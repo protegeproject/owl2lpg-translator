@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.datastructure;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -22,16 +21,8 @@ public class Graph extends AnyNode {
 
   private final List<Edge> edges;
 
-  private Graph(@Nonnull List<Edge> edges) {
+  /* package */ Graph(@Nonnull List<Edge> edges) {
     this.edges = checkNotNull(edges);
-  }
-
-  public static Graph create(Edge... edges) {
-    return new Graph(Lists.newArrayList(edges));
-  }
-
-  public static Graph create(List<Edge> edges) {
-    return new Graph(edges);
   }
 
   public Node getMainNode() {

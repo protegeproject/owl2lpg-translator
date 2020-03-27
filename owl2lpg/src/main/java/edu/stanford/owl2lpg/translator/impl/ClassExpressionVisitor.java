@@ -12,6 +12,8 @@ import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
+
 /**
  * The translator sub-module for the OWL 2 class expressions to labelled
  * property graphs.
@@ -24,21 +26,22 @@ public class ClassExpressionVisitor extends HasIriVisitor
 
   @Override
   public Graph visit(OWLClass ce) {
-    Node entityNode = Node.create(NodeLabels.CLASS);
+    Node entityNode = Node(NodeLabels.CLASS);
     Node iriNode = createIriNode(ce);
-    Graph classGraph = Graph.create(
-        Edge.create(entityNode, iriNode, EdgeLabels.ENTITY_IRI));
-    return classGraph;
+    Graph classExprGraph = Graph(
+        Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)
+    );
+    return classExprGraph;
   }
 
   @Override
   public Graph visit(OWLObjectIntersectionOf ce) {
-    Node intersectionNode = Node.create(NodeLabels.OBJECT_INTERSECTION_OF);
+    Node intersectionNode = Node(NodeLabels.OBJECT_INTERSECTION_OF);
     List<Edge> listOfEdges = ce.getOperandsAsList().stream()
-        .map(operand -> Edge.create(
+        .map(operand -> Edge(
             intersectionNode, operand.accept(this), EdgeLabels.CLASS_EXPRESSION))
         .collect(Collectors.toList());
-    Graph intersectionGraph = Graph.create(listOfEdges);
-    return intersectionGraph;
+    Graph classExprGraph = Graph(listOfEdges);
+    return classExprGraph;
   }
 }

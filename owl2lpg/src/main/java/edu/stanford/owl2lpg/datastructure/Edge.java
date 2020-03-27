@@ -23,22 +23,14 @@ public class Edge {
   private final String label;
   private final Properties properties;
 
-  private Edge(@Nonnull Node fromNode,
-               @Nonnull AnyNode toNode,
-               @Nonnull String label,
-               @Nonnull Properties properties) {
+  /* package */ Edge(@Nonnull Node fromNode,
+                     @Nonnull AnyNode toNode,
+                     @Nonnull String label,
+                     @Nonnull Properties properties) {
     this.fromNode = checkNotNull(fromNode);
     this.toNode = checkNotNull(toNode);
     this.label = checkNotNull(label);
     this.properties = checkNotNull(properties);
-  }
-
-  public static Edge create(Node fromNode, AnyNode toNode, String label, Properties properties) {
-    return new Edge(fromNode, toNode, label, properties);
-  }
-
-  public static Edge create(Node fromNode, AnyNode toNode, String label) {
-    return new Edge(fromNode, toNode, label, new Properties());
   }
 
   public Node getFromNode() {

@@ -21,17 +21,9 @@ public class Node extends AnyNode {
   private final List<String> labels;
   private final Properties properties;
 
-  private Node(@Nonnull List<String> labels, @Nonnull Properties properties) {
+  /* package */ Node(@Nonnull List<String> labels, @Nonnull Properties properties) {
     this.labels = checkNotNull(labels);
     this.properties = checkNotNull(properties);
-  }
-
-  public static Node create(List<String> labels, Properties properties) {
-    return new Node(labels, properties);
-  }
-
-  public static Node create(List<String> labels) {
-    return new Node(labels, new Properties());
   }
 
   public List<String> getLabels() {
