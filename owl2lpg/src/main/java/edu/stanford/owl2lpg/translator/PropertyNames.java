@@ -10,4 +10,6 @@ package edu.stanford.owl2lpg.translator;
 public class PropertyNames {
 
   public static final String IRI = "iri";
+  public static final String CARDINALITY = "cardinality";
+  public static final String NODE_ID = "nodeID";
 }

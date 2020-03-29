@@ -5,6 +5,8 @@ import edu.stanford.owl2lpg.translator.NodeLabels;
 import edu.stanford.owl2lpg.translator.PropertyNames;
 import org.semanticweb.owlapi.model.HasIRI;
 
+import javax.annotation.Nonnull;
+
 import static edu.stanford.owl2lpg.datastructure.GraphFactory.Node;
 
 /**
@@ -13,7 +15,7 @@ import static edu.stanford.owl2lpg.datastructure.GraphFactory.Node;
  */
 public class HasIriVisitor {
 
-  protected Node createIriNode(HasIRI entity) {
+  protected Node createIriNode(@Nonnull HasIRI entity) {
     return Node(NodeLabels.IRI,
         PropertiesBuilder.create()
             .set(PropertyNames.IRI, entity.getIRI())
