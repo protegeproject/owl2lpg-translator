@@ -21,4 +21,8 @@ public class EdgeLabels {
   public static final String OBJECT_PROPERTY_EXPRESSION = "objectPropertyExpression";
   public static final String DATA_PROPERTY_EXPRESSION = "dataPropertyExpression";
   public static final String DATA_RANGE = "dataRange";
+  public static final String DATATYPE = "datatype";
+  public static final String RESTRICTION = "restriction";
+  public static final String CONSTRAINING_FACET = "constrainingFacet";
+  public static final String RESTRICTION_VALUE = "restrictionValue";
 }

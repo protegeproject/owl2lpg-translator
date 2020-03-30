@@ -43,11 +43,15 @@ public class NodeLabels {
   public static final List<String> OBJECT_HAS_VALUE = Lists.newArrayList("ObjectHasValue", "ClassExpression");
   public static final List<String> OBJECT_HAS_SELF = Lists.newArrayList("ObjectHasSelf", "ClassExpression");
   public static final List<String> OBJECT_ONE_OF = Lists.newArrayList("ObjectOneOf", "ClassExpression");
-
-  public static final List<String> OBJECT_INVERSE_OF = Lists.newArrayList("ObjectInverseOf", "ObjectPropertyExpression");
   public static final List<String> DATA_HAS_VALUE = Lists.newArrayList("DataHasValue", "ClassExpression");
 
+  public static final List<String> OBJECT_INVERSE_OF = Lists.newArrayList("ObjectInverseOf", "ObjectPropertyExpression");
 
-
+  public static final List<String> DATA_COMPLEMENT_OF = Lists.newArrayList("DataComplementOf", "DataRange");
+  public static final List<String> DATA_INTERSECTION_OF = Lists.newArrayList("DataIntersectionOf", "DataRange");
+  public static final List<String> DATA_UNION_OF = Lists.newArrayList("DataUnionOf", "DataRange");
+  public static final List<String> DATA_ONE_OF = Lists.newArrayList("DataOneOf", "DataRange");
+  public static final List<String> DATATYPE_RESTRICTION = Lists.newArrayList("DatatypeRestriction", "DataRange");
+  public static final List<String> FACET_RESTRICTION = Lists.newArrayList("DatatypeRestriction", "DataRange");
   // @formatter:on
 }
