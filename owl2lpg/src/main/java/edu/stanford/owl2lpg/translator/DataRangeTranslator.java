@@ -24,15 +24,6 @@ public class DataRangeTranslator extends HasIriTranslator
     implements OWLDataVisitorEx<Graph> {
 
   @Override
-  public Graph visit(@Nonnull OWLDatatype dr) {
-    Node entityNode = Node(NodeLabels.DATATYPE);
-    Node iriNode = createIriNode(dr);
-    return Graph(
-        Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)
-    );
-  }
-
-  @Override
   public Graph visit(@Nonnull OWLDataComplementOf dr) {
     Node complementNode = Node(NodeLabels.DATA_COMPLEMENT_OF);
     Graph dataRangeGraph = dr.getDataRange().accept(this);
@@ -74,7 +65,7 @@ public class DataRangeTranslator extends HasIriTranslator
   @Override
   public Graph visit(@Nonnull OWLDatatypeRestriction dr) {
     Node restrictionNode = Node(NodeLabels.DATATYPE_RESTRICTION);
-    Graph datatypeGraph = dr.getDatatype().accept(this);
+    Graph datatypeGraph = dr.getDatatype().accept(new LiteralTranslator());
     List<Edge> listOfEdges = dr.facetRestrictionsAsList().stream()
         .map(operand -> Edge(
             restrictionNode, operand.accept(this), EdgeLabels.RESTRICTION))
