@@ -53,5 +53,8 @@ public class NodeLabels {
   public static final List<String> DATA_ONE_OF = Lists.newArrayList("DataOneOf", "DataRange");
   public static final List<String> DATATYPE_RESTRICTION = Lists.newArrayList("DatatypeRestriction", "DataRange");
   public static final List<String> FACET_RESTRICTION = Lists.newArrayList("DatatypeRestriction", "DataRange");
+
+  public static final List<String> LITERAL = Lists.newArrayList("Literal");
+  public static final List<String> LANGUAGE_TAG = Lists.newArrayList("LanguageTag");
   // @formatter:on
 }

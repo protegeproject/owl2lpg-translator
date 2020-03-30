@@ -25,4 +25,5 @@ public class EdgeLabels {
   public static final String RESTRICTION = "restriction";
   public static final String CONSTRAINING_FACET = "constrainingFacet";
   public static final String RESTRICTION_VALUE = "restrictionValue";
+  public static final String LANGUAGE_TAG = "languageTag";
 }
