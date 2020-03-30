@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.vocab;
 
 /**
  * A collection of property names used to specify the field name that

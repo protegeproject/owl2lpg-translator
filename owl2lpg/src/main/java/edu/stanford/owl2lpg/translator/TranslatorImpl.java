@@ -1,7 +1,6 @@
-package edu.stanford.owl2lpg.translator.impl;
+package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.datastructure.Graph;
-import edu.stanford.owl2lpg.translator.Translator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 

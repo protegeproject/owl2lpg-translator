@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.impl;
+package edu.stanford.owl2lpg.translator;
 
 import javax.annotation.Nonnull;
 import java.util.Properties;

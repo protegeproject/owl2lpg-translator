@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.impl;
+package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.datastructure.Graph;
 import org.semanticweb.owlapi.model.*;

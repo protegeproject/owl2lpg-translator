@@ -1,8 +1,8 @@
-package edu.stanford.owl2lpg.translator.impl;
+package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.datastructure.Node;
-import edu.stanford.owl2lpg.translator.NodeLabels;
-import edu.stanford.owl2lpg.translator.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.HasIRI;
 
 import javax.annotation.Nonnull;

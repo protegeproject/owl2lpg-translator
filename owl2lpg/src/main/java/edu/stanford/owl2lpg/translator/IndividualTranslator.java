@@ -1,11 +1,11 @@
-package edu.stanford.owl2lpg.translator.impl;
+package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.datastructure.AnyNode;
 import edu.stanford.owl2lpg.datastructure.Graph;
 import edu.stanford.owl2lpg.datastructure.Node;
-import edu.stanford.owl2lpg.translator.EdgeLabels;
-import edu.stanford.owl2lpg.translator.NodeLabels;
-import edu.stanford.owl2lpg.translator.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLIndividualVisitorEx;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;

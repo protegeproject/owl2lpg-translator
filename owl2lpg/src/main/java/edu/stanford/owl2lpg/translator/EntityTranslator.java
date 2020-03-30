@@ -1,9 +1,9 @@
-package edu.stanford.owl2lpg.translator.impl;
+package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.datastructure.Graph;
 import edu.stanford.owl2lpg.datastructure.Node;
-import edu.stanford.owl2lpg.translator.EdgeLabels;
-import edu.stanford.owl2lpg.translator.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;

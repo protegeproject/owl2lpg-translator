@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.vocab;
 
 /**
  * A collection of edge labels used to name the relationship between OWL 2 objects
