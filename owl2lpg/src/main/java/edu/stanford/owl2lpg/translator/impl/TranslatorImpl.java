@@ -22,6 +22,6 @@ public class TranslatorImpl implements Translator {
 
   @Override
   public Graph translate(OWLAxiom axiom) {
-    return axiom.accept(new AxiomVisitor());
+    return axiom.accept(new AxiomTranslator());
   }
 }

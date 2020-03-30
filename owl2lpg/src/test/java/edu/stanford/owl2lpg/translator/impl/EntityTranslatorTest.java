@@ -14,19 +14,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Class;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.*;
 
-public class EntityVisitorTest {
+public class EntityTranslatorTest {
 
-  private EntityVisitor visitor;
+  private EntityTranslator translator;
 
   @Before
   public void createVisitor() {
-    visitor = new EntityVisitor();
+    translator = new EntityTranslator();
   }
 
   @Test
   public void shouldTranslateEntityClass() {
     final OWLClass cls = Class(IRI("http://example.org/A"));
-    Graph actualGraph = cls.accept(visitor);
+    Graph actualGraph = cls.accept(translator);
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.CLASS),
@@ -41,7 +41,7 @@ public class EntityVisitorTest {
   @Test
   public void shouldTranslateEntityDatatype() {
     final OWLDatatype dt = Datatype(IRI("http://example.org/atype"));
-    Graph actualGraph = dt.accept(visitor);
+    Graph actualGraph = dt.accept(translator);
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.DATATYPE),
@@ -56,7 +56,7 @@ public class EntityVisitorTest {
   @Test
   public void shouldTranslateEntityObjectProperty() {
     final OWLObjectProperty op = ObjectProperty(IRI("http://example.org/p"));
-    Graph actualGraph = op.accept(visitor);
+    Graph actualGraph = op.accept(translator);
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.OBJECT_PROPERTY),
@@ -71,7 +71,7 @@ public class EntityVisitorTest {
   @Test
   public void shouldTranslateEntityDataProperty() {
     final OWLDataProperty dp = DataProperty(IRI("http://example.org/q"));
-    Graph actualGraph = dp.accept(visitor);
+    Graph actualGraph = dp.accept(translator);
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.DATA_PROPERTY),
@@ -86,7 +86,7 @@ public class EntityVisitorTest {
   @Test
   public void shouldTranslateEntityAnnotationProperty() {
     final OWLAnnotationProperty ap = AnnotationProperty(IRI("http://example.org/m"));
-    Graph actualGraph = ap.accept(visitor);
+    Graph actualGraph = ap.accept(translator);
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.ANNOTATION_PROPERTY),
@@ -101,7 +101,7 @@ public class EntityVisitorTest {
   @Test
   public void shouldTranslateEntityNamedIndividual() {
     final OWLNamedIndividual a = NamedIndividual(IRI("http://example.org/ind"));
-    Graph actualGraph = a.accept(visitor);
+    Graph actualGraph = a.accept(translator);
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.NAMED_INDIVIDUAL),

@@ -10,6 +10,6 @@ import org.semanticweb.owlapi.model.OWLDataVisitorEx;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class LiteralVisitor implements OWLDataVisitorEx<Graph> {
+public class LiteralTranslator implements OWLDataVisitorEx<Graph> {
 
 }

@@ -17,7 +17,7 @@ import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class EntityVisitor extends HasIriVisitor
+public class EntityTranslator extends HasIriTranslator
     implements OWLEntityVisitorEx<Graph> {
 
   @Override

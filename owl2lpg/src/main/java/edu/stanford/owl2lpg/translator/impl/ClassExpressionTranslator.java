@@ -22,7 +22,7 @@ import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class ClassExpressionVisitor extends HasIriVisitor
+public class ClassExpressionTranslator extends HasIriTranslator
     implements OWLClassExpressionVisitorEx<Graph> {
 
   @Override
@@ -67,7 +67,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLObjectSomeValuesFrom ce) {
     Node qualifierNode = Node(NodeLabels.OBJECT_SOME_VALUES_FROM);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     Graph fillerGraph = ce.getFiller().accept(this);
     return Graph(
         Edge(qualifierNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
@@ -78,7 +78,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLObjectAllValuesFrom ce) {
     Node qualifierNode = Node(NodeLabels.OBJECT_ALL_VALUES_FROM);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     Graph fillerGraph = ce.getFiller().accept(this);
     return Graph(
         Edge(qualifierNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
@@ -89,8 +89,8 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLObjectHasValue ce) {
     Node qualifierNode = Node(NodeLabels.OBJECT_HAS_VALUE);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
-    AnyNode fillerGraph = ce.getFiller().accept(new IndividualVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
+    AnyNode fillerGraph = ce.getFiller().accept(new IndividualTranslator());
     return Graph(
         Edge(qualifierNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
         Edge(qualifierNode, fillerGraph, EdgeLabels.INDIVIDUAL)
@@ -102,7 +102,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node cardinalityNode = Node(NodeLabels.OBJECT_MIN_CARDINALITY,
         PropertiesBuilder.create()
             .set(PropertyNames.CARDINALITY, ce.getCardinality()).build());
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     Graph fillerNode = ce.getFiller().accept(this);
     return Graph(
         Edge(cardinalityNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
@@ -115,7 +115,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node cardinalityNode = Node(NodeLabels.OBJECT_EXACT_CARDINALITY,
         PropertiesBuilder.create()
             .set(PropertyNames.CARDINALITY, ce.getCardinality()).build());
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     Graph fillerNode = ce.getFiller().accept(this);
     return Graph(
         Edge(cardinalityNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
@@ -128,7 +128,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node cardinalityNode = Node(NodeLabels.OBJECT_MAX_CARDINALITY,
         PropertiesBuilder.create()
             .set(PropertyNames.CARDINALITY, ce.getCardinality()).build());
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     Graph fillerNode = ce.getFiller().accept(this);
     return Graph(
         Edge(cardinalityNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
@@ -139,7 +139,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLObjectHasSelf ce) {
     Node restrictionNode = Node(NodeLabels.OBJECT_HAS_SELF);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     return Graph(
         Edge(restrictionNode, propertyGraph, EdgeLabels.OBJECT_PROPERTY_EXPRESSION)
     );
@@ -150,7 +150,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node enumerationNode = Node(NodeLabels.OBJECT_ONE_OF);
     List<Edge> listOfEdges = ce.getOperandsAsList().stream()
         .map(operand -> Edge(
-            enumerationNode, operand.accept(new IndividualVisitor()), EdgeLabels.INDIVIDUAL))
+            enumerationNode, operand.accept(new IndividualTranslator()), EdgeLabels.INDIVIDUAL))
         .collect(Collectors.toList());
     return Graph(listOfEdges);
   }
@@ -158,8 +158,8 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLDataSomeValuesFrom ce) {
     Node qualifierNode = Node(NodeLabels.DATA_SOME_VALUES_FROM);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
-    Graph dataRangeGraph = ce.getFiller().accept(new DataRangeVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
+    Graph dataRangeGraph = ce.getFiller().accept(new DataRangeTranslator());
     return Graph(
         Edge(qualifierNode, propertyGraph, EdgeLabels.DATA_PROPERTY_EXPRESSION),
         Edge(qualifierNode, dataRangeGraph, EdgeLabels.DATA_RANGE)
@@ -169,8 +169,8 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLDataAllValuesFrom ce) {
     Node qualifierNode = Node(NodeLabels.DATA_ALL_VALUES_FROM);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
-    Graph dataRangeGraph = ce.getFiller().accept(new DataRangeVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
+    Graph dataRangeGraph = ce.getFiller().accept(new DataRangeTranslator());
     return Graph(
         Edge(qualifierNode, propertyGraph, EdgeLabels.DATA_PROPERTY_EXPRESSION),
         Edge(qualifierNode, dataRangeGraph, EdgeLabels.DATA_RANGE)
@@ -180,8 +180,8 @@ public class ClassExpressionVisitor extends HasIriVisitor
   @Override
   public Graph visit(@Nonnull OWLDataHasValue ce) {
     Node qualifierNode = Node(NodeLabels.DATA_HAS_VALUE);
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
-    Graph literalGraph = ce.getFiller().accept(new LiteralVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
+    Graph literalGraph = ce.getFiller().accept(new LiteralTranslator());
     return Graph(
         Edge(qualifierNode, propertyGraph, EdgeLabels.DATA_PROPERTY_EXPRESSION),
         Edge(qualifierNode, literalGraph, EdgeLabels.LITERAL)
@@ -193,7 +193,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node cardinalityNode = Node(NodeLabels.DATA_MIN_CARDINALITY,
         PropertiesBuilder.create()
             .set(PropertyNames.CARDINALITY, ce.getCardinality()).build());
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     return Graph(
         Edge(cardinalityNode, propertyGraph, EdgeLabels.DATA_PROPERTY_EXPRESSION)
     );
@@ -204,7 +204,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node cardinalityNode = Node(NodeLabels.DATA_EXACT_CARDINALITY,
         PropertiesBuilder.create()
             .set(PropertyNames.CARDINALITY, ce.getCardinality()).build());
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     return Graph(
         Edge(cardinalityNode, propertyGraph, EdgeLabels.DATA_PROPERTY_EXPRESSION)
     );
@@ -215,7 +215,7 @@ public class ClassExpressionVisitor extends HasIriVisitor
     Node cardinalityNode = Node(NodeLabels.DATA_MAX_CARDINALITY,
         PropertiesBuilder.create()
             .set(PropertyNames.CARDINALITY, ce.getCardinality()).build());
-    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionVisitor());
+    Graph propertyGraph = ce.getProperty().accept(new PropertyExpressionTranslator());
     return Graph(
         Edge(cardinalityNode, propertyGraph, EdgeLabels.DATA_PROPERTY_EXPRESSION)
     );
