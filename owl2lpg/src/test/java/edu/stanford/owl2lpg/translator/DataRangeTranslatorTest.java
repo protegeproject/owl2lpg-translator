@@ -3,16 +3,26 @@ package edu.stanford.owl2lpg.translator;
 import edu.stanford.owl2lpg.datastructure.Graph;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
+import static edu.stanford.owl2lpg.translator.PropertiesFactory.Properties;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.IRI;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.LEXICAL_FORM;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.*;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.DataComplementOf;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.DataIntersectionOf;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.DataOneOf;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.DataUnionOf;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Datatype;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.DatatypeRestriction;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.FacetRestriction;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.IRI;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Literal;
 
 public class DataRangeTranslatorTest {
 
@@ -33,14 +43,9 @@ public class DataRangeTranslatorTest {
             Graph(
                 Edge(
                     Node(NodeLabels.DATATYPE),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#positiveInteger").build()),
-                    EdgeLabels.ENTITY_IRI
-                )
-            ),
-            EdgeLabels.DATA_RANGE
-        )
-    );
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#positiveInteger")),
+                    EdgeLabels.ENTITY_IRI)),
+            EdgeLabels.DATA_RANGE));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -56,60 +61,38 @@ public class DataRangeTranslatorTest {
             Node(NodeLabels.DATA_ONE_OF),
             Graph(
                 Edge(
-                    Node(NodeLabels.LITERAL, PropertiesBuilder.create()
-                        .set(PropertyNames.LEXICAL_FORM, "a").build()),
+                    Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, "a")),
                     Graph(
                         Edge(
                             Node(NodeLabels.DATATYPE),
-                            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                                .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#string").build()),
-                            EdgeLabels.ENTITY_IRI
-                        )
-                    ),
-                    EdgeLabels.DATATYPE
-                )
-            ),
-            EdgeLabels.LITERAL
-        ),
+                            Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#string")),
+                            EdgeLabels.ENTITY_IRI)),
+                    EdgeLabels.DATATYPE)),
+            EdgeLabels.LITERAL),
         Edge(
             Node(NodeLabels.DATA_ONE_OF),
             Graph(
                 Edge(
-                    Node(NodeLabels.LITERAL, PropertiesBuilder.create()
-                        .set(PropertyNames.LEXICAL_FORM, "b").build()),
+                    Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, "b")),
                     Graph(
                         Edge(
                             Node(NodeLabels.DATATYPE),
-                            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                                .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#string").build()),
-                            EdgeLabels.ENTITY_IRI
-                        )
-                    ),
-                    EdgeLabels.DATATYPE
-                )
-            ),
-            EdgeLabels.LITERAL
-        ),
+                            Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#string")),
+                            EdgeLabels.ENTITY_IRI)),
+                    EdgeLabels.DATATYPE)),
+            EdgeLabels.LITERAL),
         Edge(
             Node(NodeLabels.DATA_ONE_OF),
             Graph(
                 Edge(
-                    Node(NodeLabels.LITERAL, PropertiesBuilder.create()
-                        .set(PropertyNames.LEXICAL_FORM, "c").build()),
+                    Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, "c")),
                     Graph(
                         Edge(
                             Node(NodeLabels.DATATYPE),
-                            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                                .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#string").build()),
-                            EdgeLabels.ENTITY_IRI
-                        )
-                    ),
-                    EdgeLabels.DATATYPE
-                )
-            ),
-            EdgeLabels.LITERAL
-        )
-    );
+                            Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#string")),
+                            EdgeLabels.ENTITY_IRI)),
+                    EdgeLabels.DATATYPE)),
+            EdgeLabels.LITERAL));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -125,26 +108,17 @@ public class DataRangeTranslatorTest {
             Graph(
                 Edge(
                     Node(NodeLabels.DATATYPE),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#negativeInteger").build()),
-                    EdgeLabels.ENTITY_IRI
-                )
-            ),
-            EdgeLabels.DATA_RANGE
-        ),
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#negativeInteger")),
+                    EdgeLabels.ENTITY_IRI)),
+            EdgeLabels.DATA_RANGE),
         Edge(
             Node(NodeLabels.DATA_INTERSECTION_OF),
             Graph(
                 Edge(
                     Node(NodeLabels.DATATYPE),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#positiveInteger").build()),
-                    EdgeLabels.ENTITY_IRI
-                )
-            ),
-            EdgeLabels.DATA_RANGE
-        )
-    );
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#positiveInteger")),
+                    EdgeLabels.ENTITY_IRI)),
+            EdgeLabels.DATA_RANGE));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -160,26 +134,17 @@ public class DataRangeTranslatorTest {
             Graph(
                 Edge(
                     Node(NodeLabels.DATATYPE),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#integer").build()),
-                    EdgeLabels.ENTITY_IRI
-                )
-            ),
-            EdgeLabels.DATA_RANGE
-        ),
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#integer")),
+                    EdgeLabels.ENTITY_IRI)),
+            EdgeLabels.DATA_RANGE),
         Edge(
             Node(NodeLabels.DATA_UNION_OF),
             Graph(
                 Edge(
                     Node(NodeLabels.DATATYPE),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#string").build()),
-                    EdgeLabels.ENTITY_IRI
-                )
-            ),
-            EdgeLabels.DATA_RANGE
-        )
-    );
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#string")),
+                    EdgeLabels.ENTITY_IRI)),
+            EdgeLabels.DATA_RANGE));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -190,30 +155,20 @@ public class DataRangeTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.FACET_RESTRICTION),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#minInclusive").build()),
-            EdgeLabels.CONSTRAINING_FACET
-        ),
+            Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#minInclusive")),
+            EdgeLabels.CONSTRAINING_FACET),
         Edge(
             Node(NodeLabels.FACET_RESTRICTION),
             Graph(
                 Edge(
-                    Node(NodeLabels.LITERAL, PropertiesBuilder.create()
-                        .set(PropertyNames.LEXICAL_FORM, "5").build()),
+                    Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, "5")),
                     Graph(
                         Edge(
                             Node(NodeLabels.DATATYPE),
-                            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                                .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#integer").build()),
-                            EdgeLabels.ENTITY_IRI
-                        )
-                    ),
-                    EdgeLabels.DATATYPE
-                )
-            ),
-            EdgeLabels.RESTRICTION_VALUE
-        )
-    );
+                            Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#integer")),
+                            EdgeLabels.ENTITY_IRI)),
+                    EdgeLabels.DATATYPE)),
+            EdgeLabels.RESTRICTION_VALUE));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -230,76 +185,49 @@ public class DataRangeTranslatorTest {
             Graph(
                 Edge(
                     Node(NodeLabels.DATATYPE),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#integer").build()),
-                    EdgeLabels.ENTITY_IRI
-                )
-            ),
-            EdgeLabels.DATATYPE
-        ),
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#integer")),
+                    EdgeLabels.ENTITY_IRI)),
+            EdgeLabels.DATATYPE),
         Edge(
             Node(NodeLabels.DATATYPE_RESTRICTION),
             Graph(
                 Edge(
                     Node(NodeLabels.FACET_RESTRICTION),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#minInclusive").build()),
-                    EdgeLabels.CONSTRAINING_FACET
-                ),
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#minInclusive")),
+                    EdgeLabels.CONSTRAINING_FACET),
                 Edge(
                     Node(NodeLabels.FACET_RESTRICTION),
                     Graph(
                         Edge(
-                            Node(NodeLabels.LITERAL, PropertiesBuilder.create()
-                                .set(PropertyNames.LEXICAL_FORM, "5").build()),
+                            Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, "5")),
                             Graph(
                                 Edge(
                                     Node(NodeLabels.DATATYPE),
-                                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#integer").build()),
-                                    EdgeLabels.ENTITY_IRI
-                                )
-                            ),
-                            EdgeLabels.DATATYPE
-                        )
-                    ),
-                    EdgeLabels.RESTRICTION_VALUE
-                )
-            ),
-            EdgeLabels.RESTRICTION
-        ),
+                                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#integer")),
+                                    EdgeLabels.ENTITY_IRI)),
+                            EdgeLabels.DATATYPE)),
+                    EdgeLabels.RESTRICTION_VALUE)),
+            EdgeLabels.RESTRICTION),
         Edge(
             Node(NodeLabels.DATATYPE_RESTRICTION),
             Graph(
                 Edge(
                     Node(NodeLabels.FACET_RESTRICTION),
-                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#maxExclusive").build()),
-                    EdgeLabels.CONSTRAINING_FACET
-                ),
+                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#maxExclusive")),
+                    EdgeLabels.CONSTRAINING_FACET),
                 Edge(
                     Node(NodeLabels.FACET_RESTRICTION),
                     Graph(
                         Edge(
-                            Node(NodeLabels.LITERAL, PropertiesBuilder.create()
-                                .set(PropertyNames.LEXICAL_FORM, "10").build()),
+                            Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, "10")),
                             Graph(
                                 Edge(
                                     Node(NodeLabels.DATATYPE),
-                                    Node(NodeLabels.IRI, PropertiesBuilder.create()
-                                        .set(PropertyNames.IRI, "http://www.w3.org/2001/XMLSchema#integer").build()),
-                                    EdgeLabels.ENTITY_IRI
-                                )
-                            ),
-                            EdgeLabels.DATATYPE
-                        )
-                    ),
-                    EdgeLabels.RESTRICTION_VALUE
-                )
-            ),
-            EdgeLabels.RESTRICTION
-        )
-    );
+                                    Node(NodeLabels.IRI, Properties(IRI, "http://www.w3.org/2001/XMLSchema#integer")),
+                                    EdgeLabels.ENTITY_IRI)),
+                            EdgeLabels.DATATYPE)),
+                    EdgeLabels.RESTRICTION_VALUE)),
+            EdgeLabels.RESTRICTION));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 }

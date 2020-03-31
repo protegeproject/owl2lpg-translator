@@ -1,20 +1,24 @@
 package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.datastructure.Graph;
-import edu.stanford.owl2lpg.translator.EntityTranslator;
-import edu.stanford.owl2lpg.translator.PropertiesBuilder;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.*;
 
 import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
+import static edu.stanford.owl2lpg.translator.PropertiesFactory.Properties;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.IRI;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.AnnotationProperty;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Class;
-import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.*;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.DataProperty;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Datatype;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.IRI;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.NamedIndividual;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.ObjectProperty;
 
 public class EntityTranslatorTest {
 
@@ -32,11 +36,8 @@ public class EntityTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.CLASS),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://example.org/A").build()),
-            EdgeLabels.ENTITY_IRI
-        )
-    );
+            Node(NodeLabels.IRI, Properties(IRI, "http://example.org/A")),
+            EdgeLabels.ENTITY_IRI));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -47,11 +48,8 @@ public class EntityTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.DATATYPE),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://example.org/atype").build()),
-            EdgeLabels.ENTITY_IRI
-        )
-    );
+            Node(NodeLabels.IRI, Properties(IRI, "http://example.org/atype")),
+            EdgeLabels.ENTITY_IRI));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -62,11 +60,8 @@ public class EntityTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.OBJECT_PROPERTY),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://example.org/p").build()),
-            EdgeLabels.ENTITY_IRI
-        )
-    );
+            Node(NodeLabels.IRI, Properties(IRI, "http://example.org/p")),
+            EdgeLabels.ENTITY_IRI));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -77,11 +72,8 @@ public class EntityTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.DATA_PROPERTY),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://example.org/q").build()),
-            EdgeLabels.ENTITY_IRI
-        )
-    );
+            Node(NodeLabels.IRI, Properties(IRI, "http://example.org/q")),
+            EdgeLabels.ENTITY_IRI));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -92,11 +84,8 @@ public class EntityTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.ANNOTATION_PROPERTY),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://example.org/m").build()),
-            EdgeLabels.ENTITY_IRI
-        )
-    );
+            Node(NodeLabels.IRI, Properties(IRI, "http://example.org/m")),
+            EdgeLabels.ENTITY_IRI));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 
@@ -107,11 +96,8 @@ public class EntityTranslatorTest {
     Graph expectedGraph = Graph(
         Edge(
             Node(NodeLabels.NAMED_INDIVIDUAL),
-            Node(NodeLabels.IRI, PropertiesBuilder.create()
-                .set(PropertyNames.IRI, "http://example.org/ind").build()),
-            EdgeLabels.ENTITY_IRI
-        )
-    );
+            Node(NodeLabels.IRI, Properties(IRI, "http://example.org/ind")),
+            EdgeLabels.ENTITY_IRI));
     assertThat(actualGraph, equalTo(expectedGraph));
   }
 }
