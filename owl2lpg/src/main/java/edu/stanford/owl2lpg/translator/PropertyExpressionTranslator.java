@@ -20,25 +20,16 @@ import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class PropertyExpressionTranslator extends HasIriTranslator
-    implements OWLPropertyExpressionVisitorEx<Graph> {
+public class PropertyExpressionTranslator implements OWLPropertyExpressionVisitorEx<Graph> {
 
   @Override
   public Graph visit(@Nonnull OWLDataProperty dp) {
-    Node entityNode = Node(NodeLabels.DATA_PROPERTY);
-    Node iriNode = createIriNode(dp);
-    return Graph(
-        Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)
-    );
+    return dp.accept(new EntityTranslator());
   }
 
   @Override
   public Graph visit(@Nonnull OWLObjectProperty op) {
-    Node entityNode = Node(NodeLabels.OBJECT_PROPERTY);
-    Node iriNode = createIriNode(op);
-    return Graph(
-        Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)
-    );
+    return op.accept(new EntityTranslator());
   }
 
   @Override

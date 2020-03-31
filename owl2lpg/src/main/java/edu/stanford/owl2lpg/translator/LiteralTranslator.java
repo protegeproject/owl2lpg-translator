@@ -20,16 +20,11 @@ import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class LiteralTranslator extends HasIriTranslator
-    implements OWLDataVisitorEx<Graph> {
+public class LiteralTranslator implements OWLDataVisitorEx<Graph> {
 
   @Override
   public Graph visit(@Nonnull OWLDatatype dt) {
-    Node entityNode = Node(NodeLabels.DATATYPE);
-    Node iriNode = createIriNode(dt);
-    return Graph(
-        Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)
-    );
+    return dt.accept(new EntityTranslator());
   }
 
   @Override
