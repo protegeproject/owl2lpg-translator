@@ -37,11 +37,17 @@ public class LiteralTranslator extends HasIriTranslator
     Node literalNode = Node(NodeLabels.LITERAL, PropertiesBuilder.create()
         .set(PropertyNames.LEXICAL_FORM, lt.getLiteral()).build());
     Graph datatypeGraph = lt.getDatatype().accept(this);
-    Node languageTagNode = Node(NodeLabels.LANGUAGE_TAG, PropertiesBuilder.create()
-        .set(PropertyNames.LANGUAGE, lt.getLang()).build());
-    return Graph(
-        Edge(literalNode, datatypeGraph, EdgeLabels.DATATYPE),
-        Edge(literalNode, languageTagNode, EdgeLabels.LANGUAGE_TAG)
-    );
+    if (lt.isRDFPlainLiteral()) {
+      Node languageTagNode = Node(NodeLabels.LANGUAGE_TAG, PropertiesBuilder.create()
+          .set(PropertyNames.LANGUAGE, lt.getLang()).build());
+      return Graph(
+          Edge(literalNode, datatypeGraph, EdgeLabels.DATATYPE),
+          Edge(literalNode, languageTagNode, EdgeLabels.LANGUAGE_TAG)
+      );
+    } else {
+      return Graph(
+          Edge(literalNode, datatypeGraph, EdgeLabels.DATATYPE)
+      );
+    }
   }
 }
