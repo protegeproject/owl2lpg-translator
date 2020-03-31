@@ -24,6 +24,11 @@ public class DataRangeTranslator extends HasIriTranslator
     implements OWLDataVisitorEx<Graph> {
 
   @Override
+  public Graph visit(@Nonnull OWLDatatype dt) {
+    return dt.accept(new EntityTranslator());
+  }
+
+  @Override
   public Graph visit(@Nonnull OWLDataComplementOf dr) {
     Node complementNode = Node(NodeLabels.DATA_COMPLEMENT_OF);
     Graph dataRangeGraph = dr.getDataRange().accept(this);
