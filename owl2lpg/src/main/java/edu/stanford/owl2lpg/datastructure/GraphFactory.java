@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * A factory code for building labelled property graph.
+ * A utility code for creating labelled property graphs simple and clean
+ * by importing the methods statically.
  *
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
