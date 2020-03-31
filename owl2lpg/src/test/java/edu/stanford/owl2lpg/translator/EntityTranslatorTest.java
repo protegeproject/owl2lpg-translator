@@ -25,7 +25,7 @@ public class EntityTranslatorTest {
   private EntityTranslator translator;
 
   @Before
-  public void createVisitor() {
+  public void createTranslator() {
     translator = new EntityTranslator();
   }
 
