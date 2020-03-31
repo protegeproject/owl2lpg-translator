@@ -143,7 +143,7 @@ public class ClassExpressionTranslator implements OWLClassExpressionVisitorEx<Gr
   @Override
   public Graph visit(@Nonnull OWLObjectOneOf ce) {
     Node enumerationNode = Node(NodeLabels.OBJECT_ONE_OF);
-    List<Edge> listOfEdges = ce.getOperandsAsList().stream()
+    List<Edge> listOfEdges = ce.getIndividuals().stream()
         .map(operand -> Edge(
             enumerationNode, operand.accept(new IndividualTranslator()), EdgeLabels.INDIVIDUAL))
         .collect(Collectors.toList());

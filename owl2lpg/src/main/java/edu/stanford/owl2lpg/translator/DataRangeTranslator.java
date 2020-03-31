@@ -29,6 +29,11 @@ public class DataRangeTranslator extends HasIriTranslator
   }
 
   @Override
+  public Graph visit(@Nonnull OWLLiteral lt) {
+    return lt.accept(new LiteralTranslator());
+  }
+
+  @Override
   public Graph visit(@Nonnull OWLDataComplementOf dr) {
     Node complementNode = Node(NodeLabels.DATA_COMPLEMENT_OF);
     Graph dataRangeGraph = dr.getDataRange().accept(this);
@@ -40,7 +45,7 @@ public class DataRangeTranslator extends HasIriTranslator
   @Override
   public Graph visit(@Nonnull OWLDataOneOf dr) {
     Node enumerationNode = Node(NodeLabels.DATA_ONE_OF);
-    List<Edge> listOfEdges = dr.getOperandsAsList().stream()
+    List<Edge> listOfEdges = dr.getValues().stream()
         .map(operand -> Edge(
             enumerationNode, operand.accept(new LiteralTranslator()), EdgeLabels.LITERAL))
         .collect(Collectors.toList());
@@ -50,7 +55,7 @@ public class DataRangeTranslator extends HasIriTranslator
   @Override
   public Graph visit(@Nonnull OWLDataIntersectionOf dr) {
     Node intersectionNode = Node(NodeLabels.DATA_INTERSECTION_OF);
-    List<Edge> listOfEdges = dr.getOperandsAsList().stream()
+    List<Edge> listOfEdges = dr.getOperands().stream()
         .map(operand -> Edge(
             intersectionNode, operand.accept(this), EdgeLabels.DATA_RANGE))
         .collect(Collectors.toList());
@@ -60,7 +65,7 @@ public class DataRangeTranslator extends HasIriTranslator
   @Override
   public Graph visit(@Nonnull OWLDataUnionOf dr) {
     Node intersectionNode = Node(NodeLabels.DATA_UNION_OF);
-    List<Edge> listOfEdges = dr.getOperandsAsList().stream()
+    List<Edge> listOfEdges = dr.getOperands().stream()
         .map(operand -> Edge(
             intersectionNode, operand.accept(this), EdgeLabels.DATA_RANGE))
         .collect(Collectors.toList());
@@ -71,7 +76,7 @@ public class DataRangeTranslator extends HasIriTranslator
   public Graph visit(@Nonnull OWLDatatypeRestriction dr) {
     Node restrictionNode = Node(NodeLabels.DATATYPE_RESTRICTION);
     Graph datatypeGraph = dr.getDatatype().accept(new LiteralTranslator());
-    List<Edge> listOfEdges = dr.facetRestrictionsAsList().stream()
+    List<Edge> listOfEdges = dr.getFacetRestrictions().stream()
         .map(operand -> Edge(
             restrictionNode, operand.accept(this), EdgeLabels.RESTRICTION))
         .collect(Collectors.toList());

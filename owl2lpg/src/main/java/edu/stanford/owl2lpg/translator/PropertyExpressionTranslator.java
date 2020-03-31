@@ -4,10 +4,7 @@ import edu.stanford.owl2lpg.datastructure.Graph;
 import edu.stanford.owl2lpg.datastructure.Node;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLObjectInverseOf;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
+import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +22,12 @@ public class PropertyExpressionTranslator implements OWLPropertyExpressionVisito
   @Override
   public Graph visit(@Nonnull OWLDataProperty dp) {
     return dp.accept(new EntityTranslator());
+  }
+
+  @Nonnull
+  @Override
+  public Graph visit(@Nonnull OWLAnnotationProperty ap) {
+    return ap.accept(new EntityTranslator());
   }
 
   @Override

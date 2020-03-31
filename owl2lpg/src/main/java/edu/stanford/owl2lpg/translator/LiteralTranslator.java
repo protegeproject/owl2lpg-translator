@@ -5,9 +5,7 @@ import edu.stanford.owl2lpg.datastructure.Node;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
-import org.semanticweb.owlapi.model.OWLDataVisitorEx;
-import org.semanticweb.owlapi.model.OWLDatatype;
-import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 
@@ -44,5 +42,35 @@ public class LiteralTranslator implements OWLDataVisitorEx<Graph> {
           Edge(literalNode, datatypeGraph, EdgeLabels.DATATYPE)
       );
     }
+  }
+
+  @Override
+  public Graph visit(@Nonnull OWLDataComplementOf dr) {
+    return dr.accept(new DataRangeTranslator());
+  }
+
+  @Override
+  public Graph visit(@Nonnull OWLDataOneOf dr) {
+    return dr.accept(new DataRangeTranslator());
+  }
+
+  @Override
+  public Graph visit(@Nonnull OWLDataIntersectionOf dr) {
+    return dr.accept(new DataRangeTranslator());
+  }
+
+  @Override
+  public Graph visit(@Nonnull OWLDataUnionOf dr) {
+    return dr.accept(new DataRangeTranslator());
+  }
+
+  @Override
+  public Graph visit(@Nonnull OWLDatatypeRestriction dr) {
+    return dr.accept(new DataRangeTranslator());
+  }
+
+  @Override
+  public Graph visit(@Nonnull OWLFacetRestriction dr) {
+    return dr.accept(new DataRangeTranslator());
   }
 }
