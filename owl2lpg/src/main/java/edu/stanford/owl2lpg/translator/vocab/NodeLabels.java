@@ -1,8 +1,6 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
-import com.google.common.collect.Lists;
-
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A collection of node labels used to name the OWL 2 objects in the
@@ -14,47 +12,47 @@ import java.util.List;
 public class NodeLabels {
 
   // @formatter:off
-  public static final List<String> IRI = Lists.newArrayList("IRI");
-  public static final List<String> CLASS = Lists.newArrayList("Class", "ClassExpression", "Entity");
-  public static final List<String> DATATYPE = Lists.newArrayList("Datatype", "Entity");
-  public static final List<String> OBJECT_PROPERTY = Lists.newArrayList("ObjectProperty", "ObjectPropertyExpression", "Entity");
-  public static final List<String> DATA_PROPERTY = Lists.newArrayList("DataProperty", "DataPropertyExpression", "Entity");
-  public static final List<String> ANNOTATION_PROPERTY = Lists.newArrayList("AnnotationProperty", "Entity");
-  public static final List<String> NAMED_INDIVIDUAL = Lists.newArrayList("NamedIndividual", "Individual", "Entity");
-  public static final List<String> ANONYMOUS_INDIVIDUAL = Lists.newArrayList("AnonymousIndividual", "Individual");
+  public static final ImmutableList<String> IRI = ImmutableList.of("IRI");
+  public static final ImmutableList<String> CLASS = ImmutableList.of("Class", "ClassExpression", "Entity");
+  public static final ImmutableList<String> DATATYPE = ImmutableList.of("Datatype", "Entity");
+  public static final ImmutableList<String> OBJECT_PROPERTY = ImmutableList.of("ObjectProperty", "ObjectPropertyExpression", "Entity");
+  public static final ImmutableList<String> DATA_PROPERTY = ImmutableList.of("DataProperty", "DataPropertyExpression", "Entity");
+  public static final ImmutableList<String> ANNOTATION_PROPERTY = ImmutableList.of("AnnotationProperty", "Entity");
+  public static final ImmutableList<String> NAMED_INDIVIDUAL = ImmutableList.of("NamedIndividual", "Individual", "Entity");
+  public static final ImmutableList<String> ANONYMOUS_INDIVIDUAL = ImmutableList.of("AnonymousIndividual", "Individual");
 
-  public static final List<String> DECLARATION = Lists.newArrayList("Declaration", "Axiom");
-  public static final List<String> SUBCLASSOF = Lists.newArrayList("SubClassOf", "ClassAxiom", "Axiom");
+  public static final ImmutableList<String> DECLARATION = ImmutableList.of("Declaration", "Axiom");
+  public static final ImmutableList<String> SUBCLASSOF = ImmutableList.of("SubClassOf", "ClassAxiom", "Axiom");
 
-  public static final List<String> OBJECT_INTERSECTION_OF = Lists.newArrayList("ObjectIntersectionOf", "ClassExpression");
-  public static final List<String> OBJECT_UNION_OF = Lists.newArrayList("ObjectUnionOf", "ClassExpression");
-  public static final List<String> OBJECT_COMPLEMENT_OF = Lists.newArrayList("ObjectComplementOf", "ClassExpression");
-  public static final List<String> OBJECT_SOME_VALUES_FROM = Lists.newArrayList("ObjectSomeValuesFrom", "ClassExpression");
-  public static final List<String> OBJECT_ALL_VALUES_FROM = Lists.newArrayList("ObjectAllValuesFrom", "ClassExpression");
-  public static final List<String> OBJECT_MIN_CARDINALITY = Lists.newArrayList("ObjectMinCardinality", "ClassExpression");
-  public static final List<String> OBJECT_EXACT_CARDINALITY = Lists.newArrayList("ObjectExactCardinality", "ClassExpression");
-  public static final List<String> OBJECT_MAX_CARDINALITY = Lists.newArrayList("ObjectMaxCardinality", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_INTERSECTION_OF = ImmutableList.of("ObjectIntersectionOf", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_UNION_OF = ImmutableList.of("ObjectUnionOf", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_COMPLEMENT_OF = ImmutableList.of("ObjectComplementOf", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_SOME_VALUES_FROM = ImmutableList.of("ObjectSomeValuesFrom", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_ALL_VALUES_FROM = ImmutableList.of("ObjectAllValuesFrom", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_MIN_CARDINALITY = ImmutableList.of("ObjectMinCardinality", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_EXACT_CARDINALITY = ImmutableList.of("ObjectExactCardinality", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_MAX_CARDINALITY = ImmutableList.of("ObjectMaxCardinality", "ClassExpression");
 
-  public static final List<String> DATA_SOME_VALUES_FROM = Lists.newArrayList("DataSomeValuesFrom", "ClassExpression");
-  public static final List<String> DATA_ALL_VALUES_FROM = Lists.newArrayList("DataAllValuesFrom", "ClassExpression");
-  public static final List<String> DATA_MIN_CARDINALITY = Lists.newArrayList("DataMinCardinality", "ClassExpression");
-  public static final List<String> DATA_EXACT_CARDINALITY = Lists.newArrayList("DataExactCardinality", "ClassExpression");
-  public static final List<String> DATA_MAX_CARDINALITY = Lists.newArrayList("DataMaxCardinality", "ClassExpression");
-  public static final List<String> OBJECT_HAS_VALUE = Lists.newArrayList("ObjectHasValue", "ClassExpression");
-  public static final List<String> OBJECT_HAS_SELF = Lists.newArrayList("ObjectHasSelf", "ClassExpression");
-  public static final List<String> OBJECT_ONE_OF = Lists.newArrayList("ObjectOneOf", "ClassExpression");
-  public static final List<String> DATA_HAS_VALUE = Lists.newArrayList("DataHasValue", "ClassExpression");
+  public static final ImmutableList<String> DATA_SOME_VALUES_FROM = ImmutableList.of("DataSomeValuesFrom", "ClassExpression");
+  public static final ImmutableList<String> DATA_ALL_VALUES_FROM = ImmutableList.of("DataAllValuesFrom", "ClassExpression");
+  public static final ImmutableList<String> DATA_MIN_CARDINALITY = ImmutableList.of("DataMinCardinality", "ClassExpression");
+  public static final ImmutableList<String> DATA_EXACT_CARDINALITY = ImmutableList.of("DataExactCardinality", "ClassExpression");
+  public static final ImmutableList<String> DATA_MAX_CARDINALITY = ImmutableList.of("DataMaxCardinality", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_HAS_VALUE = ImmutableList.of("ObjectHasValue", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_HAS_SELF = ImmutableList.of("ObjectHasSelf", "ClassExpression");
+  public static final ImmutableList<String> OBJECT_ONE_OF = ImmutableList.of("ObjectOneOf", "ClassExpression");
+  public static final ImmutableList<String> DATA_HAS_VALUE = ImmutableList.of("DataHasValue", "ClassExpression");
 
-  public static final List<String> OBJECT_INVERSE_OF = Lists.newArrayList("ObjectInverseOf", "ObjectPropertyExpression");
+  public static final ImmutableList<String> OBJECT_INVERSE_OF = ImmutableList.of("ObjectInverseOf", "ObjectPropertyExpression");
 
-  public static final List<String> DATA_COMPLEMENT_OF = Lists.newArrayList("DataComplementOf", "DataRange");
-  public static final List<String> DATA_INTERSECTION_OF = Lists.newArrayList("DataIntersectionOf", "DataRange");
-  public static final List<String> DATA_UNION_OF = Lists.newArrayList("DataUnionOf", "DataRange");
-  public static final List<String> DATA_ONE_OF = Lists.newArrayList("DataOneOf", "DataRange");
-  public static final List<String> DATATYPE_RESTRICTION = Lists.newArrayList("DatatypeRestriction", "DataRange");
-  public static final List<String> FACET_RESTRICTION = Lists.newArrayList("DatatypeRestriction", "DataRange");
+  public static final ImmutableList<String> DATA_COMPLEMENT_OF = ImmutableList.of("DataComplementOf", "DataRange");
+  public static final ImmutableList<String> DATA_INTERSECTION_OF = ImmutableList.of("DataIntersectionOf", "DataRange");
+  public static final ImmutableList<String> DATA_UNION_OF = ImmutableList.of("DataUnionOf", "DataRange");
+  public static final ImmutableList<String> DATA_ONE_OF = ImmutableList.of("DataOneOf", "DataRange");
+  public static final ImmutableList<String> DATATYPE_RESTRICTION = ImmutableList.of("DatatypeRestriction", "DataRange");
+  public static final ImmutableList<String> FACET_RESTRICTION = ImmutableList.of("DatatypeRestriction", "DataRange");
 
-  public static final List<String> LITERAL = Lists.newArrayList("Literal");
-  public static final List<String> LANGUAGE_TAG = Lists.newArrayList("LanguageTag");
+  public static final ImmutableList<String> LITERAL = ImmutableList.of("Literal");
+  public static final ImmutableList<String> LANGUAGE_TAG = ImmutableList.of("LanguageTag");
   // @formatter:on
 }

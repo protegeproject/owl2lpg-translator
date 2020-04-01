@@ -1,6 +1,6 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.utils;
 
-import java.util.Properties;
+import edu.stanford.owl2lpg.model.Properties;
 
 /**
  * A utility code for creating the node and edge properties simple and clean

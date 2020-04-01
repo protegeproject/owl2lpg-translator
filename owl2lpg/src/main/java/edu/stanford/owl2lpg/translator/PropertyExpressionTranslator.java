@@ -1,46 +1,31 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.datastructure.Graph;
-import edu.stanford.owl2lpg.datastructure.Node;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
+import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
-import static edu.stanford.owl2lpg.datastructure.GraphFactory.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The translator sub-module for translating the OWL 2 property expression
- * to labelled property graphs.
+ * A translator to translate the OWL 2 property expressions.
  *
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class PropertyExpressionTranslator implements OWLPropertyExpressionVisitorEx<Graph> {
+public class PropertyExpressionTranslator {
 
-  @Override
-  public Graph visit(@Nonnull OWLDataProperty dp) {
-    return dp.accept(new EntityTranslator());
+  @Nonnull
+  private final OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor;
+
+  @Inject
+  public PropertyExpressionTranslator(@Nonnull OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor) {
+    this.propertyExpressionVisitor = checkNotNull(propertyExpressionVisitor);
   }
 
   @Nonnull
-  @Override
-  public Graph visit(@Nonnull OWLAnnotationProperty ap) {
-    return ap.accept(new EntityTranslator());
-  }
-
-  @Override
-  public Graph visit(@Nonnull OWLObjectProperty op) {
-    return op.accept(new EntityTranslator());
-  }
-
-  @Override
-  public Graph visit(@Nonnull OWLObjectInverseOf ope) {
-    Node inverseNode = Node(NodeLabels.OBJECT_INVERSE_OF);
-    Graph operandGraph = ope.getInverseProperty().accept(this);
-    return Graph(
-        Edge(inverseNode, operandGraph, EdgeLabels.OBJECT_PROPERTY)
-    );
+  public Translation translate(OWLPropertyExpression ope) {
+    return ope.accept(propertyExpressionVisitor);
   }
 }
