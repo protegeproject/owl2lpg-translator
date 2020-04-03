@@ -13,7 +13,7 @@
   <description>A program to translate OWL 2 Ontologies to Labelled Property Graph</description>
 
   <modules>
-    <module>owl2lpg</module>
+    <module>owl2lpg-translation-core</module>
     <module>owl2lpg-neo4j</module>
   </modules>
 

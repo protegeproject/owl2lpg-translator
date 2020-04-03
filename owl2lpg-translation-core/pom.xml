@@ -11,8 +11,11 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>owl2lpg</artifactId>
-  <name>OWL2LPG</name>
+  <artifactId>owl2lpg-translation-core</artifactId>
+  <name>OWL2LPG Generic Graph Translation</name>
+  <description>
+    Translate OWL 2 Axioms to Labelled Property Graph (LPG) in a generic graph representation.
+  </description>
 
   <dependencies>
     <dependency>
