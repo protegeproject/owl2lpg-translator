@@ -11,8 +11,17 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>owl2lpg-neo4j</artifactId>
-  <name>OWL2LPG for Neo4j</name>
-  <description>Translation to a labelled property graph as implemented by Neo4j</description>
+  <artifactId>owl2lpg-translation-exporter</artifactId>
+  <name>OWL2LPG Translation Exporter for Neo4j</name>
+  <description>
+    Export the OWL2LPG translations to Neo4j in various formats (e.g., CSV, JSON, Cypher Script)
+  </description>
 
+  <dependencies>
+    <dependency>
+      <groupId>edu.stanford.owl2lpg</groupId>
+      <artifactId>owl2lpg-translation-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
 </project>
