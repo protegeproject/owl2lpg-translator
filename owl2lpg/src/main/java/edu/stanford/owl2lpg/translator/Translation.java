@@ -34,12 +34,13 @@ public abstract class Translation {
 
   public Stream<Edge> edges() {
     Stream s1 = getEdges().stream();
-    Stream s2 = getNestedTranslations().stream().flatMap(t -> t.getEdges().stream());
+    Stream s2 = getNestedTranslations().stream().flatMap(Translation::edges);
     return Stream.concat(s1, s2);
   }
 
   public Stream<Translation> closure() {
-    Stream nestedClosure = this.getNestedTranslations().stream();
-    return Stream.concat(Stream.of(this), nestedClosure);
+    Stream s1 = Stream.of(this);
+    Stream s2 = getNestedTranslations().stream().flatMap(Translation::closure);
+    return Stream.concat(s1, s2);
   }
 }
