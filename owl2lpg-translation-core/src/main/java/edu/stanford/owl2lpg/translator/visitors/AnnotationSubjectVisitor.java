@@ -14,7 +14,7 @@ import static edu.stanford.owl2lpg.model.GraphFactory.Node;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.NODE_ID;
 
-public class AnnotationSubjectVisitor implements OWLAnnotationSubjectVisitorEx {
+public class AnnotationSubjectVisitor implements OWLAnnotationSubjectVisitorEx<Translation> {
 
   @Nonnull
   @Override

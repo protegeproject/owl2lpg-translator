@@ -18,7 +18,7 @@ import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.LEXICAL_FORM;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.NODE_ID;
 
-public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx {
+public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Translation> {
 
   @Nonnull
   private final OWLDataVisitorEx<Translation> dataVisitor;
@@ -44,7 +44,7 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx {
 
   @Nonnull
   @Override
-  public Object visit(@Nonnull OWLLiteral lt) {
+  public Translation visit(@Nonnull OWLLiteral lt) {
     var literalNode = Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, lt.getLiteral()));
     var datatypeTranslation = lt.getDatatype().accept(dataVisitor);
     if (lt.isRDFPlainLiteral()) {
