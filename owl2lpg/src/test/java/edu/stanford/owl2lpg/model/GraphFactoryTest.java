@@ -27,7 +27,7 @@ public class GraphFactoryTest {
 
   @Test
   public void shouldCreateNodeWithEmptyProperties() {
-    var node = GraphFactory.Node(NodeLabels.CLASS, Properties.empty());
+    var node = GraphFactory.Node(NodeLabels.CLASS);
     assertNodeMatches(node, Properties.empty());
   }
 
