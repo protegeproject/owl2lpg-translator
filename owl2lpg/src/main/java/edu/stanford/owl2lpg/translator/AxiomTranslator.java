@@ -6,6 +6,8 @@ import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A translator to translate the OWL 2 axioms.
  *
@@ -18,12 +20,12 @@ public class AxiomTranslator {
   private final OWLAxiomVisitorEx<Translation> visitor;
 
   @Inject
-  public AxiomTranslator(OWLAxiomVisitorEx<Translation> visitor) {
-    this.visitor = visitor;
+  public AxiomTranslator(@Nonnull OWLAxiomVisitorEx<Translation> visitor) {
+    this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
-  public Translation visit(OWLAxiom ax) {
+  public Translation translate(OWLAxiom ax) {
     return ax.accept(visitor);
   }
 }

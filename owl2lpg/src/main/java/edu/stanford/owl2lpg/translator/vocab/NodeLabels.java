@@ -21,9 +21,6 @@ public class NodeLabels {
   public static final ImmutableList<String> NAMED_INDIVIDUAL = ImmutableList.of("NamedIndividual", "Individual", "Entity");
   public static final ImmutableList<String> ANONYMOUS_INDIVIDUAL = ImmutableList.of("AnonymousIndividual", "Individual");
 
-  public static final ImmutableList<String> DECLARATION = ImmutableList.of("Declaration", "Axiom");
-  public static final ImmutableList<String> SUBCLASSOF = ImmutableList.of("SubClassOf", "ClassAxiom", "Axiom");
-
   public static final ImmutableList<String> OBJECT_INTERSECTION_OF = ImmutableList.of("ObjectIntersectionOf", "ClassExpression");
   public static final ImmutableList<String> OBJECT_UNION_OF = ImmutableList.of("ObjectUnionOf", "ClassExpression");
   public static final ImmutableList<String> OBJECT_COMPLEMENT_OF = ImmutableList.of("ObjectComplementOf", "ClassExpression");
@@ -54,5 +51,43 @@ public class NodeLabels {
 
   public static final ImmutableList<String> LITERAL = ImmutableList.of("Literal");
   public static final ImmutableList<String> LANGUAGE_TAG = ImmutableList.of("LanguageTag");
+
+  public static final ImmutableList<String> DECLARATION = ImmutableList.of("Declaration", "Axiom");
+  public static final ImmutableList<String> SUB_CLASS_OF = ImmutableList.of("SubClassOf", "ClassAxiom", "Axiom");
+  public static final ImmutableList<String> DATATYPE_DEFINITION = ImmutableList.of("DatatypeDefinition", "Axiom");
+  public static final ImmutableList<String> EQUIVALENT_CLASSES = ImmutableList.of("EquivalentClasses", "ClassAxiom", "Axiom");
+  public static final ImmutableList<String> DISJOINT_CLASSES = ImmutableList.of("DisjointClasses", "ClassAxiom", "Axiom");
+  public static final ImmutableList<String> DISJOINT_UNION = ImmutableList.of("DisjointUnion", "ClassAxiom", "Axiom");
+  public static final ImmutableList<String> SUB_OBJECT_PROPERTY_OF = ImmutableList.of("SubObjectPropertyOf", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> EQUIVALENT_OBJECT_PROPERTIES = ImmutableList.of("EquivalentObjectProperties", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> DISJOINT_OBJECT_PROPERTIES = ImmutableList.of("DisjointObjectProperties", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> OBJECT_PROPERTY_DOMAIN = ImmutableList.of("ObjectPropertyDomain", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> OBJECT_PROPERTY_RANGE = ImmutableList.of("ObjectPropertyRange", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> INVERSE_OBJECT_PROPERTIES = ImmutableList.of("InverseObjectProperties", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> FUNCTIONAL_OBJECT_PROPERTY = ImmutableList.of("FunctionalObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> INVERSE_FUNCTIONAL_OBJECT_PROPERTY = ImmutableList.of("InverseFunctionalObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> REFLEXIVE_OBJECT_PROPERTY = ImmutableList.of("ReflexiveObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> IRREFLEXIVE_OBJECT_PROPERTY = ImmutableList.of("IrreflexiveObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> SYMMETRIC_OBJECT_PROPERTY = ImmutableList.of("SymmetricObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> ASYMMETRIC_OBJECT_PROPERTY = ImmutableList.of("AsymmetricObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> TRANSITIVE_OBJECT_PROPERTY = ImmutableList.of("TransitiveObjectProperty", "ObjectPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> SUB_DATA_PROPERTY_OF = ImmutableList.of("SubDataPropertyOf", "DataPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> EQUIVALENT_DATA_PROPERTIES = ImmutableList.of("EquivalentDataProperties", "DataPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> DISJOINT_DATA_PROPERTIES = ImmutableList.of("DisjointDataProperties", "DataPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> DATA_PROPERTY_DOMAIN = ImmutableList.of("DataPropertyDomain", "DataPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> DATA_PROPERTY_RANGE = ImmutableList.of("DataPropertyRange", "DataPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> FUNCTIONAL_DATA_PROPERTY = ImmutableList.of("FunctionalDataProperty", "DataPropertyAxiom", "Axiom");
+  public static final ImmutableList<String> HAS_KEY = ImmutableList.of("HasKey", "Axiom");
+  public static final ImmutableList<String> SAME_INDIVIDUAL = ImmutableList.of("SameIndividual", "Assertion", "Axiom");
+  public static final ImmutableList<String> DIFFERENT_INDIVIDUALS = ImmutableList.of("DifferentIndividuals", "Assertion", "Axiom");
+  public static final ImmutableList<String> CLASS_ASSERTION = ImmutableList.of("ClassAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> OBJECT_PROPERTY_ASSERTION = ImmutableList.of("ObjectPropertyAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> NEGATIVE_OBJECT_PROPERTY_ASSERTION = ImmutableList.of("NegativeObjectPropertyAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> DATA_PROPERTY_ASSERTION = ImmutableList.of("DataPropertyAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> NEGATIVE_DATA_PROPERTY_ASSERTION = ImmutableList.of("NegativeDataPropertyAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> ANNOTATION_ASSERTION = ImmutableList.of("AnnotationAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> SUB_ANNOTATION_PROPERTY_OF = ImmutableList.of("SubAnnotationPropertyOf", "AnnotationAxiom", "Axiom");
+  public static final ImmutableList<String> ANNOTATION_PROPERTY_DOMAIN = ImmutableList.of("AnnotationPropertyDomain", "AnnotationAxiom", "Axiom");
+  public static final ImmutableList<String> ANNOTATION_PROPERTY_RANGE = ImmutableList.of("AnnotationPropertyRange", "AnnotationAxiom", "Axiom");
   // @formatter:on
 }
