@@ -1,14 +1,15 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
-import edu.stanford.owl2lpg.model.Node;
+import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.HasIRI;
 
 import javax.annotation.Nonnull;
 
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.IRI;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -16,7 +17,8 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.IRI;
  */
 public class HasIriVisitor {
 
-  protected Node createIriNode(@Nonnull HasIRI entity) {
-    return Node(NodeLabels.IRI, Properties(IRI, entity.getIRI().toString()));
+  protected Translation createIriNode(@Nonnull HasIRI entity) {
+    var iriNode = Node(NodeLabels.IRI, Properties(PropertyNames.IRI, entity.getIRI().toString()));
+    return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
   }
 }
