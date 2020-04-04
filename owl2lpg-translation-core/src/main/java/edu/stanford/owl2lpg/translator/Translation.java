@@ -32,6 +32,12 @@ public abstract class Translation {
 
   public abstract ImmutableList<Translation> getNestedTranslations();
 
+  public Stream<Node> nodes() {
+    Stream s1 = Stream.of(getMainNode());
+    Stream s2 = getNestedTranslations().stream().flatMap(Translation::nodes);
+    return Stream.concat(s1, s2);
+  }
+
   public Stream<Edge> edges() {
     Stream s1 = getEdges().stream();
     Stream s2 = getNestedTranslations().stream().flatMap(Translation::edges);
