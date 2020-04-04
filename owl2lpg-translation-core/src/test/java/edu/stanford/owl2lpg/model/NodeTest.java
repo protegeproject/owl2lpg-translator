@@ -23,7 +23,7 @@ public class NodeTest {
 
   @Before
   public void setUp() {
-    node = Node.create(labels, properties);
+    node = Node.create(1, labels, properties);
   }
 
   @Test
@@ -33,12 +33,12 @@ public class NodeTest {
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenLabelsNull() {
-    Node.create(null, properties);
+    Node.create(1, null, properties);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenPropertiesNull() {
-    Node.create(labels, null);
+    Node.create(1, labels, null);
   }
 
   @Test
