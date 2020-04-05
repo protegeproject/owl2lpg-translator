@@ -151,7 +151,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(classExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.CLASS_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.CLASS_EXPRESSION, true))
         .collect(Collectors.toList());
     return Translation.create(axiomNode,
         ImmutableList.copyOf(edges),
@@ -194,7 +194,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.OBJECT_PROPERTY_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.OBJECT_PROPERTY_EXPRESSION, true))
         .collect(Collectors.toList());
     return Translation.create(axiomNode,
         ImmutableList.copyOf(edges),
@@ -240,7 +240,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.DATA_PROPERTY_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.DATA_PROPERTY_EXPRESSION, true))
         .collect(Collectors.toList());
     return Translation.create(axiomNode,
         ImmutableList.copyOf(edges),
@@ -255,7 +255,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.OBJECT_PROPERTY_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.OBJECT_PROPERTY_EXPRESSION, true))
         .collect(Collectors.toList());
     return Translation.create(axiomNode,
         ImmutableList.copyOf(edges),
@@ -328,7 +328,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(classExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.DISJOINT_CLASS_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.DISJOINT_CLASS_EXPRESSION, true))
         .collect(Collectors.toList());
     edges.add(0, classEdge);
     translations.add(0, classTranslation);
@@ -383,7 +383,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.DATA_PROPERTY_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.DATA_PROPERTY_EXPRESSION, true))
         .collect(Collectors.toList());
     return Translation.create(axiomNode,
         ImmutableList.copyOf(edges),
@@ -412,7 +412,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .map(ce -> ce.accept(classExpressionVisitor))
         .collect(Collectors.toList());
     var edges = translations.stream()
-        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.CLASS_EXPRESSION))
+        .map(translation -> Edge(axiomNode, MainNode(translation), EdgeLabels.CLASS_EXPRESSION, true))
         .collect(Collectors.toList());
     return Translation.create(axiomNode,
         ImmutableList.copyOf(edges),

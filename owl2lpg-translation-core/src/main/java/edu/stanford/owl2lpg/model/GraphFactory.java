@@ -20,6 +20,21 @@ public class GraphFactory {
   public static Edge Edge(@Nonnull Node fromNode,
                           @Nonnull Node toNode,
                           @Nonnull String label,
+                          @Nonnull Properties properties,
+                          @Nonnull boolean isBidirectional) {
+    return Edge.create(fromNode, toNode, label, properties, isBidirectional);
+  }
+
+  public static Edge Edge(@Nonnull Node fromNode,
+                          @Nonnull Node toNode,
+                          @Nonnull String label,
+                          @Nonnull boolean isBidirectional) {
+    return Edge.create(fromNode, toNode, label, Properties.empty(), isBidirectional);
+  }
+
+  public static Edge Edge(@Nonnull Node fromNode,
+                          @Nonnull Node toNode,
+                          @Nonnull String label,
                           @Nonnull Properties properties) {
     return Edge.create(fromNode, toNode, label, properties);
   }
