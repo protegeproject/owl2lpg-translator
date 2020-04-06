@@ -38,11 +38,17 @@ public class CypherExporter {
   }
 
   public void write() {
+    writeHeader()
     axioms.forEach(axiom -> {
       var translation = axiomTranslator.translate(axiom);
       writeNodes(translation.nodes());
       writeEdges(translation.edges());
     });
+  }
+
+  private void writeHeader() {
+    String s = "MATCH (n) DETACH DELETE n;";
+    writeLine(s);
   }
 
   void writeNodes(Stream<Node> nodeStream) {
