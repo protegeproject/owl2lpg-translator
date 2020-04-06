@@ -15,6 +15,7 @@
   <modules>
     <module>owl2lpg-translation-core</module>
     <module>owl2lpg-translation-exporter</module>
+    <module>owl2lpg-translation-cli</module>
   </modules>
 
   <scm>
