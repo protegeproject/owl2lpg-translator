@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 entities.
@@ -23,54 +24,72 @@ public class EntityVisitor extends HasIriVisitor
   @Override
   public Translation visit(@Nonnull OWLClass c) {
     var entityNode = Node(NodeLabels.CLASS);
-    var iriNode = createIriNode(c);
+    var iriTranslation = createIriTranslation(c);
     return Translation.create(entityNode,
         ImmutableList.of(
-            Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)));
+            Edge(entityNode, MainNode(iriTranslation), EdgeLabels.ENTITY_IRI)),
+        ImmutableList.of(
+            iriTranslation
+        ));
   }
 
   @Override
   public Translation visit(@Nonnull OWLDatatype dt) {
     var entityNode = Node(NodeLabels.DATATYPE);
-    var iriNode = createIriNode(dt);
+    var iriTranslation = createIriTranslation(dt);
     return Translation.create(entityNode,
         ImmutableList.of(
-            Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)));
+            Edge(entityNode, MainNode(iriTranslation), EdgeLabels.ENTITY_IRI)),
+        ImmutableList.of(
+            iriTranslation
+        ));
   }
 
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
     var entityNode = Node(NodeLabels.OBJECT_PROPERTY);
-    var iriNode = createIriNode(op);
+    var iriTranslation = createIriTranslation(op);
     return Translation.create(entityNode,
         ImmutableList.of(
-            Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)));
+            Edge(entityNode, MainNode(iriTranslation), EdgeLabels.ENTITY_IRI)),
+        ImmutableList.of(
+            iriTranslation
+        ));
   }
 
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
     var entityNode = Node(NodeLabels.DATA_PROPERTY);
-    var iriNode = createIriNode(dp);
+    var iriTranslation = createIriTranslation(dp);
     return Translation.create(entityNode,
         ImmutableList.of(
-            Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)));
+            Edge(entityNode, MainNode(iriTranslation), EdgeLabels.ENTITY_IRI)),
+        ImmutableList.of(
+            iriTranslation
+        ));
   }
 
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
     var entityNode = Node(NodeLabels.ANNOTATION_PROPERTY);
-    var iriNode = createIriNode(ap);
+    var iriTranslation = createIriTranslation(ap);
     return Translation.create(entityNode,
         ImmutableList.of(
-            Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)));
+            Edge(entityNode, MainNode(iriTranslation), EdgeLabels.ENTITY_IRI)),
+        ImmutableList.of(
+            iriTranslation
+        ));
   }
 
   @Override
   public Translation visit(@Nonnull OWLNamedIndividual a) {
     var entityNode = Node(NodeLabels.NAMED_INDIVIDUAL);
-    var iriNode = createIriNode(a);
+    var iriTranslation = createIriTranslation(a);
     return Translation.create(entityNode,
         ImmutableList.of(
-            Edge(entityNode, iriNode, EdgeLabels.ENTITY_IRI)));
+            Edge(entityNode, MainNode(iriTranslation), EdgeLabels.ENTITY_IRI)),
+        ImmutableList.of(
+            iriTranslation
+        ));
   }
 }

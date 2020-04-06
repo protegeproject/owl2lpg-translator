@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
+import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.LEXICAL_FORM;
 
 /**
@@ -142,13 +142,13 @@ public class DataVisitor extends HasIriVisitor
   @Override
   public Translation visit(@Nonnull OWLFacetRestriction facet) {
     var facetRestrictionNode = Node(NodeLabels.FACET_RESTRICTION);
-    var facetNode = createIriNode(facet.getFacet());
+    var facetTranslation = createIriTranslation(facet.getFacet());
     var literalTranslation = facet.getFacetValue().accept(this);
     return Translation.create(facetRestrictionNode,
         ImmutableList.of(
-            Edge(facetRestrictionNode, facetNode, EdgeLabels.CONSTRAINING_FACET),
+            Edge(facetRestrictionNode, MainNode(facetTranslation), EdgeLabels.CONSTRAINING_FACET),
             Edge(facetRestrictionNode, MainNode(literalTranslation), EdgeLabels.RESTRICTION_VALUE)),
         ImmutableList.of(
-            literalTranslation));
+            facetTranslation, literalTranslation));
   }
 }
