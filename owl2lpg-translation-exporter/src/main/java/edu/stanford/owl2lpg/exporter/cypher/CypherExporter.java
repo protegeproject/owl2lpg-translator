@@ -111,12 +111,18 @@ public class CypherExporter {
         .map(key -> {
           var value = properties.get(key);
           if (value instanceof String) {
-            return format("%s:\"%s\"", key, value);
+            return format("%s: \"%s\"", key, escape((String) value));
           } else {
-            return format("%s:%s", key, value);
+            return format("%s: %s", key, value);
           }
         })
         .collect(Collectors.joining(",", "{", "}"));
+  }
+
+  private static String escape(String value) {
+    return value.replaceAll("\n", " ")
+        .replaceAll("'", "\\\\'")
+        .replaceAll("\"", "\\\\\"");
   }
 
   private static String printEdgeLabel(Edge edge) {
