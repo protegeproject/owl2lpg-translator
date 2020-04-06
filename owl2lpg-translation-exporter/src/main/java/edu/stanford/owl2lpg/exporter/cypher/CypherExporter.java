@@ -38,7 +38,7 @@ public class CypherExporter {
   }
 
   public void write() {
-    writeHeader()
+    writeCleanStart();
     axioms.forEach(axiom -> {
       var translation = axiomTranslator.translate(axiom);
       writeNodes(translation.nodes());
@@ -46,9 +46,8 @@ public class CypherExporter {
     });
   }
 
-  private void writeHeader() {
-    String s = "MATCH (n) DETACH DELETE n;";
-    writeLine(s);
+  private void writeCleanStart() {
+    writeLine("MATCH (n) DETACH DELETE n;");
   }
 
   void writeNodes(Stream<Node> nodeStream) {
