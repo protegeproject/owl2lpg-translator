@@ -41,7 +41,7 @@ public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL, Properties(NODE_ID, individual.getID()));
+    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL, Properties(NODE_ID, individual.getID().toString()));
     return Translation.create(anonymousNode, ImmutableList.of(), ImmutableList.of());
   }
 }

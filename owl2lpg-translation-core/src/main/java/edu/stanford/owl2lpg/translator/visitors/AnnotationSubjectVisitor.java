@@ -26,7 +26,7 @@ public class AnnotationSubjectVisitor implements OWLAnnotationSubjectVisitorEx<T
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL, Properties(NODE_ID, individual.getID()));
+    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL, Properties(NODE_ID, individual.getID().toString()));
     return Translation.create(anonymousNode, ImmutableList.of(), ImmutableList.of());
   }
 }
