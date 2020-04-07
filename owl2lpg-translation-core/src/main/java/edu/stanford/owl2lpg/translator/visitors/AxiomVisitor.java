@@ -576,14 +576,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = Node(NodeLabels.ANNOTATION_ASSERTION);
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var annotationSubjectTranslation = axiom.getSubject().accept(annotationSubjectVisitor);
-    var annotationSubjectVisitor = axiom.getValue().accept(annotationValueVisitor);
+    var annotationValueTranslation = axiom.getValue().accept(annotationValueVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
-            Edge(axiomNode, MainNode(propertyTranslation), EdgeLabels.OBJECT_PROPERTY_EXPRESSION),
-            Edge(axiomNode, MainNode(annotationSubjectTranslation), EdgeLabels.SOURCE_INDIVIDUAL),
-            Edge(axiomNode, MainNode(annotationSubjectVisitor), EdgeLabels.TARGET_INDIVIDUAL)),
+            Edge(axiomNode, MainNode(propertyTranslation), EdgeLabels.ANNOTATION_PROPERTY),
+            Edge(axiomNode, MainNode(annotationSubjectTranslation), EdgeLabels.ANNOTATION_SUBJECT),
+            Edge(axiomNode, MainNode(annotationValueTranslation), EdgeLabels.ANNOTATION_VALUE)),
         ImmutableList.of(
-            propertyTranslation, annotationSubjectTranslation, annotationSubjectVisitor));
+            propertyTranslation, annotationSubjectTranslation, annotationValueTranslation));
   }
 
   @Nonnull

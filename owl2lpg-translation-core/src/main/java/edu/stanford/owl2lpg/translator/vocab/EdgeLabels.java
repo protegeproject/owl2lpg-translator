@@ -29,6 +29,8 @@ public class EdgeLabels {
   public static final String ANNOTATION_PROPERTY = "annotationProperty";
   public static final String SUB_ANNOTATION_PROPERTY = "subAnnotationProperty";
   public static final String SUPER_ANNOTATION_PROPERTY = "superAnnotationProperty";
+  public static final String ANNOTATION_SUBJECT = "annotationSubject";
+  public static final String ANNOTATION_VALUE = "annotationValue";
   public static final String DATA_RANGE = "dataRange";
   public static final String DATATYPE = "datatype";
   public static final String RESTRICTION = "restriction";
