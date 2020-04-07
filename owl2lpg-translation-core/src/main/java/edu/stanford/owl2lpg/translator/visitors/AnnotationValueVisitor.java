@@ -47,14 +47,14 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Trans
   public Translation visit(@Nonnull OWLLiteral lt) {
     var literalNode = Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, lt.getLiteral()));
     var datatypeTranslation = lt.getDatatype().accept(dataVisitor);
-    if (lt.isRDFPlainLiteral()) {
-      var languageTagNode = Node(NodeLabels.LANGUAGE_TAG, Properties(PropertyNames.LANGUAGE, lt.getLang()));
+    if (lt.isRDFPlainLiteral() && lt.hasLang()) {
+      var languageTagTranslation = translateLanguageTag(lt);
       return Translation.create(literalNode,
           ImmutableList.of(
               Edge(literalNode, MainNode(datatypeTranslation), EdgeLabels.DATATYPE),
-              Edge(literalNode, languageTagNode, EdgeLabels.LANGUAGE_TAG)),
+              Edge(literalNode, MainNode(languageTagTranslation), EdgeLabels.LANGUAGE_TAG)),
           ImmutableList.of(
-              datatypeTranslation));
+              datatypeTranslation, languageTagTranslation));
     } else {
       return Translation.create(literalNode,
           ImmutableList.of(
@@ -62,5 +62,10 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Trans
           ImmutableList.of(
               datatypeTranslation));
     }
+  }
+
+  private Translation translateLanguageTag(@Nonnull OWLLiteral lt) {
+    var languageTagNode = Node(NodeLabels.LANGUAGE_TAG, Properties(PropertyNames.LANGUAGE, lt.getLang()));
+    return Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
   }
 }

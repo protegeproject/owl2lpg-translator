@@ -47,13 +47,13 @@ public class DataVisitor extends HasIriVisitor
     var literalNode = Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, lt.getLiteral()));
     var datatypeTranslation = lt.getDatatype().accept(this);
     if (lt.isRDFPlainLiteral() && lt.hasLang()) {
-      var languageTagNode = Node(NodeLabels.LANGUAGE_TAG, Properties(PropertyNames.LANGUAGE, lt.getLang()));
+      var languageTagTranslation = translateLanguageTag(lt);
       return Translation.create(literalNode,
           ImmutableList.of(
               Edge(literalNode, MainNode(datatypeTranslation), EdgeLabels.DATATYPE),
-              Edge(literalNode, languageTagNode, EdgeLabels.LANGUAGE_TAG)),
+              Edge(literalNode, MainNode(languageTagTranslation), EdgeLabels.LANGUAGE_TAG)),
           ImmutableList.of(
-              datatypeTranslation));
+              datatypeTranslation, languageTagTranslation));
     } else {
       return Translation.create(literalNode,
           ImmutableList.of(
@@ -61,6 +61,11 @@ public class DataVisitor extends HasIriVisitor
           ImmutableList.of(
               datatypeTranslation));
     }
+  }
+
+  private Translation translateLanguageTag(@Nonnull OWLLiteral lt) {
+    var languageTagNode = Node(NodeLabels.LANGUAGE_TAG, Properties(PropertyNames.LANGUAGE, lt.getLang()));
+    return Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
