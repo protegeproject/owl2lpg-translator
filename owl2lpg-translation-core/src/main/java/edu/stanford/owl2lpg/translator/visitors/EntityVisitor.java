@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
@@ -11,6 +12,7 @@ import javax.annotation.Nonnull;
 import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
+import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 entities.
@@ -23,7 +25,7 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLClass c) {
-    var entityNode = Node(NodeLabels.CLASS);
+    var entityNode = Node(NodeLabels.CLASS, Properties(PropertyNames.IRI, String.valueOf(c.getIRI())));
     var iriTranslation = createIriTranslation(c);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -35,7 +37,7 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLDatatype dt) {
-    var entityNode = Node(NodeLabels.DATATYPE);
+    var entityNode = Node(NodeLabels.DATATYPE, Properties(PropertyNames.IRI, String.valueOf(dt.getIRI())));
     var iriTranslation = createIriTranslation(dt);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -47,7 +49,7 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
-    var entityNode = Node(NodeLabels.OBJECT_PROPERTY);
+    var entityNode = Node(NodeLabels.OBJECT_PROPERTY, Properties(PropertyNames.IRI, String.valueOf(op.getIRI())));
     var iriTranslation = createIriTranslation(op);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -59,7 +61,7 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
-    var entityNode = Node(NodeLabels.DATA_PROPERTY);
+    var entityNode = Node(NodeLabels.DATA_PROPERTY, Properties(PropertyNames.IRI, String.valueOf(dp.getIRI())));
     var iriTranslation = createIriTranslation(dp);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -71,7 +73,7 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
-    var entityNode = Node(NodeLabels.ANNOTATION_PROPERTY);
+    var entityNode = Node(NodeLabels.ANNOTATION_PROPERTY, Properties(PropertyNames.IRI, String.valueOf(ap.getIRI())));
     var iriTranslation = createIriTranslation(ap);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -83,7 +85,7 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLNamedIndividual a) {
-    var entityNode = Node(NodeLabels.NAMED_INDIVIDUAL);
+    var entityNode = Node(NodeLabels.NAMED_INDIVIDUAL, Properties(PropertyNames.IRI, String.valueOf(a.getIRI())));
     var iriTranslation = createIriTranslation(a);
     return Translation.create(entityNode,
         ImmutableList.of(
