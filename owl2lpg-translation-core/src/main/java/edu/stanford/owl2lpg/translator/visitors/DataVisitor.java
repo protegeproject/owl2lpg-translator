@@ -12,8 +12,7 @@ import javax.inject.Inject;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.*;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.LEXICAL_FORM;
@@ -44,7 +43,9 @@ public class DataVisitor extends HasIriVisitor
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLLiteral lt) {
-    var literalNode = Node(NodeLabels.LITERAL, Properties(LEXICAL_FORM, lt.getLiteral()));
+    var literalNode = Node(NodeLabels.LITERAL,
+        Properties(LEXICAL_FORM, lt.getLiteral()),
+        withIdentifierFrom(lt));
     var datatypeTranslation = lt.getDatatype().accept(this);
     if (lt.isRDFPlainLiteral() && lt.hasLang()) {
       var languageTagTranslation = translateLanguageTag(lt);
@@ -64,14 +65,16 @@ public class DataVisitor extends HasIriVisitor
   }
 
   private Translation translateLanguageTag(@Nonnull OWLLiteral lt) {
-    var languageTagNode = Node(NodeLabels.LANGUAGE_TAG, Properties(PropertyNames.LANGUAGE, lt.getLang()));
+    var languageTagNode = Node(NodeLabels.LANGUAGE_TAG,
+        Properties(PropertyNames.LANGUAGE, lt.getLang()),
+        withIdentifierFrom(lt.getLang()));
     return Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataComplementOf dr) {
-    var complementNode = Node(NodeLabels.DATA_COMPLEMENT_OF);
+    var complementNode = Node(NodeLabels.DATA_COMPLEMENT_OF, withIdentifierFrom(dr));
     var dataRangeTranslation = dr.getDataRange().accept(this);
     return Translation.create(complementNode,
         ImmutableList.of(
@@ -83,7 +86,7 @@ public class DataVisitor extends HasIriVisitor
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataOneOf dr) {
-    var enumerationNode = Node(NodeLabels.DATA_ONE_OF);
+    var enumerationNode = Node(NodeLabels.DATA_ONE_OF, withIdentifierFrom(dr));
     var translations = dr.getValues().stream()
         .map(value -> value.accept(this))
         .collect(Collectors.toList());
@@ -98,7 +101,7 @@ public class DataVisitor extends HasIriVisitor
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataIntersectionOf dr) {
-    var intersectionNode = Node(NodeLabels.DATA_INTERSECTION_OF);
+    var intersectionNode = Node(NodeLabels.DATA_INTERSECTION_OF, withIdentifierFrom(dr));
     var translations = dr.getOperands().stream()
         .map(operand -> operand.accept(this))
         .collect(Collectors.toList());
@@ -113,7 +116,7 @@ public class DataVisitor extends HasIriVisitor
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataUnionOf dr) {
-    var unionNode = Node(NodeLabels.DATA_UNION_OF);
+    var unionNode = Node(NodeLabels.DATA_UNION_OF, withIdentifierFrom(dr));
     var translations = dr.getOperands().stream()
         .map(operand -> operand.accept(this))
         .collect(Collectors.toList());
@@ -128,7 +131,7 @@ public class DataVisitor extends HasIriVisitor
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatypeRestriction dr) {
-    var restrictionNode = Node(NodeLabels.DATATYPE_RESTRICTION);
+    var restrictionNode = Node(NodeLabels.DATATYPE_RESTRICTION, withIdentifierFrom(dr));
     var translations = dr.getFacetRestrictions().stream()
         .map(facet -> facet.accept(this))
         .collect(Collectors.toList());
@@ -146,7 +149,7 @@ public class DataVisitor extends HasIriVisitor
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLFacetRestriction facet) {
-    var facetRestrictionNode = Node(NodeLabels.FACET_RESTRICTION);
+    var facetRestrictionNode = Node(NodeLabels.FACET_RESTRICTION, withIdentifierFrom(facet));
     var facetTranslation = createIriTranslation(facet.getFacet());
     var literalTranslation = facet.getFacetValue().accept(this);
     return Translation.create(facetRestrictionNode,

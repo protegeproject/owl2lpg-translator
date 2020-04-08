@@ -10,8 +10,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.*;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 
 /**
@@ -51,7 +50,7 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectInverseOf ope) {
-    var inverseNode = Node(NodeLabels.OBJECT_INVERSE_OF);
+    var inverseNode = Node(NodeLabels.OBJECT_INVERSE_OF, withIdentifierFrom(ope));
     var propertyTranslation = ope.getInverseProperty().accept(this);
     return Translation.create(inverseNode,
         ImmutableList.of(

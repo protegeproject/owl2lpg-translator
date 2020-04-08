@@ -9,8 +9,7 @@ import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.*;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
@@ -25,7 +24,9 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLClass c) {
-    var entityNode = Node(NodeLabels.CLASS, Properties(PropertyNames.IRI, String.valueOf(c.getIRI())));
+    var entityNode = Node(NodeLabels.CLASS,
+        Properties(PropertyNames.IRI, String.valueOf(c.getIRI())),
+        withIdentifierFrom(c));
     var iriTranslation = createIriTranslation(c);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -37,7 +38,9 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLDatatype dt) {
-    var entityNode = Node(NodeLabels.DATATYPE, Properties(PropertyNames.IRI, String.valueOf(dt.getIRI())));
+    var entityNode = Node(NodeLabels.DATATYPE,
+        Properties(PropertyNames.IRI, String.valueOf(dt.getIRI())),
+        withIdentifierFrom(dt));
     var iriTranslation = createIriTranslation(dt);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -49,7 +52,9 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
-    var entityNode = Node(NodeLabels.OBJECT_PROPERTY, Properties(PropertyNames.IRI, String.valueOf(op.getIRI())));
+    var entityNode = Node(NodeLabels.OBJECT_PROPERTY,
+        Properties(PropertyNames.IRI, String.valueOf(op.getIRI())),
+        withIdentifierFrom(op));
     var iriTranslation = createIriTranslation(op);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -61,7 +66,9 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
-    var entityNode = Node(NodeLabels.DATA_PROPERTY, Properties(PropertyNames.IRI, String.valueOf(dp.getIRI())));
+    var entityNode = Node(NodeLabels.DATA_PROPERTY,
+        Properties(PropertyNames.IRI, String.valueOf(dp.getIRI())),
+        withIdentifierFrom(dp));
     var iriTranslation = createIriTranslation(dp);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -73,7 +80,9 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
-    var entityNode = Node(NodeLabels.ANNOTATION_PROPERTY, Properties(PropertyNames.IRI, String.valueOf(ap.getIRI())));
+    var entityNode = Node(NodeLabels.ANNOTATION_PROPERTY,
+        Properties(PropertyNames.IRI, String.valueOf(ap.getIRI())),
+        withIdentifierFrom(ap));
     var iriTranslation = createIriTranslation(ap);
     return Translation.create(entityNode,
         ImmutableList.of(
@@ -85,7 +94,9 @@ public class EntityVisitor extends HasIriVisitor
 
   @Override
   public Translation visit(@Nonnull OWLNamedIndividual a) {
-    var entityNode = Node(NodeLabels.NAMED_INDIVIDUAL, Properties(PropertyNames.IRI, String.valueOf(a.getIRI())));
+    var entityNode = Node(NodeLabels.NAMED_INDIVIDUAL,
+        Properties(PropertyNames.IRI, String.valueOf(a.getIRI())),
+        withIdentifierFrom(a));
     var iriTranslation = createIriTranslation(a);
     return Translation.create(entityNode,
         ImmutableList.of(

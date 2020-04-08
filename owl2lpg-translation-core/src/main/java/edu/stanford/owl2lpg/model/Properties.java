@@ -5,6 +5,10 @@ import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 
+/*
+ * @author Josef Hardi <josef.hardi@stanford.edu> <br>
+ * Stanford Center for Biomedical Informatics Research
+ */
 @AutoValue
 public abstract class Properties {
 

@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import javax.annotation.Nonnull;
 
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.withIdentifierFrom;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.NODE_ID;
 
@@ -19,14 +20,18 @@ public class AnnotationSubjectVisitor implements OWLAnnotationSubjectVisitorEx<T
   @Nonnull
   @Override
   public Translation visit(@Nonnull IRI iri) {
-    var iriNode = Node(NodeLabels.IRI, Properties(PropertyNames.IRI, iri.toString()));
+    var iriNode = Node(NodeLabels.IRI,
+        Properties(PropertyNames.IRI, iri.toString()),
+        withIdentifierFrom(iri));
     return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL, Properties(NODE_ID, individual.getID().toString()));
+    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL,
+        Properties(NODE_ID, individual.getID().toString()),
+        withIdentifierFrom(individual));
     return Translation.create(anonymousNode, ImmutableList.of(), ImmutableList.of());
   }
 }

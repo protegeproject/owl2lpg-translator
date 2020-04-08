@@ -19,15 +19,18 @@ public class GraphFactoryTest {
   @Mock
   private Node fromNode, toNode;
 
+  @Mock
+  private NodeIdProvider nodeIdProvider;
+
   @Test
   public void shouldCreateNode() {
-    var node = GraphFactory.Node(NodeLabels.CLASS, properties);
+    var node = GraphFactory.Node(NodeLabels.CLASS, properties, nodeIdProvider);
     assertNodeMatches(node, properties);
   }
 
   @Test
   public void shouldCreateNodeWithEmptyProperties() {
-    var node = GraphFactory.Node(NodeLabels.CLASS);
+    var node = GraphFactory.Node(NodeLabels.CLASS, nodeIdProvider);
     assertNodeMatches(node, Properties.empty());
   }
 

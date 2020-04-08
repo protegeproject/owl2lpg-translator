@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.withIdentifierFrom;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.NODE_ID;
 
@@ -41,7 +42,9 @@ public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL, Properties(NODE_ID, individual.getID().toString()));
+    var anonymousNode = Node(NodeLabels.ANONYMOUS_INDIVIDUAL,
+        Properties(NODE_ID, individual.getID().toString()),
+        withIdentifierFrom(individual));
     return Translation.create(anonymousNode, ImmutableList.of(), ImmutableList.of());
   }
 }

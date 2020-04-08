@@ -11,10 +11,9 @@ import javax.inject.Inject;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
+import static edu.stanford.owl2lpg.model.GraphFactory.*;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
+import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.CARDINALITY;
 
 /**
@@ -57,7 +56,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectIntersectionOf ce) {
-    var intersectionNode = Node(NodeLabels.OBJECT_INTERSECTION_OF);
+    var intersectionNode = Node(NodeLabels.OBJECT_INTERSECTION_OF, withIdentifierFrom(ce));
     var translations = ce.getOperands().stream()
         .map(operand -> operand.accept(this))
         .collect(Collectors.toList());
@@ -71,7 +70,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectUnionOf ce) {
-    var unionNode = Node(NodeLabels.OBJECT_UNION_OF);
+    var unionNode = Node(NodeLabels.OBJECT_UNION_OF, withIdentifierFrom(ce));
     var translations = ce.getOperands().stream()
         .map(operand -> operand.accept(this))
         .collect(Collectors.toList());
@@ -85,7 +84,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectComplementOf ce) {
-    var complementNode = Node(NodeLabels.OBJECT_COMPLEMENT_OF);
+    var complementNode = Node(NodeLabels.OBJECT_COMPLEMENT_OF, withIdentifierFrom(ce));
     var operandTranslation = ce.getOperand().accept(this);
     return Translation.create(complementNode,
         ImmutableList.of(
@@ -96,7 +95,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectSomeValuesFrom ce) {
-    var qualifierNode = Node(NodeLabels.OBJECT_SOME_VALUES_FROM);
+    var qualifierNode = Node(NodeLabels.OBJECT_SOME_VALUES_FROM, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(this);
     return Translation.create(qualifierNode,
@@ -109,7 +108,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectAllValuesFrom ce) {
-    var qualifierNode = Node(NodeLabels.OBJECT_ALL_VALUES_FROM);
+    var qualifierNode = Node(NodeLabels.OBJECT_ALL_VALUES_FROM, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(this);
     return Translation.create(qualifierNode,
@@ -122,7 +121,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectHasValue ce) {
-    var qualifierNode = Node(NodeLabels.OBJECT_HAS_VALUE);
+    var qualifierNode = Node(NodeLabels.OBJECT_HAS_VALUE, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(individualVisitor);
     return Translation.create(qualifierNode,
@@ -135,7 +134,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectMinCardinality ce) {
-    var cardinalityNode = Node(NodeLabels.OBJECT_MIN_CARDINALITY, Properties(CARDINALITY, ce.getCardinality()));
+    var cardinalityNode = Node(NodeLabels.OBJECT_MIN_CARDINALITY,
+        Properties(CARDINALITY, ce.getCardinality()),
+        withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(this);
     return Translation.create(cardinalityNode,
@@ -148,7 +149,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectExactCardinality ce) {
-    var cardinalityNode = Node(NodeLabels.OBJECT_EXACT_CARDINALITY, Properties(CARDINALITY, ce.getCardinality()));
+    var cardinalityNode = Node(NodeLabels.OBJECT_EXACT_CARDINALITY,
+        Properties(CARDINALITY, ce.getCardinality()),
+        withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(this);
     return Translation.create(cardinalityNode,
@@ -161,7 +164,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectMaxCardinality ce) {
-    var cardinalityNode = Node(NodeLabels.OBJECT_MAX_CARDINALITY, Properties(CARDINALITY, ce.getCardinality()));
+    var cardinalityNode = Node(NodeLabels.OBJECT_MAX_CARDINALITY,
+        Properties(CARDINALITY, ce.getCardinality()),
+        withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(this);
     return Translation.create(cardinalityNode,
@@ -174,7 +179,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectHasSelf ce) {
-    var restrictionNode = Node(NodeLabels.OBJECT_HAS_SELF);
+    var restrictionNode = Node(NodeLabels.OBJECT_HAS_SELF, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(restrictionNode,
         ImmutableList.of(
@@ -185,7 +190,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLObjectOneOf ce) {
-    var enumerationNode = Node(NodeLabels.OBJECT_ONE_OF);
+    var enumerationNode = Node(NodeLabels.OBJECT_ONE_OF, withIdentifierFrom(ce));
     var translations = ce.getIndividuals().stream()
         .map(individual -> individual.accept(individualVisitor))
         .collect(Collectors.toList());
@@ -199,7 +204,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLDataSomeValuesFrom ce) {
-    var qualifierNode = Node(NodeLabels.DATA_SOME_VALUES_FROM);
+    var qualifierNode = Node(NodeLabels.DATA_SOME_VALUES_FROM, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(dataVisitor);
     return Translation.create(qualifierNode,
@@ -212,7 +217,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLDataAllValuesFrom ce) {
-    var qualifierNode = Node(NodeLabels.DATA_ALL_VALUES_FROM);
+    var qualifierNode = Node(NodeLabels.DATA_ALL_VALUES_FROM, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(dataVisitor);
     return Translation.create(qualifierNode,
@@ -225,7 +230,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLDataHasValue ce) {
-    var qualifierNode = Node(NodeLabels.DATA_HAS_VALUE);
+    var qualifierNode = Node(NodeLabels.DATA_HAS_VALUE, withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     var fillerTranslation = ce.getFiller().accept(dataVisitor);
     return Translation.create(qualifierNode,
@@ -238,7 +243,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLDataMinCardinality ce) {
-    var cardinalityNode = Node(NodeLabels.DATA_MIN_CARDINALITY, Properties(CARDINALITY, ce.getCardinality()));
+    var cardinalityNode = Node(NodeLabels.DATA_MIN_CARDINALITY,
+        Properties(CARDINALITY, ce.getCardinality()),
+        withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(cardinalityNode,
         ImmutableList.of(
@@ -251,7 +258,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLDataExactCardinality ce) {
-    var cardinalityNode = Node(NodeLabels.DATA_EXACT_CARDINALITY, Properties(CARDINALITY, ce.getCardinality()));
+    var cardinalityNode = Node(NodeLabels.DATA_EXACT_CARDINALITY,
+        Properties(CARDINALITY, ce.getCardinality()),
+        withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(cardinalityNode,
         ImmutableList.of(
@@ -262,7 +271,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Override
   public Translation visit(@Nonnull OWLDataMaxCardinality ce) {
-    var cardinalityNode = Node(NodeLabels.DATA_MAX_CARDINALITY, Properties(CARDINALITY, ce.getCardinality()));
+    var cardinalityNode = Node(NodeLabels.DATA_MAX_CARDINALITY,
+        Properties(CARDINALITY, ce.getCardinality()),
+        withIdentifierFrom(ce));
     var propertyTranslation = ce.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(cardinalityNode,
         ImmutableList.of(

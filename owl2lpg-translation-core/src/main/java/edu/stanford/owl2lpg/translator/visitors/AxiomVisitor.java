@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.*;
 import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 
 /**
@@ -66,7 +65,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDeclarationAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DECLARATION);
+    var axiomNode = Node(NodeLabels.DECLARATION, withIdentifierFrom(axiom));
     var entityTranslation = axiom.getEntity().accept(entityVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -78,7 +77,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatypeDefinitionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DATATYPE_DEFINITION);
+    var axiomNode = Node(NodeLabels.DATATYPE_DEFINITION, withIdentifierFrom(axiom));
     var datatypeTranslation = axiom.getDatatype().accept(dataVisitor);
     var dataRangeTranslation = axiom.getDataRange().accept(dataVisitor);
     return Translation.create(axiomNode,
@@ -92,7 +91,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubClassOfAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SUB_CLASS_OF);
+    var axiomNode = Node(NodeLabels.SUB_CLASS_OF, withIdentifierFrom(axiom));
     var subClassExpressionTranslation = axiom.getSubClass().accept(classExpressionVisitor);
     var superClassExpressionTranslation = axiom.getSuperClass().accept(classExpressionVisitor);
     return Translation.create(axiomNode,
@@ -106,7 +105,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLNegativeObjectPropertyAssertionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.NEGATIVE_OBJECT_PROPERTY_ASSERTION);
+    var axiomNode = Node(NodeLabels.NEGATIVE_OBJECT_PROPERTY_ASSERTION, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var sourceIndividualTranslation = axiom.getSubject().accept(individualVisitor);
     var targetIndividualTranslation = axiom.getObject().accept(individualVisitor);
@@ -122,7 +121,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAsymmetricObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.ASYMMETRIC_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -134,7 +133,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLReflexiveObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.REFLEXIVE_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.REFLEXIVE_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -146,7 +145,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointClassesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DISJOINT_CLASSES);
+    var axiomNode = Node(NodeLabels.DISJOINT_CLASSES, withIdentifierFrom(axiom));
     var translations = axiom.getClassExpressions().stream()
         .map(ce -> ce.accept(classExpressionVisitor))
         .collect(Collectors.toList());
@@ -161,7 +160,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataPropertyDomainAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DATA_PROPERTY_DOMAIN);
+    var axiomNode = Node(NodeLabels.DATA_PROPERTY_DOMAIN, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var domainTranslation = axiom.getDomain().accept(classExpressionVisitor);
     return Translation.create(axiomNode,
@@ -175,7 +174,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectPropertyDomainAxiom axiom) {
-    var axiomNode = Node(NodeLabels.OBJECT_PROPERTY_DOMAIN);
+    var axiomNode = Node(NodeLabels.OBJECT_PROPERTY_DOMAIN, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var domainTranslation = axiom.getDomain().accept(classExpressionVisitor);
     return Translation.create(axiomNode,
@@ -189,7 +188,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLEquivalentObjectPropertiesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.EQUIVALENT_OBJECT_PROPERTIES);
+    var axiomNode = Node(NodeLabels.EQUIVALENT_OBJECT_PROPERTIES, withIdentifierFrom(axiom));
     var translations = axiom.getProperties().stream()
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
@@ -204,7 +203,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLNegativeDataPropertyAssertionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.NEGATIVE_DATA_PROPERTY_ASSERTION);
+    var axiomNode = Node(NodeLabels.NEGATIVE_DATA_PROPERTY_ASSERTION, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var sourceIndividualTranslation = axiom.getSubject().accept(individualVisitor);
     var targetLiteralTranslation = axiom.getObject().accept(dataVisitor);
@@ -220,7 +219,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDifferentIndividualsAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DIFFERENT_INDIVIDUALS);
+    var axiomNode = Node(NodeLabels.DIFFERENT_INDIVIDUALS, withIdentifierFrom(axiom));
     var translations = axiom.getIndividuals().stream()
         .map(ce -> ce.accept(individualVisitor))
         .collect(Collectors.toList());
@@ -235,7 +234,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointDataPropertiesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DISJOINT_DATA_PROPERTIES);
+    var axiomNode = Node(NodeLabels.DISJOINT_DATA_PROPERTIES, withIdentifierFrom(axiom));
     var translations = axiom.getProperties().stream()
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
@@ -250,7 +249,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointObjectPropertiesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DISJOINT_OBJECT_PROPERTIES);
+    var axiomNode = Node(NodeLabels.DISJOINT_OBJECT_PROPERTIES, withIdentifierFrom(axiom));
     var translations = axiom.getProperties().stream()
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
@@ -265,7 +264,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectPropertyRangeAxiom axiom) {
-    var axiomNode = Node(NodeLabels.OBJECT_PROPERTY_RANGE);
+    var axiomNode = Node(NodeLabels.OBJECT_PROPERTY_RANGE, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var rangeTranslation = axiom.getRange().accept(classExpressionVisitor);
     return Translation.create(axiomNode,
@@ -279,7 +278,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectPropertyAssertionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.OBJECT_PROPERTY_ASSERTION);
+    var axiomNode = Node(NodeLabels.OBJECT_PROPERTY_ASSERTION, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var sourceIndividualTranslation = axiom.getSubject().accept(individualVisitor);
     var targetIndividualTranslation = axiom.getObject().accept(individualVisitor);
@@ -295,7 +294,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLFunctionalObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.FUNCTIONAL_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.FUNCTIONAL_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -307,7 +306,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubObjectPropertyOfAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SUB_OBJECT_PROPERTY_OF);
+    var axiomNode = Node(NodeLabels.SUB_OBJECT_PROPERTY_OF, withIdentifierFrom(axiom));
     var subPropertyTranslation = axiom.getSubProperty().accept(propertyExpressionVisitor);
     var superPropertyTranslation = axiom.getSuperProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
@@ -321,7 +320,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointUnionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DISJOINT_UNION);
+    var axiomNode = Node(NodeLabels.DISJOINT_UNION, withIdentifierFrom(axiom));
     var classTranslation = axiom.getOWLClass().accept(classExpressionVisitor);
     var classEdge = Edge(axiomNode, MainNode(classTranslation), EdgeLabels.CLASS);
     var translations = axiom.getClassExpressions().stream()
@@ -340,7 +339,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSymmetricObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SYMMETRIC_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.SYMMETRIC_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -352,7 +351,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataPropertyRangeAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DATA_PROPERTY_RANGE);
+    var axiomNode = Node(NodeLabels.DATA_PROPERTY_RANGE, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var rangeTranslation = axiom.getRange().accept(dataVisitor);
     return Translation.create(axiomNode,
@@ -366,7 +365,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLFunctionalDataPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.FUNCTIONAL_DATA_PROPERTY);
+    var axiomNode = Node(NodeLabels.FUNCTIONAL_DATA_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -378,7 +377,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLEquivalentDataPropertiesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.EQUIVALENT_DATA_PROPERTIES);
+    var axiomNode = Node(NodeLabels.EQUIVALENT_DATA_PROPERTIES, withIdentifierFrom(axiom));
     var translations = axiom.getProperties().stream()
         .map(ce -> ce.accept(propertyExpressionVisitor))
         .collect(Collectors.toList());
@@ -393,7 +392,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLClassAssertionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.CLASS_ASSERTION);
+    var axiomNode = Node(NodeLabels.CLASS_ASSERTION, withIdentifierFrom(axiom));
     var classExpressionTranslation = axiom.getClassExpression().accept(classExpressionVisitor);
     var individualTranslation = axiom.getIndividual().accept(individualVisitor);
     return Translation.create(axiomNode,
@@ -407,7 +406,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLEquivalentClassesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.EQUIVALENT_CLASSES);
+    var axiomNode = Node(NodeLabels.EQUIVALENT_CLASSES, withIdentifierFrom(axiom));
     var translations = axiom.getClassExpressions().stream()
         .map(ce -> ce.accept(classExpressionVisitor))
         .collect(Collectors.toList());
@@ -422,7 +421,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataPropertyAssertionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.DATA_PROPERTY_ASSERTION);
+    var axiomNode = Node(NodeLabels.DATA_PROPERTY_ASSERTION, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var sourceIndividualTranslation = axiom.getSubject().accept(individualVisitor);
     var targetLiteralTranslation = axiom.getObject().accept(dataVisitor);
@@ -438,7 +437,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLTransitiveObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.TRANSITIVE_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.TRANSITIVE_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -450,7 +449,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLIrreflexiveObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -462,7 +461,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubDataPropertyOfAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SUB_DATA_PROPERTY_OF);
+    var axiomNode = Node(NodeLabels.SUB_DATA_PROPERTY_OF, withIdentifierFrom(axiom));
     var subPropertyTranslation = axiom.getSubProperty().accept(propertyExpressionVisitor);
     var superPropertyTranslation = axiom.getSuperProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
@@ -476,7 +475,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLInverseFunctionalObjectPropertyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
+    var axiomNode = Node(NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
         ImmutableList.of(
@@ -488,7 +487,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSameIndividualAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SAME_INDIVIDUAL);
+    var axiomNode = Node(NodeLabels.SAME_INDIVIDUAL, withIdentifierFrom(axiom));
     var translations = axiom.getIndividuals().stream()
         .map(ce -> ce.accept(individualVisitor))
         .collect(Collectors.toList());
@@ -503,7 +502,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubPropertyChainOfAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SUB_OBJECT_PROPERTY_OF);
+    var axiomNode = Node(NodeLabels.SUB_OBJECT_PROPERTY_OF, withIdentifierFrom(axiom));
     var subPropertyTranslation = translateChainRecursively(axiom.getPropertyChain());
     var superPropertyTranslation = axiom.getSuperProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
@@ -530,7 +529,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLInverseObjectPropertiesAxiom axiom) {
-    var axiomNode = Node(NodeLabels.INVERSE_OBJECT_PROPERTIES);
+    var axiomNode = Node(NodeLabels.INVERSE_OBJECT_PROPERTIES, withIdentifierFrom(axiom));
     var firstPropertyTranslation = axiom.getFirstProperty().accept(propertyExpressionVisitor);
     var secondPropertyTranslation = axiom.getSecondProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
@@ -544,7 +543,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLHasKeyAxiom axiom) {
-    var axiomNode = Node(NodeLabels.HAS_KEY);
+    var axiomNode = Node(NodeLabels.HAS_KEY, withIdentifierFrom(axiom));
     var classTranslation = axiom.getClassExpression().accept(classExpressionVisitor);
     var classEdge = Edge(axiomNode, MainNode(classTranslation), EdgeLabels.CLASS_EXPRESSION);
     var objectExpressionTranslations = axiom.getObjectPropertyExpressions().stream()
@@ -573,7 +572,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationAssertionAxiom axiom) {
-    var axiomNode = Node(NodeLabels.ANNOTATION_ASSERTION);
+    var axiomNode = Node(NodeLabels.ANNOTATION_ASSERTION, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var annotationSubjectTranslation = axiom.getSubject().accept(annotationSubjectVisitor);
     var annotationValueTranslation = axiom.getValue().accept(annotationValueVisitor);
@@ -589,7 +588,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubAnnotationPropertyOfAxiom axiom) {
-    var axiomNode = Node(NodeLabels.SUB_ANNOTATION_PROPERTY_OF);
+    var axiomNode = Node(NodeLabels.SUB_ANNOTATION_PROPERTY_OF, withIdentifierFrom(axiom));
     var subPropertyTranslation = axiom.getSubProperty().accept(propertyExpressionVisitor);
     var superPropertyTranslation = axiom.getSuperProperty().accept(propertyExpressionVisitor);
     return Translation.create(axiomNode,
@@ -603,7 +602,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationPropertyDomainAxiom axiom) {
-    var axiomNode = Node(NodeLabels.ANNOTATION_PROPERTY_DOMAIN);
+    var axiomNode = Node(NodeLabels.ANNOTATION_PROPERTY_DOMAIN, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var domainTranslation = axiom.getDomain().accept(annotationSubjectVisitor);
     return Translation.create(axiomNode,
@@ -617,7 +616,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationPropertyRangeAxiom axiom) {
-    var axiomNode = Node(NodeLabels.ANNOTATION_PROPERTY_RANGE);
+    var axiomNode = Node(NodeLabels.ANNOTATION_PROPERTY_RANGE, withIdentifierFrom(axiom));
     var propertyTranslation = axiom.getProperty().accept(propertyExpressionVisitor);
     var rangeTranslation = axiom.getRange().accept(annotationValueVisitor);
     return Translation.create(axiomNode,

@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.HasIRI;
 import javax.annotation.Nonnull;
 
 import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.model.GraphFactory.withIdentifierFrom;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
@@ -18,7 +19,9 @@ import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties
 public class HasIriVisitor {
 
   protected Translation createIriTranslation(@Nonnull HasIRI entity) {
-    var iriNode = Node(NodeLabels.IRI, Properties(PropertyNames.IRI, entity.getIRI().toString()));
+    var iriNode = Node(NodeLabels.IRI,
+        Properties(PropertyNames.IRI, entity.getIRI().toString()),
+        withIdentifierFrom(entity.getIRI()));
     return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
   }
 }
