@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.exporter.cypher;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
@@ -12,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +40,6 @@ public class CypherExporter {
   }
 
   public void write() {
-    writeCleanStart();
     axioms.forEach(axiom -> {
       var translation = axiomTranslator.translate(axiom);
       writeNodes(translation.nodes());
@@ -46,15 +47,11 @@ public class CypherExporter {
     });
   }
 
-  private void writeCleanStart() {
-    writeLine("MATCH (n) DETACH DELETE n;");
-  }
-
   void writeNodes(Stream<Node> nodeStream) {
     nodeStream.forEach(node -> {
-      var nodeId = printNodeId(node);
-      var nodeLabel = printNodeLabel(node);
-      var nodeProperties = printNodeProperties(node);
+      var nodeId = printNodeId(node.getNodeId());
+      var nodeLabel = printNodeLabel(node.getLabels());
+      var nodeProperties = printNodeProperties(node.getProperties());
       var s = format("CREATE (%s%s %s)", nodeId, nodeLabel, nodeProperties);
       writeLine(s);
     });
@@ -62,10 +59,10 @@ public class CypherExporter {
 
   void writeEdges(Stream<Edge> edgeStream) {
     edgeStream.forEach(edge -> {
-      var fromNodeId = printNodeId(edge.getFromNode());
-      var toNodeId = printNodeId(edge.getToNode());
-      var edgeLabel = printEdgeLabel(edge);
-      var edgeProperties = printEdgeProperties(edge);
+      var fromNodeId = printNodeId(edge.getFromNode().getNodeId());
+      var toNodeId = printNodeId(edge.getToNode().getNodeId());
+      var edgeLabel = printEdgeLabel(edge.getLabel());
+      var edgeProperties = printEdgeProperties(edge.getProperties());
       var s = format("CREATE (%s)-[%s %s]->(%s)", fromNodeId, edgeLabel, edgeProperties, toNodeId);
       writeLine(s);
     });
@@ -91,19 +88,18 @@ public class CypherExporter {
     }
   }
 
-  private static String printNodeId(Node node) {
-    return format("NodeId_%s", node.getNodeId());
+  private static String printNodeId(int nodeId) {
+    return format("NodeId_%d", nodeId);
   }
 
-  private static String printNodeLabel(Node node) {
-    return node.getLabels().stream()
+  private static String printNodeLabel(List<String> nodeLabels) {
+    return nodeLabels.stream()
         .map(label -> format(":%s", label))
         .collect(Collectors.joining(""));
   }
 
-  private static String printNodeProperties(Node node) {
-    var properties = node.getProperties();
-    return printProperties(properties);
+  private static String printNodeProperties(Properties nodeProperties) {
+    return printProperties(nodeProperties);
   }
 
   private static String printProperties(Properties properties) {
@@ -120,17 +116,18 @@ public class CypherExporter {
   }
 
   private static String escape(String value) {
-    return value.replaceAll("\n", " ")
+    var bytes = value.replaceAll("\n", " ")
         .replaceAll("'", "\\\\'")
-        .replaceAll("\"", "\\\\\"");
+        .replaceAll("\"", "\\\\\"")
+        .getBytes();
+    return new String(bytes, Charsets.UTF_8);
   }
 
-  private static String printEdgeLabel(Edge edge) {
-    return format(":%s", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edge.getLabel()));
+  private static String printEdgeLabel(String edgeLabel) {
+    return format(":%s", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edgeLabel));
   }
 
-  private static String printEdgeProperties(Edge edge) {
-    var properties = edge.getProperties();
-    return printProperties(properties);
+  private static String printEdgeProperties(Properties edgeProperties) {
+    return printProperties(edgeProperties);
   }
 }
