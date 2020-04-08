@@ -85,7 +85,7 @@ public class NodeLabels {
   public static final ImmutableList<String> NEGATIVE_OBJECT_PROPERTY_ASSERTION = ImmutableList.of("NegativeObjectPropertyAssertion", "Assertion", "Axiom");
   public static final ImmutableList<String> DATA_PROPERTY_ASSERTION = ImmutableList.of("DataPropertyAssertion", "Assertion", "Axiom");
   public static final ImmutableList<String> NEGATIVE_DATA_PROPERTY_ASSERTION = ImmutableList.of("NegativeDataPropertyAssertion", "Assertion", "Axiom");
-  public static final ImmutableList<String> ANNOTATION_ASSERTION = ImmutableList.of("AnnotationAssertion", "Assertion", "Axiom");
+  public static final ImmutableList<String> ANNOTATION_ASSERTION = ImmutableList.of("AnnotationAssertion", "AnnotationAxiom", "Axiom");
   public static final ImmutableList<String> SUB_ANNOTATION_PROPERTY_OF = ImmutableList.of("SubAnnotationPropertyOf", "AnnotationAxiom", "Axiom");
   public static final ImmutableList<String> ANNOTATION_PROPERTY_DOMAIN = ImmutableList.of("AnnotationPropertyDomain", "AnnotationAxiom", "Axiom");
   public static final ImmutableList<String> ANNOTATION_PROPERTY_RANGE = ImmutableList.of("AnnotationPropertyRange", "AnnotationAxiom", "Axiom");
