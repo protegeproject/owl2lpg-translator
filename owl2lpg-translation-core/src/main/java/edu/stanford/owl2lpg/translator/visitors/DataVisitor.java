@@ -9,6 +9,8 @@ import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,7 +25,7 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.LEXICAL_FORM;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class DataVisitor extends HasIriVisitor
+public class DataVisitor extends VisitorBase
     implements OWLDataVisitorEx<Translation> {
 
   @Nonnull
@@ -87,9 +89,7 @@ public class DataVisitor extends HasIriVisitor
   @Override
   public Translation visit(@Nonnull OWLDataOneOf dr) {
     var enumerationNode = Node(NodeLabels.DATA_ONE_OF, withIdentifierFrom(dr));
-    var translations = dr.getValues().stream()
-        .map(value -> value.accept(this))
-        .collect(Collectors.toList());
+    var translations = createLiteralTranslations(dr.getValues());
     var edges = translations.stream()
         .map(translation -> Edge(enumerationNode, MainNode(translation), EdgeLabels.LITERAL))
         .collect(Collectors.toList());
@@ -102,9 +102,7 @@ public class DataVisitor extends HasIriVisitor
   @Override
   public Translation visit(@Nonnull OWLDataIntersectionOf dr) {
     var intersectionNode = Node(NodeLabels.DATA_INTERSECTION_OF, withIdentifierFrom(dr));
-    var translations = dr.getOperands().stream()
-        .map(operand -> operand.accept(this))
-        .collect(Collectors.toList());
+    var translations = createDataRangeTranslations(dr.getOperands());
     var edges = translations.stream()
         .map(translation -> Edge(intersectionNode, MainNode(translation), EdgeLabels.DATA_RANGE))
         .collect(Collectors.toList());
@@ -117,9 +115,7 @@ public class DataVisitor extends HasIriVisitor
   @Override
   public Translation visit(@Nonnull OWLDataUnionOf dr) {
     var unionNode = Node(NodeLabels.DATA_UNION_OF, withIdentifierFrom(dr));
-    var translations = dr.getOperands().stream()
-        .map(operand -> operand.accept(this))
-        .collect(Collectors.toList());
+    var translations = createDataRangeTranslations(dr.getOperands());
     var edges = translations.stream()
         .map(translation -> Edge(unionNode, MainNode(translation), EdgeLabels.DATA_RANGE))
         .collect(Collectors.toList());
@@ -132,9 +128,7 @@ public class DataVisitor extends HasIriVisitor
   @Override
   public Translation visit(@Nonnull OWLDatatypeRestriction dr) {
     var restrictionNode = Node(NodeLabels.DATATYPE_RESTRICTION, withIdentifierFrom(dr));
-    var translations = dr.getFacetRestrictions().stream()
-        .map(facet -> facet.accept(this))
-        .collect(Collectors.toList());
+    var translations = createFacetRestrictionTranslations(dr.getFacetRestrictions());
     var edges = translations.stream()
         .map(translation -> Edge(restrictionNode, MainNode(translation), EdgeLabels.RESTRICTION))
         .collect(Collectors.toList());
@@ -158,5 +152,23 @@ public class DataVisitor extends HasIriVisitor
             Edge(facetRestrictionNode, MainNode(literalTranslation), EdgeLabels.RESTRICTION_VALUE)),
         ImmutableList.of(
             facetTranslation, literalTranslation));
+  }
+
+  private List<Translation> createLiteralTranslations(Set<OWLLiteral> literals) {
+    return literals.stream()
+        .map(value -> value.accept(this))
+        .collect(Collectors.toList());
+  }
+
+  private List<Translation> createDataRangeTranslations(Set<OWLDataRange> dataRanges) {
+    return dataRanges.stream()
+        .map(operand -> operand.accept(this))
+        .collect(Collectors.toList());
+  }
+
+  private List<Translation> createFacetRestrictionTranslations(@Nonnull Set<OWLFacetRestriction> facets) {
+    return facets.stream()
+        .map(facet -> facet.accept(this))
+        .collect(Collectors.toList());
   }
 }

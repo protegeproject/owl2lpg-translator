@@ -19,7 +19,7 @@ import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class EntityVisitor extends HasIriVisitor
+public class EntityVisitor extends VisitorBase
     implements OWLEntityVisitorEx<Translation> {
 
   @Override
