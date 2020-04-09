@@ -1,6 +1,8 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -11,7 +13,6 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.model.GraphFactory.*;
-import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 property expressions.
@@ -23,6 +24,8 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
 
   @Nonnull
   private final OWLEntityVisitorEx<Translation> entityVisitor;
+
+  private Node mainNode;
 
   @Inject
   public PropertyExpressionVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor) {
@@ -50,12 +53,45 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectInverseOf ope) {
-    var inverseNode = Node(NodeLabels.OBJECT_INVERSE_OF, withIdentifierFrom(ope));
-    var propertyTranslation = ope.getInverseProperty().accept(this);
-    return Translation.create(inverseNode,
-        ImmutableList.of(
-            Edge(inverseNode, MainNode(propertyTranslation), EdgeLabels.OBJECT_PROPERTY)),
-        ImmutableList.of(
-            propertyTranslation));
+    mainNode = createMainNode(ope, NodeLabels.OBJECT_INVERSE_OF);
+    var inverseProperty = ope.getInverseProperty();
+    var objectPropertyEdge = createEdge(inverseProperty, EdgeLabels.OBJECT_PROPERTY);
+    var inversePropertyTranslation = createTranslation(inverseProperty);
+    return Translation.create(mainNode,
+        ImmutableList.of(objectPropertyEdge),
+        ImmutableList.of(inversePropertyTranslation));
+  }
+
+  @Nonnull
+  protected Node createMainNode(@Nonnull OWLPropertyExpression property,
+                                @Nonnull ImmutableList<String> nodeLabels) {
+    checkNotNull(property);
+    checkNotNull(nodeLabels);
+    return Node(nodeLabels, withIdentifierFrom(property));
+  }
+
+  @Nonnull
+  protected Edge createEdge(@Nonnull OWLPropertyExpression property,
+                            @Nonnull String edgeLabel) {
+    checkNotNull(property);
+    checkNotNull(edgeLabel);
+    var toNode = getMainNode(property);
+    return Edge(mainNode, toNode, edgeLabel);
+  }
+
+  @Nonnull
+  private Node getMainNode(@Nonnull OWLPropertyExpression property) {
+    return visit(property).getMainNode();
+  }
+
+  @Nonnull
+  protected Translation createTranslation(@Nonnull OWLPropertyExpression property) {
+    return visit(property);
+  }
+
+  @Nonnull
+  protected Translation visit(@Nonnull OWLPropertyExpression anyPropertyExpression) {
+    checkNotNull(anyPropertyExpression);
+    return anyPropertyExpression.accept(this);
   }
 }
