@@ -1,41 +1,121 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
-import org.semanticweb.owlapi.model.HasIRI;
-import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
-import static edu.stanford.owl2lpg.model.GraphFactory.withIdentifierFrom;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.model.GraphFactory.*;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class VisitorBase {
+public abstract class VisitorBase {
 
-  protected Translation createIriTranslation(@Nonnull HasIRI entity) {
-    return createIriTranslation(entity.getIRI());
+  @Nonnull
+  protected Node createNode(@Nonnull OWLObject anyObject,
+                            @Nonnull ImmutableList<String> nodeLabels,
+                            @Nonnull Properties properties) {
+    checkNotNull(anyObject);
+    checkNotNull(nodeLabels);
+    checkNotNull(properties);
+    return Node(nodeLabels, properties, withIdentifierFrom(anyObject));
   }
 
-  protected Translation createIriTranslation(@Nonnull IRI iri) {
-    var iriNode = createIriNode(iri);
-    return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
+  @Nonnull
+  protected Node createNode(@Nonnull OWLObject anyObject,
+                            @Nonnull ImmutableList<String> nodeLabels) {
+    checkNotNull(anyObject);
+    checkNotNull(nodeLabels);
+    return createNode(anyObject, nodeLabels, Properties.empty());
   }
 
-  protected Node createIriNode(@Nonnull HasIRI entity) {
-    return createIriNode(entity.getIRI());
+  @Nonnull
+  protected Node createEntityNode(@Nonnull OWLEntity anyEntity,
+                                  @Nonnull ImmutableList<String> nodeLabels) {
+    return createNode(
+        anyEntity,
+        nodeLabels,
+        Properties(PropertyNames.IRI, String.valueOf(anyEntity.getIRI())));
   }
 
-  protected Node createIriNode(@Nonnull IRI iri) {
-    return Node(NodeLabels.IRI,
-        Properties(PropertyNames.IRI, iri.toString()),
-        withIdentifierFrom(iri));
+  @Nonnull
+  protected Node createLiteralNode(@Nonnull OWLLiteral anyLiteral,
+                                   @Nonnull ImmutableList<String> nodeLabels) {
+    return createNode(
+        anyLiteral,
+        nodeLabels,
+        Properties(PropertyNames.LEXICAL_FORM, anyLiteral.getLiteral()));
   }
+
+  @Nonnull
+  protected Node createIriNode(@Nonnull IRI iri,
+                               @Nonnull ImmutableList<String> nodeLabels) {
+    return createNode(
+        iri,
+        nodeLabels,
+        Properties(PropertyNames.IRI, String.valueOf(iri)));
+  }
+
+  @Nonnull
+  protected Node createAnonymousIndividualNode(@Nonnull OWLAnonymousIndividual individual,
+                                               @Nonnull ImmutableList<String> nodeLabels) {
+    return createNode(
+        individual,
+        nodeLabels,
+        Properties(PropertyNames.NODE_ID, String.valueOf(individual.getID())));
+  }
+
+  @Nonnull
+  protected Edge createEdge(@Nonnull OWLObject anyObject,
+                            @Nonnull String edgeLabel) {
+    checkNotNull(anyObject);
+    checkNotNull(edgeLabel);
+    return Edge(getMainNode(), getMainNode(anyObject), edgeLabel);
+  }
+
+  @Nonnull
+  protected Collection<Edge> createEdges(
+      @Nonnull Set<? extends OWLObject> anyObjects,
+      @Nonnull String edgeLabel) {
+    checkNotNull(anyObjects);
+    checkNotNull(edgeLabel);
+    return anyObjects.stream()
+        .map(o -> createEdge(o, edgeLabel))
+        .collect(Collectors.toList());
+  }
+
+  @Nonnull
+  protected Translation createTranslation(@Nonnull OWLObject anyObject) {
+    return getTranslation(anyObject);
+  }
+
+  @Nonnull
+  protected Collection<Translation> createTranslations(
+      @Nonnull Set<? extends OWLObject> anyObjects) {
+    checkNotNull(anyObjects);
+    return anyObjects.stream()
+        .map(o -> createTranslation(o))
+        .collect(Collectors.toList());
+  }
+
+  @Nonnull
+  protected Node getMainNode(OWLObject anyObject) {
+    return getTranslation(anyObject).getMainNode();
+  }
+
+  protected abstract Node getMainNode();
+
+  protected abstract Translation getTranslation(@Nonnull OWLObject anyObject);
 }

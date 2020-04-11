@@ -1,6 +1,9 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -8,16 +11,12 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.model.GraphFactory.*;
-import static edu.stanford.owl2lpg.translator.Translation.MainNode;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyNames.LEXICAL_FORM;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -30,6 +29,8 @@ public class DataVisitor extends VisitorBase
 
   @Nonnull
   private final OWLEntityVisitorEx<Translation> entityVisitor;
+
+  private Node mainNode;
 
   @Inject
   public DataVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor) {
@@ -45,130 +46,126 @@ public class DataVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLLiteral lt) {
-    var literalNode = Node(NodeLabels.LITERAL,
-        Properties(LEXICAL_FORM, lt.getLiteral()),
-        withIdentifierFrom(lt));
-    var datatypeTranslation = lt.getDatatype().accept(this);
+    mainNode = createLiteralNode(lt, NodeLabels.LITERAL);
+    var datatypeEdge = createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
+    var datatypeTranslation = createTranslation(lt.getDatatype());
     if (lt.isRDFPlainLiteral() && lt.hasLang()) {
-      var languageTagTranslation = translateLanguageTag(lt);
-      return Translation.create(literalNode,
-          ImmutableList.of(
-              Edge(literalNode, MainNode(datatypeTranslation), EdgeLabels.DATATYPE),
-              Edge(literalNode, MainNode(languageTagTranslation), EdgeLabels.LANGUAGE_TAG)),
-          ImmutableList.of(
-              datatypeTranslation, languageTagTranslation));
+      var languageTagEdge = createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
+      var languageTagTranslation = createLanguageTagTranslation(lt.getLang());
+      return Translation.create(mainNode,
+          ImmutableList.of(datatypeEdge, languageTagEdge),
+          ImmutableList.of(datatypeTranslation, languageTagTranslation));
     } else {
-      return Translation.create(literalNode,
-          ImmutableList.of(
-              Edge(literalNode, MainNode(datatypeTranslation), EdgeLabels.DATATYPE)),
-          ImmutableList.of(
-              datatypeTranslation));
+      return Translation.create(mainNode,
+          ImmutableList.of(datatypeEdge),
+          ImmutableList.of(datatypeTranslation));
     }
   }
 
-  private Translation translateLanguageTag(@Nonnull OWLLiteral lt) {
-    var languageTagNode = Node(NodeLabels.LANGUAGE_TAG,
-        Properties(PropertyNames.LANGUAGE, lt.getLang()),
-        withIdentifierFrom(lt.getLang()));
+  protected Node createLanguageTagNode(@Nonnull String languageTag,
+                                       @Nonnull ImmutableList<String> nodeLabels) {
+    return Node(nodeLabels,
+        Properties(PropertyNames.LANGUAGE, languageTag),
+        withIdentifierFrom(languageTag));
+  }
+
+  private Edge createLanguageTagEdge(@Nonnull String languageTag, @Nonnull String edgeLabel) {
+    var languageTagNode = createLanguageTagNode(languageTag, NodeLabels.LANGUAGE_TAG);
+    return Edge(mainNode, languageTagNode, edgeLabel);
+  }
+
+  private Translation createLanguageTagTranslation(@Nonnull String languageTag) {
+    var languageTagNode = createLanguageTagNode(languageTag, NodeLabels.LANGUAGE_TAG);
     return Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataComplementOf dr) {
-    var complementNode = Node(NodeLabels.DATA_COMPLEMENT_OF, withIdentifierFrom(dr));
-    var dataRangeTranslation = dr.getDataRange().accept(this);
-    return Translation.create(complementNode,
-        ImmutableList.of(
-            Edge(complementNode, MainNode(dataRangeTranslation), EdgeLabels.DATA_RANGE)),
-        ImmutableList.of(
-            dataRangeTranslation));
+    mainNode = createNode(dr, NodeLabels.DATA_COMPLEMENT_OF);
+    var dataRangeEdge = createEdge(dr.getDataRange(), EdgeLabels.DATA_RANGE);
+    var dataRangeTranslation = createTranslation(dr.getDataRange());
+    return Translation.create(mainNode,
+        ImmutableList.of(dataRangeEdge),
+        ImmutableList.of(dataRangeTranslation));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataOneOf dr) {
-    var enumerationNode = Node(NodeLabels.DATA_ONE_OF, withIdentifierFrom(dr));
-    var translations = createLiteralTranslations(dr.getValues());
-    var edges = translations.stream()
-        .map(translation -> Edge(enumerationNode, MainNode(translation), EdgeLabels.LITERAL))
-        .collect(Collectors.toList());
-    return Translation.create(enumerationNode,
-        ImmutableList.copyOf(edges),
-        ImmutableList.copyOf(translations));
+    mainNode = createNode(dr, NodeLabels.DATA_ONE_OF);
+    var literalEdges = createEdges(dr.getValues(), EdgeLabels.LITERAL);
+    var literalTranslations = createTranslations(dr.getValues());
+    return Translation.create(mainNode,
+        ImmutableList.copyOf(literalEdges),
+        ImmutableList.copyOf(literalTranslations));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataIntersectionOf dr) {
-    var intersectionNode = Node(NodeLabels.DATA_INTERSECTION_OF, withIdentifierFrom(dr));
-    var translations = createDataRangeTranslations(dr.getOperands());
-    var edges = translations.stream()
-        .map(translation -> Edge(intersectionNode, MainNode(translation), EdgeLabels.DATA_RANGE))
-        .collect(Collectors.toList());
-    return Translation.create(intersectionNode,
-        ImmutableList.copyOf(edges),
-        ImmutableList.copyOf(translations));
+    mainNode = createNode(dr, NodeLabels.DATA_INTERSECTION_OF);
+    var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
+    var dataRangeTranslations = createTranslations(dr.getOperands());
+    return Translation.create(mainNode,
+        ImmutableList.copyOf(dataRangeEdges),
+        ImmutableList.copyOf(dataRangeTranslations));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataUnionOf dr) {
-    var unionNode = Node(NodeLabels.DATA_UNION_OF, withIdentifierFrom(dr));
-    var translations = createDataRangeTranslations(dr.getOperands());
-    var edges = translations.stream()
-        .map(translation -> Edge(unionNode, MainNode(translation), EdgeLabels.DATA_RANGE))
-        .collect(Collectors.toList());
-    return Translation.create(unionNode,
-        ImmutableList.copyOf(edges),
-        ImmutableList.copyOf(translations));
+    mainNode = createNode(dr, NodeLabels.DATA_UNION_OF);
+    var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
+    var dataRangeTranslations = createTranslations(dr.getOperands());
+    return Translation.create(mainNode,
+        ImmutableList.copyOf(dataRangeEdges),
+        ImmutableList.copyOf(dataRangeTranslations));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatypeRestriction dr) {
-    var restrictionNode = Node(NodeLabels.DATATYPE_RESTRICTION, withIdentifierFrom(dr));
-    var translations = createFacetRestrictionTranslations(dr.getFacetRestrictions());
-    var edges = translations.stream()
-        .map(translation -> Edge(restrictionNode, MainNode(translation), EdgeLabels.RESTRICTION))
-        .collect(Collectors.toList());
-    var datatypeTranslation = dr.getDatatype().accept(this);
-    translations.add(0, datatypeTranslation);
-    edges.add(0, Edge(restrictionNode, MainNode(datatypeTranslation), EdgeLabels.DATATYPE));
-    return Translation.create(restrictionNode,
-        ImmutableList.copyOf(edges),
-        ImmutableList.copyOf(translations));
+    mainNode = createNode(dr, NodeLabels.DATATYPE_RESTRICTION);
+    var datatypeEdge = createEdge(dr.getDatatype(), EdgeLabels.DATATYPE);
+    var datatypeTranslation = createTranslation(dr.getDatatype());
+    var facetRestrictionEdges = createEdges(dr.getFacetRestrictions(), EdgeLabels.RESTRICTION);
+    var facetRestrictionTranslations = createTranslations(dr.getFacetRestrictions());
+    var allEdges = Lists.newArrayList(datatypeEdge, (Edge) facetRestrictionEdges);
+    var allTranslations = Lists.newArrayList(datatypeTranslation, (Translation) facetRestrictionTranslations);
+    return Translation.create(mainNode,
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allTranslations));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLFacetRestriction facet) {
-    var facetRestrictionNode = Node(NodeLabels.FACET_RESTRICTION, withIdentifierFrom(facet));
-    var facetTranslation = createIriTranslation(facet.getFacet());
-    var literalTranslation = facet.getFacetValue().accept(this);
-    return Translation.create(facetRestrictionNode,
-        ImmutableList.of(
-            Edge(facetRestrictionNode, MainNode(facetTranslation), EdgeLabels.CONSTRAINING_FACET),
-            Edge(facetRestrictionNode, MainNode(literalTranslation), EdgeLabels.RESTRICTION_VALUE)),
-        ImmutableList.of(
-            facetTranslation, literalTranslation));
+    mainNode = createNode(facet, NodeLabels.FACET_RESTRICTION);
+    var constrainingFacetEdge = createEdge(facet.getFacet().getIRI(), EdgeLabels.CONSTRAINING_FACET);
+    var constrainingFacetTranslation = createTranslation(facet.getFacet().getIRI());
+    var restrictionValueEdge = createEdge(facet.getFacetValue(), EdgeLabels.RESTRICTION_VALUE);
+    var restrictionValueTranslation = createTranslation(facet.getFacetValue());
+    return Translation.create(mainNode,
+        ImmutableList.of(constrainingFacetEdge, restrictionValueEdge),
+        ImmutableList.of(constrainingFacetTranslation, restrictionValueTranslation));
   }
 
-  private List<Translation> createLiteralTranslations(Set<OWLLiteral> literals) {
-    return literals.stream()
-        .map(value -> value.accept(this))
-        .collect(Collectors.toList());
+  @Override
+  @Nullable
+  protected Node getMainNode() {
+    return mainNode;
   }
 
-  private List<Translation> createDataRangeTranslations(Set<OWLDataRange> dataRanges) {
-    return dataRanges.stream()
-        .map(operand -> operand.accept(this))
-        .collect(Collectors.toList());
-  }
-
-  private List<Translation> createFacetRestrictionTranslations(@Nonnull Set<OWLFacetRestriction> facets) {
-    return facets.stream()
-        .map(facet -> facet.accept(this))
-        .collect(Collectors.toList());
+  @Nonnull
+  @Override
+  protected Translation getTranslation(OWLObject anyObject) {
+    checkNotNull(anyObject);
+    if (anyObject instanceof OWLDataRange) {
+      return ((OWLDataRange) anyObject).accept(this);
+    } else if (anyObject instanceof OWLLiteral) {
+      return ((OWLLiteral) anyObject).accept(this);
+    }
+    throw new IllegalArgumentException("Implementation error");
   }
 }

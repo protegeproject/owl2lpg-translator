@@ -2,20 +2,15 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.GraphFactory;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
-import static edu.stanford.owl2lpg.model.GraphFactory.withIdentifierFrom;
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 entities.
@@ -31,9 +26,9 @@ public class EntityVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLClass c) {
-    mainNode = createMainNode(c, NodeLabels.CLASS);
-    var entityIriEdge = createEntityIriEdge(c, EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createIriTranslation(c);
+    mainNode = createEntityNode(c, NodeLabels.CLASS);
+    var entityIriEdge = createEdge(c.getIRI(), EdgeLabels.ENTITY_IRI);
+    var iriTranslation = createTranslation(c.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -43,9 +38,9 @@ public class EntityVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatype dt) {
-    mainNode = createMainNode(dt, NodeLabels.DATATYPE);
-    var entityIriEdge = createEntityIriEdge(dt, EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createIriTranslation(dt);
+    mainNode = createEntityNode(dt, NodeLabels.DATATYPE);
+    var entityIriEdge = createEdge(dt.getIRI(), EdgeLabels.ENTITY_IRI);
+    var iriTranslation = createTranslation(dt.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -55,9 +50,9 @@ public class EntityVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
-    mainNode = createMainNode(op, NodeLabels.OBJECT_PROPERTY);
-    var entityIriEdge = createEntityIriEdge(op, EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createIriTranslation(op);
+    mainNode = createEntityNode(op, NodeLabels.OBJECT_PROPERTY);
+    var entityIriEdge = createEdge(op.getIRI(), EdgeLabels.ENTITY_IRI);
+    var iriTranslation = createTranslation(op.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -67,9 +62,9 @@ public class EntityVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
-    mainNode = createMainNode(dp, NodeLabels.DATA_PROPERTY);
-    var entityIriEdge = createEntityIriEdge(dp, EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createIriTranslation(dp);
+    mainNode = createEntityNode(dp, NodeLabels.DATA_PROPERTY);
+    var entityIriEdge = createEdge(dp.getIRI(), EdgeLabels.ENTITY_IRI);
+    var iriTranslation = createTranslation(dp.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -79,9 +74,9 @@ public class EntityVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
-    mainNode = createMainNode(ap, NodeLabels.ANNOTATION_PROPERTY);
-    var entityIriEdge = createEntityIriEdge(ap, EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createIriTranslation(ap);
+    mainNode = createEntityNode(ap, NodeLabels.ANNOTATION_PROPERTY);
+    var entityIriEdge = createEdge(ap.getIRI(), EdgeLabels.ENTITY_IRI);
+    var iriTranslation = createTranslation(ap.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -91,32 +86,13 @@ public class EntityVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLNamedIndividual a) {
-    mainNode = createMainNode(a, NodeLabels.NAMED_INDIVIDUAL);
-    var entityIriEdge = createEntityIriEdge(a, EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createIriTranslation(a);
+    mainNode = createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
+    var entityIriEdge = createEdge(a.getIRI(), EdgeLabels.ENTITY_IRI);
+    var iriTranslation = createTranslation(a.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
         ImmutableList.of(iriTranslation));
-  }
-
-  @Nonnull
-  protected Edge createEntityIriEdge(@Nonnull OWLEntity entity,
-                                     @Nonnull String edgeLabel) {
-    checkNotNull(entity);
-    checkNotNull(edgeLabel);
-    var iriNode = createIriNode(entity);
-    return GraphFactory.Edge(mainNode, iriNode, edgeLabel);
-  }
-
-  @Nonnull
-  protected Node createMainNode(@Nonnull OWLEntity entity,
-                                @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(entity);
-    checkNotNull(nodeLabels);
-    return Node(nodeLabels,
-        Properties(PropertyNames.IRI, String.valueOf(entity.getIRI())),
-        withIdentifierFrom(entity));
   }
 
   @Nonnull
@@ -127,5 +103,22 @@ public class EntityVisitor extends VisitorBase
     checkNotNull(edges);
     checkNotNull(nestedTranslations);
     return Translation.create(mainNode, edges, nestedTranslations);
+  }
+
+  @Nonnull
+  @Override
+  protected Node getMainNode() {
+    return mainNode;
+  }
+
+  @Nonnull
+  @Override
+  protected Translation getTranslation(OWLObject anyObject) {
+    checkNotNull(anyObject);
+    if (anyObject instanceof IRI) {
+      var iriNode = createIriNode((IRI) anyObject, NodeLabels.IRI);
+      return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
+    }
+    throw new IllegalArgumentException("Implementation error");
   }
 }

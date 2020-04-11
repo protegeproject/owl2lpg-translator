@@ -4,19 +4,13 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
-import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
-import org.semanticweb.owlapi.model.OWLEntityVisitorEx;
-import org.semanticweb.owlapi.model.OWLIndividualVisitorEx;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
-import static edu.stanford.owl2lpg.model.GraphFactory.withIdentifierFrom;
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 individuals.
@@ -24,12 +18,13 @@ import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
+public class IndividualVisitor extends VisitorBase
+    implements OWLIndividualVisitorEx<Translation> {
+
+  private Node mainNode;
 
   @Nonnull
   private final OWLEntityVisitorEx<Translation> entityVisitor;
-
-  private Node mainNode;
 
   @Inject
   public IndividualVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor) {
@@ -45,17 +40,19 @@ public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    mainNode = createMainNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
+    mainNode = createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
     return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
   }
 
+  @Override
+  @Nullable
+  protected Node getMainNode() {
+    return mainNode;
+  }
+
   @Nonnull
-  protected Node createMainNode(@Nonnull OWLAnonymousIndividual individual,
-                                @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(individual);
-    checkNotNull(nodeLabels);
-    return Node(nodeLabels,
-        Properties(PropertyNames.NODE_ID, String.valueOf(individual.getID())),
-        withIdentifierFrom(individual));
+  @Override
+  protected Translation getTranslation(OWLObject anyObject) {
+    throw new IllegalArgumentException("Implementation error");
   }
 }

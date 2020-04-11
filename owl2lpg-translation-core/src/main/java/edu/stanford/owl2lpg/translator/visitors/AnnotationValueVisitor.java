@@ -1,9 +1,13 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
+import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -14,31 +18,42 @@ public class AnnotationValueVisitor extends VisitorBase
   @Nonnull
   private final OWLDataVisitorEx<Translation> dataVisitor;
 
-  @Nonnull
-  private final OWLIndividualVisitorEx<Translation> individualVisitor;
+  private Node mainNode;
 
   @Inject
-  public AnnotationValueVisitor(@Nonnull OWLDataVisitorEx<Translation> dataVisitor,
-                                @Nonnull OWLIndividualVisitorEx<Translation> individualVisitor) {
+  public AnnotationValueVisitor(@Nonnull OWLDataVisitorEx<Translation> dataVisitor) {
     this.dataVisitor = checkNotNull(dataVisitor);
-    this.individualVisitor = checkNotNull(individualVisitor);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull IRI iri) {
-    return createIriTranslation(iri);
+    mainNode = createIriNode(iri, NodeLabels.IRI);
+    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    return individualVisitor.visit(individual);
+    mainNode = createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
+    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLLiteral lt) {
+    checkNotNull(lt);
     return dataVisitor.visit(lt);
+  }
+
+  @Nullable
+  @Override
+  protected Node getMainNode() {
+    return mainNode;
+  }
+
+  @Override
+  protected Translation getTranslation(@Nonnull OWLObject anyObject) {
+    throw new IllegalArgumentException("Implementation error");
   }
 }
