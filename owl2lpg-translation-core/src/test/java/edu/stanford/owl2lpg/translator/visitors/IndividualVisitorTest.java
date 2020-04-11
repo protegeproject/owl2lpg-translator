@@ -37,7 +37,7 @@ public class IndividualVisitorTest {
     var individual = mock(OWLAnonymousIndividual.class);
     visitor.visit(individual);
     verify(visitor).visit(individual);
-    verify(visitor).createMainNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
+    verify(visitor).createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
   }
 
   @Test(expected = NullPointerException.class)

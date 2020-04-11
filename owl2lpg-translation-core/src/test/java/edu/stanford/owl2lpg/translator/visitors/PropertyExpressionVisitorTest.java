@@ -33,7 +33,7 @@ public class PropertyExpressionVisitorTest {
   @Before
   public void setUp() {
     visitor = spy(new PropertyExpressionVisitor(entityVisitor));
-    when(visitor.visit(objectPropertyExpression)).thenReturn(nestedTranslation);
+    when(objectPropertyExpression.accept(visitor)).thenReturn(nestedTranslation);
     when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
   }
 
@@ -68,9 +68,9 @@ public class PropertyExpressionVisitorTest {
 
     visitor.visit(ope);
     verify(visitor).visit(ope);
-    verify(visitor).createMainNode(ope, NodeLabels.OBJECT_INVERSE_OF);
-    verify(visitor).createEdge(objectPropertyExpression, EdgeLabels.OBJECT_PROPERTY);
-    verify(visitor).createTranslation(objectPropertyExpression);
+    verify(visitor).createNode(ope, NodeLabels.OBJECT_INVERSE_OF);
+    verify(visitor).createEdge(ope.getInverseProperty(), EdgeLabels.OBJECT_PROPERTY);
+    verify(visitor).createTranslation(ope.getInverseProperty());
   }
 
   @Test(expected = NullPointerException.class)

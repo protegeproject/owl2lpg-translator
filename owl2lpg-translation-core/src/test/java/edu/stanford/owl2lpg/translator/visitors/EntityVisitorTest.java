@@ -24,9 +24,9 @@ public class EntityVisitorTest {
 
     visitor.visit(cls);
     verify(visitor).visit(cls);
-    verify(visitor).createMainNode(cls, NodeLabels.CLASS);
-    verify(visitor).createEntityIriEdge(cls, EdgeLabels.ENTITY_IRI);
-    verify(visitor).createIriTranslation(cls);
+    verify(visitor).createEntityNode(cls, NodeLabels.CLASS);
+    verify(visitor).createEdge(cls.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createTranslation(cls.getIRI());
   }
 
   @Test
@@ -37,9 +37,9 @@ public class EntityVisitorTest {
 
     visitor.visit(dt);
     verify(visitor).visit(dt);
-    verify(visitor).createMainNode(dt, NodeLabels.DATATYPE);
-    verify(visitor).createEntityIriEdge(dt, EdgeLabels.ENTITY_IRI);
-    verify(visitor).createIriTranslation(dt);
+    verify(visitor).createEntityNode(dt, NodeLabels.DATATYPE);
+    verify(visitor).createEdge(dt.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createTranslation(dt.getIRI());
   }
 
   @Test
@@ -50,9 +50,9 @@ public class EntityVisitorTest {
 
     visitor.visit(op);
     verify(visitor).visit(op);
-    verify(visitor).createMainNode(op, NodeLabels.OBJECT_PROPERTY);
-    verify(visitor).createEntityIriEdge(op, EdgeLabels.ENTITY_IRI);
-    verify(visitor).createIriTranslation(op);
+    verify(visitor).createEntityNode(op, NodeLabels.OBJECT_PROPERTY);
+    verify(visitor).createEdge(op.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createTranslation(op.getIRI());
   }
 
   @Test
@@ -63,9 +63,9 @@ public class EntityVisitorTest {
 
     visitor.visit(dp);
     verify(visitor).visit(dp);
-    verify(visitor).createMainNode(dp, NodeLabels.DATA_PROPERTY);
-    verify(visitor).createEntityIriEdge(dp, EdgeLabels.ENTITY_IRI);
-    verify(visitor).createIriTranslation(dp);
+    verify(visitor).createEntityNode(dp, NodeLabels.DATA_PROPERTY);
+    verify(visitor).createEdge(dp.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createTranslation(dp.getIRI());
   }
 
   @Test
@@ -76,9 +76,9 @@ public class EntityVisitorTest {
 
     visitor.visit(ap);
     verify(visitor).visit(ap);
-    verify(visitor).createMainNode(ap, NodeLabels.ANNOTATION_PROPERTY);
-    verify(visitor).createEntityIriEdge(ap, EdgeLabels.ENTITY_IRI);
-    verify(visitor).createIriTranslation(ap);
+    verify(visitor).createEntityNode(ap, NodeLabels.ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(ap.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createTranslation(ap.getIRI());
   }
 
   @Test
@@ -89,9 +89,9 @@ public class EntityVisitorTest {
 
     visitor.visit(a);
     verify(visitor).visit(a);
-    verify(visitor).createMainNode(a, NodeLabels.NAMED_INDIVIDUAL);
-    verify(visitor).createEntityIriEdge(a, EdgeLabels.ENTITY_IRI);
-    verify(visitor).createIriTranslation(a);
+    verify(visitor).createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
+    verify(visitor).createEdge(a.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createTranslation(a.getIRI());
   }
 
   @Test(expected = NullPointerException.class)
