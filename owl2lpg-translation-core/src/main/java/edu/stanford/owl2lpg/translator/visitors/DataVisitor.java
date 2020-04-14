@@ -50,8 +50,9 @@ public class DataVisitor extends VisitorBase
     var datatypeEdge = createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
     var datatypeTranslation = createTranslation(lt.getDatatype());
     if (lt.isRDFPlainLiteral() && lt.hasLang()) {
+      var languageTagNode = createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
       var languageTagEdge = createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
-      var languageTagTranslation = createLanguageTagTranslation(lt.getLang());
+      var languageTagTranslation = Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
       return Translation.create(mainNode,
           ImmutableList.of(datatypeEdge, languageTagEdge),
           ImmutableList.of(datatypeTranslation, languageTagTranslation));
@@ -69,14 +70,10 @@ public class DataVisitor extends VisitorBase
         withIdentifierFrom(languageTag));
   }
 
-  private Edge createLanguageTagEdge(@Nonnull String languageTag, @Nonnull String edgeLabel) {
+  protected Edge createLanguageTagEdge(@Nonnull String languageTag,
+                                       @Nonnull String edgeLabel) {
     var languageTagNode = createLanguageTagNode(languageTag, NodeLabels.LANGUAGE_TAG);
     return Edge(mainNode, languageTagNode, edgeLabel);
-  }
-
-  private Translation createLanguageTagTranslation(@Nonnull String languageTag) {
-    var languageTagNode = createLanguageTagNode(languageTag, NodeLabels.LANGUAGE_TAG);
-    return Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
   }
 
   @Nonnull
@@ -131,8 +128,10 @@ public class DataVisitor extends VisitorBase
     var datatypeTranslation = createTranslation(dr.getDatatype());
     var facetRestrictionEdges = createEdges(dr.getFacetRestrictions(), EdgeLabels.RESTRICTION);
     var facetRestrictionTranslations = createTranslations(dr.getFacetRestrictions());
-    var allEdges = Lists.newArrayList(datatypeEdge, (Edge) facetRestrictionEdges);
-    var allTranslations = Lists.newArrayList(datatypeTranslation, (Translation) facetRestrictionTranslations);
+    var allEdges = Lists.newArrayList(datatypeEdge);
+    allEdges.addAll(facetRestrictionEdges);
+    var allTranslations = Lists.newArrayList(datatypeTranslation);
+    allTranslations.addAll(facetRestrictionTranslations);
     return Translation.create(mainNode,
         ImmutableList.copyOf(allEdges),
         ImmutableList.copyOf(allTranslations));
@@ -165,6 +164,9 @@ public class DataVisitor extends VisitorBase
       return ((OWLDataRange) anyObject).accept(this);
     } else if (anyObject instanceof OWLLiteral) {
       return ((OWLLiteral) anyObject).accept(this);
+    } else if (anyObject instanceof IRI) {
+      var iriNode = createIriNode((IRI) anyObject, NodeLabels.IRI);
+      return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
     }
     throw new IllegalArgumentException("Implementation error");
   }
