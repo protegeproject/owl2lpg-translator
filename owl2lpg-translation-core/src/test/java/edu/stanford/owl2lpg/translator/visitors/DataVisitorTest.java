@@ -77,7 +77,7 @@ public class DataVisitorTest {
     verify(visitor).visit(lt);
     verify(visitor).createLiteralNode(lt, NodeLabels.LITERAL);
     verify(visitor).createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
-    verify(visitor).createTranslation(lt.getDatatype());
+    verify(visitor).createNestedTranslation(lt.getDatatype());
     verify(visitor, times(0))
         .createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
     verify(visitor, times(0))
@@ -96,7 +96,7 @@ public class DataVisitorTest {
     verify(visitor).visit(lt);
     verify(visitor).createLiteralNode(lt, NodeLabels.LITERAL);
     verify(visitor).createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
-    verify(visitor).createTranslation(lt.getDatatype());
+    verify(visitor).createNestedTranslation(lt.getDatatype());
     verify(visitor, times(0))
         .createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
     verify(visitor, times(0))
@@ -116,7 +116,7 @@ public class DataVisitorTest {
     verify(visitor).visit(lt);
     verify(visitor).createLiteralNode(lt, NodeLabels.LITERAL);
     verify(visitor).createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
-    verify(visitor).createTranslation(lt.getDatatype());
+    verify(visitor).createNestedTranslation(lt.getDatatype());
     verify(visitor).createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
     verify(visitor, times(2)).createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
   }
@@ -130,7 +130,7 @@ public class DataVisitorTest {
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_COMPLEMENT_OF);
     verify(visitor).createEdge(dr.getDataRange(), EdgeLabels.DATA_RANGE);
-    verify(visitor).createTranslation(dr.getDataRange());
+    verify(visitor).createNestedTranslation(dr.getDataRange());
   }
 
   @Test
@@ -142,7 +142,7 @@ public class DataVisitorTest {
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_ONE_OF);
     verify(visitor).createEdges(dr.getValues(), EdgeLabels.LITERAL);
-    verify(visitor).createTranslations(dr.getValues());
+    verify(visitor).createNestedTranslations(dr.getValues());
   }
 
   @Test
@@ -154,7 +154,7 @@ public class DataVisitorTest {
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_INTERSECTION_OF);
     verify(visitor).createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
-    verify(visitor).createTranslations(dr.getOperands());
+    verify(visitor).createNestedTranslations(dr.getOperands());
   }
 
   @Test
@@ -166,7 +166,7 @@ public class DataVisitorTest {
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_UNION_OF);
     verify(visitor).createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
-    verify(visitor).createTranslations(dr.getOperands());
+    verify(visitor).createNestedTranslations(dr.getOperands());
   }
 
   @Test
@@ -179,9 +179,9 @@ public class DataVisitorTest {
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATATYPE_RESTRICTION);
     verify(visitor).createEdge(dr.getDatatype(), EdgeLabels.DATATYPE);
-    verify(visitor).createTranslation(dr.getDatatype());
+    verify(visitor).createNestedTranslation(dr.getDatatype());
     verify(visitor).createEdges(dr.getFacetRestrictions(), EdgeLabels.RESTRICTION);
-    verify(visitor).createTranslations(dr.getFacetRestrictions());
+    verify(visitor).createNestedTranslations(dr.getFacetRestrictions());
   }
 
   @Test
@@ -195,9 +195,9 @@ public class DataVisitorTest {
     verify(visitor).visit(restriction);
     verify(visitor).createNode(restriction, NodeLabels.FACET_RESTRICTION);
     verify(visitor).createEdge(restriction.getFacet().getIRI(), EdgeLabels.CONSTRAINING_FACET);
-    verify(visitor).createTranslation(restriction.getFacet().getIRI());
+    verify(visitor).createNestedTranslation(restriction.getFacet().getIRI());
     verify(visitor).createEdge(restriction.getFacetValue(), EdgeLabels.RESTRICTION_VALUE);
-    verify(visitor).createTranslation(restriction.getFacetValue());
+    verify(visitor).createNestedTranslation(restriction.getFacetValue());
   }
 
   @Test(expected = NullPointerException.class)

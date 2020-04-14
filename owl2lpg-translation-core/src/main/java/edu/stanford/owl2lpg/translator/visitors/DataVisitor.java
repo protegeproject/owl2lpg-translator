@@ -48,7 +48,7 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLLiteral lt) {
     mainNode = createLiteralNode(lt, NodeLabels.LITERAL);
     var datatypeEdge = createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
-    var datatypeTranslation = createTranslation(lt.getDatatype());
+    var datatypeTranslation = createNestedTranslation(lt.getDatatype());
     if (lt.isRDFPlainLiteral() && lt.hasLang()) {
       var languageTagNode = createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
       var languageTagEdge = createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
@@ -81,7 +81,7 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDataComplementOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_COMPLEMENT_OF);
     var dataRangeEdge = createEdge(dr.getDataRange(), EdgeLabels.DATA_RANGE);
-    var dataRangeTranslation = createTranslation(dr.getDataRange());
+    var dataRangeTranslation = createNestedTranslation(dr.getDataRange());
     return Translation.create(mainNode,
         ImmutableList.of(dataRangeEdge),
         ImmutableList.of(dataRangeTranslation));
@@ -92,7 +92,7 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDataOneOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_ONE_OF);
     var literalEdges = createEdges(dr.getValues(), EdgeLabels.LITERAL);
-    var literalTranslations = createTranslations(dr.getValues());
+    var literalTranslations = createNestedTranslations(dr.getValues());
     return Translation.create(mainNode,
         ImmutableList.copyOf(literalEdges),
         ImmutableList.copyOf(literalTranslations));
@@ -103,7 +103,7 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDataIntersectionOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_INTERSECTION_OF);
     var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
-    var dataRangeTranslations = createTranslations(dr.getOperands());
+    var dataRangeTranslations = createNestedTranslations(dr.getOperands());
     return Translation.create(mainNode,
         ImmutableList.copyOf(dataRangeEdges),
         ImmutableList.copyOf(dataRangeTranslations));
@@ -114,7 +114,7 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDataUnionOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_UNION_OF);
     var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
-    var dataRangeTranslations = createTranslations(dr.getOperands());
+    var dataRangeTranslations = createNestedTranslations(dr.getOperands());
     return Translation.create(mainNode,
         ImmutableList.copyOf(dataRangeEdges),
         ImmutableList.copyOf(dataRangeTranslations));
@@ -125,9 +125,9 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDatatypeRestriction dr) {
     mainNode = createNode(dr, NodeLabels.DATATYPE_RESTRICTION);
     var datatypeEdge = createEdge(dr.getDatatype(), EdgeLabels.DATATYPE);
-    var datatypeTranslation = createTranslation(dr.getDatatype());
+    var datatypeTranslation = createNestedTranslation(dr.getDatatype());
     var facetRestrictionEdges = createEdges(dr.getFacetRestrictions(), EdgeLabels.RESTRICTION);
-    var facetRestrictionTranslations = createTranslations(dr.getFacetRestrictions());
+    var facetRestrictionTranslations = createNestedTranslations(dr.getFacetRestrictions());
     var allEdges = Lists.newArrayList(datatypeEdge);
     allEdges.addAll(facetRestrictionEdges);
     var allTranslations = Lists.newArrayList(datatypeTranslation);
@@ -142,9 +142,9 @@ public class DataVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLFacetRestriction facet) {
     mainNode = createNode(facet, NodeLabels.FACET_RESTRICTION);
     var constrainingFacetEdge = createEdge(facet.getFacet().getIRI(), EdgeLabels.CONSTRAINING_FACET);
-    var constrainingFacetTranslation = createTranslation(facet.getFacet().getIRI());
+    var constrainingFacetTranslation = createNestedTranslation(facet.getFacet().getIRI());
     var restrictionValueEdge = createEdge(facet.getFacetValue(), EdgeLabels.RESTRICTION_VALUE);
-    var restrictionValueTranslation = createTranslation(facet.getFacetValue());
+    var restrictionValueTranslation = createNestedTranslation(facet.getFacetValue());
     return Translation.create(mainNode,
         ImmutableList.of(constrainingFacetEdge, restrictionValueEdge),
         ImmutableList.of(constrainingFacetTranslation, restrictionValueTranslation));

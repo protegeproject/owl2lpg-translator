@@ -58,7 +58,7 @@ public class PropertyExpressionVisitor extends VisitorBase
     mainNode = createNode(ope, NodeLabels.OBJECT_INVERSE_OF);
     var inverseProperty = ope.getInverseProperty();
     var objectPropertyEdge = createEdge(inverseProperty, EdgeLabels.OBJECT_PROPERTY);
-    var inversePropertyTranslation = createTranslation(inverseProperty);
+    var inversePropertyTranslation = createNestedTranslation(inverseProperty);
     return Translation.create(mainNode,
         ImmutableList.of(objectPropertyEdge),
         ImmutableList.of(inversePropertyTranslation));

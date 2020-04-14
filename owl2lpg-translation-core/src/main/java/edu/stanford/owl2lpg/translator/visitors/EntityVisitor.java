@@ -28,7 +28,7 @@ public class EntityVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLClass c) {
     mainNode = createEntityNode(c, NodeLabels.CLASS);
     var entityIriEdge = createEdge(c.getIRI(), EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createTranslation(c.getIRI());
+    var iriTranslation = createNestedTranslation(c.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -40,7 +40,7 @@ public class EntityVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDatatype dt) {
     mainNode = createEntityNode(dt, NodeLabels.DATATYPE);
     var entityIriEdge = createEdge(dt.getIRI(), EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createTranslation(dt.getIRI());
+    var iriTranslation = createNestedTranslation(dt.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -52,7 +52,7 @@ public class EntityVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLObjectProperty op) {
     mainNode = createEntityNode(op, NodeLabels.OBJECT_PROPERTY);
     var entityIriEdge = createEdge(op.getIRI(), EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createTranslation(op.getIRI());
+    var iriTranslation = createNestedTranslation(op.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -64,7 +64,7 @@ public class EntityVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLDataProperty dp) {
     mainNode = createEntityNode(dp, NodeLabels.DATA_PROPERTY);
     var entityIriEdge = createEdge(dp.getIRI(), EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createTranslation(dp.getIRI());
+    var iriTranslation = createNestedTranslation(dp.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -76,7 +76,7 @@ public class EntityVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
     mainNode = createEntityNode(ap, NodeLabels.ANNOTATION_PROPERTY);
     var entityIriEdge = createEdge(ap.getIRI(), EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createTranslation(ap.getIRI());
+    var iriTranslation = createNestedTranslation(ap.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),
@@ -88,7 +88,7 @@ public class EntityVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLNamedIndividual a) {
     mainNode = createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
     var entityIriEdge = createEdge(a.getIRI(), EdgeLabels.ENTITY_IRI);
-    var iriTranslation = createTranslation(a.getIRI());
+    var iriTranslation = createNestedTranslation(a.getIRI());
     return createEntityTranslation(
         mainNode,
         ImmutableList.of(entityIriEdge),

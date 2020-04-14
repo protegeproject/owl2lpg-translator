@@ -70,7 +70,7 @@ public class PropertyExpressionVisitorTest {
     verify(visitor).visit(ope);
     verify(visitor).createNode(ope, NodeLabels.OBJECT_INVERSE_OF);
     verify(visitor).createEdge(ope.getInverseProperty(), EdgeLabels.OBJECT_PROPERTY);
-    verify(visitor).createTranslation(ope.getInverseProperty());
+    verify(visitor).createNestedTranslation(ope.getInverseProperty());
   }
 
   @Test(expected = NullPointerException.class)

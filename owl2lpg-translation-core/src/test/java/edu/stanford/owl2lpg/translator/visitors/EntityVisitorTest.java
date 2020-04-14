@@ -26,7 +26,7 @@ public class EntityVisitorTest {
     verify(visitor).visit(cls);
     verify(visitor).createEntityNode(cls, NodeLabels.CLASS);
     verify(visitor).createEdge(cls.getIRI(), EdgeLabels.ENTITY_IRI);
-    verify(visitor).createTranslation(cls.getIRI());
+    verify(visitor).createNestedTranslation(cls.getIRI());
   }
 
   @Test
@@ -39,7 +39,7 @@ public class EntityVisitorTest {
     verify(visitor).visit(dt);
     verify(visitor).createEntityNode(dt, NodeLabels.DATATYPE);
     verify(visitor).createEdge(dt.getIRI(), EdgeLabels.ENTITY_IRI);
-    verify(visitor).createTranslation(dt.getIRI());
+    verify(visitor).createNestedTranslation(dt.getIRI());
   }
 
   @Test
@@ -52,7 +52,7 @@ public class EntityVisitorTest {
     verify(visitor).visit(op);
     verify(visitor).createEntityNode(op, NodeLabels.OBJECT_PROPERTY);
     verify(visitor).createEdge(op.getIRI(), EdgeLabels.ENTITY_IRI);
-    verify(visitor).createTranslation(op.getIRI());
+    verify(visitor).createNestedTranslation(op.getIRI());
   }
 
   @Test
@@ -65,7 +65,7 @@ public class EntityVisitorTest {
     verify(visitor).visit(dp);
     verify(visitor).createEntityNode(dp, NodeLabels.DATA_PROPERTY);
     verify(visitor).createEdge(dp.getIRI(), EdgeLabels.ENTITY_IRI);
-    verify(visitor).createTranslation(dp.getIRI());
+    verify(visitor).createNestedTranslation(dp.getIRI());
   }
 
   @Test
@@ -78,7 +78,7 @@ public class EntityVisitorTest {
     verify(visitor).visit(ap);
     verify(visitor).createEntityNode(ap, NodeLabels.ANNOTATION_PROPERTY);
     verify(visitor).createEdge(ap.getIRI(), EdgeLabels.ENTITY_IRI);
-    verify(visitor).createTranslation(ap.getIRI());
+    verify(visitor).createNestedTranslation(ap.getIRI());
   }
 
   @Test
@@ -91,7 +91,7 @@ public class EntityVisitorTest {
     verify(visitor).visit(a);
     verify(visitor).createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
     verify(visitor).createEdge(a.getIRI(), EdgeLabels.ENTITY_IRI);
-    verify(visitor).createTranslation(a.getIRI());
+    verify(visitor).createNestedTranslation(a.getIRI());
   }
 
   @Test(expected = NullPointerException.class)

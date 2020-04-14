@@ -97,16 +97,16 @@ public abstract class VisitorBase {
   }
 
   @Nonnull
-  protected Translation createTranslation(@Nonnull OWLObject anyObject) {
+  protected Translation createNestedTranslation(@Nonnull OWLObject anyObject) {
     return getTranslation(anyObject);
   }
 
   @Nonnull
-  protected Collection<Translation> createTranslations(
+  protected Collection<Translation> createNestedTranslations(
       @Nonnull Set<? extends OWLObject> anyObjects) {
     checkNotNull(anyObjects);
     return anyObjects.stream()
-        .map(o -> createTranslation(o))
+        .map(o -> createNestedTranslation(o))
         .collect(Collectors.toList());
   }
 
