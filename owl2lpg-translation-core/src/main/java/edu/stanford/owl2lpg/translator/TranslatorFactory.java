@@ -24,10 +24,8 @@ public class TranslatorFactory {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor);
-    annotationSubjectVisitor = new AnnotationSubjectVisitor(individualVisitor);
-    annotationValueVisitor = new AnnotationValueVisitor(
-        dataVisitor,
-        individualVisitor);
+    annotationSubjectVisitor = new AnnotationSubjectVisitor();
+    annotationValueVisitor = new AnnotationValueVisitor(dataVisitor);
     axiomVisitor = new AxiomVisitor(entityVisitor,
         propertyExpressionVisitor,
         individualVisitor,
