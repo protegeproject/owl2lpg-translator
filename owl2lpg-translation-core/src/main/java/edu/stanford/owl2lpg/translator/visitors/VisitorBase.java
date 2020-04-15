@@ -78,6 +78,24 @@ public abstract class VisitorBase {
   }
 
   @Nonnull
+  protected Node createCardinalityNode(@Nonnull OWLObjectCardinalityRestriction restriction,
+                                       @Nonnull ImmutableList<String> nodeLabels) {
+    return createNode(
+        restriction,
+        nodeLabels,
+        Properties(PropertyNames.CARDINALITY, restriction.getCardinality()));
+  }
+
+  @Nonnull
+  protected Node createCardinalityNode(@Nonnull OWLDataCardinalityRestriction restriction,
+                                       @Nonnull ImmutableList<String> nodeLabels) {
+    return createNode(
+        restriction,
+        nodeLabels,
+        Properties(PropertyNames.CARDINALITY, restriction.getCardinality()));
+  }
+
+  @Nonnull
   protected Edge createEdge(@Nonnull OWLObject anyObject,
                             @Nonnull String edgeLabel) {
     checkNotNull(anyObject);
