@@ -27,10 +27,10 @@ public class TranslatorFactory {
     annotationSubjectVisitor = new AnnotationSubjectVisitor();
     annotationValueVisitor = new AnnotationValueVisitor(dataVisitor);
     axiomVisitor = new AxiomVisitor(entityVisitor,
+        classExpressionVisitor,
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
-        classExpressionVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
