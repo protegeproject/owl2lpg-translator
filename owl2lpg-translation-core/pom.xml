@@ -16,6 +16,7 @@
   <description>
     Translate OWL 2 Axioms to Labelled Property Graph (LPG) in a generic graph representation.
   </description>
+  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>

@@ -16,12 +16,22 @@
   <description>
     Export the OWL2LPG translations to Neo4j in various formats (e.g., CSV, JSON, Cypher Script)
   </description>
+  <packaging>jar</packaging>
+
+  <properties>
+    <opencsv.version>5.1</opencsv.version>
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>edu.stanford.owl2lpg</groupId>
       <artifactId>owl2lpg-translation-core</artifactId>
       <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>${opencsv.version}</version>
     </dependency>
   </dependencies>
 </project>
