@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /*
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -22,8 +23,9 @@ public abstract class Properties {
 
   public abstract ImmutableMap<String, Object> getMap();
 
+  @Nullable
   public <E> E get(String key) {
     var obj = getMap().get(key);
-    return (E) obj.getClass().cast(obj);
+    return (obj != null) ? (E) obj.getClass().cast(obj) : null;
   }
 }
