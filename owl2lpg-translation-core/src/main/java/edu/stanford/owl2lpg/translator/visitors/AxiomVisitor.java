@@ -463,13 +463,13 @@ public class AxiomVisitor extends VisitorBase
     if (chain.size() == 1) {
       return createNestedTranslation(chain.get(0));
     } else {
-      var headChainNode = createNode(chain.get(0), NodeLabels.OBJECT_PROPERTY);
+      var headChainNode = createNestedTranslation(chain.get(0)).getMainNode();
       return translateChainRecursively(headChainNode, chain.subList(1, chain.size()));
     }
   }
 
   private Translation translateChainRecursively(Node headNode, List<OWLObjectPropertyExpression> chain) {
-    var nextPropertyNode = createNode(chain.get(0), NodeLabels.OBJECT_PROPERTY);
+    var nextPropertyNode = createNestedTranslation(chain.get(0)).getMainNode();
     var nextPropertyEdge = Edge.create(headNode, nextPropertyNode, EdgeLabels.NEXT, Properties.empty());
     if (chain.size() == 1) {
       var nextPropertyTranslation = createNestedTranslation(chain.get(0));
