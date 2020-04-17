@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
+import edu.stanford.owl2lpg.exporter.csv.bean.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,74 +82,51 @@ public class GraphDataElement {
     this.edgeType = edgeType;
   }
 
-  public static GraphDataElement createNode(@Nonnull String nodeId,
-                                            @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, null, null, null, null, null, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull PropertylessNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement createEntityNode(@Nonnull String nodeId,
-                                                  @Nonnull String propertyIri,
-                                                  @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(propertyIri);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, propertyIri, null, null, null, null, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull EntityNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), bean.getPropertyIri(), null, null, null, null,
+        bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement createIriNode(@Nonnull String nodeId,
-                                               @Nonnull String propertyIri,
-                                               @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(propertyIri);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, propertyIri, null, null, null, null, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull IriNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), bean.getPropertyIri(), null, null, null, null,
+        bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement createLiteralNode(@Nonnull String nodeId,
-                                                   @Nonnull String propertyLexicalForm,
-                                                   @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(propertyLexicalForm);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, null, propertyLexicalForm, null, null, null, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull LiteralNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, bean.getPropertyLexicalForm(), null, null, null
+        , bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement createLanguageTagNode(@Nonnull String nodeId,
-                                                       @Nonnull String propertyLanguageTag,
-                                                       @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(propertyLanguageTag);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, null, null, propertyLanguageTag, null, null, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull LanguageTagNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, null, bean.getPropertyLang(), null, null,
+        bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement createAnonymousIndividualNode(@Nonnull String nodeId,
-                                                               @Nonnull String propertyNodeId,
-                                                               @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(propertyNodeId);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, null, null, null, propertyNodeId, null, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull AnonymousIndividualNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, null, null, bean.getPropertyNodeId(), null,
+        bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement creatCardinalityAxiomeNode(@Nonnull String nodeId,
-                                                            @Nonnull Integer propertyCardinality,
-                                                            @Nonnull ImmutableList<String> nodeLabels) {
-    checkNotNull(nodeId);
-    checkNotNull(propertyCardinality);
-    checkNotNull(nodeLabels);
-    return new GraphDataElement(nodeId, null, null, null, null, propertyCardinality, nodeLabels, null, null, null);
+  public static GraphDataElement of(@Nonnull CardinalityAxiomNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, bean.getPropertyCardinality(),
+        bean.getNodeLabels(), null, null, null);
   }
 
-  public static GraphDataElement createEdge(@Nonnull String startNodeId,
-                                            @Nonnull String endNodeId,
-                                            @Nonnull String edgeType) {
-    checkNotNull(startNodeId);
-    checkNotNull(endNodeId);
-    checkNotNull(edgeType);
-    return new GraphDataElement(null, null, null, null, null, null, null, startNodeId, endNodeId, edgeType);
+  public static GraphDataElement of(@Nonnull PropertylessEdge bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(null, null, null, null, null, null, null, bean.getStartNodeId(), bean.getEndNodeId(),
+        bean.getEdgeType());
   }
 
   @Nullable

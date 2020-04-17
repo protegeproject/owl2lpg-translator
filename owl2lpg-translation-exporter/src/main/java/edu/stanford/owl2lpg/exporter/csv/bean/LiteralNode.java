@@ -1,12 +1,17 @@
-package edu.stanford.owl2lpg.exporter.csv;
+package edu.stanford.owl2lpg.exporter.csv.bean;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
+import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 
 import javax.annotation.Nonnull;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.exporter.csv.bean.Utils.NodeID;
 
 public class LiteralNode {
 
@@ -27,15 +32,16 @@ public class LiteralNode {
   private LiteralNode(@Nonnull String nodeId,
                       @Nonnull String propertyLexicalForm,
                       @Nonnull ImmutableList<String> nodeLabels) {
-    this.nodeId = nodeId;
-    this.propertyLexicalForm = propertyLexicalForm;
-    this.nodeLabels = nodeLabels;
+    this.nodeId = checkNotNull(nodeId);
+    this.propertyLexicalForm = checkNotNull(propertyLexicalForm);
+    this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static LiteralNode create(@Nonnull String nodeId,
-                                   @Nonnull String propertyLexicalForm,
-                                   @Nonnull ImmutableList<String> nodeLabels) {
-    return new LiteralNode(nodeId, propertyLexicalForm, nodeLabels);
+  public static LiteralNode create(@Nonnull Node node) {
+    return new LiteralNode(
+        NodeID(node.getNodeId()),
+        node.getProperties().get(PropertyNames.LEXICAL_FORM),
+        node.getLabels());
   }
 
   @Nonnull
