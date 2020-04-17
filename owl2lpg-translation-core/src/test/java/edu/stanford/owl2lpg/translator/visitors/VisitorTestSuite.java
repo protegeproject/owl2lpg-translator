@@ -12,6 +12,7 @@ import org.junit.runners.Suite;
     DataVisitorTest.class,
     AnnotationSubjectVisitorTest.class,
     AnnotationValueVisitorTest.class,
+    AnnotationObjectVisitorTest.class,
     AxiomVisitorTest.class
 })
 public class VisitorTestSuite {
