@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.bean;
+package edu.stanford.owl2lpg.exporter.csv.beans;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -11,17 +11,17 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.bean.Utils.NodeID;
+import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
-public class CardinalityAxiomNode {
+public class IriNode {
 
   @Nonnull
   @CsvBindByName(column = ":ID", required = true)
   private final String nodeId;
 
   @Nonnull
-  @CsvBindByName(column = "cardinality:int", required = true)
-  private final Integer propertyCardinality;
+  @CsvBindByName(column = "iri:string", required = true)
+  private final String propertyIri;
 
   @Nonnull
   @CsvBindAndSplitByName(column = ":LABEL",
@@ -29,18 +29,18 @@ public class CardinalityAxiomNode {
       writeDelimiter = ";", required = true)
   private final ImmutableList<String> nodeLabels;
 
-  private CardinalityAxiomNode(@Nonnull String nodeId,
-                               @Nonnull Integer propertyCardinality,
-                               @Nonnull ImmutableList<String> nodeLabels) {
+  private IriNode(@Nonnull String nodeId,
+                  @Nonnull String propertyIri,
+                  @Nonnull ImmutableList<String> nodeLabels) {
     this.nodeId = checkNotNull(nodeId);
-    this.propertyCardinality = checkNotNull(propertyCardinality);
+    this.propertyIri = checkNotNull(propertyIri);
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static CardinalityAxiomNode of(@Nonnull Node node) {
-    return new CardinalityAxiomNode(
+  public static IriNode of(@Nonnull Node node) {
+    return new IriNode(
         NodeID(node.getNodeId()),
-        node.getProperties().get(PropertyNames.CARDINALITY),
+        node.getProperties().get(PropertyNames.IRI),
         node.getLabels());
   }
 
@@ -50,8 +50,8 @@ public class CardinalityAxiomNode {
   }
 
   @Nonnull
-  public Integer getPropertyCardinality() {
-    return propertyCardinality;
+  public String getPropertyIri() {
+    return propertyIri;
   }
 
   @Nonnull
@@ -67,22 +67,22 @@ public class CardinalityAxiomNode {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CardinalityAxiomNode that = (CardinalityAxiomNode) o;
+    IriNode that = (IriNode) o;
     return Objects.equal(nodeId, that.nodeId) &&
-        Objects.equal(propertyCardinality, that.propertyCardinality) &&
+        Objects.equal(propertyIri, that.propertyIri) &&
         Objects.equal(nodeLabels, that.nodeLabels);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(nodeId, propertyCardinality, nodeLabels);
+    return Objects.hashCode(nodeId, propertyIri, nodeLabels);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("nodeId", nodeId)
-        .add("propertyCardinality", propertyCardinality)
+        .add("propertyIri", propertyIri)
         .add("nodeLabels", nodeLabels)
         .toString();
   }

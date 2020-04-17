@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.bean;
+package edu.stanford.owl2lpg.exporter.csv.beans;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -11,17 +11,17 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.bean.Utils.NodeID;
+import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
-public class AnonymousIndividualNode {
+public class CardinalityAxiomNode {
 
   @Nonnull
   @CsvBindByName(column = ":ID", required = true)
   private final String nodeId;
 
   @Nonnull
-  @CsvBindByName(column = "nodeID:string", required = true)
-  private final String propertyNodeId;
+  @CsvBindByName(column = "cardinality:int", required = true)
+  private final Integer propertyCardinality;
 
   @Nonnull
   @CsvBindAndSplitByName(column = ":LABEL",
@@ -29,18 +29,18 @@ public class AnonymousIndividualNode {
       writeDelimiter = ";", required = true)
   private final ImmutableList<String> nodeLabels;
 
-  private AnonymousIndividualNode(@Nonnull String nodeId,
-                                  @Nonnull String propertyNodeId,
-                                  @Nonnull ImmutableList<String> nodeLabels) {
+  private CardinalityAxiomNode(@Nonnull String nodeId,
+                               @Nonnull Integer propertyCardinality,
+                               @Nonnull ImmutableList<String> nodeLabels) {
     this.nodeId = checkNotNull(nodeId);
-    this.propertyNodeId = checkNotNull(propertyNodeId);
+    this.propertyCardinality = checkNotNull(propertyCardinality);
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static AnonymousIndividualNode of(@Nonnull Node node) {
-    return new AnonymousIndividualNode(
+  public static CardinalityAxiomNode of(@Nonnull Node node) {
+    return new CardinalityAxiomNode(
         NodeID(node.getNodeId()),
-        node.getProperties().get(PropertyNames.NODE_ID),
+        node.getProperties().get(PropertyNames.CARDINALITY),
         node.getLabels());
   }
 
@@ -50,8 +50,8 @@ public class AnonymousIndividualNode {
   }
 
   @Nonnull
-  public String getPropertyNodeId() {
-    return propertyNodeId;
+  public Integer getPropertyCardinality() {
+    return propertyCardinality;
   }
 
   @Nonnull
@@ -67,22 +67,22 @@ public class AnonymousIndividualNode {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AnonymousIndividualNode that = (AnonymousIndividualNode) o;
+    CardinalityAxiomNode that = (CardinalityAxiomNode) o;
     return Objects.equal(nodeId, that.nodeId) &&
-        Objects.equal(propertyNodeId, that.propertyNodeId) &&
+        Objects.equal(propertyCardinality, that.propertyCardinality) &&
         Objects.equal(nodeLabels, that.nodeLabels);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(nodeId, propertyNodeId, nodeLabels);
+    return Objects.hashCode(nodeId, propertyCardinality, nodeLabels);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("nodeId", nodeId)
-        .add("propertyNodeId", propertyNodeId)
+        .add("propertyCardinality", propertyCardinality)
         .add("nodeLabels", nodeLabels)
         .toString();
   }

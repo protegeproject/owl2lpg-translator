@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
-import edu.stanford.owl2lpg.exporter.csv.bean.*;
+import edu.stanford.owl2lpg.exporter.csv.beans.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

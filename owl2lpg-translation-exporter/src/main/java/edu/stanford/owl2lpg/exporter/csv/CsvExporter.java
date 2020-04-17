@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.opencsv.bean.*;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import edu.stanford.owl2lpg.exporter.csv.bean.*;
+import edu.stanford.owl2lpg.exporter.csv.beans.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;

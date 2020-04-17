@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.bean;
+package edu.stanford.owl2lpg.exporter.csv.beans;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -11,17 +11,17 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.bean.Utils.NodeID;
+import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
-public class EntityNode {
+public class LiteralNode {
 
   @Nonnull
   @CsvBindByName(column = ":ID", required = true)
   private final String nodeId;
 
   @Nonnull
-  @CsvBindByName(column = "iri:string", required = true)
-  private final String propertyIri;
+  @CsvBindByName(column = "lexicalForm:string", required = true)
+  private final String propertyLexicalForm;
 
   @Nonnull
   @CsvBindAndSplitByName(column = ":LABEL",
@@ -29,18 +29,18 @@ public class EntityNode {
       writeDelimiter = ";", required = true)
   private final ImmutableList<String> nodeLabels;
 
-  private EntityNode(@Nonnull String nodeId,
-                     @Nonnull String propertyIri,
-                     @Nonnull ImmutableList<String> nodeLabels) {
+  private LiteralNode(@Nonnull String nodeId,
+                      @Nonnull String propertyLexicalForm,
+                      @Nonnull ImmutableList<String> nodeLabels) {
     this.nodeId = checkNotNull(nodeId);
-    this.propertyIri = checkNotNull(propertyIri);
+    this.propertyLexicalForm = checkNotNull(propertyLexicalForm);
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static EntityNode of(@Nonnull Node node) {
-    return new EntityNode(
+  public static LiteralNode create(@Nonnull Node node) {
+    return new LiteralNode(
         NodeID(node.getNodeId()),
-        node.getProperties().get(PropertyNames.IRI),
+        node.getProperties().get(PropertyNames.LEXICAL_FORM),
         node.getLabels());
   }
 
@@ -50,8 +50,8 @@ public class EntityNode {
   }
 
   @Nonnull
-  public String getPropertyIri() {
-    return propertyIri;
+  public String getPropertyLexicalForm() {
+    return propertyLexicalForm;
   }
 
   @Nonnull
@@ -67,22 +67,22 @@ public class EntityNode {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    EntityNode that = (EntityNode) o;
+    LiteralNode that = (LiteralNode) o;
     return Objects.equal(nodeId, that.nodeId) &&
-        Objects.equal(propertyIri, that.propertyIri) &&
+        Objects.equal(propertyLexicalForm, that.propertyLexicalForm) &&
         Objects.equal(nodeLabels, that.nodeLabels);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(nodeId, propertyIri, nodeLabels);
+    return Objects.hashCode(nodeId, propertyLexicalForm, nodeLabels);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("nodeId", nodeId)
-        .add("propertyIri", propertyIri)
+        .add("propertyLexicalForm", propertyLexicalForm)
         .add("nodeLabels", nodeLabels)
         .toString();
   }

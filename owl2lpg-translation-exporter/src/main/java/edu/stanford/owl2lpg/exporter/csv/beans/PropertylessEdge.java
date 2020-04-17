@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.bean;
+package edu.stanford.owl2lpg.exporter.csv.beans;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -8,7 +8,7 @@ import edu.stanford.owl2lpg.model.Edge;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.bean.Utils.NodeID;
+import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
 public class PropertylessEdge {
 
