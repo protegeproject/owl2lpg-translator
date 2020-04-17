@@ -89,5 +89,6 @@ public class NodeLabels {
   public static final ImmutableList<String> SUB_ANNOTATION_PROPERTY_OF = ImmutableList.of("SubAnnotationPropertyOf", "AnnotationAxiom", "Axiom");
   public static final ImmutableList<String> ANNOTATION_PROPERTY_DOMAIN = ImmutableList.of("AnnotationPropertyDomain", "AnnotationAxiom", "Axiom");
   public static final ImmutableList<String> ANNOTATION_PROPERTY_RANGE = ImmutableList.of("AnnotationPropertyRange", "AnnotationAxiom", "Axiom");
+  public static final ImmutableList<String> ANNOTATION = ImmutableList.of("Annotation");
   // @formatter:on
 }
