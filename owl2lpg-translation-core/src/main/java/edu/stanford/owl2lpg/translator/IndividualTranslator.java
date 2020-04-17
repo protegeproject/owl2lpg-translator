@@ -26,6 +26,7 @@ public class IndividualTranslator {
 
   @Nonnull
   public Translation translate(OWLIndividual a) {
+    checkNotNull(a);
     return a.accept(visitor);
   }
 

@@ -26,6 +26,7 @@ public class AxiomTranslator {
 
   @Nonnull
   public Translation translate(OWLAxiom ax) {
+    checkNotNull(ax);
     return ax.accept(visitor);
   }
 }

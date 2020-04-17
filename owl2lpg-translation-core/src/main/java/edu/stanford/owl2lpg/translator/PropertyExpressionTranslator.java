@@ -17,15 +17,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PropertyExpressionTranslator {
 
   @Nonnull
-  private final OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor;
+  private final OWLPropertyExpressionVisitorEx<Translation> visitor;
 
   @Inject
-  public PropertyExpressionTranslator(@Nonnull OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor) {
-    this.propertyExpressionVisitor = checkNotNull(propertyExpressionVisitor);
+  public PropertyExpressionTranslator(@Nonnull OWLPropertyExpressionVisitorEx<Translation> visitor) {
+    this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation translate(OWLPropertyExpression ope) {
-    return ope.accept(propertyExpressionVisitor);
+    checkNotNull(ope);
+    return ope.accept(visitor);
   }
 }

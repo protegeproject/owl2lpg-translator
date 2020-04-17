@@ -26,6 +26,7 @@ public class EntityTranslator {
 
   @Nonnull
   public Translation translate(OWLEntity entity) {
+    checkNotNull(entity);
     return entity.accept(visitor);
   }
 }

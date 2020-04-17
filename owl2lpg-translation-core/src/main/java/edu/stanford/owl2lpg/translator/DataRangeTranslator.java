@@ -6,6 +6,8 @@ import org.semanticweb.owlapi.model.OWLDataVisitorEx;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A translator to translate the OWL 2 data range expressions.
  *
@@ -19,11 +21,12 @@ public class DataRangeTranslator {
 
   @Inject
   public DataRangeTranslator(OWLDataVisitorEx<Translation> visitor) {
-    this.visitor = visitor;
+    this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation visit(OWLDataRange dr) {
+    checkNotNull(dr);
     return dr.accept(visitor);
   }
 }

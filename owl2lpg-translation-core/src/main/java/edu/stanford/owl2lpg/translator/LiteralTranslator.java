@@ -26,6 +26,7 @@ public class LiteralTranslator {
 
   @Nonnull
   public Translation translate(@Nonnull OWLLiteral lt) {
+    checkNotNull(lt);
     return lt.accept(visitor);
   }
 }

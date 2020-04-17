@@ -6,6 +6,8 @@ import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A translator to translate the OWL 2 class expressions.
  *
@@ -19,11 +21,12 @@ public class ClassExpressionTranslator {
 
   @Inject
   public ClassExpressionTranslator(OWLClassExpressionVisitorEx<Translation> visitor) {
-    this.visitor = visitor;
+    this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation visit(OWLClassExpression ce) {
+    checkNotNull(ce);
     return ce.accept(visitor);
   }
 }
