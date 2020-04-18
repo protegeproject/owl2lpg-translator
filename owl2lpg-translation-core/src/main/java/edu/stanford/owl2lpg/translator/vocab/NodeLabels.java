@@ -12,6 +12,9 @@ import com.google.common.collect.ImmutableList;
 public class NodeLabels {
 
   // @formatter:off
+  public static final ImmutableList<String> ONTOLOGY_DOCUMENT = ImmutableList.of("OntologyDocument");
+  public static final ImmutableList<String> ONTOLOGY_ID = ImmutableList.of("OntologyID");
+
   public static final ImmutableList<String> IRI = ImmutableList.of("IRI");
   public static final ImmutableList<String> CLASS = ImmutableList.of("Class", "ClassExpression", "Entity");
   public static final ImmutableList<String> DATATYPE = ImmutableList.of("Datatype", "Entity");

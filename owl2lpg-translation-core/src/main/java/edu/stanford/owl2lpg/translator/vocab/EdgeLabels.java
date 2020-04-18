@@ -9,6 +9,10 @@ package edu.stanford.owl2lpg.translator.vocab;
  */
 public class EdgeLabels {
 
+  public static final String ONTOLOGY_ID = "ontologyID";
+  public static final String DIRECTLY_IMPORTS_DOCUMENT = "directlyImportsDocument";
+  public static final String ONTOLOGY_ANNOTATION = "ontologyAnnotation";
+  public static final String AXIOM = "axiom";
   public static final String ENTITY = "entity";
   public static final String ENTITY_IRI = "entityIri";
   public static final String OBJECT_PROPERTY = "objectProperty";
