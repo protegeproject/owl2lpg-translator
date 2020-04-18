@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
     AnnotationSubjectVisitorTest.class,
     AnnotationValueVisitorTest.class,
     AnnotationObjectVisitorTest.class,
-    AxiomVisitorTest.class
+    AxiomVisitorTest.class,
+    OntologyVisitorTest.class
 })
 public class VisitorTestSuite {
   // NO-OP
