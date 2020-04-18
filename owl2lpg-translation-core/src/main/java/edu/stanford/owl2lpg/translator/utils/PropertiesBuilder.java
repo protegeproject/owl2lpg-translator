@@ -36,7 +36,9 @@ public class PropertiesBuilder {
   }
 
   public PropertiesBuilder set(String key, Object value) {
-    map.put(key, value);
+    if (value != null) {
+      map.put(key, value);
+    }
     return this;
   }
 
