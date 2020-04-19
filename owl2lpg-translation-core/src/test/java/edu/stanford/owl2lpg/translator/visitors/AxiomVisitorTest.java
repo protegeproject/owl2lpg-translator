@@ -27,10 +27,10 @@ public class AxiomVisitorTest {
   @Mock private PropertyExpressionVisitor propertyExpressionVisitor;
   @Mock private IndividualVisitor individualVisitor;
   @Mock private DataVisitor dataVisitor;
+  @Mock private AnnotationObjectVisitor annotationVisitor;
   @Mock private AnnotationSubjectVisitor annotationSubjectVisitor;
   @Mock private AnnotationValueVisitor annotationValueVisitor;
 
-  @Mock private OWLAxiom anyAxiom;
   @Mock private OWLClass anyClass;
   @Mock private OWLEntity anyEntity;
 
@@ -58,9 +58,9 @@ public class AxiomVisitorTest {
   @Mock private OWLDataRange anyDataRange;
   @Mock private OWLLiteral anyLiteral;
   @Mock private IRI anyIri;
+  @Mock private Set<OWLAnnotation> annotations;
   @Mock private OWLAnnotationSubject anyAnnotationSubject;
   @Mock private OWLAnnotationValue anyAnnotationValue;
-
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
@@ -72,6 +72,7 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor));
     when(anyClass.accept(entityVisitor)).thenReturn(nestedTranslation);
@@ -104,12 +105,15 @@ public class AxiomVisitorTest {
   public void shouldVisitDeclarationAxiom() {
     var axiom = mock(OWLDeclarationAxiom.class);
     when(axiom.getEntity()).thenReturn(anyEntity);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DECLARATION);
     verify(visitor).createEdge(axiom.getEntity(), EdgeLabels.ENTITY);
     verify(visitor).createNestedTranslation(axiom.getEntity());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -117,6 +121,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDatatypeDefinitionAxiom.class);
     when(axiom.getDatatype()).thenReturn(anyDatatype);
     when(axiom.getDataRange()).thenReturn(anyDataRange);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -125,6 +130,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getDatatype());
     verify(visitor).createEdge(axiom.getDataRange(), EdgeLabels.DATA_RANGE);
     verify(visitor).createNestedTranslation(axiom.getDataRange());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -132,6 +139,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLSubClassOfAxiom.class);
     when(axiom.getSubClass()).thenReturn(anySubClassExpression);
     when(axiom.getSuperClass()).thenReturn(anySuperClassExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -140,6 +148,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getSubClass());
     verify(visitor).createEdge(axiom.getSuperClass(), EdgeLabels.SUPER_CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSuperClass());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -147,6 +157,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLSubObjectPropertyOfAxiom.class);
     when(axiom.getSubProperty()).thenReturn(anySubObjectPropertyExpression);
     when(axiom.getSuperProperty()).thenReturn(anySuperObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -155,6 +166,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getSubProperty());
     verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSuperProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -162,6 +175,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLSubDataPropertyOfAxiom.class);
     when(axiom.getSubProperty()).thenReturn(anySubDataPropertyExpression);
     when(axiom.getSuperProperty()).thenReturn(anySuperDataPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -170,6 +184,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getSubProperty());
     verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSuperProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -179,6 +195,7 @@ public class AxiomVisitorTest {
     when(axiom.getPropertyChain().get(0)).thenReturn(anyObjectPropertyExpression);
     when(axiom.getPropertyChain().size()).thenReturn(1);
     when(axiom.getSuperProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -187,6 +204,8 @@ public class AxiomVisitorTest {
     verify(visitor).createChainTranslation(axiom.getPropertyChain());
     verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
     verify(visitor, times(2)).createNestedTranslation(axiom.getSuperProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -194,6 +213,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLSubAnnotationPropertyOfAxiom.class);
     when(axiom.getSubProperty()).thenReturn(anySubAnnotationProperty);
     when(axiom.getSuperProperty()).thenReturn(anySuperAnnotationProperty);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -202,6 +222,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getSubProperty());
     verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(axiom.getSuperProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -209,6 +231,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLObjectPropertyDomainAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getDomain()).thenReturn(anyClassExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -217,6 +240,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
     verify(visitor).createNestedTranslation(axiom.getDomain());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -224,6 +249,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLObjectPropertyRangeAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getRange()).thenReturn(anyClassExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -232,6 +258,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getRange(), EdgeLabels.RANGE);
     verify(visitor).createNestedTranslation(axiom.getRange());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -239,6 +267,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDataPropertyDomainAxiom.class);
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getDomain()).thenReturn(anyClassExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -247,6 +276,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
     verify(visitor).createNestedTranslation(axiom.getDomain());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -254,6 +285,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDataPropertyRangeAxiom.class);
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getRange()).thenReturn(anyDataRange);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -262,6 +294,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getRange(), EdgeLabels.RANGE);
     verify(visitor).createNestedTranslation(axiom.getRange());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -269,6 +303,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLAnnotationPropertyDomainAxiom.class);
     when(axiom.getProperty()).thenReturn(anyAnnotationProperty);
     when(axiom.getDomain()).thenReturn(anyIri);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -277,6 +312,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
     verify(visitor).createNestedTranslation(axiom.getDomain());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -284,6 +321,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLAnnotationPropertyRangeAxiom.class);
     when(axiom.getProperty()).thenReturn(anyAnnotationProperty);
     when(axiom.getRange()).thenReturn(anyIri);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -292,54 +330,68 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getRange(), EdgeLabels.RANGE);
     verify(visitor).createNestedTranslation(axiom.getRange());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitEquivalentClassesAxiom() {
     var axiom = mock(OWLEquivalentClassesAxiom.class);
     when(axiom.getClassExpressions()).thenReturn(classExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.EQUIVALENT_CLASSES);
     verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabels.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getClassExpressions());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitEquivalentObjectPropertiesAxiom() {
     var axiom = mock(OWLEquivalentObjectPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(objectPropertyExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.EQUIVALENT_OBJECT_PROPERTIES);
     verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitEquivalentDataPropertiesAxiom() {
     var axiom = mock(OWLEquivalentDataPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(dataPropertyExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.EQUIVALENT_DATA_PROPERTIES);
     verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitDisjointClassesAxiom() {
     var axiom = mock(OWLDisjointClassesAxiom.class);
     when(axiom.getClassExpressions()).thenReturn(classExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_CLASSES);
     verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabels.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getClassExpressions());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -347,6 +399,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDisjointUnionAxiom.class);
     when(axiom.getOWLClass()).thenReturn(anyClass);
     when(axiom.getClassExpressions()).thenReturn(classExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -355,54 +408,68 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getOWLClass());
     verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabels.DISJOINT_CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getClassExpressions());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitDisjointObjectPropertiesAxiom() {
     var axiom = mock(OWLDisjointObjectPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(objectPropertyExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_OBJECT_PROPERTIES);
     verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitDisjointDataPropertiesAxiom() {
     var axiom = mock(OWLDisjointDataPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(dataPropertyExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_DATA_PROPERTIES);
     verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitSameIndividualAxiom() {
     var axiom = mock(OWLSameIndividualAxiom.class);
     when(axiom.getIndividuals()).thenReturn(individuals);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SAME_INDIVIDUAL);
     verify(visitor).createEdges(axiom.getIndividuals(), EdgeLabels.INDIVIDUAL);
     verify(visitor).createNestedTranslations(axiom.getIndividuals());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitDifferentIndividualsAxiom() {
     var axiom = mock(OWLDifferentIndividualsAxiom.class);
     when(axiom.getIndividuals()).thenReturn(individuals);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DIFFERENT_INDIVIDUALS);
     verify(visitor).createEdges(axiom.getIndividuals(), EdgeLabels.INDIVIDUAL);
     verify(visitor).createNestedTranslations(axiom.getIndividuals());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -410,6 +477,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLInverseObjectPropertiesAxiom.class);
     when(axiom.getFirstProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getSecondProperty()).thenReturn(anySuperObjectPropertyExpression); // any ope
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -418,6 +486,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getFirstProperty());
     verify(visitor).createEdge(axiom.getSecondProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSecondProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -426,6 +496,7 @@ public class AxiomVisitorTest {
     when(axiom.getClassExpression()).thenReturn(anyClassExpression);
     when(axiom.getObjectPropertyExpressions()).thenReturn(objectPropertyExpressions);
     when(axiom.getDataPropertyExpressions()).thenReturn(dataPropertyExpressions);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -436,6 +507,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslations(axiom.getObjectPropertyExpressions());
     verify(visitor).createEdges(axiom.getDataPropertyExpressions(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getDataPropertyExpressions());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -443,6 +516,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLClassAssertionAxiom.class);
     when(axiom.getClassExpression()).thenReturn(anyClassExpression);
     when(axiom.getIndividual()).thenReturn(anyIndividual);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -451,6 +525,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getClassExpression());
     verify(visitor).createEdge(axiom.getIndividual(), EdgeLabels.INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getIndividual());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -459,6 +535,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubject()).thenReturn(anySourceIndividual);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getObject()).thenReturn(anyTargetIndividual);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -469,6 +546,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getObject());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -477,6 +556,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubject()).thenReturn(anyIndividual);
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getObject()).thenReturn(anyLiteral);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -487,6 +567,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_VALUE);
     verify(visitor).createNestedTranslation(axiom.getObject());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -495,6 +577,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubject()).thenReturn(anyAnnotationSubject);
     when(axiom.getProperty()).thenReturn(anyAnnotationProperty);
     when(axiom.getValue()).thenReturn(anyAnnotationValue);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -505,6 +588,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getValue(), EdgeLabels.ANNOTATION_VALUE);
     verify(visitor).createNestedTranslation(axiom.getValue());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -513,6 +598,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubject()).thenReturn(anySourceIndividual);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getObject()).thenReturn(anyTargetIndividual);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -523,6 +609,8 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getObject());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
@@ -531,6 +619,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubject()).thenReturn(anyIndividual);
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getObject()).thenReturn(anyLiteral);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -541,102 +630,128 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getProperty());
     verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_VALUE);
     verify(visitor).createNestedTranslation(axiom.getObject());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitFunctionalObjectPropertyAxiom() {
     var axiom = mock(OWLFunctionalObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.FUNCTIONAL_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitInverseFunctionalObjectPropertyAxiom() {
     var axiom = mock(OWLInverseFunctionalObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitSynmetricObjectPropertyAxiom() {
     var axiom = mock(OWLSymmetricObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SYMMETRIC_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitAsymmetricObjectPropertyAxiom() {
     var axiom = mock(OWLAsymmetricObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitReflexiveObjectPropertyAxiom() {
     var axiom = mock(OWLReflexiveObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.REFLEXIVE_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitIrreflexiveObjectPropertyAxiom() {
     var axiom = mock(OWLIrreflexiveObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitTransitiveObjectPropertyAxiom() {
     var axiom = mock(OWLTransitiveObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.TRANSITIVE_OBJECT_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test
   public void shouldVisitFunctionalDataPropertyAxiom() {
     var axiom = mock(OWLFunctionalDataPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
+    when(axiom.getAnnotations()).thenReturn(annotations);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.FUNCTIONAL_DATA_PROPERTY);
     verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
   @Test(expected = NullPointerException.class)
@@ -647,6 +762,7 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
@@ -659,6 +775,7 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
@@ -671,6 +788,7 @@ public class AxiomVisitorTest {
         nullPropertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
@@ -683,6 +801,7 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         nullIndividualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
@@ -695,6 +814,20 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         individualVisitor,
         nullDataVisitor,
+        annotationVisitor,
+        annotationSubjectVisitor,
+        annotationValueVisitor);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenAnnotationVisitorNull() {
+    AnnotationObjectVisitor nullAnnotationVisitor = null;
+    new AxiomVisitor(entityVisitor,
+        classExpressionVisitor,
+        propertyExpressionVisitor,
+        individualVisitor,
+        dataVisitor,
+        nullAnnotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
@@ -707,6 +840,7 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         nullAnnotationSubjectVisitor,
         annotationValueVisitor);
   }
@@ -719,6 +853,7 @@ public class AxiomVisitorTest {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         nullAnnotationValueVisitor);
   }

@@ -12,7 +12,10 @@ import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,6 +44,9 @@ public class AxiomVisitor extends VisitorBase
   private final OWLClassExpressionVisitorEx<Translation> classExpressionVisitor;
 
   @Nonnull
+  private final OWLAnnotationObjectVisitorEx<Translation> annotationVisitor;
+
+  @Nonnull
   private final OWLAnnotationSubjectVisitorEx<Translation> annotationSubjectVisitor;
 
   @Nonnull
@@ -54,6 +60,7 @@ public class AxiomVisitor extends VisitorBase
                       @Nonnull OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor,
                       @Nonnull OWLIndividualVisitorEx<Translation> individualVisitor,
                       @Nonnull OWLDataVisitorEx<Translation> dataVisitor,
+                      @Nonnull OWLAnnotationObjectVisitorEx<Translation> annotationVisitor,
                       @Nonnull OWLAnnotationSubjectVisitorEx<Translation> annotationSubjectVisitor,
                       @Nonnull OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor) {
     this.entityVisitor = checkNotNull(entityVisitor);
@@ -61,6 +68,7 @@ public class AxiomVisitor extends VisitorBase
     this.individualVisitor = checkNotNull(individualVisitor);
     this.dataVisitor = checkNotNull(dataVisitor);
     this.classExpressionVisitor = checkNotNull(classExpressionVisitor);
+    this.annotationVisitor = checkNotNull(annotationVisitor);
     this.annotationSubjectVisitor = checkNotNull(annotationSubjectVisitor);
     this.annotationValueVisitor = checkNotNull(annotationValueVisitor);
   }
@@ -71,9 +79,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.DECLARATION);
     var entityEdge = createEdge(axiom.getEntity(), EdgeLabels.ENTITY);
     var entityTranslation = createNestedTranslation(axiom.getEntity());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(entityEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(entityTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(entityEdge),
-        ImmutableList.of(entityTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -84,9 +96,14 @@ public class AxiomVisitor extends VisitorBase
     var datatypeTranslation = createNestedTranslation(axiom.getDatatype());
     var dataRangeEdge = createEdge(axiom.getDataRange(), EdgeLabels.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(axiom.getDataRange());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(datatypeEdge, dataRangeEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(datatypeTranslation, dataRangeTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(datatypeEdge, dataRangeEdge),
-        ImmutableList.of(datatypeTranslation, dataRangeTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -97,9 +114,14 @@ public class AxiomVisitor extends VisitorBase
     var subClassTranslation = createNestedTranslation(axiom.getSubClass());
     var superClassEdge = createEdge(axiom.getSuperClass(), EdgeLabels.SUPER_CLASS_EXPRESSION);
     var superClassTranslation = createNestedTranslation(axiom.getSuperClass());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(subClassEdge, superClassEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(subClassTranslation, superClassTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(subClassEdge, superClassEdge),
-        ImmutableList.of(subClassTranslation, superClassTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -112,9 +134,17 @@ public class AxiomVisitor extends VisitorBase
     var sourceIndividualTranslation = createNestedTranslation(axiom.getSubject());
     var targetIndividualEdge = createEdge(axiom.getObject(), EdgeLabels.TARGET_INDIVIDUAL);
     var targetIndividualTranslation = createNestedTranslation(axiom.getObject());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(
+        concatEdges(propertyExprEdge, sourceIndividualEdge, targetIndividualEdge),
+        annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, sourceIndividualTranslation, targetIndividualTranslation),
+        annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, sourceIndividualEdge, targetIndividualEdge),
-        ImmutableList.of(propertyExprTranslation, sourceIndividualTranslation, targetIndividualTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -123,9 +153,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -134,9 +168,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.REFLEXIVE_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -145,9 +183,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.DISJOINT_CLASSES);
     var classExprEdges = createEdges(axiom.getClassExpressions(), EdgeLabels.CLASS_EXPRESSION);
     var classExprTranslations = createNestedTranslations(axiom.getClassExpressions());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(classExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(classExprTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(classExprEdges),
-        ImmutableList.copyOf(classExprTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -158,9 +200,14 @@ public class AxiomVisitor extends VisitorBase
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
     var domainEdge = createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
     var domainTranslation = createNestedTranslation(axiom.getDomain());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(propertyExprEdge, domainEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, domainTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, domainEdge),
-        ImmutableList.of(propertyExprTranslation, domainTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -171,9 +218,14 @@ public class AxiomVisitor extends VisitorBase
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
     var domainEdge = createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
     var domainTranslation = createNestedTranslation(axiom.getDomain());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(propertyExprEdge, domainEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, domainTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, domainEdge),
-        ImmutableList.of(propertyExprTranslation, domainTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -182,9 +234,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.EQUIVALENT_OBJECT_PROPERTIES);
     var propertyExprEdges = createEdges(axiom.getProperties(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslations = createNestedTranslations(axiom.getProperties());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(propertyExprEdges),
-        ImmutableList.copyOf(propertyExprTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -197,9 +253,17 @@ public class AxiomVisitor extends VisitorBase
     var sourceIndividualTranslation = createNestedTranslation(axiom.getSubject());
     var targetValueEdge = createEdge(axiom.getObject(), EdgeLabels.TARGET_VALUE);
     var targetValueTranslation = createNestedTranslation(axiom.getObject());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(
+        concatEdges(propertyExprEdge, sourceIndividualEdge, targetValueEdge),
+        annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, sourceIndividualTranslation, targetValueTranslation),
+        annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, sourceIndividualEdge, targetValueEdge),
-        ImmutableList.of(propertyExprTranslation, sourceIndividualTranslation, targetValueTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -208,9 +272,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.DIFFERENT_INDIVIDUALS);
     var individualEdges = createEdges(axiom.getIndividuals(), EdgeLabels.INDIVIDUAL);
     var individualTranslations = createNestedTranslations(axiom.getIndividuals());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(individualEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(individualTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(individualEdges),
-        ImmutableList.copyOf(individualTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -219,9 +287,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.DISJOINT_DATA_PROPERTIES);
     var propertyExprEdges = createEdges(axiom.getProperties(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslations = createNestedTranslations(axiom.getProperties());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(propertyExprEdges),
-        ImmutableList.copyOf(propertyExprTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -230,9 +302,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.DISJOINT_OBJECT_PROPERTIES);
     var propertyExprEdges = createEdges(axiom.getProperties(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslations = createNestedTranslations(axiom.getProperties());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(propertyExprEdges),
-        ImmutableList.copyOf(propertyExprTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -243,9 +319,14 @@ public class AxiomVisitor extends VisitorBase
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
     var rangeEdge = createEdge(axiom.getRange(), EdgeLabels.RANGE);
     var rangeTranslation = createNestedTranslation(axiom.getRange());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(propertyExprEdge, rangeEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, rangeTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, rangeEdge),
-        ImmutableList.of(propertyExprTranslation, rangeTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -258,9 +339,17 @@ public class AxiomVisitor extends VisitorBase
     var sourceIndividualTranslation = createNestedTranslation(axiom.getSubject());
     var targetIndividualEdge = createEdge(axiom.getObject(), EdgeLabels.TARGET_INDIVIDUAL);
     var targetIndividualTranslation = createNestedTranslation(axiom.getObject());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(
+        concatEdges(propertyExprEdge, sourceIndividualEdge, targetIndividualEdge),
+        annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, sourceIndividualTranslation, targetIndividualTranslation),
+        annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, sourceIndividualEdge, targetIndividualEdge),
-        ImmutableList.of(propertyExprTranslation, sourceIndividualTranslation, targetIndividualTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -269,9 +358,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.FUNCTIONAL_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -282,9 +375,14 @@ public class AxiomVisitor extends VisitorBase
     var subPropertyTranslation = createNestedTranslation(axiom.getSubProperty());
     var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
     var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(subPropertyEdge, superPropertyEdge),
-        ImmutableList.of(subPropertyTranslation, superPropertyTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -295,13 +393,15 @@ public class AxiomVisitor extends VisitorBase
     var classTranslation = createNestedTranslation(axiom.getOWLClass());
     var disjointClassExprEdges = createEdges(axiom.getClassExpressions(), EdgeLabels.DISJOINT_CLASS_EXPRESSION);
     var disjointClassExprTranslations = createNestedTranslations(axiom.getClassExpressions());
-    var allEdges = Lists.newArrayList(classEdge);
-    allEdges.addAll(disjointClassExprEdges);
-    var allTranslations = Lists.newArrayList(classTranslation);
-    allTranslations.addAll(disjointClassExprTranslations);
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(classEdge), concatEdges(disjointClassExprEdges, annotationEdges));
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(classTranslation,
+            concatTranslations(disjointClassExprTranslations, annotationTranslations)));
     return Translation.create(mainNode,
         ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allTranslations));
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -310,9 +410,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.SYMMETRIC_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -323,9 +427,14 @@ public class AxiomVisitor extends VisitorBase
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
     var rangeEdge = createEdge(axiom.getRange(), EdgeLabels.RANGE);
     var rangeTranslation = createNestedTranslation(axiom.getRange());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(propertyExprEdge, rangeEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, rangeTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, rangeEdge),
-        ImmutableList.of(propertyExprTranslation, rangeTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -334,9 +443,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.FUNCTIONAL_DATA_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -345,9 +458,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.EQUIVALENT_DATA_PROPERTIES);
     var propertyExprEdges = createEdges(axiom.getProperties(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslations = createNestedTranslations(axiom.getProperties());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(propertyExprEdges),
-        ImmutableList.copyOf(propertyExprTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -358,9 +475,14 @@ public class AxiomVisitor extends VisitorBase
     var classExprTranslation = createNestedTranslation(axiom.getClassExpression());
     var individualEdge = createEdge(axiom.getIndividual(), EdgeLabels.INDIVIDUAL);
     var individualTranslation = createNestedTranslation(axiom.getIndividual());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(classExprEdge, individualEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(classExprTranslation, individualTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(classExprEdge, individualEdge),
-        ImmutableList.of(classExprTranslation, individualTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -369,9 +491,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.EQUIVALENT_CLASSES);
     var classExprEdges = createEdges(axiom.getClassExpressions(), EdgeLabels.CLASS_EXPRESSION);
     var classExprTranslations = createNestedTranslations(axiom.getClassExpressions());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(classExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(classExprTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(classExprEdges),
-        ImmutableList.copyOf(classExprTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -384,9 +510,17 @@ public class AxiomVisitor extends VisitorBase
     var sourceIndividualTranslation = createNestedTranslation(axiom.getSubject());
     var targetValueEdge = createEdge(axiom.getObject(), EdgeLabels.TARGET_VALUE);
     var targetValueTranslation = createNestedTranslation(axiom.getObject());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(
+        concatEdges(propertyExprEdge, sourceIndividualEdge, targetValueEdge),
+        annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(propertyExprTranslation, sourceIndividualTranslation, targetValueTranslation),
+        annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, sourceIndividualEdge, targetValueEdge),
-        ImmutableList.of(propertyExprTranslation, sourceIndividualTranslation, targetValueTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -395,9 +529,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.TRANSITIVE_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -406,9 +544,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -419,9 +561,14 @@ public class AxiomVisitor extends VisitorBase
     var subPropertyTranslation = createNestedTranslation(axiom.getSubProperty());
     var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_DATA_PROPERTY_EXPRESSION);
     var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(subPropertyEdge, superPropertyEdge),
-        ImmutableList.of(subPropertyTranslation, superPropertyTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -430,9 +577,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge),
-        ImmutableList.of(propertyExprTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -441,9 +592,13 @@ public class AxiomVisitor extends VisitorBase
     mainNode = createNode(axiom, NodeLabels.SAME_INDIVIDUAL);
     var individualEdges = createEdges(axiom.getIndividuals(), EdgeLabels.INDIVIDUAL);
     var individualTranslations = createNestedTranslations(axiom.getIndividuals());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(individualEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(individualTranslations, annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.copyOf(individualEdges),
-        ImmutableList.copyOf(individualTranslations));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -454,9 +609,14 @@ public class AxiomVisitor extends VisitorBase
     var subPropertyTranslation = createChainTranslation(axiom.getPropertyChain());
     var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
     var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(subPropertyEdge, superPropertyEdge),
-        ImmutableList.of(subPropertyTranslation, superPropertyTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   protected Translation createChainTranslation(List<OWLObjectPropertyExpression> chain) {
@@ -492,9 +652,14 @@ public class AxiomVisitor extends VisitorBase
     var firstPropertyTranslation = createNestedTranslation(axiom.getFirstProperty());
     var secondPropertyEdge = createEdge(axiom.getSecondProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var secondPropertyTranslation = createNestedTranslation(axiom.getSecondProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(firstPropertyEdge, secondPropertyEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(firstPropertyTranslation, secondPropertyTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(firstPropertyEdge, secondPropertyEdge),
-        ImmutableList.of(firstPropertyTranslation, secondPropertyTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -509,15 +674,16 @@ public class AxiomVisitor extends VisitorBase
     var dataPropertyExprEdges = createEdges(axiom.getDataPropertyExpressions(),
         EdgeLabels.DATA_PROPERTY_EXPRESSION);
     var dataPropertyExprTranslations = createNestedTranslations(axiom.getDataPropertyExpressions());
-    var allEdges = Lists.newArrayList(classEdge);
-    allEdges.addAll(dataPropertyExprEdges);
-    allEdges.addAll(objectPropertyExprEdges);
-    var allTranslations = Lists.newArrayList(classTranslation);
-    allTranslations.addAll(objectPropertyExprTranslations);
-    allTranslations.addAll(dataPropertyExprTranslations);
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(classEdge), concatEdges(
+        concatEdges(objectPropertyExprEdges, dataPropertyExprEdges), annotationEdges));
+    var allNestedTranslations = concatTranslations(concatTranslations(classTranslation), concatTranslations(
+        concatTranslations(concatTranslations(objectPropertyExprTranslations, dataPropertyExprTranslations),
+            annotationTranslations)));
     return Translation.create(mainNode,
         ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allTranslations));
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -530,9 +696,16 @@ public class AxiomVisitor extends VisitorBase
     var annotationSubjectTranslation = createNestedTranslation(axiom.getSubject());
     var annotationValueEdge = createEdge(axiom.getValue(), EdgeLabels.ANNOTATION_VALUE);
     var annotationValueTranslation = createNestedTranslation(axiom.getValue());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(annotationPropertyEdge, annotationSubjectEdge, annotationValueEdge),
+        annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(annotationPropertyTranslation, annotationSubjectTranslation, annotationValueTranslation),
+        annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(annotationPropertyEdge, annotationSubjectEdge, annotationValueEdge),
-        ImmutableList.of(annotationPropertyTranslation, annotationSubjectTranslation, annotationValueTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -543,9 +716,14 @@ public class AxiomVisitor extends VisitorBase
     var subPropertyTranslation = createNestedTranslation(axiom.getSubProperty());
     var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_ANNOTATION_PROPERTY);
     var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(subPropertyEdge, superPropertyEdge),
-        ImmutableList.of(subPropertyTranslation, superPropertyTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -556,9 +734,14 @@ public class AxiomVisitor extends VisitorBase
     var annotationPropertyTranslation = createNestedTranslation(axiom.getProperty());
     var domainEdge = createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
     var domainTranslation = createNestedTranslation(axiom.getDomain());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(annotationPropertyEdge, domainEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(annotationPropertyTranslation, domainTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(annotationPropertyEdge, domainEdge),
-        ImmutableList.of(annotationPropertyTranslation, domainTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -569,9 +752,14 @@ public class AxiomVisitor extends VisitorBase
     var annotationPropertyTranslation = createNestedTranslation(axiom.getProperty());
     var rangeEdge = createEdge(axiom.getRange(), EdgeLabels.RANGE);
     var rangeTranslation = createNestedTranslation(axiom.getRange());
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(annotationPropertyEdge, rangeEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+        concatTranslations(annotationPropertyTranslation, rangeTranslation), annotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(annotationPropertyEdge, rangeEdge),
-        ImmutableList.of(annotationPropertyTranslation, rangeTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -600,6 +788,8 @@ public class AxiomVisitor extends VisitorBase
       return createLiteralTranslation((OWLLiteral) anyObject);
     } else if (anyObject instanceof OWLDataRange) {
       return createDataRangeTranslation((OWLDataRange) anyObject);
+    } else if (anyObject instanceof OWLAnnotation) {
+      return createAxiomAnnotation((OWLAnnotation) anyObject);
     } else if (anyObject instanceof OWLAnnotationSubject) {
       return createAnnotationSubjectTranslation((OWLAnnotationSubject) anyObject);
     } else if (anyObject instanceof OWLAnnotationValue) {
@@ -632,11 +822,48 @@ public class AxiomVisitor extends VisitorBase
     return dataRange.accept(dataVisitor);
   }
 
+  private Translation createAxiomAnnotation(OWLAnnotation annotation) {
+    return annotation.accept(annotationVisitor);
+  }
+
   private Translation createAnnotationSubjectTranslation(OWLAnnotationSubject subject) {
     return subject.accept(annotationSubjectVisitor);
   }
 
   private Translation createAnnotationValueTranslation(OWLAnnotationValue value) {
     return value.accept(annotationValueVisitor);
+  }
+
+  /* Helpful methods for concatenating edges and translations */
+
+  private static Collection<Edge> concatEdges(Edge... edges) {
+    return Lists.newArrayList(edges);
+  }
+
+  @SafeVarargs
+  private static Collection<Edge> concatEdges(Collection<Edge>... edgeCollections) {
+    return Stream.of(edgeCollections)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
+  }
+
+  private static Collection<Edge> concatEdges(Edge edge, Collection<Edge> edgeCollection) {
+    return concatEdges(concatEdges(edge), edgeCollection);
+  }
+
+  private static Collection<Translation> concatTranslations(Translation... translations) {
+    return Lists.newArrayList(translations);
+  }
+
+  @SafeVarargs
+  private static Collection<Translation> concatTranslations(Collection<Translation>... translationCollections) {
+    return Stream.of(translationCollections)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
+  }
+
+  private static Collection<Translation> concatTranslations(Translation translation,
+                                                            Collection<Translation> translationCollection) {
+    return concatTranslations(concatTranslations(translation), translationCollection);
   }
 }

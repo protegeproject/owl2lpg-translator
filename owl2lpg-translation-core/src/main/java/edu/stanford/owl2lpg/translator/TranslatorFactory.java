@@ -11,6 +11,7 @@ public class TranslatorFactory {
   private static OWLEntityVisitorEx<Translation> entityVisitor;
   private static OWLIndividualVisitorEx<Translation> individualVisitor;
   private static OWLDataVisitorEx<Translation> dataVisitor;
+  private static OWLAnnotationObjectVisitorEx<Translation> annotationVisitor;
   private static OWLAnnotationSubjectVisitorEx<Translation> annotationSubjectVisitor;
   private static OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor;
 
@@ -31,6 +32,7 @@ public class TranslatorFactory {
         propertyExpressionVisitor,
         individualVisitor,
         dataVisitor,
+        annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
   }
