@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.*;
 
+import java.util.Set;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,6 +33,9 @@ public class AnnotationObjectVisitorTest {
   private OWLAnnotationValue annotationValue;
 
   @Mock
+  private Set<OWLAnnotation> annotationAnnotations;
+
+  @Mock
   private Translation nestedTranslation;
 
   @Mock
@@ -49,6 +54,7 @@ public class AnnotationObjectVisitorTest {
     var annotation = mock(OWLAnnotation.class);
     when(annotation.getProperty()).thenReturn(annotationProperty);
     when(annotation.getValue()).thenReturn(annotationValue);
+    when(annotation.getAnnotations()).thenReturn(annotationAnnotations);
 
     visitor.visit(annotation);
     verify(visitor).visit(annotation);
@@ -57,6 +63,8 @@ public class AnnotationObjectVisitorTest {
     verify(visitor).createNestedTranslation(annotation.getProperty());
     verify(visitor).createEdge(annotation.getValue(), EdgeLabels.ANNOTATION_VALUE);
     verify(visitor).createNestedTranslation(annotation.getValue());
+    verify(visitor).createEdges(annotation.getAnnotations(), EdgeLabels.ANNOTATION_ANNOTATION);
+    verify(visitor).createNestedTranslations(annotation.getAnnotations());
   }
 
   @Test

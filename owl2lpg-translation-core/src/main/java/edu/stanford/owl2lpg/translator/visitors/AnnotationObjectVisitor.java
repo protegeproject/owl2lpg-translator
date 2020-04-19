@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
@@ -42,9 +43,15 @@ public class AnnotationObjectVisitor extends VisitorBase
     var annotationPropertyTranslation = createNestedTranslation(annotation.getProperty());
     var annotationValueEdge = createEdge(annotation.getValue(), EdgeLabels.ANNOTATION_VALUE);
     var annotationValueTranslation = createNestedTranslation(annotation.getValue());
+    var annotationAnnotationEdges = createEdges(annotation.getAnnotations(), EdgeLabels.ANNOTATION_ANNOTATION);
+    var annotationAnnotationTranslations = createNestedTranslations(annotation.getAnnotations());
+    var allEdges = Lists.newArrayList(annotationPropertyEdge, annotationValueEdge);
+    allEdges.addAll(annotationAnnotationEdges);
+    var allNestedTranslations = Lists.newArrayList(annotationPropertyTranslation, annotationValueTranslation);
+    allNestedTranslations.addAll(annotationAnnotationTranslations);
     return Translation.create(mainNode,
-        ImmutableList.of(annotationPropertyEdge, annotationValueEdge),
-        ImmutableList.of(annotationPropertyTranslation, annotationValueTranslation));
+        ImmutableList.copyOf(allEdges),
+        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull

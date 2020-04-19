@@ -13,6 +13,7 @@ public class EdgeLabels {
   public static final String DIRECTLY_IMPORTS_DOCUMENT = "directlyImportsDocument";
   public static final String ONTOLOGY_ANNOTATION = "ontologyAnnotation";
   public static final String AXIOM_ANNOTATION = "axiomAnnotation";
+  public static final String ANNOTATION_ANNOTATION = "annotationAnnotation";
   public static final String AXIOM = "axiom";
   public static final String ENTITY = "entity";
   public static final String ENTITY_IRI = "entityIri";
