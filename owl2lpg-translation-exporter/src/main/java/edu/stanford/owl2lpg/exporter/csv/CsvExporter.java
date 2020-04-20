@@ -74,31 +74,31 @@ public class CsvExporter {
   private void collectNodes(Stream<Node> nodeStream) {
     nodeStream.forEach(node -> {
       if (isEntity(node)) {
-        var entityNode = EntityNode.of(node);
+        var entityNode = EntityNode.of(node, new NodeIdProvider(node));
         entityNodes.add(entityNode);
         allElements.add(GraphDataElement.of(entityNode));
       } else if (isIri(node)) {
-        var iriNode = IriNode.of(node);
+        var iriNode = IriNode.of(node, new NodeIdProvider(node));
         iriNodes.add(iriNode);
         allElements.add(GraphDataElement.of(iriNode));
       } else if (isLiteral(node)) {
-        var literalNode = LiteralNode.create(node);
+        var literalNode = LiteralNode.create(node, new NodeIdProvider(node));
         literalNodes.add(literalNode);
         allElements.add(GraphDataElement.of(literalNode));
       } else if (isLanguageTag(node)) {
-        var languageTagNode = LanguageTagNode.of(node);
+        var languageTagNode = LanguageTagNode.of(node, new NodeIdProvider(node));
         languageTagNodes.add(languageTagNode);
         allElements.add(GraphDataElement.of(languageTagNode));
       } else if (isAnonymousIndividual(node)) {
-        var anonymousIndividualNode = AnonymousIndividualNode.of(node);
+        var anonymousIndividualNode = AnonymousIndividualNode.of(node, new NodeIdProvider(node));
         individualNodes.add(anonymousIndividualNode);
         allElements.add(GraphDataElement.of(anonymousIndividualNode));
       } else if (isCardinalityAxiom(node)) {
-        var cardinalityNode = CardinalityAxiomNode.of(node);
+        var cardinalityNode = CardinalityAxiomNode.of(node, new NodeIdProvider(node));
         cardinalityNodes.add(cardinalityNode);
         allElements.add(GraphDataElement.of(cardinalityNode));
       } else {
-        var propertylessNode = PropertylessNode.of(node);
+        var propertylessNode = PropertylessNode.of(node, new NodeIdProvider(node));
         propertylessNodes.add(propertylessNode);
         allElements.add(GraphDataElement.of(propertylessNode));
       }
@@ -107,7 +107,9 @@ public class CsvExporter {
 
   private void collectEdges(Stream<Edge> edgeStream) {
     edgeStream.forEach(edge -> {
-      var propertylessEdge = PropertylessEdge.of(edge);
+      var propertylessEdge = PropertylessEdge.of(edge,
+          new NodeIdProvider(edge.getFromNode()),
+          new NodeIdProvider(edge.getToNode()));
       propertylessEdges.add(propertylessEdge);
       allElements.add(GraphDataElement.of(propertylessEdge));
     });

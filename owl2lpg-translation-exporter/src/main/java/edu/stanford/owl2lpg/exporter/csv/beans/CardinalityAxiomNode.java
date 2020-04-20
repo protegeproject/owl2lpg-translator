@@ -11,7 +11,6 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
 public class CardinalityAxiomNode {
 
@@ -37,9 +36,10 @@ public class CardinalityAxiomNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static CardinalityAxiomNode of(@Nonnull Node node) {
+  public static CardinalityAxiomNode of(@Nonnull Node node,
+                                        @Nonnull NodeIdProvider nodeIdProvider) {
     return new CardinalityAxiomNode(
-        NodeID(node.getNodeId()),
+        nodeIdProvider.getId(),
         node.getProperties().get(PropertyNames.CARDINALITY),
         node.getLabels());
   }

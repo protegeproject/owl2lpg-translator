@@ -11,7 +11,6 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
 public class LanguageTagNode {
 
@@ -37,9 +36,10 @@ public class LanguageTagNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static LanguageTagNode of(@Nonnull Node node) {
+  public static LanguageTagNode of(@Nonnull Node node,
+                                   @Nonnull NodeIdProvider nodeIdProvider) {
     return new LanguageTagNode(
-        NodeID(node.getNodeId()),
+        nodeIdProvider.getId(),
         node.getProperties().get(PropertyNames.LANGUAGE),
         node.getLabels());
   }

@@ -11,7 +11,6 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
 public class LiteralNode {
 
@@ -37,9 +36,10 @@ public class LiteralNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static LiteralNode create(@Nonnull Node node) {
+  public static LiteralNode create(@Nonnull Node node,
+                                   @Nonnull NodeIdProvider nodeIdProvider) {
     return new LiteralNode(
-        NodeID(node.getNodeId()),
+        nodeIdProvider.getId(),
         node.getProperties().get(PropertyNames.LEXICAL_FORM),
         node.getLabels());
   }

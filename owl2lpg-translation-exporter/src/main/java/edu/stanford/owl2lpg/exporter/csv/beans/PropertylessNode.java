@@ -10,7 +10,6 @@ import edu.stanford.owl2lpg.model.Node;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
 public class PropertylessNode {
 
@@ -30,9 +29,10 @@ public class PropertylessNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static PropertylessNode of(@Nonnull Node node) {
+  public static PropertylessNode of(@Nonnull Node node,
+                                    @Nonnull NodeIdProvider nodeIdProvider) {
     return new PropertylessNode(
-        NodeID(node.getNodeId()),
+        nodeIdProvider.getId(),
         node.getLabels());
   }
 

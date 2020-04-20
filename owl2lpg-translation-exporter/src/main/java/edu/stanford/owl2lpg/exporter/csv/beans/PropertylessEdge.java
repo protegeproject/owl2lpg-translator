@@ -8,7 +8,6 @@ import edu.stanford.owl2lpg.model.Edge;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.exporter.csv.beans.Utils.NodeID;
 
 public class PropertylessEdge {
 
@@ -32,10 +31,12 @@ public class PropertylessEdge {
     this.edgeType = checkNotNull(edgeType);
   }
 
-  public static PropertylessEdge of(@Nonnull Edge edge) {
+  public static PropertylessEdge of(@Nonnull Edge edge,
+                                    @Nonnull NodeIdProvider sourceNodeIdProvider,
+                                    @Nonnull NodeIdProvider targetNodeIdProvider) {
     return new PropertylessEdge(
-        NodeID(edge.getFromNode().getNodeId()),
-        NodeID(edge.getToNode().getNodeId()),
+        sourceNodeIdProvider.getId(),
+        targetNodeIdProvider.getId(),
         edge.getLabel());
   }
 
