@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.opencsv.bean.*;
@@ -9,9 +8,10 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import edu.stanford.owl2lpg.exporter.csv.beans.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.OntologyTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import java.io.FileWriter;
@@ -35,10 +35,10 @@ import static java.lang.String.format;
 public class CsvExporter {
 
   @Nonnull
-  private final AxiomTranslator axiomTranslator;
+  private final OntologyTranslator ontologyTranslator;
 
   @Nonnull
-  private final ImmutableSet<OWLAxiom> axioms;
+  private final OWLOntology ontology;
 
   @Nonnull
   private final Writer writer;
@@ -54,20 +54,18 @@ public class CsvExporter {
   private Set<PropertylessNode> propertylessNodes = Sets.newHashSet();
   private Set<PropertylessEdge> propertylessEdges = Sets.newHashSet();
 
-  public CsvExporter(@Nonnull AxiomTranslator axiomTranslator,
-                     @Nonnull ImmutableSet<OWLAxiom> axioms,
+  public CsvExporter(@Nonnull OntologyTranslator ontologyTranslator,
+                     @Nonnull OWLOntology ontology,
                      @Nonnull Writer writer) {
-    this.axiomTranslator = checkNotNull(axiomTranslator);
-    this.axioms = checkNotNull(axioms);
+    this.ontologyTranslator = checkNotNull(ontologyTranslator);
+    this.ontology = checkNotNull(ontology);
     this.writer = checkNotNull(writer);
   }
 
   public void write() throws IOException {
-    for (var axiom : axioms) {
-      var translation = axiomTranslator.translate(axiom);
-      collectNodes(translation.nodes());
-      collectEdges(translation.edges());
-    }
+    Translation ontologyTranslation = ontologyTranslator.translate(ontology);
+    collectNodes(ontologyTranslation.nodes());
+    collectEdges(ontologyTranslation.edges());
     writeCsv();
   }
 

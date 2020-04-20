@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.exporter.AbstractTranslationExporter;
 import edu.stanford.owl2lpg.translator.TranslatorFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -36,8 +35,8 @@ public class CsvTranslationExporter extends AbstractTranslationExporter {
     checkNotNull(ontology);
     checkNotNull(writer);
     var exporter = new CsvExporter(
-        TranslatorFactory.getAxiomTranslator(),
-        ImmutableSet.copyOf(ontology.getAxioms()),
+        TranslatorFactory.getOntologyTranslator(),
+        ontology,
         writer);
     exporter.write();
     exporter.flush();
