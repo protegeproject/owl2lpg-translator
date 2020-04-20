@@ -5,6 +5,7 @@ import org.semanticweb.owlapi.model.*;
 
 public class TranslatorFactory {
 
+  private static OWLNamedObjectVisitorEx ontologyVisitor;
   private static OWLAxiomVisitorEx<Translation> axiomVisitor;
   private static OWLClassExpressionVisitorEx<Translation> classExpressionVisitor;
   private static OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor;
@@ -27,6 +28,9 @@ public class TranslatorFactory {
         dataVisitor);
     annotationSubjectVisitor = new AnnotationSubjectVisitor();
     annotationValueVisitor = new AnnotationValueVisitor(dataVisitor);
+    annotationVisitor = new AnnotationObjectVisitor(
+        entityVisitor,
+        annotationValueVisitor);
     axiomVisitor = new AxiomVisitor(entityVisitor,
         classExpressionVisitor,
         propertyExpressionVisitor,
@@ -35,6 +39,11 @@ public class TranslatorFactory {
         annotationVisitor,
         annotationSubjectVisitor,
         annotationValueVisitor);
+    ontologyVisitor = new OntologyVisitor(axiomVisitor, annotationVisitor);
+  }
+
+  public static OntologyTranslator getOntologyTranslator() {
+    return new OntologyTranslator(ontologyVisitor);
   }
 
   public static AxiomTranslator getAxiomTranslator() {
