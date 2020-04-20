@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.exporter.cypher;
 
-import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.exporter.AbstractTranslationExporter;
 import edu.stanford.owl2lpg.translator.TranslatorFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -32,8 +31,8 @@ public class CypherTranslationExporter extends AbstractTranslationExporter {
     checkNotNull(ontology);
     checkNotNull(writer);
     var exporter = new CypherExporter(
-        TranslatorFactory.getAxiomTranslator(),
-        ImmutableSet.copyOf(ontology.getAxioms()),
+        TranslatorFactory.getOntologyTranslator(),
+        ontology,
         writer);
     exporter.write();
     exporter.flush();

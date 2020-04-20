@@ -2,12 +2,12 @@ package edu.stanford.owl2lpg.exporter.cypher;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import edu.stanford.owl2lpg.translator.OntologyTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,28 +23,26 @@ import static java.lang.String.format;
 public class CypherExporter {
 
   @Nonnull
-  private final AxiomTranslator axiomTranslator;
+  private final OntologyTranslator ontologyTranslator;
 
   @Nonnull
-  private final ImmutableSet<OWLAxiom> axioms;
+  private final OWLOntology ontology;
 
   @Nonnull
   private final Writer writer;
 
-  CypherExporter(@Nonnull AxiomTranslator axiomTranslator,
-                 @Nonnull ImmutableSet<OWLAxiom> axioms,
+  CypherExporter(@Nonnull OntologyTranslator ontologyTranslator,
+                 @Nonnull OWLOntology ontology,
                  @Nonnull Writer writer) {
-    this.axiomTranslator = checkNotNull(axiomTranslator);
-    this.axioms = checkNotNull(axioms);
+    this.ontologyTranslator = checkNotNull(ontologyTranslator);
+    this.ontology = checkNotNull(ontology);
     this.writer = checkNotNull(writer);
   }
 
   public void write() {
-    axioms.forEach(axiom -> {
-      var translation = axiomTranslator.translate(axiom);
-      writeNodes(translation.nodes());
-      writeEdges(translation.edges());
-    });
+    Translation ontologyTranslation = ontologyTranslator.translate(ontology);
+    writeNodes(ontologyTranslation.nodes());
+    writeEdges(ontologyTranslation.edges());
   }
 
   void writeNodes(Stream<Node> nodeStream) {
