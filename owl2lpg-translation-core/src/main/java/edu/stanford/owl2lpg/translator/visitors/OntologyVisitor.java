@@ -66,11 +66,13 @@ public class OntologyVisitor extends VisitorBase
   }
 
   private Node createOntologyIdNode(OWLOntologyID ontologyId) {
+    String ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : null;
+    String versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : null;
     return Node(
         NodeLabels.ONTOLOGY_ID,
         PropertiesBuilder.create()
-            .set(PropertyNames.ONTOLOGY_IRI, ontologyId.getOntologyIRI().orNull())
-            .set(PropertyNames.ONTOLOGY_VERSION_IRI, ontologyId.getVersionIRI().orNull())
+            .set(PropertyNames.ONTOLOGY_IRI, ontologyIri)
+            .set(PropertyNames.ONTOLOGY_VERSION_IRI, versionIri)
             .build(),
         withIdentifierFrom(ontologyId));
   }
