@@ -21,35 +21,36 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PropertyExpressionVisitor extends VisitorBase
     implements OWLPropertyExpressionVisitorEx<Translation> {
 
-  @Nonnull
-  private final OWLEntityVisitorEx<Translation> entityVisitor;
-
   private Node mainNode;
 
+  private final VisitorFactory visitorFactory;
+
   @Inject
-  public PropertyExpressionVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor) {
-    this.entityVisitor = checkNotNull(entityVisitor);
+  public PropertyExpressionVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                                   @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
     checkNotNull(dp);
-    return entityVisitor.visit(dp);
+    return visitorFactory.createEntityVisitor().visit(dp);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
     checkNotNull(ap);
-    return entityVisitor.visit(ap);
+    return visitorFactory.createEntityVisitor().visit(ap);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
     checkNotNull(op);
-    return entityVisitor.visit(op);
+    return visitorFactory.createEntityVisitor().visit(op);
   }
 
   @Nonnull
@@ -75,8 +76,13 @@ public class PropertyExpressionVisitor extends VisitorBase
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
     if (anyObject instanceof OWLPropertyExpression) {
-      return ((OWLPropertyExpression) anyObject).accept(this);
+      return getPropertyExpressionTranslation((OWLPropertyExpression) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
+  }
+
+  private Translation getPropertyExpressionTranslation(OWLPropertyExpression propertyExpression) {
+    var propertyExpressionVisitor = visitorFactory.createPropertyExpressionVisitor();
+    return propertyExpression.accept(propertyExpressionVisitor);
   }
 }

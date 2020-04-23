@@ -21,35 +21,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ClassExpressionVisitor extends VisitorBase
     implements OWLClassExpressionVisitorEx<Translation> {
 
-  @Nonnull
-  private final OWLEntityVisitorEx<Translation> entityVisitor;
-
-  @Nonnull
-  private final OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor;
-
-  @Nonnull
-  private final OWLIndividualVisitorEx<Translation> individualVisitor;
-
-  @Nonnull
-  private final OWLDataVisitorEx<Translation> dataVisitor;
-
   private Node mainNode;
 
+  private final VisitorFactory visitorFactory;
+
   @Inject
-  public ClassExpressionVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor,
-                                @Nonnull OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor,
-                                @Nonnull OWLIndividualVisitorEx<Translation> individualVisitor,
-                                @Nonnull OWLDataVisitorEx<Translation> dataVisitor) {
-    this.entityVisitor = checkNotNull(entityVisitor);
-    this.propertyExpressionVisitor = checkNotNull(propertyExpressionVisitor);
-    this.individualVisitor = checkNotNull(individualVisitor);
-    this.dataVisitor = checkNotNull(dataVisitor);
+  public ClassExpressionVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                                @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLClass c) {
-    return entityVisitor.visit(c);
+    return visitorFactory.createEntityVisitor().visit(c);
   }
 
   @Nonnull
@@ -272,36 +258,41 @@ public class ClassExpressionVisitor extends VisitorBase
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
     if (anyObject instanceof OWLClassExpression) {
-      return createClassExpressionTranslation((OWLClassExpression) anyObject);
+      return getClassExpressionTranslation((OWLClassExpression) anyObject);
     } else if (anyObject instanceof OWLPropertyExpression) {
-      return createPropertyExpressionTranslation((OWLPropertyExpression) anyObject);
+      return getPropertyExpressionTranslation((OWLPropertyExpression) anyObject);
     } else if (anyObject instanceof OWLIndividual) {
-      return createIndividualTranslation((OWLIndividual) anyObject);
+      return getIndividualTranslation((OWLIndividual) anyObject);
     } else if (anyObject instanceof OWLLiteral) {
-      return createLiteralTranslation((OWLLiteral) anyObject);
+      return getLiteralTranslation((OWLLiteral) anyObject);
     } else if (anyObject instanceof OWLDataRange) {
-      return createDataRangeTranslation((OWLDataRange) anyObject);
+      return DataRangeTranslation((OWLDataRange) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
   }
 
-  private Translation createClassExpressionTranslation(OWLClassExpression classExpression) {
-    return classExpression.accept(this);
+  private Translation getClassExpressionTranslation(OWLClassExpression classExpression) {
+    var classExpressionVisitor = visitorFactory.createClassExpressionVisitor();
+    return classExpression.accept(classExpressionVisitor);
   }
 
-  private Translation createPropertyExpressionTranslation(OWLPropertyExpression propertyExpression) {
+  private Translation getPropertyExpressionTranslation(OWLPropertyExpression propertyExpression) {
+    var propertyExpressionVisitor = visitorFactory.createPropertyExpressionVisitor();
     return propertyExpression.accept(propertyExpressionVisitor);
   }
 
-  private Translation createIndividualTranslation(OWLIndividual individual) {
+  private Translation getIndividualTranslation(OWLIndividual individual) {
+    var individualVisitor = visitorFactory.createIndividualVisitor();
     return individual.accept(individualVisitor);
   }
 
-  private Translation createLiteralTranslation(OWLLiteral literal) {
+  private Translation getLiteralTranslation(OWLLiteral literal) {
+    var dataVisitor = visitorFactory.createDataVisitor();
     return literal.accept(dataVisitor);
   }
 
-  private Translation createDataRangeTranslation(OWLDataRange dataRange) {
+  private Translation DataRangeTranslation(OWLDataRange dataRange) {
+    var dataVisitor = visitorFactory.createDataVisitor();
     return dataRange.accept(dataVisitor);
   }
 }

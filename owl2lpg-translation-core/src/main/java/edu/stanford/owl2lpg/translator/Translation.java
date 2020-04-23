@@ -8,6 +8,10 @@ import edu.stanford.owl2lpg.model.Node;
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
+/**
+ * @author Josef Hardi <josef.hardi@stanford.edu> <br>
+ * Stanford Center for Biomedical Informatics Research
+ */
 @AutoValue
 public abstract class Translation {
 

@@ -21,18 +21,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AnnotationObjectVisitor extends VisitorBase
     implements OWLAnnotationObjectVisitorEx<Translation> {
 
-  @Nonnull
-  private final OWLEntityVisitorEx<Translation> entityVisitor;
-
-  @Nonnull
-  private final OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor;
+  private final VisitorFactory visitorFactory;
 
   private Node mainNode;
 
-  public AnnotationObjectVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor,
-                                 @Nonnull OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor) {
-    this.entityVisitor = checkNotNull(entityVisitor);
-    this.annotationValueVisitor = checkNotNull(annotationValueVisitor);
+  public AnnotationObjectVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                                 @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
@@ -57,19 +53,19 @@ public class AnnotationObjectVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull IRI iri) {
-    return annotationValueVisitor.visit(iri);
+    return visitorFactory.createAnnotationValueVisitor().visit(iri);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    return annotationValueVisitor.visit(individual);
+    return visitorFactory.createIndividualVisitor().visit(individual);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLLiteral literal) {
-    return annotationValueVisitor.visit(literal);
+    return visitorFactory.createDataVisitor().visit(literal);
   }
 
   @Nonnull
@@ -104,19 +100,28 @@ public class AnnotationObjectVisitor extends VisitorBase
   @Override
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
-    if (anyObject instanceof OWLAnnotationProperty) {
-      return createAnnotationPropertyTranslation((OWLAnnotationProperty) anyObject);
+    if (anyObject instanceof OWLAnnotation) {
+      return getAnnotationTranslation((OWLAnnotation) anyObject);
+    } else if (anyObject instanceof OWLAnnotationProperty) {
+      return getAnnotationPropertyTranslation((OWLAnnotationProperty) anyObject);
     } else if (anyObject instanceof OWLAnnotationValue) {
-      return createAnnotationValueTranslation((OWLAnnotationValue) anyObject);
+      return getAnnotationValueTranslation((OWLAnnotationValue) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
   }
 
-  private Translation createAnnotationPropertyTranslation(OWLAnnotationProperty annotationProperty) {
+  private Translation getAnnotationTranslation(OWLAnnotation annotation) {
+    var annotationVisitor = visitorFactory.createAnnotationObjectVisitor();
+    return annotation.accept(annotationVisitor);
+  }
+
+  private Translation getAnnotationPropertyTranslation(OWLAnnotationProperty annotationProperty) {
+    var entityVisitor = visitorFactory.createEntityVisitor();
     return annotationProperty.accept(entityVisitor);
   }
 
-  private Translation createAnnotationValueTranslation(OWLAnnotationValue value) {
-    return value.accept(this);
+  private Translation getAnnotationValueTranslation(OWLAnnotationValue value) {
+    var annotationObjectVisitor = visitorFactory.createAnnotationObjectVisitor();
+    return value.accept(annotationObjectVisitor);
   }
 }

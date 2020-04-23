@@ -15,14 +15,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AnnotationValueVisitor extends VisitorBase
     implements OWLAnnotationValueVisitorEx<Translation> {
 
-  @Nonnull
-  private final OWLDataVisitorEx<Translation> dataVisitor;
-
   private Node mainNode;
 
+  private final VisitorFactory visitorFactory;
+
   @Inject
-  public AnnotationValueVisitor(@Nonnull OWLDataVisitorEx<Translation> dataVisitor) {
-    this.dataVisitor = checkNotNull(dataVisitor);
+  public AnnotationValueVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                                @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
@@ -35,15 +36,15 @@ public class AnnotationValueVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    mainNode = createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
-    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+    checkNotNull(individual);
+    return visitorFactory.createIndividualVisitor().visit(individual);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLLiteral lt) {
     checkNotNull(lt);
-    return dataVisitor.visit(lt);
+    return visitorFactory.createDataVisitor().visit(lt);
   }
 
   @Nullable

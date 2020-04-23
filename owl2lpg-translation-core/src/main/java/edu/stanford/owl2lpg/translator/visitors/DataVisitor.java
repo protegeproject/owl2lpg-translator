@@ -15,7 +15,8 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.*;
+import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
+import static edu.stanford.owl2lpg.model.GraphFactory.Node;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
@@ -27,20 +28,21 @@ import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties
 public class DataVisitor extends VisitorBase
     implements OWLDataVisitorEx<Translation> {
 
-  @Nonnull
-  private final OWLEntityVisitorEx<Translation> entityVisitor;
-
   private Node mainNode;
 
+  private final VisitorFactory visitorFactory;
+
   @Inject
-  public DataVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor) {
-    this.entityVisitor = checkNotNull(entityVisitor);
+  public DataVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                     @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatype dt) {
-    return entityVisitor.visit(dt);
+    return visitorFactory.createEntityVisitor().visit(dt);
   }
 
   @Nonnull
@@ -65,9 +67,9 @@ public class DataVisitor extends VisitorBase
 
   protected Node createLanguageTagNode(@Nonnull String languageTag,
                                        @Nonnull ImmutableList<String> nodeLabels) {
-    return Node(nodeLabels,
-        Properties(PropertyNames.LANGUAGE, languageTag),
-        withIdentifierFrom(languageTag));
+    return Node(nodeIdMapper.getId(languageTag),
+        nodeLabels,
+        Properties(PropertyNames.LANGUAGE, languageTag));
   }
 
   protected Edge createLanguageTagEdge(@Nonnull String languageTag,
@@ -160,14 +162,28 @@ public class DataVisitor extends VisitorBase
   @Override
   protected Translation getTranslation(OWLObject anyObject) {
     checkNotNull(anyObject);
-    if (anyObject instanceof OWLDataRange) {
-      return ((OWLDataRange) anyObject).accept(this);
-    } else if (anyObject instanceof OWLLiteral) {
-      return ((OWLLiteral) anyObject).accept(this);
+    if (anyObject instanceof OWLLiteral) {
+      return getLiteralTranslation((OWLLiteral) anyObject);
+    } else if (anyObject instanceof OWLDataRange) {
+      return getDataRangeTranslation((OWLDataRange) anyObject);
     } else if (anyObject instanceof IRI) {
-      var iriNode = createIriNode((IRI) anyObject, NodeLabels.IRI);
-      return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
+      return getIriTranslation((IRI) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
+  }
+
+  private Translation getLiteralTranslation(OWLLiteral literal) {
+    var dataVisitor = visitorFactory.createDataVisitor();
+    return literal.accept(dataVisitor);
+  }
+
+  private Translation getDataRangeTranslation(OWLDataRange dataRange) {
+    var dataVisitor = visitorFactory.createDataVisitor();
+    return dataRange.accept(dataVisitor);
+  }
+
+  private Translation getIriTranslation(IRI iri) {
+    var annotationValueVisitor = visitorFactory.createAnnotationValueVisitor();
+    return iri.accept(annotationValueVisitor);
   }
 }

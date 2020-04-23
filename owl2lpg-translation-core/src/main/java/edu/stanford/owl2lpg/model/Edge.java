@@ -18,16 +18,8 @@ public abstract class Edge {
   public static Edge create(@Nonnull Node fromNode,
                             @Nonnull Node toNode,
                             @Nonnull String label,
-                            @Nonnull Properties properties,
-                            boolean isBidirectional) {
-    return new AutoValue_Edge(fromNode, toNode, label, properties, isBidirectional);
-  }
-
-  public static Edge create(@Nonnull Node fromNode,
-                            @Nonnull Node toNode,
-                            @Nonnull String label,
                             @Nonnull Properties properties) {
-    return create(fromNode, toNode, label, properties, false);
+    return new AutoValue_Edge(fromNode, toNode, label, properties);
   }
 
   public abstract Node getFromNode();
@@ -37,6 +29,4 @@ public abstract class Edge {
   public abstract String getLabel();
 
   public abstract Properties getProperties();
-
-  public abstract boolean isBidirectional();
 }

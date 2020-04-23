@@ -1,9 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
-import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationSubjectVisitorEx;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
@@ -11,29 +9,37 @@ import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class AnnotationSubjectVisitor extends VisitorBase
     implements OWLAnnotationSubjectVisitorEx<Translation> {
 
-  private Node mainNode;
+  private final VisitorFactory visitorFactory;
+
+  protected AnnotationSubjectVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                                     @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
+  }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull IRI iri) {
-    mainNode = createIriNode(iri, NodeLabels.IRI);
-    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+    checkNotNull(iri);
+    return visitorFactory.createAnnotationValueVisitor().visit(iri);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    mainNode = createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
-    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+    checkNotNull(individual);
+    return visitorFactory.createAnnotationValueVisitor().visit(individual);
   }
 
   @Nonnull
   @Override
   protected Node getMainNode() {
-    return mainNode;
+    throw new IllegalArgumentException("Implementation error");
   }
 
   @Override

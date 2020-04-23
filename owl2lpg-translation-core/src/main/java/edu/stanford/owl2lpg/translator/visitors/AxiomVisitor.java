@@ -28,49 +28,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AxiomVisitor extends VisitorBase
     implements OWLAxiomVisitorEx<Translation> {
 
-  @Nonnull
-  private final OWLEntityVisitorEx<Translation> entityVisitor;
-
-  @Nonnull
-  private final OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor;
-
-  @Nonnull
-  private final OWLIndividualVisitorEx<Translation> individualVisitor;
-
-  @Nonnull
-  private final OWLDataVisitorEx<Translation> dataVisitor;
-
-  @Nonnull
-  private final OWLClassExpressionVisitorEx<Translation> classExpressionVisitor;
-
-  @Nonnull
-  private final OWLAnnotationObjectVisitorEx<Translation> annotationVisitor;
-
-  @Nonnull
-  private final OWLAnnotationSubjectVisitorEx<Translation> annotationSubjectVisitor;
-
-  @Nonnull
-  private final OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor;
-
   private Node mainNode;
 
+  private final VisitorFactory visitorFactory;
+
   @Inject
-  public AxiomVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor,
-                      @Nonnull OWLClassExpressionVisitorEx<Translation> classExpressionVisitor,
-                      @Nonnull OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor,
-                      @Nonnull OWLIndividualVisitorEx<Translation> individualVisitor,
-                      @Nonnull OWLDataVisitorEx<Translation> dataVisitor,
-                      @Nonnull OWLAnnotationObjectVisitorEx<Translation> annotationVisitor,
-                      @Nonnull OWLAnnotationSubjectVisitorEx<Translation> annotationSubjectVisitor,
-                      @Nonnull OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor) {
-    this.entityVisitor = checkNotNull(entityVisitor);
-    this.propertyExpressionVisitor = checkNotNull(propertyExpressionVisitor);
-    this.individualVisitor = checkNotNull(individualVisitor);
-    this.dataVisitor = checkNotNull(dataVisitor);
-    this.classExpressionVisitor = checkNotNull(classExpressionVisitor);
-    this.annotationVisitor = checkNotNull(annotationVisitor);
-    this.annotationSubjectVisitor = checkNotNull(annotationSubjectVisitor);
-    this.annotationValueVisitor = checkNotNull(annotationValueVisitor);
+  public AxiomVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                      @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
@@ -777,60 +743,69 @@ public class AxiomVisitor extends VisitorBase
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
     if (anyObject instanceof OWLEntity) {
-      return createEntityTranslation((OWLEntity) anyObject);
+      return getEntityTranslation((OWLEntity) anyObject);
     } else if (anyObject instanceof OWLClassExpression) {
-      return createClassExpressionTranslation((OWLClassExpression) anyObject);
+      return getClassExpressionTranslation((OWLClassExpression) anyObject);
     } else if (anyObject instanceof OWLPropertyExpression) {
-      return createPropertyExpressionTranslation((OWLPropertyExpression) anyObject);
+      return getPropertyExpressionTranslation((OWLPropertyExpression) anyObject);
     } else if (anyObject instanceof OWLIndividual) {
-      return createIndividualTranslation((OWLIndividual) anyObject);
+      return getIndividualTranslation((OWLIndividual) anyObject);
     } else if (anyObject instanceof OWLLiteral) {
-      return createLiteralTranslation((OWLLiteral) anyObject);
+      return getLiteralTranslation((OWLLiteral) anyObject);
     } else if (anyObject instanceof OWLDataRange) {
-      return createDataRangeTranslation((OWLDataRange) anyObject);
+      return getDataRangeTranslation((OWLDataRange) anyObject);
     } else if (anyObject instanceof OWLAnnotation) {
-      return createAxiomAnnotation((OWLAnnotation) anyObject);
+      return getAxiomAnnotation((OWLAnnotation) anyObject);
     } else if (anyObject instanceof OWLAnnotationSubject) {
-      return createAnnotationSubjectTranslation((OWLAnnotationSubject) anyObject);
+      return getAnnotationSubjectTranslation((OWLAnnotationSubject) anyObject);
     } else if (anyObject instanceof OWLAnnotationValue) {
-      return createAnnotationValueTranslation((OWLAnnotationValue) anyObject);
+      return getAnnotationValueTranslation((OWLAnnotationValue) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
   }
 
-  private Translation createEntityTranslation(OWLEntity entity) {
+  private Translation getEntityTranslation(OWLEntity entity) {
+    var entityVisitor = visitorFactory.createEntityVisitor();
     return entity.accept(entityVisitor);
   }
 
-  private Translation createClassExpressionTranslation(OWLClassExpression classExpression) {
+  private Translation getClassExpressionTranslation(OWLClassExpression classExpression) {
+    var classExpressionVisitor = visitorFactory.createClassExpressionVisitor();
     return classExpression.accept(classExpressionVisitor);
   }
 
-  private Translation createPropertyExpressionTranslation(OWLPropertyExpression propertyExpression) {
+  private Translation getPropertyExpressionTranslation(OWLPropertyExpression propertyExpression) {
+    var propertyExpressionVisitor = visitorFactory.createPropertyExpressionVisitor();
     return propertyExpression.accept(propertyExpressionVisitor);
   }
 
-  private Translation createIndividualTranslation(OWLIndividual individual) {
+  private Translation getIndividualTranslation(OWLIndividual individual) {
+    var individualVisitor = visitorFactory.createIndividualVisitor();
     return individual.accept(individualVisitor);
   }
 
-  private Translation createLiteralTranslation(OWLLiteral literal) {
+  private Translation getLiteralTranslation(OWLLiteral literal) {
+    var dataVisitor = visitorFactory.createDataVisitor();
     return literal.accept(dataVisitor);
   }
 
-  private Translation createDataRangeTranslation(OWLDataRange dataRange) {
+  private Translation getDataRangeTranslation(OWLDataRange dataRange) {
+    var dataVisitor = visitorFactory.createDataVisitor();
     return dataRange.accept(dataVisitor);
   }
 
-  private Translation createAxiomAnnotation(OWLAnnotation annotation) {
+  private Translation getAxiomAnnotation(OWLAnnotation annotation) {
+    var annotationVisitor = visitorFactory.createAnnotationObjectVisitor();
     return annotation.accept(annotationVisitor);
   }
 
-  private Translation createAnnotationSubjectTranslation(OWLAnnotationSubject subject) {
+  private Translation getAnnotationSubjectTranslation(OWLAnnotationSubject subject) {
+    var annotationSubjectVisitor = visitorFactory.createAnnotationSubjectVisitor();
     return subject.accept(annotationSubjectVisitor);
   }
 
-  private Translation createAnnotationValueTranslation(OWLAnnotationValue value) {
+  private Translation getAnnotationValueTranslation(OWLAnnotationValue value) {
+    var annotationValueVisitor = visitorFactory.createAnnotationValueVisitor();
     return value.accept(annotationValueVisitor);
   }
 

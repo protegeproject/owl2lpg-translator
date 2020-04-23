@@ -15,42 +15,42 @@ import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AnnotationObjectVisitorTest {
 
   private AnnotationObjectVisitor visitor;
 
-  @Mock
-  private EntityVisitor entityVisitor;
+  // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
 
-  @Mock
-  private AnnotationValueVisitor annotationValueVisitor;
+  @Mock private AnnotationValueVisitor annotationValueVisitor;
+  @Mock private IndividualVisitor individualVisitor;
+  @Mock private DataVisitor dataVisitor;
 
-  @Mock
-  private OWLAnnotationProperty annotationProperty;
+  @Mock private OWLAnnotationProperty annotationProperty;
+  @Mock private OWLAnnotationValue annotationValue;
+  @Mock private OWLAnnotation annotationAnnotation;
+  @Mock private Set<OWLAnnotation> annotationAnnotations;
 
-  @Mock
-  private OWLAnnotationValue annotationValue;
-
-  @Mock
-  private Set<OWLAnnotation> annotationAnnotations;
-
-  @Mock
-  private Translation nestedTranslation;
-
-  @Mock
-  private Node nestedTranslationMainNode;
+  @Mock private Translation nestedTranslation;
+  @Mock private Node nestedTranslationMainNode;
+  // @formatter:off
 
   @Before
   public void setUp() {
-    visitor = spy(new AnnotationObjectVisitor(entityVisitor, annotationValueVisitor));
-    when(annotationProperty.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(annotationValue.accept(visitor)).thenReturn(nestedTranslation);
+    visitor = spy(new AnnotationObjectVisitor(nodeIdMapper, visitorFactory));
+    when(visitor.getTranslation(annotationProperty)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(annotationValue)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(annotationAnnotation)).thenReturn(nestedTranslation);
+    when(visitorFactory.createAnnotationValueVisitor()).thenReturn(annotationValueVisitor);
+    when(visitorFactory.createIndividualVisitor()).thenReturn(individualVisitor);
+    when(visitorFactory.createDataVisitor()).thenReturn(dataVisitor);
     when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
   }
 
   @Test
-  public void shouldVisitTranslateAnnotation() {
+  public void shouldVisitAnnotation() {
     var annotation = mock(OWLAnnotation.class);
     when(annotation.getProperty()).thenReturn(annotationProperty);
     when(annotation.getValue()).thenReturn(annotationValue);
@@ -72,6 +72,7 @@ public class AnnotationObjectVisitorTest {
     var iri = mock(IRI.class);
     visitor.visit(iri);
     verify(visitor).visit(iri);
+    verify(visitorFactory).createAnnotationValueVisitor();
     verify(annotationValueVisitor).visit(iri);
   }
 
@@ -80,7 +81,8 @@ public class AnnotationObjectVisitorTest {
     var individual = mock(OWLAnonymousIndividual.class);
     visitor.visit(individual);
     verify(visitor).visit(individual);
-    verify(annotationValueVisitor).visit(individual);
+    verify(visitorFactory).createIndividualVisitor();
+    verify(individualVisitor).visit(individual);
   }
 
   @Test
@@ -88,19 +90,20 @@ public class AnnotationObjectVisitorTest {
     var literal = mock(OWLLiteral.class);
     visitor.visit(literal);
     verify(visitor).visit(literal);
-    verify(annotationValueVisitor).visit(literal);
+    verify(visitorFactory).createDataVisitor();
+    verify(dataVisitor).visit(literal);
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenEntityVisitorNull() {
-    EntityVisitor nulEntityVisitor = null;
-    new AnnotationObjectVisitor(nulEntityVisitor, annotationValueVisitor);
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new AnnotationObjectVisitor(nullIdMapper, visitorFactory);
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenAnnotationValueVisitorNull() {
-    AnnotationValueVisitor nullAnnotationValueVisitor = null;
-    new AnnotationObjectVisitor(entityVisitor, nullAnnotationValueVisitor);
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new AnnotationObjectVisitor(nodeIdMapper, nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

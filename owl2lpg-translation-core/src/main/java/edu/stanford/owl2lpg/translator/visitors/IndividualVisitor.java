@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
+import org.semanticweb.owlapi.model.OWLIndividualVisitorEx;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,18 +26,19 @@ public class IndividualVisitor extends VisitorBase
 
   private Node mainNode;
 
-  @Nonnull
-  private final OWLEntityVisitorEx<Translation> entityVisitor;
+  private final VisitorFactory visitorFactory;
 
   @Inject
-  public IndividualVisitor(@Nonnull OWLEntityVisitorEx<Translation> entityVisitor) {
-    this.entityVisitor = checkNotNull(entityVisitor);
+  public IndividualVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                           @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLNamedIndividual individual) {
-    return entityVisitor.visit(individual);
+    return visitorFactory.createEntityVisitor().visit(individual);
   }
 
   @Nonnull

@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
@@ -18,19 +17,24 @@ public class AnnotationValueVisitorTest {
 
   private AnnotationValueVisitor visitor;
 
-  @Mock
-  private DataVisitor dataVisitor;
+  // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
+  @Mock private IndividualVisitor individualVisitor;
+  @Mock private DataVisitor dataVisitor;
+  // @formatter:off
 
   @Before
   public void setUp() {
-    visitor = spy(new AnnotationValueVisitor(dataVisitor));
+    visitor = spy(new AnnotationValueVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.createIndividualVisitor()).thenReturn(individualVisitor);
+    when(visitorFactory.createDataVisitor()).thenReturn(dataVisitor);
   }
 
   @Test
   public void shouldVisitIri() {
     var iri = mock(IRI.class);
     visitor.visit(iri);
-
     verify(visitor).visit(iri);
     verify(visitor).createIriNode(iri, NodeLabels.IRI);
   }
@@ -38,27 +42,31 @@ public class AnnotationValueVisitorTest {
   @Test
   public void shouldVisitAnonymousIndividual() {
     var individual = mock(OWLAnonymousIndividual.class);
-    when(individual.getID()).thenReturn(NodeID.getNodeID());
     visitor.visit(individual);
-
     verify(visitor).visit(individual);
-    verify(visitor).createAnonymousIndividualNode(individual,
-        NodeLabels.ANONYMOUS_INDIVIDUAL);
+    verify(visitorFactory).createIndividualVisitor();
+    verify(individualVisitor).visit(individual);
   }
 
   @Test
   public void shouldVisitLiteral() {
     var lt = mock(OWLLiteral.class);
     visitor.visit(lt);
-
     verify(visitor).visit(lt);
+    verify(visitorFactory).createDataVisitor();
     verify(dataVisitor).visit(lt);
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenDataVisitorNull() {
-    DataVisitor nullDataVisitor = null;
-    new AnnotationValueVisitor(nullDataVisitor);
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new AnnotationValueVisitor(nullIdMapper, visitorFactory);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new AnnotationValueVisitor(nodeIdMapper, nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

@@ -14,14 +14,18 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class IndividualVisitorTest {
 
-  @Mock
-  private EntityVisitor entityVisitor;
-
   private IndividualVisitor visitor;
+
+  // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
+  @Mock private EntityVisitor entityVisitor;
+  // @formatter:off
 
   @Before
   public void setUp() {
-    visitor = spy(new IndividualVisitor(entityVisitor));
+    visitor = spy(new IndividualVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
   }
 
   @Test
@@ -29,6 +33,7 @@ public class IndividualVisitorTest {
     var individual = mock(OWLNamedIndividual.class);
     visitor.visit(individual);
     verify(visitor).visit(individual);
+    verify(visitorFactory).createEntityVisitor();
     verify(entityVisitor).visit(individual);
   }
 
@@ -38,6 +43,18 @@ public class IndividualVisitorTest {
     visitor.visit(individual);
     verify(visitor).visit(individual);
     verify(visitor).createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new IndividualVisitor(nullIdMapper, visitorFactory);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new IndividualVisitor(nodeIdMapper, nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

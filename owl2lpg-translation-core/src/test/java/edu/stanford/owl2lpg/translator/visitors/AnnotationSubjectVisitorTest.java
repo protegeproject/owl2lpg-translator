@@ -1,12 +1,11 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 
 import static org.mockito.Mockito.*;
@@ -16,29 +15,46 @@ public class AnnotationSubjectVisitorTest {
 
   private AnnotationSubjectVisitor visitor;
 
+  // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
+  @Mock private AnnotationValueVisitor annotationValueVisitor;
+  // @formatter:off
+
   @Before
   public void setUp() {
-    visitor = spy(new AnnotationSubjectVisitor());
+    visitor = spy(new AnnotationSubjectVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.createAnnotationValueVisitor()).thenReturn(annotationValueVisitor);
   }
 
   @Test
   public void shouldVisitIri() {
     var iri = mock(IRI.class);
     visitor.visit(iri);
-
     verify(visitor).visit(iri);
-    verify(visitor).createIriNode(iri, NodeLabels.IRI);
+    verify(visitorFactory).createAnnotationValueVisitor();
+    verify(annotationValueVisitor).visit(iri);
   }
 
   @Test
   public void shouldVisitAnonymousIndividual() {
     var individual = mock(OWLAnonymousIndividual.class);
-    when(individual.getID()).thenReturn(NodeID.getNodeID());
     visitor.visit(individual);
-
     verify(visitor).visit(individual);
-    verify(visitor).createAnonymousIndividualNode(individual,
-        NodeLabels.ANONYMOUS_INDIVIDUAL);
+    verify(visitorFactory).createAnnotationValueVisitor();
+    verify(annotationValueVisitor).visit(individual);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new AnnotationSubjectVisitor(nullIdMapper, visitorFactory);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new AnnotationSubjectVisitor(nodeIdMapper, nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

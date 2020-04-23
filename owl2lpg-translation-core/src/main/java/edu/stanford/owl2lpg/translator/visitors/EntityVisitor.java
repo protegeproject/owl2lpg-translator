@@ -23,6 +23,14 @@ public class EntityVisitor extends VisitorBase
 
   private Node mainNode;
 
+  private final VisitorFactory visitorFactory;
+
+  public EntityVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                       @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
+  }
+
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLClass c) {
@@ -116,9 +124,13 @@ public class EntityVisitor extends VisitorBase
   protected Translation getTranslation(OWLObject anyObject) {
     checkNotNull(anyObject);
     if (anyObject instanceof IRI) {
-      var iriNode = createIriNode((IRI) anyObject, NodeLabels.IRI);
-      return Translation.create(iriNode, ImmutableList.of(), ImmutableList.of());
+      return getIriTranslation((IRI) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
+  }
+
+  private Translation getIriTranslation(IRI iri) {
+    var annotationValueVisitor = visitorFactory.createAnnotationValueVisitor();
+    return iri.accept(annotationValueVisitor);
   }
 }

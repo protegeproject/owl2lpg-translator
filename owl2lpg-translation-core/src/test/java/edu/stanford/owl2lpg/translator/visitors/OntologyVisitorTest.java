@@ -19,24 +19,18 @@ public class OntologyVisitorTest {
 
   private OntologyVisitor visitor;
 
-  @Mock
-  private AxiomVisitor axiomVisitor;
+  // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
 
-  @Mock
-  private AnnotationObjectVisitor annotationVisitor;
-
-  @Mock
-  private OWLOntologyID ontologyId;
-
-  @Mock
-  private Set<OWLAxiom> axioms;
-
-  @Mock
-  private Set<OWLAnnotation> annotations;
+  @Mock private OWLOntologyID ontologyId;
+  @Mock private Set<OWLAxiom> axioms;
+  @Mock private Set<OWLAnnotation> annotations;
+  // @formatter:off
 
   @Before
   public void setUp() {
-    visitor = spy(new OntologyVisitor(axiomVisitor, annotationVisitor));
+    visitor = spy(new OntologyVisitor(nodeIdMapper, visitorFactory));
   }
 
   @Test
@@ -103,14 +97,14 @@ public class OntologyVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenAxiomVisitorNull() {
-    AxiomVisitor nullAxiomVisitor = null;
-    visitor = new OntologyVisitor(nullAxiomVisitor, annotationVisitor);
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new OntologyVisitor(nullIdMapper, visitorFactory);
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenAnnotationVisitorNull() {
-    AnnotationObjectVisitor nullAnnotationVisitor = null;
-    visitor = new OntologyVisitor(axiomVisitor, nullAnnotationVisitor);
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new OntologyVisitor(nodeIdMapper, nullVisitorFactory);
   }
 }

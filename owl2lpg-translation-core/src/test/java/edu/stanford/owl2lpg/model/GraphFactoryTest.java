@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
+import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Test;
@@ -19,24 +20,24 @@ public class GraphFactoryTest {
   @Mock
   private Node fromNode, toNode;
 
-  @Mock
-  private NodeIdProvider nodeIdProvider;
-
   @Test
   public void shouldCreateNode() {
-    var node = GraphFactory.Node(NodeLabels.CLASS, properties, nodeIdProvider);
-    assertNodeMatches(node, properties);
+    var node = GraphFactory.Node(1, NodeLabels.CLASS, properties);
+    assertNodeMatches(node, 1, NodeLabels.CLASS, properties);
   }
 
   @Test
   public void shouldCreateNodeWithEmptyProperties() {
-    var node = GraphFactory.Node(NodeLabels.CLASS, nodeIdProvider);
-    assertNodeMatches(node, Properties.empty());
+    var node = GraphFactory.Node(1, NodeLabels.CLASS);
+    assertNodeMatches(node, 1, NodeLabels.CLASS, Properties.empty());
   }
 
-  private static void assertNodeMatches(Node node, Properties properties) {
-    assertThat(node.getLabels(), equalTo(NodeLabels.CLASS));
-    assertThat(node.getProperties(), equalTo(properties));
+  private static void assertNodeMatches(Node actualNode, int expectedNodeId,
+                                        ImmutableList<String> expectedNodeLabels,
+                                        Properties expectedProperties) {
+    assertThat(actualNode.getNodeId(), equalTo(expectedNodeId));
+    assertThat(actualNode.getLabels(), equalTo(expectedNodeLabels));
+    assertThat(actualNode.getProperties(), equalTo(expectedProperties));
   }
 
   @Test
@@ -45,7 +46,7 @@ public class GraphFactoryTest {
         fromNode, toNode,
         EdgeLabels.ENTITY_IRI,
         properties);
-    assertEdgeMatches(edge, fromNode, toNode, properties);
+    assertEdgeMatches(edge, fromNode, toNode, EdgeLabels.ENTITY_IRI, properties);
   }
 
   @Test
@@ -53,13 +54,17 @@ public class GraphFactoryTest {
     var edge = GraphFactory.Edge(
         fromNode, toNode,
         EdgeLabels.ENTITY_IRI);
-    assertEdgeMatches(edge, fromNode, toNode, Properties.empty());
+    assertEdgeMatches(edge, fromNode, toNode, EdgeLabels.ENTITY_IRI, Properties.empty());
   }
 
-  private static void assertEdgeMatches(Edge edge, Node fromNode, Node toNode, Properties properties) {
-    assertThat(edge.getFromNode(), equalTo(fromNode));
-    assertThat(edge.getToNode(), equalTo(toNode));
-    assertThat(edge.getLabel(), equalTo(EdgeLabels.ENTITY_IRI));
-    assertThat(edge.getProperties(), equalTo(properties));
+  private static void assertEdgeMatches(Edge actualNode,
+                                        Node expectedFromNode,
+                                        Node expectedToNode,
+                                        String expectedNodeLabel,
+                                        Properties expectedProperties) {
+    assertThat(actualNode.getFromNode(), equalTo(expectedFromNode));
+    assertThat(actualNode.getToNode(), equalTo(expectedToNode));
+    assertThat(actualNode.getLabel(), equalTo(expectedNodeLabel));
+    assertThat(actualNode.getProperties(), equalTo(expectedProperties));
   }
 }

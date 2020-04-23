@@ -22,18 +22,11 @@ public class AxiomVisitorTest {
   private AxiomVisitor visitor;
 
   // @formatter:off
-  @Mock private EntityVisitor entityVisitor;
-  @Mock private ClassExpressionVisitor classExpressionVisitor;
-  @Mock private PropertyExpressionVisitor propertyExpressionVisitor;
-  @Mock private IndividualVisitor individualVisitor;
-  @Mock private DataVisitor dataVisitor;
-  @Mock private AnnotationObjectVisitor annotationVisitor;
-  @Mock private AnnotationSubjectVisitor annotationSubjectVisitor;
-  @Mock private AnnotationValueVisitor annotationValueVisitor;
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
 
   @Mock private OWLClass anyClass;
   @Mock private OWLEntity anyEntity;
-
   @Mock private OWLClassExpression anyClassExpression;
   @Mock private OWLClassExpression anySubClassExpression;
   @Mock private OWLClassExpression anySuperClassExpression;
@@ -61,43 +54,37 @@ public class AxiomVisitorTest {
   @Mock private Set<OWLAnnotation> annotations;
   @Mock private OWLAnnotationSubject anyAnnotationSubject;
   @Mock private OWLAnnotationValue anyAnnotationValue;
+
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
 
   @Before
-  public void setUp() throws Exception {
-    visitor = spy(new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor));
-    when(anyClass.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(anyDatatype.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(anyAnnotationProperty.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(anySubAnnotationProperty.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(anySuperAnnotationProperty.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(anyEntity.accept(entityVisitor)).thenReturn(nestedTranslation);
-    when(anyClassExpression.accept(classExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anySubClassExpression.accept(classExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anySuperClassExpression.accept(classExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anyObjectPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anySubObjectPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anySuperObjectPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anyDataPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anySubDataPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anySuperDataPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anyIndividual.accept(individualVisitor)).thenReturn(nestedTranslation);
-    when(anySourceIndividual.accept(individualVisitor)).thenReturn(nestedTranslation);
-    when(anyTargetIndividual.accept(individualVisitor)).thenReturn(nestedTranslation);
-    when(anyDataRange.accept(dataVisitor)).thenReturn(nestedTranslation);
-    when(anyLiteral.accept(dataVisitor)).thenReturn(nestedTranslation);
-    when(anyIri.accept(annotationSubjectVisitor)).thenReturn(nestedTranslation);
-    when(anyAnnotationSubject.accept(annotationSubjectVisitor)).thenReturn(nestedTranslation);
-    when(anyAnnotationValue.accept(annotationValueVisitor)).thenReturn(nestedTranslation);
+  public void setUp() {
+    visitor = spy(new AxiomVisitor(nodeIdMapper, visitorFactory));
+    when(visitor.getTranslation(anyClass)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyDatatype)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyAnnotationProperty)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySubAnnotationProperty)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySuperAnnotationProperty)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyEntity)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyClassExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySubClassExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySuperClassExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyObjectPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySubObjectPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySuperObjectPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyDataPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySubDataPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySuperDataPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyIndividual)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anySourceIndividual)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyTargetIndividual)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyDataRange)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyLiteral)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyIri)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyAnnotationSubject)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyAnnotationValue)).thenReturn(nestedTranslation);
     when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
   }
 
@@ -755,106 +742,14 @@ public class AxiomVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenEntityVisitorNull() {
-    EntityVisitor nullEntityVisitor = null;
-    new AxiomVisitor(nullEntityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new AxiomVisitor(nullIdMapper, visitorFactory);
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenClassExpressionVisitorNull() {
-    ClassExpressionVisitor nullClassExpressionVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        nullClassExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenPropertyExpressionVisitorNull() {
-    PropertyExpressionVisitor nullPropertyExpressionVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        nullPropertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenIndividualVisitorNull() {
-    IndividualVisitor nullIndividualVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        nullIndividualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenDataVisitorNull() {
-    DataVisitor nullDataVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        nullDataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenAnnotationVisitorNull() {
-    AnnotationObjectVisitor nullAnnotationVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        nullAnnotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenAnnotationSubjectVisitorNull() {
-    AnnotationSubjectVisitor nullAnnotationSubjectVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        nullAnnotationSubjectVisitor,
-        annotationValueVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenAnnotationValueVisitorNull() {
-    AnnotationValueVisitor nullAnnotationValueVisitor = null;
-    new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        nullAnnotationValueVisitor);
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new AxiomVisitor(nodeIdMapper, nullVisitorFactory);
   }
 }

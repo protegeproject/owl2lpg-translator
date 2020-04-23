@@ -1,10 +1,13 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
+import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Spy;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.*;
 
@@ -13,14 +16,29 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class EntityVisitorTest {
 
-  @Spy
-  private EntityVisitor visitor = new EntityVisitor();
+  private EntityVisitor visitor;
+
+  // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
+
+  @Mock private IRI anyIRI;
+
+  @Mock private Translation nestedTranslation;
+  @Mock private Node nestedTranslationMainNode;
+  // @formatter:off
+
+  @Before
+  public void setUp() {
+    visitor = spy(new EntityVisitor(nodeIdMapper, visitorFactory));
+    when(visitor.getTranslation(anyIRI)).thenReturn(nestedTranslation);
+    when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
+  }
 
   @Test
   public void shouldVisitClass() {
-    var classIri = mock(IRI.class);
     var cls = mock(OWLClass.class);
-    when(cls.getIRI()).thenReturn(classIri);
+    when(cls.getIRI()).thenReturn(anyIRI);
 
     visitor.visit(cls);
     verify(visitor).visit(cls);
@@ -31,9 +49,8 @@ public class EntityVisitorTest {
 
   @Test
   public void shouldVisitDatatype() {
-    var datatypeIri = mock(IRI.class);
     var dt = mock(OWLDatatype.class);
-    when(dt.getIRI()).thenReturn(datatypeIri);
+    when(dt.getIRI()).thenReturn(anyIRI);
 
     visitor.visit(dt);
     verify(visitor).visit(dt);
@@ -44,9 +61,8 @@ public class EntityVisitorTest {
 
   @Test
   public void shouldVisitObjectProperty() {
-    var propertyIri = mock(IRI.class);
     var op = mock(OWLObjectProperty.class);
-    when(op.getIRI()).thenReturn(propertyIri);
+    when(op.getIRI()).thenReturn(anyIRI);
 
     visitor.visit(op);
     verify(visitor).visit(op);
@@ -57,9 +73,8 @@ public class EntityVisitorTest {
 
   @Test
   public void shouldVisitDataProperty() {
-    var propertyIri = mock(IRI.class);
     var dp = mock(OWLDataProperty.class);
-    when(dp.getIRI()).thenReturn(propertyIri);
+    when(dp.getIRI()).thenReturn(anyIRI);
 
     visitor.visit(dp);
     verify(visitor).visit(dp);
@@ -70,9 +85,8 @@ public class EntityVisitorTest {
 
   @Test
   public void shouldVisitAnnotationProperty() {
-    var propertyIri = mock(IRI.class);
     var ap = mock(OWLAnnotationProperty.class);
-    when(ap.getIRI()).thenReturn(propertyIri);
+    when(ap.getIRI()).thenReturn(anyIRI);
 
     visitor.visit(ap);
     verify(visitor).visit(ap);
@@ -83,15 +97,26 @@ public class EntityVisitorTest {
 
   @Test
   public void shouldVisitNamedIndividual() {
-    var individualIri = mock(IRI.class);
     var a = mock(OWLNamedIndividual.class);
-    when(a.getIRI()).thenReturn(individualIri);
+    when(a.getIRI()).thenReturn(anyIRI);
 
     visitor.visit(a);
     verify(visitor).visit(a);
     verify(visitor).createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
     verify(visitor).createEdge(a.getIRI(), EdgeLabels.ENTITY_IRI);
     verify(visitor).createNestedTranslation(a.getIRI());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new EntityVisitor(nullIdMapper, visitorFactory);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new EntityVisitor(nodeIdMapper, nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

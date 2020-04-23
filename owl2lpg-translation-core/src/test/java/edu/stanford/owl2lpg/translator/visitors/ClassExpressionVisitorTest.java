@@ -21,10 +21,9 @@ public class ClassExpressionVisitorTest {
   private ClassExpressionVisitor visitor;
 
   // @formatter:off
+  @Mock private NodeIdMapper nodeIdMapper;
+  @Mock private VisitorFactory visitorFactory;
   @Mock private EntityVisitor entityVisitor;
-  @Mock private PropertyExpressionVisitor propertyExpressionVisitor;
-  @Mock private IndividualVisitor individualVisitor;
-  @Mock private DataVisitor dataVisitor;
 
   @Mock private OWLClassExpression anyClassExpression;
   @Mock private Set<OWLClassExpression> classExpressions;
@@ -41,25 +40,23 @@ public class ClassExpressionVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new ClassExpressionVisitor(entityVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor));
-    when(anyClassExpression.accept(visitor)).thenReturn(nestedTranslation);
-    when(anyObjectPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anyDataPropertyExpression.accept(propertyExpressionVisitor)).thenReturn(nestedTranslation);
-    when(anyIndividual.accept(individualVisitor)).thenReturn(nestedTranslation);
-    when(anyDataRange.accept(dataVisitor)).thenReturn(nestedTranslation);
-    when(anyLiteral.accept(dataVisitor)).thenReturn(nestedTranslation);
+    visitor = spy(new ClassExpressionVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
+    when(visitor.getTranslation(anyClassExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyObjectPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyDataPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyIndividual)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyDataRange)).thenReturn(nestedTranslation);
+    when(visitor.getTranslation(anyLiteral)).thenReturn(nestedTranslation);
     when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
   }
 
   @Test
   public void shouldVisitClass() {
     var c = mock(OWLClass.class);
-
     visitor.visit(c);
     verify(visitor).visit(c);
+    verify(visitorFactory).createEntityVisitor();
     verify(entityVisitor).visit(c);
   }
 
@@ -300,38 +297,14 @@ public class ClassExpressionVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenEntityVisitorNull() {
-    EntityVisitor nullEntityVisitor = null;
-    new ClassExpressionVisitor(nullEntityVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor);
+  public void shouldThrowNPEWhenNodeIdMapperNull() {
+    NodeIdMapper nullIdMapper = null;
+    new ClassExpressionVisitor(nullIdMapper, visitorFactory);
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenPropertyExpressionVisitorNull() {
-    PropertyExpressionVisitor nullPropertyExpressionVisitor = null;
-    new ClassExpressionVisitor(entityVisitor,
-        nullPropertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenIndividualVisitorNull() {
-    IndividualVisitor nullIndividualVisitor = null;
-    new ClassExpressionVisitor(entityVisitor,
-        propertyExpressionVisitor,
-        nullIndividualVisitor,
-        dataVisitor);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenDataVisitorNull() {
-    DataVisitor nullDataVisitor = null;
-    new ClassExpressionVisitor(entityVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        nullDataVisitor);
+  public void shouldThrowNPEWhenVisitorFactoryNull() {
+    VisitorFactory nullVisitorFactory = null;
+    new ClassExpressionVisitor(nodeIdMapper, nullVisitorFactory);
   }
 }

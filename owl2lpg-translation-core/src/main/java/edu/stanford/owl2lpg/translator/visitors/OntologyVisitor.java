@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.*;
+import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
+import static edu.stanford.owl2lpg.model.GraphFactory.Node;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 ontology.
@@ -30,17 +31,13 @@ public class OntologyVisitor extends VisitorBase
 
   private Node mainNode;
 
-  @Nonnull
-  private final OWLAxiomVisitorEx<Translation> axiomVisitor;
-
-  @Nonnull
-  private final OWLAnnotationObjectVisitorEx<Translation> annotationVisitor;
+  private final VisitorFactory visitorFactory;
 
   @Inject
-  public OntologyVisitor(@Nonnull OWLAxiomVisitorEx<Translation> axiomVisitor,
-                         @Nonnull OWLAnnotationObjectVisitorEx<Translation> annotationVisitor) {
-    this.axiomVisitor = checkNotNull(axiomVisitor);
-    this.annotationVisitor = checkNotNull(annotationVisitor);
+  public OntologyVisitor(@Nonnull NodeIdMapper nodeIdMapper,
+                         @Nonnull VisitorFactory visitorFactory) {
+    super(nodeIdMapper);
+    this.visitorFactory = checkNotNull(visitorFactory);
   }
 
   @Nonnull
@@ -65,20 +62,23 @@ public class OntologyVisitor extends VisitorBase
     return Edge(mainNode, createOntologyIdNode(ontologyId), EdgeLabels.ONTOLOGY_ID);
   }
 
-  private Node createOntologyIdNode(OWLOntologyID ontologyId) {
-    String ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : null;
-    String versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : null;
+  protected Translation createOntologyIdTranslation(OWLOntologyID ontologyID) {
+    return Translation.create(
+        createOntologyIdNode(ontologyID),
+        ImmutableList.of(),
+        ImmutableList.of());
+  }
+
+  private Node createOntologyIdNode(@Nonnull OWLOntologyID ontologyId) {
+    var ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : null;
+    var versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : null;
     return Node(
+        nodeIdMapper.getId(ontologyId),
         NodeLabels.ONTOLOGY_ID,
         PropertiesBuilder.create()
             .set(PropertyNames.ONTOLOGY_IRI, ontologyIri)
             .set(PropertyNames.ONTOLOGY_VERSION_IRI, versionIri)
-            .build(),
-        withIdentifierFrom(ontologyId));
-  }
-
-  protected Translation createOntologyIdTranslation(OWLOntologyID ontologyID) {
-    return Translation.create(createOntologyIdNode(ontologyID), ImmutableList.of(), ImmutableList.of());
+            .build());
   }
 
   @Nonnull
@@ -126,10 +126,20 @@ public class OntologyVisitor extends VisitorBase
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
     if (anyObject instanceof OWLAnnotation) {
-      return ((OWLAnnotation) anyObject).accept(annotationVisitor);
+      return getAnnotationTranslation((OWLAnnotation) anyObject);
     } else if (anyObject instanceof OWLAxiom) {
-      return ((OWLAxiom) anyObject).accept(axiomVisitor);
+      return getAxiomTranslation((OWLAxiom) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
+  }
+
+  private Translation getAnnotationTranslation(OWLAnnotation annotation) {
+    var annotationVisitor = visitorFactory.createAnnotationObjectVisitor();
+    return annotation.accept(annotationVisitor);
+  }
+
+  private Translation getAxiomTranslation(OWLAxiom axiom) {
+    var axiomVisitor = visitorFactory.createAxiomVisitor();
+    return axiom.accept(axiomVisitor);
   }
 }

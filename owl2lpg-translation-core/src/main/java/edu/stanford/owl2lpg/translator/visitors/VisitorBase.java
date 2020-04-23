@@ -14,7 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.*;
+import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
+import static edu.stanford.owl2lpg.model.GraphFactory.Node;
 import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
@@ -23,22 +24,28 @@ import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties
  */
 public abstract class VisitorBase {
 
+  protected final NodeIdMapper nodeIdMapper;
+
+  protected VisitorBase(@Nonnull NodeIdMapper nodeIdMapper) {
+    this.nodeIdMapper = checkNotNull(nodeIdMapper);
+  }
+
   @Nonnull
-  protected Node createNode(@Nonnull OWLObject anyObject,
+  protected Node createNode(@Nonnull Object anyObject,
                             @Nonnull ImmutableList<String> nodeLabels,
                             @Nonnull Properties properties) {
     checkNotNull(anyObject);
     checkNotNull(nodeLabels);
     checkNotNull(properties);
-    return Node(nodeLabels, properties, withIdentifierFrom(anyObject));
+    return Node(nodeIdMapper.getId(anyObject), nodeLabels, properties);
   }
 
   @Nonnull
-  protected Node createNode(@Nonnull OWLObject anyObject,
+  protected Node createNode(@Nonnull Object anyObject,
                             @Nonnull ImmutableList<String> nodeLabels) {
     checkNotNull(anyObject);
     checkNotNull(nodeLabels);
-    return createNode(anyObject, nodeLabels, Properties.empty());
+    return createNode(nodeIdMapper.getId(anyObject), nodeLabels, Properties.empty());
   }
 
   @Nonnull

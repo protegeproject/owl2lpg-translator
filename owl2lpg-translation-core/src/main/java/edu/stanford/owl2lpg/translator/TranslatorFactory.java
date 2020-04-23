@@ -1,76 +1,115 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.translator.visitors.*;
-import org.semanticweb.owlapi.model.*;
+import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
+import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
+import edu.stanford.owl2lpg.translator.visitors.VisitorFactory;
 
+import javax.annotation.Nonnull;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * A collection of factory methods to create OWL object translators.
+ *
+ * @author Josef Hardi <josef.hardi@stanford.edu> <br>
+ * Stanford Center for Biomedical Informatics Research
+ */
 public class TranslatorFactory {
 
-  private static OWLNamedObjectVisitorEx ontologyVisitor;
-  private static OWLAxiomVisitorEx<Translation> axiomVisitor;
-  private static OWLClassExpressionVisitorEx<Translation> classExpressionVisitor;
-  private static OWLPropertyExpressionVisitorEx<Translation> propertyExpressionVisitor;
-  private static OWLEntityVisitorEx<Translation> entityVisitor;
-  private static OWLIndividualVisitorEx<Translation> individualVisitor;
-  private static OWLDataVisitorEx<Translation> dataVisitor;
-  private static OWLAnnotationObjectVisitorEx<Translation> annotationVisitor;
-  private static OWLAnnotationSubjectVisitorEx<Translation> annotationSubjectVisitor;
-  private static OWLAnnotationValueVisitorEx<Translation> annotationValueVisitor;
-
-  static {
-    entityVisitor = new EntityVisitor();
-    propertyExpressionVisitor = new PropertyExpressionVisitor(entityVisitor);
-    individualVisitor = new IndividualVisitor(entityVisitor);
-    dataVisitor = new DataVisitor(entityVisitor);
-    classExpressionVisitor = new ClassExpressionVisitor(
-        entityVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor);
-    annotationSubjectVisitor = new AnnotationSubjectVisitor();
-    annotationValueVisitor = new AnnotationValueVisitor(dataVisitor);
-    annotationVisitor = new AnnotationObjectVisitor(
-        entityVisitor,
-        annotationValueVisitor);
-    axiomVisitor = new AxiomVisitor(entityVisitor,
-        classExpressionVisitor,
-        propertyExpressionVisitor,
-        individualVisitor,
-        dataVisitor,
-        annotationVisitor,
-        annotationSubjectVisitor,
-        annotationValueVisitor);
-    ontologyVisitor = new OntologyVisitor(axiomVisitor, annotationVisitor);
+  @Nonnull
+  public static OntologyTranslator getOntologyTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new OntologyTranslator(new VisitorFactory(nodeIdMapper).createOntologyVisitor());
   }
 
+  @Nonnull
   public static OntologyTranslator getOntologyTranslator() {
-    return new OntologyTranslator(ontologyVisitor);
+    return getOntologyTranslator(getDefaultProvider());
   }
 
+  @Nonnull
+  public static AxiomTranslator getAxiomTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new AxiomTranslator(new VisitorFactory(nodeIdMapper).createAxiomVisitor());
+  }
+
+  @Nonnull
   public static AxiomTranslator getAxiomTranslator() {
-    return new AxiomTranslator(axiomVisitor);
+    return getAxiomTranslator(getDefaultProvider());
   }
 
-  public static ClassExpressionTranslator getClassExpressionTranslator() {
-    return new ClassExpressionTranslator(classExpressionVisitor);
+  @Nonnull
+  public static ClassExpressionTranslator getClassExpressionTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new ClassExpressionTranslator(new VisitorFactory(nodeIdMapper).createClassExpressionVisitor());
   }
 
+  @Nonnull
+  public static ClassExpressionTranslator getClassExpresssionTranslator() {
+    return getClassExpressionTranslator(getDefaultProvider());
+  }
+
+  @Nonnull
+  public static PropertyExpressionTranslator getPropertyExpressionTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new PropertyExpressionTranslator(new VisitorFactory(nodeIdMapper).createPropertyExpressionVisitor());
+  }
+
+  @Nonnull
   public static PropertyExpressionTranslator getPropertyExpressionTranslator() {
-    return new PropertyExpressionTranslator(propertyExpressionVisitor);
+    return getPropertyExpressionTranslator(getDefaultProvider());
   }
 
+  @Nonnull
+  public static EntityTranslator getEntityTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new EntityTranslator(new VisitorFactory(nodeIdMapper).createEntityVisitor());
+  }
+
+  @Nonnull
   public static EntityTranslator getEntityTranslator() {
-    return new EntityTranslator(entityVisitor);
+    return getEntityTranslator(getDefaultProvider());
   }
 
+  @Nonnull
+  public static IndividualTranslator getIndividualTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new IndividualTranslator(new VisitorFactory(nodeIdMapper).createIndividualVisitor());
+  }
+
+  @Nonnull
   public static IndividualTranslator getIndividualTranslator() {
-    return new IndividualTranslator(individualVisitor);
+    return getIndividualTranslator(getDefaultProvider());
   }
 
+  @Nonnull
+  public static DataRangeTranslator getDataRangeTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new DataRangeTranslator(new VisitorFactory(nodeIdMapper).createDataVisitor());
+  }
+
+  @Nonnull
   public static DataRangeTranslator getDataRangeTranslator() {
-    return new DataRangeTranslator(dataVisitor);
+    return getDataRangeTranslator(getDefaultProvider());
   }
 
+  @Nonnull
+  public static LiteralTranslator getLiteralTranslator(@Nonnull NodeIdProvider nodeIdProvider) {
+    var nodeIdMapper = getNodeIdMapper(nodeIdProvider);
+    return new LiteralTranslator(new VisitorFactory(nodeIdMapper).createDataVisitor());
+  }
+
+  @Nonnull
   public static LiteralTranslator getLiteralTranslator() {
-    return new LiteralTranslator(dataVisitor);
+    return getLiteralTranslator(getDefaultProvider());
+  }
+
+  private static NodeIdMapper getNodeIdMapper(@Nonnull NodeIdProvider nodeIdProvider) {
+    checkNotNull(nodeIdProvider);
+    return new NodeIdMapper(nodeIdProvider);
+  }
+
+  private static NodeIdProvider getDefaultProvider() {
+    return new NumberIncrementIdProvider();
   }
 }
