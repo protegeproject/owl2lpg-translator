@@ -36,10 +36,9 @@ public class IriNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static IriNode of(@Nonnull Node node,
-                           @Nonnull NodeIdProvider nodeIdProvider) {
+  public static IriNode of(@Nonnull Node node) {
     return new IriNode(
-        nodeIdProvider.getId(),
+        node.getNodeId().toString(),
         node.getProperties().get(PropertyNames.IRI),
         node.getLabels());
   }

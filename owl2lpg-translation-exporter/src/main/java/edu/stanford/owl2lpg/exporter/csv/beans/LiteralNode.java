@@ -36,10 +36,9 @@ public class LiteralNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static LiteralNode create(@Nonnull Node node,
-                                   @Nonnull NodeIdProvider nodeIdProvider) {
+  public static LiteralNode create(@Nonnull Node node) {
     return new LiteralNode(
-        nodeIdProvider.getId(),
+        node.getNodeId().toString(),
         node.getProperties().get(PropertyNames.LEXICAL_FORM),
         node.getLabels());
   }

@@ -31,12 +31,10 @@ public class PropertylessEdge {
     this.edgeType = checkNotNull(edgeType);
   }
 
-  public static PropertylessEdge of(@Nonnull Edge edge,
-                                    @Nonnull NodeIdProvider sourceNodeIdProvider,
-                                    @Nonnull NodeIdProvider targetNodeIdProvider) {
+  public static PropertylessEdge of(@Nonnull Edge edge) {
     return new PropertylessEdge(
-        sourceNodeIdProvider.getId(),
-        targetNodeIdProvider.getId(),
+        edge.getFromNode().getNodeId().toString(),
+        edge.getToNode().getNodeId().toString(),
         edge.getLabel());
   }
 

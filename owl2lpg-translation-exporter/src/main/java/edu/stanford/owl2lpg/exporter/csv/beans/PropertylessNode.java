@@ -29,10 +29,9 @@ public class PropertylessNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static PropertylessNode of(@Nonnull Node node,
-                                    @Nonnull NodeIdProvider nodeIdProvider) {
+  public static PropertylessNode of(@Nonnull Node node) {
     return new PropertylessNode(
-        nodeIdProvider.getId(),
+        node.getNodeId().toString(),
         node.getLabels());
   }
 

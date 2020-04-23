@@ -36,10 +36,9 @@ public class LanguageTagNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static LanguageTagNode of(@Nonnull Node node,
-                                   @Nonnull NodeIdProvider nodeIdProvider) {
+  public static LanguageTagNode of(@Nonnull Node node) {
     return new LanguageTagNode(
-        nodeIdProvider.getId(),
+        node.getNodeId().toString(),
         node.getProperties().get(PropertyNames.LANGUAGE),
         node.getLabels());
   }

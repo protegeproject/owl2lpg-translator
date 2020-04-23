@@ -36,10 +36,9 @@ public class EntityNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static EntityNode of(@Nonnull Node node,
-                              @Nonnull NodeIdProvider nodeIdProvider) {
+  public static EntityNode of(@Nonnull Node node) {
     return new EntityNode(
-        nodeIdProvider.getId(),
+        node.getNodeId().toString(),
         node.getProperties().get(PropertyNames.IRI),
         node.getLabels());
   }

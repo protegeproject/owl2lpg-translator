@@ -36,10 +36,9 @@ public class AnonymousIndividualNode {
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
-  public static AnonymousIndividualNode of(@Nonnull Node node,
-                                           @Nonnull NodeIdProvider nodeIdProvider) {
+  public static AnonymousIndividualNode of(@Nonnull Node node) {
     return new AnonymousIndividualNode(
-        nodeIdProvider.getId(),
+        node.getNodeId().toString(),
         node.getProperties().get(PropertyNames.NODE_ID),
         node.getLabels());
   }

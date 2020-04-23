@@ -46,8 +46,9 @@ public class CypherExporter {
   }
 
   void writeNodes(Stream<Node> nodeStream) {
-    nodeStream.forEach(node -> {
-      var nodeId = printNodeId(node.getNodeId());
+    nodeStream.collect(Collectors.toSet())
+        .stream().forEach(node -> {
+      var nodeId = node.getNodeId();
       var nodeLabel = printNodeLabel(node.getLabels());
       var nodeProperties = printNodeProperties(node.getProperties());
       var s = format("CREATE (%s%s %s)", nodeId, nodeLabel, nodeProperties);
@@ -57,8 +58,8 @@ public class CypherExporter {
 
   void writeEdges(Stream<Edge> edgeStream) {
     edgeStream.forEach(edge -> {
-      var fromNodeId = printNodeId(edge.getFromNode().getNodeId());
-      var toNodeId = printNodeId(edge.getToNode().getNodeId());
+      var fromNodeId = edge.getFromNode().getNodeId();
+      var toNodeId = edge.getToNode().getNodeId();
       var edgeLabel = printEdgeLabel(edge.getLabel());
       var edgeProperties = printEdgeProperties(edge.getProperties());
       var s = format("CREATE (%s)-[%s %s]->(%s)", fromNodeId, edgeLabel, edgeProperties, toNodeId);
@@ -84,10 +85,6 @@ public class CypherExporter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private static String printNodeId(int nodeId) {
-    return format("NodeId_%d", nodeId);
   }
 
   private static String printNodeLabel(List<String> nodeLabels) {
