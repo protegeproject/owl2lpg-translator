@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -55,6 +56,7 @@ public class AxiomVisitorTest {
   @Mock private OWLAnnotationSubject anyAnnotationSubject;
   @Mock private OWLAnnotationValue anyAnnotationValue;
 
+  @Mock private NodeId nodeId;
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
@@ -93,6 +95,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDeclarationAxiom.class);
     when(axiom.getEntity()).thenReturn(anyEntity);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -109,6 +112,7 @@ public class AxiomVisitorTest {
     when(axiom.getDatatype()).thenReturn(anyDatatype);
     when(axiom.getDataRange()).thenReturn(anyDataRange);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -127,6 +131,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubClass()).thenReturn(anySubClassExpression);
     when(axiom.getSuperClass()).thenReturn(anySuperClassExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -145,6 +150,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubProperty()).thenReturn(anySubObjectPropertyExpression);
     when(axiom.getSuperProperty()).thenReturn(anySuperObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -163,6 +169,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubProperty()).thenReturn(anySubDataPropertyExpression);
     when(axiom.getSuperProperty()).thenReturn(anySuperDataPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -183,6 +190,7 @@ public class AxiomVisitorTest {
     when(axiom.getPropertyChain().size()).thenReturn(1);
     when(axiom.getSuperProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -201,6 +209,7 @@ public class AxiomVisitorTest {
     when(axiom.getSubProperty()).thenReturn(anySubAnnotationProperty);
     when(axiom.getSuperProperty()).thenReturn(anySuperAnnotationProperty);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -219,6 +228,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getDomain()).thenReturn(anyClassExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -237,6 +247,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getRange()).thenReturn(anyClassExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -255,6 +266,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getDomain()).thenReturn(anyClassExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -273,6 +285,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getRange()).thenReturn(anyDataRange);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -291,6 +304,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyAnnotationProperty);
     when(axiom.getDomain()).thenReturn(anyIri);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -309,6 +323,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyAnnotationProperty);
     when(axiom.getRange()).thenReturn(anyIri);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -326,6 +341,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLEquivalentClassesAxiom.class);
     when(axiom.getClassExpressions()).thenReturn(classExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -341,6 +357,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLEquivalentObjectPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(objectPropertyExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -356,6 +373,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLEquivalentDataPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(dataPropertyExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -371,6 +389,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDisjointClassesAxiom.class);
     when(axiom.getClassExpressions()).thenReturn(classExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -387,6 +406,7 @@ public class AxiomVisitorTest {
     when(axiom.getOWLClass()).thenReturn(anyClass);
     when(axiom.getClassExpressions()).thenReturn(classExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -404,6 +424,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDisjointObjectPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(objectPropertyExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -419,6 +440,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDisjointDataPropertiesAxiom.class);
     when(axiom.getProperties()).thenReturn(dataPropertyExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -434,6 +456,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLSameIndividualAxiom.class);
     when(axiom.getIndividuals()).thenReturn(individuals);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -449,6 +472,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLDifferentIndividualsAxiom.class);
     when(axiom.getIndividuals()).thenReturn(individuals);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -465,6 +489,7 @@ public class AxiomVisitorTest {
     when(axiom.getFirstProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getSecondProperty()).thenReturn(anySuperObjectPropertyExpression); // any ope
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -484,6 +509,7 @@ public class AxiomVisitorTest {
     when(axiom.getObjectPropertyExpressions()).thenReturn(objectPropertyExpressions);
     when(axiom.getDataPropertyExpressions()).thenReturn(dataPropertyExpressions);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -504,6 +530,7 @@ public class AxiomVisitorTest {
     when(axiom.getClassExpression()).thenReturn(anyClassExpression);
     when(axiom.getIndividual()).thenReturn(anyIndividual);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -523,6 +550,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getObject()).thenReturn(anyTargetIndividual);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -544,6 +572,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getObject()).thenReturn(anyLiteral);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -561,10 +590,12 @@ public class AxiomVisitorTest {
   @Test
   public void shouldVisitAnnotationAssertionAxiom() {
     var axiom = mock(OWLAnnotationAssertionAxiom.class);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
     when(axiom.getSubject()).thenReturn(anyAnnotationSubject);
     when(axiom.getProperty()).thenReturn(anyAnnotationProperty);
     when(axiom.getValue()).thenReturn(anyAnnotationValue);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -586,6 +617,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getObject()).thenReturn(anyTargetIndividual);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -607,6 +639,7 @@ public class AxiomVisitorTest {
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getObject()).thenReturn(anyLiteral);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -626,6 +659,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLFunctionalObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -641,6 +675,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLInverseFunctionalObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -656,6 +691,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLSymmetricObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -671,6 +707,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLAsymmetricObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -686,6 +723,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLReflexiveObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -701,6 +739,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLIrreflexiveObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -716,6 +755,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLTransitiveObjectPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -731,6 +771,7 @@ public class AxiomVisitorTest {
     var axiom = mock(OWLFunctionalDataPropertyAxiom.class);
     when(axiom.getProperty()).thenReturn(anyDataPropertyExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
+    when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);

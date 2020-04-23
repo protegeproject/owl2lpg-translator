@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.Maps;
+import edu.stanford.owl2lpg.model.NodeId;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -13,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class NodeIdMapper {
 
-  private Map<Object, Integer> nodeIdMapper = Maps.newHashMap();
+  private Map<Object, NodeId> nodeIdMapper = Maps.newHashMap();
 
   @Nonnull
   private final NodeIdProvider idProvider;
@@ -22,12 +23,13 @@ public class NodeIdMapper {
     this.idProvider = checkNotNull(idProvider);
   }
 
-  public int getId(@Nonnull Object o) {
+  @Nonnull
+  public NodeId get(@Nonnull Object o) {
     return getExistingOrCreate(o);
   }
 
-  private int getExistingOrCreate(@Nonnull Object o) {
-    Integer nodeId = nodeIdMapper.get(o);
+  private NodeId getExistingOrCreate(@Nonnull Object o) {
+    NodeId nodeId = nodeIdMapper.get(o);
     if (nodeId == null) {
       nodeId = createNewId();
       nodeIdMapper.put(o, nodeId);
@@ -35,7 +37,7 @@ public class NodeIdMapper {
     return nodeId;
   }
 
-  private int createNewId() {
+  private NodeId createNewId() {
     return idProvider.getId();
   }
 }

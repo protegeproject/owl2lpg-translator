@@ -37,7 +37,7 @@ public abstract class VisitorBase {
     checkNotNull(anyObject);
     checkNotNull(nodeLabels);
     checkNotNull(properties);
-    return Node(nodeIdMapper.getId(anyObject), nodeLabels, properties);
+    return Node(nodeIdMapper.get(anyObject), nodeLabels, properties);
   }
 
   @Nonnull
@@ -45,7 +45,7 @@ public abstract class VisitorBase {
                             @Nonnull ImmutableList<String> nodeLabels) {
     checkNotNull(anyObject);
     checkNotNull(nodeLabels);
-    return createNode(nodeIdMapper.getId(anyObject), nodeLabels, Properties.empty());
+    return createNode(anyObject, nodeLabels, Properties.empty());
   }
 
   @Nonnull

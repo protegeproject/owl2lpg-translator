@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ public class IndividualVisitorTest {
   @Mock private NodeIdMapper nodeIdMapper;
   @Mock private VisitorFactory visitorFactory;
   @Mock private EntityVisitor entityVisitor;
+  @Mock private NodeId nodeId;
   // @formatter:off
 
   @Before
@@ -40,6 +42,8 @@ public class IndividualVisitorTest {
   @Test
   public void shouldVisitAnonymousIndividual() {
     var individual = mock(OWLAnonymousIndividual.class);
+    when(nodeIdMapper.get(individual)).thenReturn(nodeId);
+
     visitor.visit(individual);
     verify(visitor).visit(individual);
     verify(visitor).createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);

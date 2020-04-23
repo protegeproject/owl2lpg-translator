@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ public class AnnotationValueVisitorTest {
   @Mock private VisitorFactory visitorFactory;
   @Mock private IndividualVisitor individualVisitor;
   @Mock private DataVisitor dataVisitor;
+  @Mock private NodeId nodeId;
   // @formatter:off
 
   @Before
@@ -34,6 +36,8 @@ public class AnnotationValueVisitorTest {
   @Test
   public void shouldVisitIri() {
     var iri = mock(IRI.class);
+    when(nodeIdMapper.get(iri)).thenReturn(nodeId);
+
     visitor.visit(iri);
     verify(visitor).visit(iri);
     verify(visitor).createIriNode(iri, NodeLabels.IRI);

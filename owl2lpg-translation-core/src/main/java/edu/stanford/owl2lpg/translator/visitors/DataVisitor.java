@@ -67,7 +67,7 @@ public class DataVisitor extends VisitorBase
 
   protected Node createLanguageTagNode(@Nonnull String languageTag,
                                        @Nonnull ImmutableList<String> nodeLabels) {
-    return Node(nodeIdMapper.getId(languageTag),
+    return Node(nodeIdMapper.get(languageTag),
         nodeLabels,
         Properties(PropertyNames.LANGUAGE, languageTag));
   }

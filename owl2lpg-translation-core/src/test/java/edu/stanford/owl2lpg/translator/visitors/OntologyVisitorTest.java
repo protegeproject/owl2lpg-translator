@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.base.Optional;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
@@ -26,6 +27,8 @@ public class OntologyVisitorTest {
   @Mock private OWLOntologyID ontologyId;
   @Mock private Set<OWLAxiom> axioms;
   @Mock private Set<OWLAnnotation> annotations;
+
+  @Mock private NodeId nodeId;
   // @formatter:off
 
   @Before
@@ -42,6 +45,8 @@ public class OntologyVisitorTest {
     when(ontologyId.getVersionIRI()).thenReturn(Optional.absent());
     when(ontology.getAnnotations()).thenReturn(annotations);
     when(ontology.getAxioms()).thenReturn(axioms);
+    when(nodeIdMapper.get(ontologyId)).thenReturn(nodeId);
+    when(nodeIdMapper.get(ontology)).thenReturn(nodeId);
 
     visitor.visit(ontology);
     verify(visitor).visit(ontology);

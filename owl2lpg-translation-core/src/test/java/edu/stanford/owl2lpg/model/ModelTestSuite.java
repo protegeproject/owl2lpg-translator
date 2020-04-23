@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+    NodeIdTest.class,
     NodeTest.class,
     EdgeTest.class,
     GraphFactoryTest.class,

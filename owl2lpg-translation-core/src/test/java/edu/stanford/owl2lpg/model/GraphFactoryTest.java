@@ -15,6 +15,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class GraphFactoryTest {
 
   @Mock
+  private NodeId nodeId;
+
+  @Mock
   private Properties properties;
 
   @Mock
@@ -22,17 +25,18 @@ public class GraphFactoryTest {
 
   @Test
   public void shouldCreateNode() {
-    var node = GraphFactory.Node(1, NodeLabels.CLASS, properties);
-    assertNodeMatches(node, 1, NodeLabels.CLASS, properties);
+    var node = GraphFactory.Node(nodeId, NodeLabels.CLASS, properties);
+    assertNodeMatches(node, nodeId, NodeLabels.CLASS, properties);
   }
 
   @Test
   public void shouldCreateNodeWithEmptyProperties() {
-    var node = GraphFactory.Node(1, NodeLabels.CLASS);
-    assertNodeMatches(node, 1, NodeLabels.CLASS, Properties.empty());
+    var node = GraphFactory.Node(nodeId, NodeLabels.CLASS);
+    assertNodeMatches(node, nodeId, NodeLabels.CLASS, Properties.empty());
   }
 
-  private static void assertNodeMatches(Node actualNode, int expectedNodeId,
+  private static void assertNodeMatches(Node actualNode,
+                                        NodeId expectedNodeId,
                                         ImmutableList<String> expectedNodeLabels,
                                         Properties expectedProperties) {
     assertThat(actualNode.getNodeId(), equalTo(expectedNodeId));

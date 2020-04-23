@@ -73,7 +73,7 @@ public class OntologyVisitor extends VisitorBase
     var ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : null;
     var versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : null;
     return Node(
-        nodeIdMapper.getId(ontologyId),
+        nodeIdMapper.get(ontologyId),
         NodeLabels.ONTOLOGY_ID,
         PropertiesBuilder.create()
             .set(PropertyNames.ONTOLOGY_IRI, ontologyIri)

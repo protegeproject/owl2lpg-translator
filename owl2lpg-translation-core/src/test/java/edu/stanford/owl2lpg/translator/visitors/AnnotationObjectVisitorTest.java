@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -33,6 +34,7 @@ public class AnnotationObjectVisitorTest {
   @Mock private OWLAnnotation annotationAnnotation;
   @Mock private Set<OWLAnnotation> annotationAnnotations;
 
+  @Mock private NodeId nodeId;
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
@@ -55,6 +57,7 @@ public class AnnotationObjectVisitorTest {
     when(annotation.getProperty()).thenReturn(annotationProperty);
     when(annotation.getValue()).thenReturn(annotationValue);
     when(annotation.getAnnotations()).thenReturn(annotationAnnotations);
+    when(nodeIdMapper.get(annotation)).thenReturn(nodeId);
 
     visitor.visit(annotation);
     verify(visitor).visit(annotation);

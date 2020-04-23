@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -24,6 +25,7 @@ public class EntityVisitorTest {
 
   @Mock private IRI anyIRI;
 
+  @Mock private NodeId nodeId;
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
@@ -39,6 +41,7 @@ public class EntityVisitorTest {
   public void shouldVisitClass() {
     var cls = mock(OWLClass.class);
     when(cls.getIRI()).thenReturn(anyIRI);
+    when(nodeIdMapper.get(cls)).thenReturn(nodeId);
 
     visitor.visit(cls);
     verify(visitor).visit(cls);
@@ -51,6 +54,7 @@ public class EntityVisitorTest {
   public void shouldVisitDatatype() {
     var dt = mock(OWLDatatype.class);
     when(dt.getIRI()).thenReturn(anyIRI);
+    when(nodeIdMapper.get(dt)).thenReturn(nodeId);
 
     visitor.visit(dt);
     verify(visitor).visit(dt);
@@ -63,6 +67,7 @@ public class EntityVisitorTest {
   public void shouldVisitObjectProperty() {
     var op = mock(OWLObjectProperty.class);
     when(op.getIRI()).thenReturn(anyIRI);
+    when(nodeIdMapper.get(op)).thenReturn(nodeId);
 
     visitor.visit(op);
     verify(visitor).visit(op);
@@ -75,6 +80,7 @@ public class EntityVisitorTest {
   public void shouldVisitDataProperty() {
     var dp = mock(OWLDataProperty.class);
     when(dp.getIRI()).thenReturn(anyIRI);
+    when(nodeIdMapper.get(dp)).thenReturn(nodeId);
 
     visitor.visit(dp);
     verify(visitor).visit(dp);
@@ -87,6 +93,7 @@ public class EntityVisitorTest {
   public void shouldVisitAnnotationProperty() {
     var ap = mock(OWLAnnotationProperty.class);
     when(ap.getIRI()).thenReturn(anyIRI);
+    when(nodeIdMapper.get(ap)).thenReturn(nodeId);
 
     visitor.visit(ap);
     verify(visitor).visit(ap);
@@ -99,6 +106,7 @@ public class EntityVisitorTest {
   public void shouldVisitNamedIndividual() {
     var a = mock(OWLNamedIndividual.class);
     when(a.getIRI()).thenReturn(anyIRI);
+    when(nodeIdMapper.get(a)).thenReturn(nodeId);
 
     visitor.visit(a);
     verify(visitor).visit(a);

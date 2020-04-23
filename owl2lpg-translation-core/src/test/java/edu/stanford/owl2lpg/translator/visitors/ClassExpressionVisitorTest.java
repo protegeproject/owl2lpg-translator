@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -34,6 +35,7 @@ public class ClassExpressionVisitorTest {
   @Mock private OWLDataRange anyDataRange;
   @Mock private OWLLiteral anyLiteral;
 
+  @Mock private NodeId nodeId;
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
@@ -64,6 +66,7 @@ public class ClassExpressionVisitorTest {
   public void shouldVisitObjectIntersectionOf() {
     var ce = mock(OWLObjectIntersectionOf.class);
     when(ce.getOperands()).thenReturn(classExpressions);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -76,6 +79,7 @@ public class ClassExpressionVisitorTest {
   public void shouldVisitObjectUnionOf() {
     var ce = mock(OWLObjectUnionOf.class);
     when(ce.getOperands()).thenReturn(classExpressions);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -88,6 +92,7 @@ public class ClassExpressionVisitorTest {
   public void shouldVisitObjectComplementOf() {
     var ce = mock(OWLObjectComplementOf.class);
     when(ce.getOperand()).thenReturn(anyClassExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -101,6 +106,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLObjectSomeValuesFrom.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(ce.getFiller()).thenReturn(anyClassExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -116,6 +122,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLObjectAllValuesFrom.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(ce.getFiller()).thenReturn(anyClassExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -131,6 +138,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLObjectHasValue.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(ce.getFiller()).thenReturn(anyIndividual);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -146,6 +154,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLObjectMinCardinality.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(ce.getFiller()).thenReturn(anyClassExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -161,6 +170,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLObjectExactCardinality.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(ce.getFiller()).thenReturn(anyClassExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -176,6 +186,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLObjectMaxCardinality.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
     when(ce.getFiller()).thenReturn(anyClassExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -190,6 +201,7 @@ public class ClassExpressionVisitorTest {
   public void shouldVisitObjectHasSelf() {
     var ce = mock(OWLObjectHasSelf.class);
     when(ce.getProperty()).thenReturn(anyObjectPropertyExpression);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -202,6 +214,7 @@ public class ClassExpressionVisitorTest {
   public void shouldVisitObjectOneOf() {
     var ce = mock(OWLObjectOneOf.class);
     when(ce.getIndividuals()).thenReturn(individuals);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_ONE_OF);
@@ -214,6 +227,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLDataSomeValuesFrom.class);
     when(ce.getProperty()).thenReturn(anyDataPropertyExpression);
     when(ce.getFiller()).thenReturn(anyDataRange);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.DATA_SOME_VALUES_FROM);
@@ -228,6 +242,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLDataAllValuesFrom.class);
     when(ce.getProperty()).thenReturn(anyDataPropertyExpression);
     when(ce.getFiller()).thenReturn(anyDataRange);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.DATA_ALL_VALUES_FROM);
@@ -242,6 +257,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLDataHasValue.class);
     when(ce.getProperty()).thenReturn(anyDataPropertyExpression);
     when(ce.getFiller()).thenReturn(anyLiteral);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.DATA_HAS_VALUE);
@@ -256,6 +272,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLDataMinCardinality.class);
     when(ce.getProperty()).thenReturn(anyDataPropertyExpression);
     when(ce.getFiller()).thenReturn(anyDataRange);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -271,6 +288,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLDataExactCardinality.class);
     when(ce.getProperty()).thenReturn(anyDataPropertyExpression);
     when(ce.getFiller()).thenReturn(anyDataRange);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);
@@ -286,6 +304,7 @@ public class ClassExpressionVisitorTest {
     var ce = mock(OWLDataMaxCardinality.class);
     when(ce.getProperty()).thenReturn(anyDataPropertyExpression);
     when(ce.getFiller()).thenReturn(anyDataRange);
+    when(nodeIdMapper.get(ce)).thenReturn(nodeId);
 
     visitor.visit(ce);
     verify(visitor).visit(ce);

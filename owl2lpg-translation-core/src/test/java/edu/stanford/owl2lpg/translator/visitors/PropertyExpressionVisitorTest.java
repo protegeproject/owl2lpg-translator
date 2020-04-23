@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -24,6 +25,8 @@ public class PropertyExpressionVisitorTest {
 
   @Mock private EntityVisitor entityVisitor;
   @Mock private OWLObjectPropertyExpression objectPropertyExpression;
+
+  @Mock private NodeId nodeId;
   @Mock private Translation nestedTranslation;
   @Mock private Node nestedTranslationMainNode;
   // @formatter:off
@@ -67,6 +70,7 @@ public class PropertyExpressionVisitorTest {
   public void shouldVisitObjectInverseOf() {
     var ope = mock(OWLObjectInverseOf.class);
     when(ope.getInverseProperty()).thenReturn(objectPropertyExpression);
+    when(nodeIdMapper.get(ope)).thenReturn(nodeId);
 
     visitor.visit(ope);
     verify(visitor).visit(ope);

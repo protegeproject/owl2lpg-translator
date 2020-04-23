@@ -15,13 +15,13 @@ import javax.annotation.Nonnull;
 @AutoValue
 public abstract class Node {
 
-  public static Node create(int nodeId,
+  public static Node create(@Nonnull NodeId nodeId,
                             @Nonnull ImmutableList<String> labels,
                             @Nonnull Properties properties) {
     return new AutoValue_Node(nodeId, labels, properties);
   }
 
-  public abstract int getNodeId();
+  public abstract NodeId getNodeId();
 
   public abstract ImmutableList<String> getLabels();
 
