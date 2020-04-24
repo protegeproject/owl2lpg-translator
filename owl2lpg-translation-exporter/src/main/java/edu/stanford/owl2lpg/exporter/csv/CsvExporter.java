@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.opencsv.bean.*;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import edu.stanford.owl2lpg.exporter.csv.beans.*;
@@ -18,11 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -252,75 +248,7 @@ public class CsvExporter {
         .build();
   }
 
-  private HeaderColumnByAnnotationStrategy getCustomMappingStrategy(Class<?> cls) {
-    var mappingStrategy = new HeaderColumnByAnnotationStrategy();
-    var columnNameComparator = new ClassFieldOrderComparator(cls);
-    mappingStrategy.setType(cls);
-    mappingStrategy.setColumnOrderOnWrite(columnNameComparator);
-    return mappingStrategy;
-  }
-
-  /*
-   * Code taken from:
-   * https://stackoverflow.com/questions/56168094/why-opencsv-capitalizing-csv-
-   * headers-while-writing-to-file
-   */
-  private static class HeaderColumnByAnnotationStrategy<T> extends HeaderColumnNameTranslateMappingStrategy<T> {
-    @Override
-    public void setType(Class<? extends T> cls) {
-      super.setType(cls);
-      var map = Maps.<String, String>newHashMap();
-      Arrays.stream(cls.getDeclaredFields())
-          .forEach(field -> {
-            var a1 = field.getAnnotation(CsvBindByName.class);
-            if (a1 != null) {
-              map.put(field.getName(), a1.column());
-            }
-            var a2 = field.getAnnotation(CsvBindAndSplitByName.class);
-            if (a2 != null) {
-              map.put(field.getName(), a2.column());
-            }
-          });
-      setColumnMapping(map);
-    }
-
-    @Override
-    public String getColumnName(int col) {
-      return headerIndex.getByPosition(col);
-    }
-
-    @Override
-    public String[] generateHeader(T bean) throws CsvRequiredFieldEmptyException {
-      var result = super.generateHeader(bean);
-      for (int i = 0; i < result.length; i++) {
-        result[i] = getColumnMapping().get(getColumnName(i));
-      }
-      return result;
-    }
-  }
-
-  /**
-   * Code taken from:
-   * https://stackoverflow.com/questions/45203867/opencsv-how-to-create-csv-
-   * file-from-pojo-with-custom-column-headers-and-custom
-   */
-  private static class ClassFieldOrderComparator implements Comparator<String> {
-
-    private List<String> columnNamesInOrder;
-
-    public ClassFieldOrderComparator(Class<?> clazz) {
-      columnNamesInOrder = Arrays.stream(clazz.getDeclaredFields())
-          .filter(field -> field.getAnnotation(CsvBindByName.class) != null ||
-              field.getAnnotation(CsvBindAndSplitByName.class) != null)
-          .map(field -> field.getName().toUpperCase())
-          .collect(Collectors.toList());
-    }
-
-    @Override
-    public int compare(String o1, String o2) {
-      var fieldIndexo1 = columnNamesInOrder.indexOf(o1);
-      var fieldIndexo2 = columnNamesInOrder.indexOf(o2);
-      return Integer.compare(fieldIndexo1, fieldIndexo2);
-    }
+  private CsvWritingStrategy getCustomMappingStrategy(Class<?> cls) {
+    return new CsvWritingStrategy(cls);
   }
 }
