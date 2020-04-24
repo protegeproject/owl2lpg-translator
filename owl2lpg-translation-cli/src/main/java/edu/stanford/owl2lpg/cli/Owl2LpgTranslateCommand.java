@@ -21,7 +21,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   @Parameters(type = File.class, index = "0", paramLabel = "FILE", description = "An OWL ontology file to translate")
   File ontologyFile;
 
-  @Option(names = {"-f"}, description = "Translation format: ${COMPLETION-CANDIDATE} (default: ${DEFAULT-VALUE})")
+  @Option(names = {"-f"}, description = "Translation format: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})")
   Format format = Format.cypher;
 
   @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display a help message")
