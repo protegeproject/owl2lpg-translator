@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>OWL2LPG-Translator (Parent)</name>
+  <name>OWL2LPG-Translation Parent</name>
   <description>A program to translate OWL 2 Ontologies to Labelled Property Graph</description>
 
   <modules>
@@ -17,6 +17,7 @@
     <module>owl2lpg-translation-exporter</module>
     <module>owl2lpg-translation-cli</module>
     <module>owl2lpg-translation-versioning</module>
+    <module>owl2lpg-client-api</module>
   </modules>
 
   <scm>

@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>owl2lpg-translation-versioning</artifactId>
-  <name>Ontology graph versioning implemented for Neo4j</name>
+  <name>OWL2LPG-Translation Versioning</name>
   <description>
     Manages project, branching and change history of an ontology graph in Neo4j
   </description>

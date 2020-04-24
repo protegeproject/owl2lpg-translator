@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>owl2lpg-translation-exporter</artifactId>
-  <name>OWL2LPG Translation Exporter for Neo4j</name>
+  <name>OWL2LPG-Translation Exporter</name>
   <description>
     Export the OWL2LPG translations to Neo4j in various formats (e.g., CSV, JSON, Cypher Script)
   </description>

@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>owl2lpg-translation-cli</artifactId>
-  <name>OWL2LPG Translator in a Command Line Interface</name>
+  <name>OWL2LPG-Translation CLI</name>
   <description>
     Export the translations from OWL 2 to Neo4j in various formats (e.g., CSV, JSON, Cypher Script)
   </description>

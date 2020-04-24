@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>owl2lpg-translation-core</artifactId>
-  <name>OWL2LPG Generic Graph Translation</name>
+  <name>OWL2LPG-Translation Core</name>
   <description>
     Translate OWL 2 Axioms to Labelled Property Graph (LPG) in a generic graph representation.
   </description>
