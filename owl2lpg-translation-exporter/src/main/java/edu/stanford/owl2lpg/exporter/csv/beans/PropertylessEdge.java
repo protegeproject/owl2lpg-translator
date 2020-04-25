@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.exporter.csv.beans;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.opencsv.bean.CsvBindByName;
@@ -35,7 +36,7 @@ public class PropertylessEdge {
     return new PropertylessEdge(
         edge.getFromNode().getNodeId().toString(),
         edge.getToNode().getNodeId().toString(),
-        edge.getLabel());
+        CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edge.getLabel()));
   }
 
   @Nonnull
