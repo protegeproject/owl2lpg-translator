@@ -30,6 +30,7 @@ public class DataVisitorTest {
   @Mock private DataVisitor dataVisitor;
   @Mock private AnnotationValueVisitor annotationValueVisitor;
 
+  @Mock private IRI anyIri;
   @Mock private OWLDatatype anyDatatype;
   @Mock private OWLLiteral anyLiteral;
   @Mock private Set<OWLLiteral> literals;
@@ -67,6 +68,7 @@ public class DataVisitorTest {
     var lt = mock(OWLLiteral.class);
     when(lt.getLiteral()).thenReturn("value");
     when(lt.getDatatype()).thenReturn(anyDatatype);
+    when(anyDatatype.getIRI()).thenReturn(anyIri);
     when(lt.isRDFPlainLiteral()).thenReturn(false);
     when(nodeIdMapper.get(lt)).thenReturn(nodeId);
 
@@ -86,6 +88,7 @@ public class DataVisitorTest {
     var lt = mock(OWLLiteral.class);
     when(lt.getLiteral()).thenReturn("value");
     when(lt.getDatatype()).thenReturn(anyDatatype);
+    when(anyDatatype.getIRI()).thenReturn(anyIri);
     when(lt.isRDFPlainLiteral()).thenReturn(true);
     when(lt.hasLang()).thenReturn(false);
     when(nodeIdMapper.get(lt)).thenReturn(nodeId);
@@ -106,6 +109,7 @@ public class DataVisitorTest {
     var lt = mock(OWLLiteral.class);
     when(lt.getLiteral()).thenReturn("value");
     when(lt.getDatatype()).thenReturn(anyDatatype);
+    when(anyDatatype.getIRI()).thenReturn(anyIri);
     when(lt.isRDFPlainLiteral()).thenReturn(true);
     when(lt.hasLang()).thenReturn(true);
     when(lt.getLang()).thenReturn("lang");

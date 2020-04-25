@@ -5,6 +5,7 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.utils.PropertiesBuilder;
 import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
 import org.semanticweb.owlapi.model.*;
 
@@ -63,7 +64,11 @@ public abstract class VisitorBase {
     return createNode(
         anyLiteral,
         nodeLabels,
-        Properties(PropertyNames.LEXICAL_FORM, anyLiteral.getLiteral()));
+        PropertiesBuilder.create()
+            .set(PropertyNames.LEXICAL_FORM, anyLiteral.getLiteral())
+            .set(PropertyNames.DATATYPE, anyLiteral.getDatatype().getIRI().toString())
+            .set(PropertyNames.LANGUAGE, anyLiteral.getLang())
+            .build());
   }
 
   @Nonnull
