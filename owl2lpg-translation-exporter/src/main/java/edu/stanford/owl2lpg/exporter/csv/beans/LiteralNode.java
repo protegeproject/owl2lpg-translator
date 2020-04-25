@@ -23,6 +23,14 @@ public class LiteralNode {
   private final String propertyLexicalForm;
 
   @Nonnull
+  @CsvBindByName(column = "datatype:string", required = true)
+  private final String propertyDatatype;
+
+  @Nonnull
+  @CsvBindByName(column = "language:string", required = false)
+  private final String propertyLanguage;
+
+  @Nonnull
   @CsvBindAndSplitByName(column = ":LABEL",
       elementType = String.class, splitOn = ";",
       writeDelimiter = ";", required = true)
@@ -30,9 +38,13 @@ public class LiteralNode {
 
   private LiteralNode(@Nonnull String nodeId,
                       @Nonnull String propertyLexicalForm,
+                      @Nonnull String propertyDatatype,
+                      @Nonnull String propertyLanguage,
                       @Nonnull ImmutableList<String> nodeLabels) {
     this.nodeId = checkNotNull(nodeId);
     this.propertyLexicalForm = checkNotNull(propertyLexicalForm);
+    this.propertyDatatype = checkNotNull(propertyDatatype);
+    this.propertyLanguage = checkNotNull(propertyLanguage);
     this.nodeLabels = checkNotNull(nodeLabels);
   }
 
@@ -40,6 +52,8 @@ public class LiteralNode {
     return new LiteralNode(
         node.getNodeId().toString(),
         node.getProperties().get(PropertyNames.LEXICAL_FORM),
+        node.getProperties().get(PropertyNames.DATATYPE),
+        node.getProperties().get(PropertyNames.LANGUAGE),
         node.getLabels());
   }
 
@@ -51,6 +65,16 @@ public class LiteralNode {
   @Nonnull
   public String getPropertyLexicalForm() {
     return propertyLexicalForm;
+  }
+
+  @Nonnull
+  public String getPropertyDatatype() {
+    return propertyDatatype;
+  }
+
+  @Nonnull
+  public String getPropertyLanguage() {
+    return propertyLanguage;
   }
 
   @Nonnull
@@ -69,12 +93,14 @@ public class LiteralNode {
     LiteralNode that = (LiteralNode) o;
     return Objects.equal(nodeId, that.nodeId) &&
         Objects.equal(propertyLexicalForm, that.propertyLexicalForm) &&
+        Objects.equal(propertyDatatype, that.propertyDatatype) &&
+        Objects.equal(propertyLanguage, that.propertyLanguage) &&
         Objects.equal(nodeLabels, that.nodeLabels);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(nodeId, propertyLexicalForm, nodeLabels);
+    return Objects.hashCode(nodeId, propertyLexicalForm, propertyDatatype, propertyLanguage, nodeLabels);
   }
 
   @Override
@@ -82,6 +108,8 @@ public class LiteralNode {
     return MoreObjects.toStringHelper(this)
         .add("nodeId", nodeId)
         .add("propertyLexicalForm", propertyLexicalForm)
+        .add("propertyDatatype", propertyDatatype)
+        .add("propertyLanguage", propertyLanguage)
         .add("nodeLabels", nodeLabels)
         .toString();
   }
