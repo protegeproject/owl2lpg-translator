@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class NumberIncrementIdProvider implements NodeIdProvider {
 
-  private final AtomicInteger counter = new AtomicInteger(0);
+  private final AtomicLong counter = new AtomicLong(0);
 
   @Override
   public NodeId getId() {
