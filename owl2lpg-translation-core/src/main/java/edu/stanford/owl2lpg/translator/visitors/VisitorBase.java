@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
@@ -124,6 +125,46 @@ public abstract class VisitorBase {
     return anyObjects.stream()
         .map(o -> createEdge(o, edgeLabel))
         .collect(Collectors.toList());
+  }
+
+  @Nonnull
+  protected Edge createAugmentedEdge(@Nonnull OWLObject fromObject,
+                                     @Nonnull OWLObject toObject,
+                                     @Nonnull String edgeLabel) {
+    checkNotNull(fromObject);
+    checkNotNull(toObject);
+    checkNotNull(edgeLabel);
+    return Edge(getMainNode(fromObject), getMainNode(toObject), edgeLabel);
+  }
+
+  @Nonnull
+  protected Collection<Edge> createAugmentedEdges(@Nonnull OWLObject fromObject,
+                                                  @Nonnull Set<? extends OWLObject> toObjects,
+                                                  @Nonnull String edgeLabel) {
+    checkNotNull(fromObject);
+    checkNotNull(toObjects);
+    checkNotNull(edgeLabel);
+    return toObjects.stream()
+        .map(o -> createAugmentedEdge(fromObject, o, edgeLabel))
+        .collect(Collectors.toList());
+  }
+
+  @Nonnull
+  protected Collection<Edge> createAugmentedEdges(@Nonnull Set<? extends OWLObject> fromObjects,
+                                                  @Nonnull Set<? extends OWLObject> toObjects,
+                                                  @Nonnull String edgeLabel) {
+    checkNotNull(fromObjects);
+    checkNotNull(toObjects);
+    checkNotNull(edgeLabel);
+    var augmentedEdges = Lists.<Edge>newArrayList();
+    fromObjects.stream()
+        .forEach(o1 -> toObjects.stream()
+            .forEach(o2 -> {
+              if (!o1.equals(o2)) {
+                augmentedEdges.add(createAugmentedEdge(o1, o2, edgeLabel));
+              }
+            }));
+    return augmentedEdges;
   }
 
   @Nonnull

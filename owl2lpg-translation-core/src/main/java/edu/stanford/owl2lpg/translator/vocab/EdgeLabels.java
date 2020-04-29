@@ -49,4 +49,8 @@ public class EdgeLabels {
   public static final String DOMAIN = "domain";
   public static final String RANGE = "range";
   public static final String NEXT = "next";
+
+  // Augmented edges
+  public static final String SUB_CLASS_OF = "subClassOf";
+  public static final String IS_SUBJECT_OF = "isSubjectOf";
 }

@@ -82,7 +82,13 @@ public class AxiomVisitor extends VisitorBase
     var superClassTranslation = createNestedTranslation(axiom.getSuperClass());
     var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
     var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(subClassEdge, superClassEdge), annotationEdges);
+    var augmentedSubClassOfEdge = createAugmentedEdge(axiom.getSubClass(), axiom.getSuperClass(),
+        EdgeLabels.SUB_CLASS_OF);
+    var augmentedIsSubjectOfEdge = createAugmentedEdge(axiom.getSubClass(), axiom,
+        EdgeLabels.IS_SUBJECT_OF);
+    var allEdges = concatEdges(concatEdges(
+        concatEdges(subClassEdge, superClassEdge), annotationEdges),
+        concatEdges(augmentedSubClassOfEdge, augmentedIsSubjectOfEdge));
     var allNestedTranslations = concatTranslations(
         concatTranslations(subClassTranslation, superClassTranslation), annotationTranslations);
     return Translation.create(mainNode,
