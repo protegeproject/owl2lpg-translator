@@ -26,6 +26,10 @@ public abstract class Translation {
     return Translation.create(mainNode, edges, ImmutableList.of());
   }
 
+  public static Translation create(@Nonnull Node mainNode) {
+    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+  }
+
   public static Node MainNode(Translation translation) {
     return translation.getMainNode();
   }
