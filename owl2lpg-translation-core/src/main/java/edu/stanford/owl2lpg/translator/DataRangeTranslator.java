@@ -25,7 +25,7 @@ public class DataRangeTranslator {
   }
 
   @Nonnull
-  public Translation visit(OWLDataRange dr) {
+  public Translation translate(OWLDataRange dr) {
     checkNotNull(dr);
     return dr.accept(visitor);
   }

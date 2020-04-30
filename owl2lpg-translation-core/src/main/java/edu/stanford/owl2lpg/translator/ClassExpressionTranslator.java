@@ -25,7 +25,7 @@ public class ClassExpressionTranslator {
   }
 
   @Nonnull
-  public Translation visit(OWLClassExpression ce) {
+  public Translation translate(OWLClassExpression ce) {
     checkNotNull(ce);
     return ce.accept(visitor);
   }
