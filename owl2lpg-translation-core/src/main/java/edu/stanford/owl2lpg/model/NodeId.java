@@ -13,14 +13,14 @@ import static java.lang.String.format;
 @AutoValue
 public abstract class NodeId {
 
-  public static NodeId create(long numberSequence) {
-    return new AutoValue_NodeId(numberSequence);
+  public static NodeId create(Object identifierObject) {
+    return new AutoValue_NodeId(identifierObject);
   }
 
-  public abstract long getNumberSequence();
+  public abstract Object getIdentifierObject();
 
   @Override
   public String toString() {
-    return format("NodeId_%d", getNumberSequence());
+    return format("NodeId_%s", getIdentifierObject());
   }
 }
