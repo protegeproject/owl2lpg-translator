@@ -7,7 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.utils.PropertiesBuilder;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
@@ -56,7 +56,7 @@ public abstract class VisitorBase {
     return createNode(
         anyEntity,
         nodeLabels,
-        Properties(PropertyNames.IRI, String.valueOf(anyEntity.getIRI())));
+        Properties(PropertyFields.IRI, String.valueOf(anyEntity.getIRI())));
   }
 
   @Nonnull
@@ -66,9 +66,9 @@ public abstract class VisitorBase {
         anyLiteral,
         nodeLabels,
         PropertiesBuilder.create()
-            .set(PropertyNames.LEXICAL_FORM, anyLiteral.getLiteral())
-            .set(PropertyNames.DATATYPE, anyLiteral.getDatatype().getIRI().toString())
-            .set(PropertyNames.LANGUAGE, anyLiteral.getLang())
+            .set(PropertyFields.LEXICAL_FORM, anyLiteral.getLiteral())
+            .set(PropertyFields.DATATYPE, anyLiteral.getDatatype().getIRI().toString())
+            .set(PropertyFields.LANGUAGE, anyLiteral.getLang())
             .build());
   }
 
@@ -78,7 +78,7 @@ public abstract class VisitorBase {
     return createNode(
         iri,
         nodeLabels,
-        Properties(PropertyNames.IRI, String.valueOf(iri)));
+        Properties(PropertyFields.IRI, String.valueOf(iri)));
   }
 
   @Nonnull
@@ -87,7 +87,7 @@ public abstract class VisitorBase {
     return createNode(
         individual,
         nodeLabels,
-        Properties(PropertyNames.NODE_ID, String.valueOf(individual.getID())));
+        Properties(PropertyFields.NODE_ID, String.valueOf(individual.getID())));
   }
 
   @Nonnull
@@ -96,7 +96,7 @@ public abstract class VisitorBase {
     return createNode(
         restriction,
         nodeLabels,
-        Properties(PropertyNames.CARDINALITY, restriction.getCardinality()));
+        Properties(PropertyFields.CARDINALITY, restriction.getCardinality()));
   }
 
   @Nonnull
@@ -105,7 +105,7 @@ public abstract class VisitorBase {
     return createNode(
         restriction,
         nodeLabels,
-        Properties(PropertyNames.CARDINALITY, restriction.getCardinality()));
+        Properties(PropertyFields.CARDINALITY, restriction.getCardinality()));
   }
 
   @Nonnull

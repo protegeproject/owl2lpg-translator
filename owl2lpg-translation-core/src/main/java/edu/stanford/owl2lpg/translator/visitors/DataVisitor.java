@@ -7,7 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
@@ -69,7 +69,7 @@ public class DataVisitor extends VisitorBase
                                        @Nonnull ImmutableList<String> nodeLabels) {
     return Node(nodeIdMapper.get(languageTag),
         nodeLabels,
-        Properties(PropertyNames.LANGUAGE, languageTag));
+        Properties(PropertyFields.LANGUAGE, languageTag));
   }
 
   protected Edge createLanguageTagEdge(@Nonnull String languageTag,

@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 
@@ -39,7 +39,7 @@ public class IriNode {
   public static IriNode of(@Nonnull Node node) {
     return new IriNode(
         node.getNodeId().toString(),
-        node.getProperties().get(PropertyNames.IRI),
+        node.getProperties().get(PropertyFields.IRI),
         node.getLabels());
   }
 

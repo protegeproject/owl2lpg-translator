@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 
@@ -39,7 +39,7 @@ public class AnonymousIndividualNode {
   public static AnonymousIndividualNode of(@Nonnull Node node) {
     return new AnonymousIndividualNode(
         node.getNodeId().toString(),
-        node.getProperties().get(PropertyNames.NODE_ID),
+        node.getProperties().get(PropertyFields.NODE_ID),
         node.getLabels());
   }
 

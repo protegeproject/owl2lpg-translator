@@ -8,7 +8,7 @@ import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.utils.PropertiesBuilder;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
@@ -76,8 +76,8 @@ public class OntologyVisitor extends VisitorBase
         nodeIdMapper.get(ontologyId),
         NodeLabels.ONTOLOGY_ID,
         PropertiesBuilder.create()
-            .set(PropertyNames.ONTOLOGY_IRI, ontologyIri)
-            .set(PropertyNames.ONTOLOGY_VERSION_IRI, versionIri)
+            .set(PropertyFields.ONTOLOGY_IRI, ontologyIri)
+            .set(PropertyFields.ONTOLOGY_VERSION_IRI, versionIri)
             .build());
   }
 

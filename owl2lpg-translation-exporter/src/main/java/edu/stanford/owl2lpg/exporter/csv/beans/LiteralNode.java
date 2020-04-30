@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.vocab.PropertyNames;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 
@@ -51,9 +51,9 @@ public class LiteralNode {
   public static LiteralNode create(@Nonnull Node node) {
     return new LiteralNode(
         node.getNodeId().toString(),
-        node.getProperties().get(PropertyNames.LEXICAL_FORM),
-        node.getProperties().get(PropertyNames.DATATYPE),
-        node.getProperties().get(PropertyNames.LANGUAGE),
+        node.getProperties().get(PropertyFields.LEXICAL_FORM),
+        node.getProperties().get(PropertyFields.DATATYPE),
+        node.getProperties().get(PropertyFields.LANGUAGE),
         node.getLabels());
   }
 

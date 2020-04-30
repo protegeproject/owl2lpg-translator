@@ -7,7 +7,7 @@ package edu.stanford.owl2lpg.translator.vocab;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class PropertyNames {
+public class PropertyFields {
 
   public static final String ONTOLOGY_DOCUMENT_ID = "ontologyDocumentId";
   public static final String ONTOLOGY_IRI = "ontologyIri";
