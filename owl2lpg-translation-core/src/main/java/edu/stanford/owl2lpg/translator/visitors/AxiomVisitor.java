@@ -748,7 +748,9 @@ public class AxiomVisitor extends VisitorBase
   @Override
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
-    if (anyObject instanceof OWLEntity) {
+    if (anyObject instanceof OWLAxiom) {
+      return getAxiomTranslation((OWLAxiom) anyObject);
+    } else if (anyObject instanceof OWLEntity) {
       return getEntityTranslation((OWLEntity) anyObject);
     } else if (anyObject instanceof OWLClassExpression) {
       return getClassExpressionTranslation((OWLClassExpression) anyObject);
@@ -768,6 +770,11 @@ public class AxiomVisitor extends VisitorBase
       return getAnnotationValueTranslation((OWLAnnotationValue) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
+  }
+
+  private Translation getAxiomTranslation(OWLAxiom axiom) {
+    var axiomVisitor = visitorFactory.createAxiomVisitor();
+    return axiom.accept(axiomVisitor);
   }
 
   private Translation getEntityTranslation(OWLEntity entity) {
