@@ -42,7 +42,7 @@ public class OntologyVisitor extends VisitorBase
 
   @Nonnull
   public Translation visit(@Nonnull OWLOntology ontology) {
-    mainNode = createNode(ontology, NodeLabels.ONTOLOGY_DOCUMENT);
+    mainNode = createNode(ontology, NodeLabels.ONTOLOGY);
     var ontologyIdEdge = createOntologyIdEdge(ontology.getOntologyID());
     var ontologyIdTranslation = createOntologyIdTranslation(ontology.getOntologyID());
     var ontologyAnnotationEdges = createEdges(ontology.getAnnotations(), EdgeLabels.ONTOLOGY_ANNOTATION);

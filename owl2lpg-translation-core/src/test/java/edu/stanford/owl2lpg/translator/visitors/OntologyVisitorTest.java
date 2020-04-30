@@ -50,7 +50,7 @@ public class OntologyVisitorTest {
 
     visitor.visit(ontology);
     verify(visitor).visit(ontology);
-    verify(visitor).createNode(ontology, NodeLabels.ONTOLOGY_DOCUMENT);
+    verify(visitor).createNode(ontology, NodeLabels.ONTOLOGY);
     verify(visitor).createOntologyIdEdge(ontology.getOntologyID());
     verify(visitor).createOntologyIdTranslation(ontology.getOntologyID());
     verify(visitor).createEdges(ontology.getAnnotations(), EdgeLabels.ONTOLOGY_ANNOTATION);
