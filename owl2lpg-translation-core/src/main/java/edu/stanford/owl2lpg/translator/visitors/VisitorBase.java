@@ -112,7 +112,9 @@ public abstract class VisitorBase {
                             @Nonnull String edgeLabel) {
     checkNotNull(anyObject);
     checkNotNull(edgeLabel);
-    return Edge(getMainNode(), getMainNode(anyObject), edgeLabel);
+    return Edge(getMainNode(), getMainNode(anyObject),
+        edgeLabel,
+        Properties(PropertyFields.PRIMARY, true));
   }
 
   @Nonnull
