@@ -36,21 +36,47 @@ public abstract class Translation {
 
   public abstract ImmutableList<Translation> getNestedTranslations();
 
+  /**
+   * Gets all the nodes with the given node label.
+   *
+   * @param label The node label to filter.
+   * @return A collection of nodes.
+   */
+  public Stream<Node> nodes(String label) {
+    return nodes().filter(node -> node.getLabels().contains(label));
+  }
+
+  /**
+   * Gets all the edges with the given edge label.
+   *
+   * @param label The edge label to filter.
+   * @return A collection of edges.
+   */
+  public Stream<Edge> edges(String label) {
+    return edges().filter(edge -> edge.getLabel().contains(label));
+  }
+
+  /**
+   * Gets all the nodes that make up this translation, including from
+   * its nested translation.
+   *
+   * @return a stream of nodes.
+   */
   public Stream<Node> nodes() {
     var s1 = Stream.of(getMainNode());
     var s2 = getNestedTranslations().stream().flatMap(Translation::nodes);
     return Stream.concat(s1, s2);
   }
 
+  /**
+   * Gets all the edges that make up this translation, including from
+   * its nested translation.
+   *
+   * @return a stream of edges.
+   */
   public Stream<Edge> edges() {
     var s1 = getEdges().stream();
     var s2 = getNestedTranslations().stream().flatMap(Translation::edges);
-    return Stream.concat(s1, s2);
-  }
-
-  public Stream<Translation> translations() {
-    var s1 = Stream.of(this);
-    var s2 = getNestedTranslations().stream().flatMap(Translation::translations);
     return Stream.concat(s1, s2);
   }
 }
