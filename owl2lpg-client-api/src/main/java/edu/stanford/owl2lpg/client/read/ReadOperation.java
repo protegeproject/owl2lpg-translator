@@ -28,9 +28,10 @@ public class ReadOperation {
   }
 
   public ClassFrame getFrame(AxiomContext context, OWLClass subject) {
-    var result = database.execute("");
-    var resultClassFrame = resultMapperFactory.getResultClassFrame(result);
-    return resultClassFrame.getClassFrame();
+//    var result = database.execute("");
+//    var resultClassFrame = resultMapperFactory.getResultClassFrame(result);
+//    return resultClassFrame.getClassFrame();
+    return null;
   }
 
   public ObjectPropertyFrame getFrame(AxiomContext context, OWLObjectProperty subject) {

@@ -6,73 +6,84 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class CypherStringFactory {
+public class AxiomToCypherQuery {
 
-  public static String createCypherStatementFrom(@Nonnull Translation translation) {
+  @Nonnull
+  private final AxiomTranslator axiomTranslator;
+
+  @Nonnull
+  private final AxiomContextTranslator contextTranslator;
+
+  public AxiomToCypherQuery(@Nonnull AxiomTranslator axiomTranslator,
+                            @Nonnull AxiomContextTranslator contextTranslator) {
+    this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.contextTranslator = checkNotNull(contextTranslator);
+  }
+
+  public CypherQuery translate(@Nonnull AxiomBundle bundle) {
+    checkNotNull(bundle);
     var sb = new StringBuilder();
-    createCypherStatementFrom(translation, sb);
-    return sb.toString();
+    var axiomTranslation = axiomTranslator.translate(bundle.getAxiom());
+    translateToCypher(axiomTranslation, sb);
+    var contextTranslation = contextTranslator.translate(bundle.getContext());
+    translateToCypher(contextTranslation, sb);
+    var contextEdge = createContextEdge(contextTranslation, axiomTranslation);
+    translateToCypher(contextEdge, sb);
+    return CypherQuery.create(sb.toString());
   }
 
-  private static void createCypherStatementFrom(@Nonnull Translation translation, StringBuilder sb) {
-    translation.nodes()
-        .collect(Collectors.toSet())
-        .forEach(node -> createCypherStatementFrom(node, sb));
-    translation.edges()
-        .forEach(edge -> createCypherStatementFrom(edge, sb));
+  private static void translateToCypher(Translation translation, StringBuilder stringBuilder) {
+    translation.nodes().distinct().forEach(node -> translateToCypher(node, stringBuilder));
+    translation.edges().distinct().forEach(edge -> translateToCypher(edge, stringBuilder));
   }
 
-  public static String createCypherStatementFrom(@Nonnull Node node) {
-    var sb = new StringBuilder();
-    createCypherStatementFrom(node, sb);
-    return sb.toString();
+  private Edge createContextEdge(Translation contextTranslation, Translation axiomTranslation) {
+    return Edge.create(
+        contextTranslation.nodes("OntologyDocument").findFirst().get(),
+        axiomTranslation.nodes("Axiom").findFirst().get(),
+        EdgeLabels.AXIOM,
+        Properties.empty());
   }
 
-  public static String createCypherStatementFrom(@Nonnull Edge edge) {
-    var sb = new StringBuilder();
-    createCypherStatementFrom(edge.getFromNode(), sb);
-    if (!edge.isReflexive()) {
-      createCypherStatementFrom(edge.getToNode(), sb);
-    }
-    createCypherStatementFrom(edge, sb);
-    return sb.toString();
-  }
-
-  private static void createCypherStatementFrom(Node node, StringBuilder builder) {
+  private static void translateToCypher(Node node, StringBuilder stringBuilder) {
     if (isReusableNode(node)) {
-      builder.append(format("MERGE (%s%s %s)",
+      stringBuilder.append(format("MERGE (%s%s %s)",
           printNodeId(node.getNodeId()),
           printNodeLabel(node.getLabels()),
           printNodeProperties(node.getProperties())));
     } else {
-      builder.append(format("CREATE (%s%s %s)",
+      stringBuilder.append(format("CREATE (%s%s %s)",
           printNodeId(node.getNodeId()),
           printNodeLabel(node.getLabels()),
           printNodeProperties(node.getProperties())));
     }
-    builder.append("\n");
+    stringBuilder.append("\n");
   }
 
-  private static void createCypherStatementFrom(Edge edge, StringBuilder builder) {
-    builder.append(format("MERGE (%s)-[%s %s]->(%s)",
+  private static void translateToCypher(Edge edge, StringBuilder stringBuilder) {
+    stringBuilder.append(format("MERGE (%s)-[%s %s]->(%s)",
         printNodeId(edge.getFromNode().getNodeId()),
         printEdgeLabel(edge.getLabel()),
         printEdgeProperties(edge.getProperties()),
         printNodeId(edge.getToNode().getNodeId())));
-    builder.append("\n");
+    stringBuilder.append("\n");
   }
 
   private static boolean isReusableNode(Node node) {

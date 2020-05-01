@@ -1,13 +1,8 @@
 package edu.stanford.owl2lpg.client.write;
 
 import edu.stanford.owl2lpg.client.Database;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Properties;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
-import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
+import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -25,40 +20,26 @@ public class AxiomStorer {
   private final Database database;
 
   @Nonnull
-  private final AxiomContextTranslator axiomContextTranslator;
+  private final Session session;
 
   @Nonnull
-  private final AxiomTranslator axiomTranslator;
+  private final AxiomToCypherQuery translator;
 
   public AxiomStorer(@Nonnull Database database,
-                     @Nonnull AxiomContextTranslator axiomContextTranslator,
-                     @Nonnull AxiomTranslator axiomTranslator) {
+                     @Nonnull Session session,
+                     @Nonnull AxiomToCypherQuery translator) {
     this.database = checkNotNull(database);
-    this.axiomContextTranslator = checkNotNull(axiomContextTranslator);
-    this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.session = session;
+    this.translator = checkNotNull(translator);
   }
 
-  public void add(AxiomContext context, Collection<OWLAxiom> axioms) {
-    writeAxiomContext(context);
-    axioms.stream()
-        .forEach(axiom -> {
-          var axiomTranslation = axiomTranslator.translate(axiom);
-          database.insert(axiomTranslation);
-          database.insert(createDocumentAxiomEdge(context, axiomTranslation));
-        });
-  }
-
-  private void writeAxiomContext(AxiomContext context) {
-    var contextTranslation = axiomContextTranslator.translate(context);
-//    contextTranslation.nodes().forEach(database::insert);
-    contextTranslation.edges().forEach(database::insert);
-  }
-
-  private Edge createDocumentAxiomEdge(AxiomContext context, Translation axiomTranslation) {
-    return Edge.create(
-        axiomContextTranslator.createOntologyDocumentNode(context.getOntologyDocumentId()),
-        axiomTranslation.getMainNode(),
-        EdgeLabels.AXIOM,
-        Properties.empty());
+  public boolean add(AxiomContext context, Collection<OWLAxiom> axioms) {
+    return axioms.stream()
+        .map(axiom -> AxiomBundle.create(context, axiom))
+        .map(translator::translate)
+        .map(query -> CreateQueryStatement.create(session, query))
+        .map(database::run)
+        .reduce(Boolean::logicalAnd)
+        .orElse(false);
   }
 }

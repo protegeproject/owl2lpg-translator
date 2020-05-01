@@ -1,16 +1,13 @@
 package edu.stanford.owl2lpg.client;
 
 import edu.stanford.owl2lpg.client.write.AxiomStorer;
-import edu.stanford.owl2lpg.client.write.CypherStringFactory;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.client.write.AxiomToCypherQuery;
+import edu.stanford.owl2lpg.client.write.CreateQueryStatement;
 import edu.stanford.owl2lpg.translator.TranslatorFactory;
 import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Result;
 
 import javax.annotation.Nonnull;
 
@@ -37,31 +34,17 @@ public class Database implements AutoCloseable {
   }
 
   public AxiomStorer getAxiomStorer() {
-    return new AxiomStorer(this,
-        new AxiomContextTranslator(),
-        TranslatorFactory.getAxiomTranslator());
-  }
-
-  public void insert(Translation translation) {
-    String stmt = CypherStringFactory.createCypherStatementFrom(translation);
-    System.out.println(stmt);
-    execute(stmt);
-  }
-
-  public void insert(Node node) {
-    String stmt = CypherStringFactory.createCypherStatementFrom(node);
-    execute(stmt);
-  }
-
-  public void insert(Edge edge) {
-    String stmt = CypherStringFactory.createCypherStatementFrom(edge);
-    execute(stmt);
-  }
-
-  public Result execute(String cypherString) {
     try (var session = driver.session()) {
-      return session.writeTransaction(tx -> tx.run(cypherString));
+      return new AxiomStorer(this,
+          session,
+          new AxiomToCypherQuery(
+              TranslatorFactory.getAxiomTranslator(),
+              new AxiomContextTranslator()));
     }
+  }
+
+  public boolean run(CreateQueryStatement statement) {
+    return statement.run();
   }
 
   @Override
