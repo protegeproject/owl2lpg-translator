@@ -82,9 +82,13 @@ public class AxiomVisitor extends VisitorBase
     var superClassTranslation = createNestedTranslation(axiom.getSuperClass());
     var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
     var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var augmentedSubClassOfEdge = createAugmentedEdge(axiom.getSubClass(), axiom.getSuperClass(),
+    var augmentedSubClassOfEdge = createAugmentedEdge(
+        subClassTranslation.getMainNode(),
+        superClassTranslation.getMainNode(),
         EdgeLabels.SUB_CLASS_OF);
-    var augmentedIsSubjectOfEdge = createAugmentedEdge(axiom.getSubClass(), axiom,
+    var augmentedIsSubjectOfEdge = createAugmentedEdge(
+        subClassTranslation.getMainNode(),
+        mainNode,
         EdgeLabels.IS_SUBJECT_OF);
     var allEdges = concatEdges(concatEdges(
         concatEdges(subClassEdge, superClassEdge), annotationEdges),
@@ -748,9 +752,7 @@ public class AxiomVisitor extends VisitorBase
   @Override
   protected Translation getTranslation(@Nonnull OWLObject anyObject) {
     checkNotNull(anyObject);
-    if (anyObject instanceof OWLAxiom) {
-      return getAxiomTranslation((OWLAxiom) anyObject);
-    } else if (anyObject instanceof OWLEntity) {
+    if (anyObject instanceof OWLEntity) {
       return getEntityTranslation((OWLEntity) anyObject);
     } else if (anyObject instanceof OWLClassExpression) {
       return getClassExpressionTranslation((OWLClassExpression) anyObject);
@@ -770,11 +772,6 @@ public class AxiomVisitor extends VisitorBase
       return getAnnotationValueTranslation((OWLAnnotationValue) anyObject);
     }
     throw new IllegalArgumentException("Implementation error");
-  }
-
-  private Translation getAxiomTranslation(OWLAxiom axiom) {
-    var axiomVisitor = visitorFactory.createAxiomVisitor();
-    return axiom.accept(axiomVisitor);
   }
 
   private Translation getEntityTranslation(OWLEntity entity) {

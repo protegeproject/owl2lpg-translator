@@ -132,7 +132,6 @@ public class AxiomVisitorTest {
     when(axiom.getSuperClass()).thenReturn(anySuperClassExpression);
     when(axiom.getAnnotations()).thenReturn(annotations);
     when(nodeIdMapper.get(axiom)).thenReturn(nodeId);
-    when(visitor.getTranslation(axiom)).thenReturn(nestedTranslation);
 
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
@@ -143,10 +142,6 @@ public class AxiomVisitorTest {
     verify(visitor).createNestedTranslation(axiom.getSuperClass());
     verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
-    verify(visitor).createAugmentedEdge(axiom.getSubClass(), axiom.getSuperClass(),
-        EdgeLabels.SUB_CLASS_OF);
-    verify(visitor).createAugmentedEdge(axiom.getSubClass(), axiom,
-        EdgeLabels.IS_SUBJECT_OF);
   }
 
   @Test
