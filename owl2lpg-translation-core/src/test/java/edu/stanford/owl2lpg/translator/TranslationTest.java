@@ -64,12 +64,6 @@ public class TranslationTest {
   }
 
   @Test
-  public void shouldGetMainNodeStatically() {
-    var actualMainNode = Translation.MainNode(translation);
-    assertThat(actualMainNode, equalTo(mainNode));
-  }
-
-  @Test
   public void shouldGetEdges() {
     var actualEdges = translation.getEdges();
     assertThat(actualEdges, equalTo(edges));
