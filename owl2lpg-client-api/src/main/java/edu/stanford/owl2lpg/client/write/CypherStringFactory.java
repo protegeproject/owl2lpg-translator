@@ -91,7 +91,7 @@ public class CypherStringFactory {
         NodeLabels.DATA_PROPERTY.equals(nodeLabels) ||
         NodeLabels.ANNOTATION_PROPERTY.equals(nodeLabels) ||
         NodeLabels.NAMED_INDIVIDUAL.equals(nodeLabels) ||
-        NodeLabels.DATA_PROPERTY.equals(nodeLabels);
+        NodeLabels.DATATYPE.equals(nodeLabels);
   }
 
   private static boolean isProjectNode(Node node) {
