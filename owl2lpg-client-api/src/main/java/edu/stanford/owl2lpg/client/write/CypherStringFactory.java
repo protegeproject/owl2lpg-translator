@@ -12,7 +12,6 @@ import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -24,22 +23,16 @@ public class CypherStringFactory {
 
   public static String createCypherStatementFrom(@Nonnull Translation translation) {
     var sb = new StringBuilder();
-    Stream.concat(
-        Stream.of(translation.getMainNode()),
-        Stream.concat(
-            translation.getEdges().stream()
-                .map(edge -> edge.getFromNode()),
-            translation.getEdges().stream()
-                .map(edge -> edge.getToNode())))
+    createCypherStatementFrom(translation, sb);
+    return sb.toString();
+  }
+
+  private static void createCypherStatementFrom(@Nonnull Translation translation, StringBuilder sb) {
+    translation.nodes()
         .collect(Collectors.toSet())
         .forEach(node -> createCypherStatementFrom(node, sb));
-    translation.getEdges().stream()
-        .forEach(edge -> createCypherStatementFrom(
-            edge.getFromNode(),
-            edge.getToNode(),
-            edge.getLabel(),
-            edge.getProperties(), sb));
-    return sb.toString();
+    translation.edges()
+        .forEach(edge -> createCypherStatementFrom(edge, sb));
   }
 
   public static String createCypherStatementFrom(@Nonnull Node node) {
@@ -54,8 +47,7 @@ public class CypherStringFactory {
     if (!edge.isReflexive()) {
       createCypherStatementFrom(edge.getToNode(), sb);
     }
-    createCypherStatementFrom(edge.getFromNode(), edge.getToNode(),
-        edge.getLabel(), edge.getProperties(), sb);
+    createCypherStatementFrom(edge, sb);
     return sb.toString();
   }
 
@@ -74,15 +66,12 @@ public class CypherStringFactory {
     builder.append("\n");
   }
 
-  private static void createCypherStatementFrom(Node fromNode, Node toNode,
-                                                String edgeLabel,
-                                                Properties edgeProperties,
-                                                StringBuilder builder) {
+  private static void createCypherStatementFrom(Edge edge, StringBuilder builder) {
     builder.append(format("MERGE (%s)-[%s %s]->(%s)",
-        printNodeId(fromNode.getNodeId()),
-        printEdgeLabel(edgeLabel),
-        printEdgeProperties(edgeProperties),
-        printNodeId(toNode.getNodeId())));
+        printNodeId(edge.getFromNode().getNodeId()),
+        printEdgeLabel(edge.getLabel()),
+        printEdgeProperties(edge.getProperties()),
+        printNodeId(edge.getToNode().getNodeId())));
     builder.append("\n");
   }
 

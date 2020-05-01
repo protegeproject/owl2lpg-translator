@@ -43,15 +43,19 @@ public class Database implements AutoCloseable {
   }
 
   public void insert(Translation translation) {
-    execute(CypherStringFactory.createCypherStatementFrom(translation));
+    String stmt = CypherStringFactory.createCypherStatementFrom(translation);
+    System.out.println(stmt);
+    execute(stmt);
   }
 
   public void insert(Node node) {
-    execute(CypherStringFactory.createCypherStatementFrom(node));
+    String stmt = CypherStringFactory.createCypherStatementFrom(node);
+    execute(stmt);
   }
 
   public void insert(Edge edge) {
-    execute(CypherStringFactory.createCypherStatementFrom(edge));
+    String stmt = CypherStringFactory.createCypherStatementFrom(edge);
+    execute(stmt);
   }
 
   public Result execute(String cypherString) {
