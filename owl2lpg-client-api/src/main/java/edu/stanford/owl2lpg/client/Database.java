@@ -4,6 +4,7 @@ import edu.stanford.owl2lpg.client.write.AxiomStorer;
 import edu.stanford.owl2lpg.client.write.CypherStringFactory;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslatorFactory;
 import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
 import org.neo4j.driver.AuthTokens;
@@ -41,14 +42,16 @@ public class Database implements AutoCloseable {
         TranslatorFactory.getAxiomTranslator());
   }
 
+  public void insert(Translation translation) {
+    execute(CypherStringFactory.createCypherStatementFrom(translation));
+  }
+
   public void insert(Node node) {
-    System.out.println(CypherStringFactory.createNodeQuery(node));
-    execute(CypherStringFactory.createNodeQuery(node));
+    execute(CypherStringFactory.createCypherStatementFrom(node));
   }
 
   public void insert(Edge edge) {
-    System.out.println(CypherStringFactory.createEdgeQuery(edge));
-    execute(CypherStringFactory.createEdgeQuery(edge));
+    execute(CypherStringFactory.createCypherStatementFrom(edge));
   }
 
   public Result execute(String cypherString) {

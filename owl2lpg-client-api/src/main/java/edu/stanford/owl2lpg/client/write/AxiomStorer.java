@@ -43,8 +43,7 @@ public class AxiomStorer {
     axioms.stream()
         .forEach(axiom -> {
           var axiomTranslation = axiomTranslator.translate(axiom);
-//          axiomTranslation.nodes().forEach(database::insert);
-          axiomTranslation.edges().forEach(database::insert);
+          axiomTranslation.closure().forEach(database::insert);
           database.insert(createDocumentAxiomEdge(context, axiomTranslation));
         });
   }

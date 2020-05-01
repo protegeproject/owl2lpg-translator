@@ -22,6 +22,10 @@ public abstract class Edge {
     return new AutoValue_Edge(fromNode, toNode, label, properties);
   }
 
+  public boolean isReflexive() {
+    return getFromNode().equals(getToNode());
+  }
+
   public abstract Node getFromNode();
 
   public abstract Node getToNode();
