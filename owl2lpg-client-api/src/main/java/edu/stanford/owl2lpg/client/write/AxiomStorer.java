@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomStorer {
+public class AxiomStorer implements AutoCloseable {
 
   @Nonnull
   private final Database database;
@@ -41,5 +41,10 @@ public class AxiomStorer {
         .map(database::run)
         .reduce(Boolean::logicalAnd)
         .orElse(false);
+  }
+
+  @Override
+  public void close() throws Exception {
+    session.close();
   }
 }

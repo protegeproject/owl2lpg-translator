@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Session;
 
 import javax.annotation.Nonnull;
 
@@ -33,14 +34,16 @@ public class Database implements AutoCloseable {
     return new Database(driver);
   }
 
+  private Session getSession() {
+    return driver.session();
+  }
+
   public AxiomStorer getAxiomStorer() {
-    try (var session = driver.session()) {
-      return new AxiomStorer(this,
-          session,
-          new AxiomToCypherQuery(
-              TranslatorFactory.getAxiomTranslator(),
-              new AxiomContextTranslator()));
-    }
+    return new AxiomStorer(this,
+        getSession(),
+        new AxiomToCypherQuery(
+            TranslatorFactory.getAxiomTranslator(),
+            new AxiomContextTranslator()));
   }
 
   public boolean run(CreateQueryStatement statement) {
