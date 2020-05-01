@@ -48,9 +48,9 @@ public abstract class Translation {
     return Stream.concat(s1, s2);
   }
 
-  public Stream<Translation> closure() {
+  public Stream<Translation> translations() {
     var s1 = Stream.of(this);
-    var s2 = getNestedTranslations().stream().flatMap(Translation::closure);
+    var s2 = getNestedTranslations().stream().flatMap(Translation::translations);
     return Stream.concat(s1, s2);
   }
 }
