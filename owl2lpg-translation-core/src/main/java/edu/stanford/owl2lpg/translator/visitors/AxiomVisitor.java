@@ -110,48 +110,117 @@ public class AxiomVisitor extends VisitorBase
                                       EdgeLabels.TARGET_INDIVIDUAL);
   }
 
+  private Translation translateUnaryArgsAxiom(@Nonnull OWLAxiom axiom,
+                                               @Nonnull ImmutableList<String> axiomNodeLabels,
+                                               @Nonnull String firstArgEdgeLabel,
+                                               @Nonnull OWLObject firstArg) {
+    mainNode = createNode(axiom, axiomNodeLabels);
+    var firstEdge = createEdge(firstArg, firstArgEdgeLabel);
+    var firstArgTrans = createNestedTranslation(firstArg);
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(firstEdge, annotationEdges);
+    var allNestedTranslations = concatTranslations(firstArgTrans, annotationTranslations);
+    return Translation.create(mainNode,
+                              ImmutableList.copyOf(allEdges),
+                              ImmutableList.copyOf(allNestedTranslations));
+  }
+
+
+  private Translation translateBinaryArgsAxiom(@Nonnull OWLAxiom axiom,
+                                               @Nonnull ImmutableList<String> axiomNodeLabels,
+                                               @Nonnull String firstArgEdgeLabel,
+                                               @Nonnull OWLObject firstArg,
+                                               @Nonnull String secondArgEdgeLabel,
+                                               @Nonnull OWLObject secondArg) {
+    mainNode = createNode(axiom, axiomNodeLabels);
+    var firstEdge = createEdge(firstArg, firstArgEdgeLabel);
+    var firstArgTrans = createNestedTranslation(firstArg);
+    var secondEdge = createEdge(secondArg, secondArgEdgeLabel);
+    var secondArgTrans = createNestedTranslation(secondArg);
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(concatEdges(firstEdge, secondEdge), annotationEdges);
+    var allNestedTranslations = concatTranslations(
+            concatTranslations(firstArgTrans, secondArgTrans), annotationTranslations);
+    return Translation.create(mainNode,
+                              ImmutableList.copyOf(allEdges),
+                              ImmutableList.copyOf(allNestedTranslations));
+  }
+
+  private Translation translateTernaryArgsAxiom(@Nonnull OWLAxiom axiom,
+                                                ImmutableList<String> axiomNodeLabels,
+                                                String firstArgEdgeLabel,
+                                                OWLObject firstArg,
+                                                String secondArgEdgeLabel,
+                                                OWLObject secondArg,
+                                                String thirdArgEdgeLabel,
+                                                OWLObject thirdArg) {
+    mainNode = createNode(axiom, axiomNodeLabels);
+    var firstArgEdge = createEdge(firstArg, firstArgEdgeLabel);
+    var firstArgTrans = createNestedTranslation(firstArg);
+    var secondArgEdge = createEdge(secondArg, secondArgEdgeLabel);
+    var secondArgTrans = createNestedTranslation(secondArg);
+    var thirdArgEdge = createEdge(thirdArg, thirdArgEdgeLabel);
+    var thirdArgTrans = createNestedTranslation(thirdArg);
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(
+            concatEdges(firstArgEdge, secondArgEdge, thirdArgEdge),
+            annotationEdges);
+    var allNestedTranslations = concatTranslations(
+            concatTranslations(firstArgTrans, secondArgTrans, thirdArgTrans),
+            annotationTranslations);
+    return Translation.create(mainNode,
+                              ImmutableList.copyOf(allEdges),
+                              ImmutableList.copyOf(allNestedTranslations));
+  }
+
+
+  private Translation translateNaryArgsAxiom(@Nonnull OWLAxiom axiom,
+                                             @Nonnull ImmutableList<String> axiomNodeLabels,
+                                             @Nonnull Set<? extends OWLObject> naryArgs,
+                                             @Nonnull String naryArgEdgeLabel) {
+    mainNode = createNode(axiom, axiomNodeLabels);
+    var classExprEdges = createEdges(naryArgs, naryArgEdgeLabel);
+    var classExprTranslations = createNestedTranslations(naryArgs);
+    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
+    var allEdges = concatEdges(classExprEdges, annotationEdges);
+    var allNestedTranslations = concatTranslations(classExprTranslations, annotationTranslations);
+    return Translation.create(mainNode,
+                              ImmutableList.copyOf(allEdges),
+                              ImmutableList.copyOf(allNestedTranslations));
+  }
+
+
   private Translation translatePropertyAssertion(@Nonnull OWLPropertyAssertionAxiom<?, ?> axiom,
                                                  ImmutableList<String> axiomNodeLabels,
                                                  String propertyEdgeLabel,
                                                  String objectEdgeLabel) {
-    mainNode = createNode(axiom, axiomNodeLabels);
-    var propertyExprEdge = createEdge(axiom.getProperty(), propertyEdgeLabel);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var sourceIndividualEdge = createEdge(axiom.getSubject(), EdgeLabels.SOURCE_INDIVIDUAL);
-    var sourceIndividualTranslation = createNestedTranslation(axiom.getSubject());
-    var targetIndividualEdge = createEdge(axiom.getObject(), objectEdgeLabel);
-    var targetIndividualTranslation = createNestedTranslation(axiom.getObject());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(
-        concatEdges(propertyExprEdge, sourceIndividualEdge, targetIndividualEdge),
-        annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(propertyExprTranslation, sourceIndividualTranslation, targetIndividualTranslation),
-        annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateTernaryArgsAxiom(axiom,
+                                     axiomNodeLabels,
+                                     propertyEdgeLabel,
+                                     axiom.getProperty(),
+                                     EdgeLabels.SOURCE_INDIVIDUAL,
+                                     axiom.getSubject(),
+                                     objectEdgeLabel,
+                                     axiom.getObject());
+  }
+
+  private Translation translateObjectPropertyCharacteristicAxiom(@Nonnull OWLObjectPropertyCharacteristicAxiom axiom,
+                                                                 ImmutableList<String> axiomNodeLabels) {
+
+    return translateUnaryArgsAxiom(axiom,
+                                   axiomNodeLabels,
+                                   EdgeLabels.OBJECT_PROPERTY_EXPRESSION,
+                                   axiom.getProperty());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAsymmetricObjectPropertyAxiom axiom) {
     return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
-  }
-
-  private Translation translateObjectPropertyCharacteristicAxiom(@Nonnull OWLObjectPropertyCharacteristicAxiom axiom,
-                                                                 ImmutableList<String> labels) {
-    mainNode = createNode(axiom, labels);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
   }
 
   @Nonnull
@@ -163,55 +232,41 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointClassesAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                       NodeLabels.DISJOINT_CLASSES,
-                       axiom.getClassExpressions(),
-                       EdgeLabels.CLASS_EXPRESSION);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.DISJOINT_CLASSES,
+                                  axiom.getClassExpressions(),
+                                  EdgeLabels.CLASS_EXPRESSION);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataPropertyDomainAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.DATA_PROPERTY_DOMAIN);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var domainEdge = createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
-    var domainTranslation = createNestedTranslation(axiom.getDomain());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(propertyExprEdge, domainEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(propertyExprTranslation, domainTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.DATA_PROPERTY_DOMAIN,
+                                    EdgeLabels.DATA_PROPERTY_EXPRESSION,
+                                    axiom.getProperty(),
+                                    EdgeLabels.DOMAIN,
+                                    axiom.getDomain());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectPropertyDomainAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.OBJECT_PROPERTY_DOMAIN);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var domainEdge = createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
-    var domainTranslation = createNestedTranslation(axiom.getDomain());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(propertyExprEdge, domainEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(propertyExprTranslation, domainTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.OBJECT_PROPERTY_DOMAIN,
+                                    EdgeLabels.OBJECT_PROPERTY_EXPRESSION,
+                                    axiom.getProperty(),
+                                    EdgeLabels.DOMAIN,
+                                    axiom.getDomain());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLEquivalentObjectPropertiesAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                              NodeLabels.EQUIVALENT_OBJECT_PROPERTIES,
-                              axiom.getProperties(),
-                              EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.EQUIVALENT_OBJECT_PROPERTIES,
+                                  axiom.getProperties(),
+                                  EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
   }
 
   @Nonnull
@@ -226,46 +281,39 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDifferentIndividualsAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                              NodeLabels.DIFFERENT_INDIVIDUALS,
-                              axiom.getIndividuals(),
-                              EdgeLabels.INDIVIDUAL);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.DIFFERENT_INDIVIDUALS,
+                                  axiom.getIndividuals(),
+                                  EdgeLabels.INDIVIDUAL);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointDataPropertiesAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                              NodeLabels.DISJOINT_DATA_PROPERTIES,
-                              axiom.getProperties(),
-                              EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.DISJOINT_DATA_PROPERTIES,
+                                  axiom.getProperties(),
+                                  EdgeLabels.DATA_PROPERTY_EXPRESSION);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDisjointObjectPropertiesAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                              NodeLabels.DISJOINT_OBJECT_PROPERTIES,
-                              axiom.getProperties(),
-                              EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.DISJOINT_OBJECT_PROPERTIES,
+                                  axiom.getProperties(),
+                                  EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectPropertyRangeAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.OBJECT_PROPERTY_RANGE);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var rangeEdge = createEdge(axiom.getRange(), EdgeLabels.RANGE);
-    var rangeTranslation = createNestedTranslation(axiom.getRange());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(propertyExprEdge, rangeEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(propertyExprTranslation, rangeTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.OBJECT_PROPERTY_RANGE,
+                                    EdgeLabels.OBJECT_PROPERTY_EXPRESSION,
+                                    axiom.getProperty(),
+                                    EdgeLabels.RANGE,
+                                    axiom.getRange());
   }
 
   @Nonnull
@@ -286,19 +334,12 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubObjectPropertyOfAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.SUB_OBJECT_PROPERTY_OF);
-    var subPropertyEdge = createEdge(axiom.getSubProperty(), EdgeLabels.SUB_OBJECT_PROPERTY_EXPRESSION);
-    var subPropertyTranslation = createNestedTranslation(axiom.getSubProperty());
-    var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
-    var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                             NodeLabels.SUB_OBJECT_PROPERTY_OF,
+                             EdgeLabels.SUB_OBJECT_PROPERTY_EXPRESSION,
+                             axiom.getSubProperty(),
+                             EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION,
+                             axiom.getSuperProperty());
   }
 
   @Nonnull
@@ -329,86 +370,50 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataPropertyRangeAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.DATA_PROPERTY_RANGE);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var rangeEdge = createEdge(axiom.getRange(), EdgeLabels.RANGE);
-    var rangeTranslation = createNestedTranslation(axiom.getRange());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(propertyExprEdge, rangeEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(propertyExprTranslation, rangeTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.DATA_PROPERTY_RANGE,
+                                    EdgeLabels.DATA_PROPERTY_EXPRESSION,
+                                    axiom.getProperty(),
+                                    EdgeLabels.RANGE,
+                                    axiom.getRange());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLFunctionalDataPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.FUNCTIONAL_DATA_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateUnaryArgsAxiom(axiom,
+                                   NodeLabels.FUNCTIONAL_DATA_PROPERTY,
+                                   EdgeLabels.DATA_PROPERTY_EXPRESSION,
+                                   axiom.getProperty());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLEquivalentDataPropertiesAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                              NodeLabels.EQUIVALENT_DATA_PROPERTIES,
-                              axiom.getProperties(),
-                              EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.EQUIVALENT_DATA_PROPERTIES,
+                                  axiom.getProperties(),
+                                  EdgeLabels.DATA_PROPERTY_EXPRESSION);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLClassAssertionAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.CLASS_ASSERTION);
-    var classExprEdge = createEdge(axiom.getClassExpression(), EdgeLabels.CLASS_EXPRESSION);
-    var classExprTranslation = createNestedTranslation(axiom.getClassExpression());
-    var individualEdge = createEdge(axiom.getIndividual(), EdgeLabels.INDIVIDUAL);
-    var individualTranslation = createNestedTranslation(axiom.getIndividual());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(classExprEdge, individualEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(classExprTranslation, individualTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
-  }
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.CLASS_ASSERTION,
+                                    EdgeLabels.CLASS_EXPRESSION,
+                                    axiom.getClassExpression(),
+                                    EdgeLabels.INDIVIDUAL,
+                                    axiom.getIndividual());
+    }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLEquivalentClassesAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                       NodeLabels.EQUIVALENT_CLASSES,
-                       axiom.getClassExpressions(),
-                       EdgeLabels.CLASS_EXPRESSION);
-  }
-
-  private Translation translateNaryAxiom(@Nonnull OWLAxiom axiom,
-                                         @Nonnull ImmutableList<String> axiomNodeLabels,
-                                         @Nonnull Set<? extends OWLObject> naryArgs,
-                                         @Nonnull String naryArgEdgeLabel) {
-    mainNode = createNode(axiom, axiomNodeLabels);
-    var classExprEdges = createEdges(naryArgs, naryArgEdgeLabel);
-    var classExprTranslations = createNestedTranslations(naryArgs);
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(classExprEdges, annotationEdges);
-    var allNestedTranslations = concatTranslations(classExprTranslations, annotationTranslations);
-    return Translation.create(mainNode,
-                              ImmutableList.copyOf(allEdges),
-                              ImmutableList.copyOf(allNestedTranslations));
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.EQUIVALENT_CLASSES,
+                                  axiom.getClassExpressions(),
+                                  EdgeLabels.CLASS_EXPRESSION);
   }
 
   @Nonnull
@@ -435,34 +440,28 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubDataPropertyOfAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.SUB_DATA_PROPERTY_OF);
-    var subPropertyEdge = createEdge(axiom.getSubProperty(), EdgeLabels.SUB_DATA_PROPERTY_EXPRESSION);
-    var subPropertyTranslation = createNestedTranslation(axiom.getSubProperty());
-    var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_DATA_PROPERTY_EXPRESSION);
-    var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.SUB_DATA_PROPERTY_OF,
+                                    EdgeLabels.SUB_DATA_PROPERTY_EXPRESSION,
+                                    axiom.getSubProperty(),
+                                    EdgeLabels.SUPER_DATA_PROPERTY_EXPRESSION,
+                                    axiom.getSuperProperty());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLInverseFunctionalObjectPropertyAxiom axiom) {
-    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
+    return translateObjectPropertyCharacteristicAxiom(axiom,
+                                                      NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSameIndividualAxiom axiom) {
-    return translateNaryAxiom(axiom,
-                              NodeLabels.SAME_INDIVIDUAL,
-                              axiom.getIndividuals(),
-                              EdgeLabels.INDIVIDUAL);
+    return translateNaryArgsAxiom(axiom,
+                                  NodeLabels.SAME_INDIVIDUAL,
+                                  axiom.getIndividuals(),
+                                  EdgeLabels.INDIVIDUAL);
   }
 
   @Nonnull
@@ -511,19 +510,12 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLInverseObjectPropertiesAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.INVERSE_OBJECT_PROPERTIES);
-    var firstPropertyEdge = createEdge(axiom.getFirstProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var firstPropertyTranslation = createNestedTranslation(axiom.getFirstProperty());
-    var secondPropertyEdge = createEdge(axiom.getSecondProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var secondPropertyTranslation = createNestedTranslation(axiom.getSecondProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(firstPropertyEdge, secondPropertyEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(firstPropertyTranslation, secondPropertyTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.INVERSE_OBJECT_PROPERTIES,
+                                    EdgeLabels.OBJECT_PROPERTY_EXPRESSION,
+                                    axiom.getFirstProperty(),
+                                    EdgeLabels.OBJECT_PROPERTY_EXPRESSION,
+                                    axiom.getSecondProperty());
   }
 
   @Nonnull
@@ -553,77 +545,47 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationAssertionAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.ANNOTATION_ASSERTION);
-    var annotationPropertyEdge = createEdge(axiom.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
-    var annotationPropertyTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationSubjectEdge = createEdge(axiom.getSubject(), EdgeLabels.ANNOTATION_SUBJECT);
-    var annotationSubjectTranslation = createNestedTranslation(axiom.getSubject());
-    var annotationValueEdge = createEdge(axiom.getValue(), EdgeLabels.ANNOTATION_VALUE);
-    var annotationValueTranslation = createNestedTranslation(axiom.getValue());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(annotationPropertyEdge, annotationSubjectEdge, annotationValueEdge),
-        annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(annotationPropertyTranslation, annotationSubjectTranslation, annotationValueTranslation),
-        annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateTernaryArgsAxiom(axiom,
+                                     NodeLabels.ANNOTATION_ASSERTION,
+                                     EdgeLabels.ANNOTATION_PROPERTY,
+                                     axiom.getProperty(),
+                                     EdgeLabels.ANNOTATION_SUBJECT,
+                                     axiom.getSubject(),
+                                     EdgeLabels.ANNOTATION_VALUE,
+                                     axiom.getValue());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubAnnotationPropertyOfAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.SUB_ANNOTATION_PROPERTY_OF);
-    var subPropertyEdge = createEdge(axiom.getSubProperty(), EdgeLabels.SUB_ANNOTATION_PROPERTY);
-    var subPropertyTranslation = createNestedTranslation(axiom.getSubProperty());
-    var superPropertyEdge = createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_ANNOTATION_PROPERTY);
-    var superPropertyTranslation = createNestedTranslation(axiom.getSuperProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(subPropertyEdge, superPropertyEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(subPropertyTranslation, superPropertyTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.SUB_ANNOTATION_PROPERTY_OF,
+                                    EdgeLabels.SUB_ANNOTATION_PROPERTY,
+                                    axiom.getSubProperty(),
+                                    EdgeLabels.SUPER_ANNOTATION_PROPERTY,
+                                    axiom.getSuperProperty());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationPropertyDomainAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.ANNOTATION_PROPERTY_DOMAIN);
-    var annotationPropertyEdge = createEdge(axiom.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
-    var annotationPropertyTranslation = createNestedTranslation(axiom.getProperty());
-    var domainEdge = createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
-    var domainTranslation = createNestedTranslation(axiom.getDomain());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(annotationPropertyEdge, domainEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(annotationPropertyTranslation, domainTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.ANNOTATION_PROPERTY_DOMAIN,
+                                    EdgeLabels.ANNOTATION_PROPERTY,
+                                    axiom.getProperty(),
+                                    EdgeLabels.DOMAIN,
+                                    axiom.getDomain());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationPropertyRangeAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.ANNOTATION_PROPERTY_RANGE);
-    var annotationPropertyEdge = createEdge(axiom.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
-    var annotationPropertyTranslation = createNestedTranslation(axiom.getProperty());
-    var rangeEdge = createEdge(axiom.getRange(), EdgeLabels.RANGE);
-    var rangeTranslation = createNestedTranslation(axiom.getRange());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(concatEdges(annotationPropertyEdge, rangeEdge), annotationEdges);
-    var allNestedTranslations = concatTranslations(
-        concatTranslations(annotationPropertyTranslation, rangeTranslation), annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateBinaryArgsAxiom(axiom,
+                                    NodeLabels.ANNOTATION_PROPERTY_RANGE,
+                                    EdgeLabels.ANNOTATION_PROPERTY,
+                                    axiom.getProperty(),
+                                    EdgeLabels.RANGE,
+                                    axiom.getRange());
   }
 
   @Nonnull
