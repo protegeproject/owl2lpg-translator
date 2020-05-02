@@ -92,7 +92,8 @@ public class AxiomToCypherQuery {
         isBranchNode(node) ||
         isOntologyDocumentNode(node) ||
         isLiteralNode(node) ||
-        isIriNode(node);
+        isIriNode(node) ||
+        isLanguageTagNode(node);
   }
 
   private static boolean isEntityNode(Node node) {
@@ -128,6 +129,11 @@ public class AxiomToCypherQuery {
   private static boolean isIriNode(Node node) {
     var nodeLabels = node.getLabels();
     return NodeLabels.IRI.equals(nodeLabels);
+  }
+
+  private static boolean isLanguageTagNode(Node node) {
+    var nodeLabels = node.getLabels();
+    return NodeLabels.LANGUAGE_TAG.equals(nodeLabels);
   }
 
   private static Object printNodeId(NodeId nodeId) {
