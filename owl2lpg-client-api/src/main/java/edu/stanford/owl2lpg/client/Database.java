@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client;
 
 import edu.stanford.owl2lpg.client.write.AxiomStorer;
 import edu.stanford.owl2lpg.client.write.AxiomToCypherQuery;
-import edu.stanford.owl2lpg.client.write.CreateQueryStatement;
+import edu.stanford.owl2lpg.client.write.CreateStatement;
 import edu.stanford.owl2lpg.translator.TranslatorFactory;
 import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
 import org.neo4j.driver.AuthTokens;
@@ -46,7 +46,7 @@ public class Database implements AutoCloseable {
             new AxiomContextTranslator()));
   }
 
-  public boolean run(CreateQueryStatement statement) {
+  public boolean run(CreateStatement statement) {
     return statement.run();
   }
 

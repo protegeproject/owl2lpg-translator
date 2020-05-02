@@ -10,11 +10,11 @@ import javax.annotation.Nonnull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class CreateQueryStatement {
+public abstract class CreateStatement {
 
-  public static CreateQueryStatement create(@Nonnull Session session,
-                                            @Nonnull CypherQuery query) {
-    return new AutoValue_CreateQueryStatement(session, query);
+  public static CreateStatement create(@Nonnull CypherQuery query,
+                                       @Nonnull Session session) {
+    return new AutoValue_CreateStatement(query, session);
   }
 
   public boolean run() {
@@ -22,7 +22,7 @@ public abstract class CreateQueryStatement {
     return true;
   }
 
-  protected abstract Session getSession();
-
   protected abstract CypherQuery getQuery();
+
+  protected abstract Session getSession();
 }

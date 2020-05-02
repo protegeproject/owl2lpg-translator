@@ -37,7 +37,7 @@ public class AxiomStorer implements AutoCloseable {
     return axioms.stream()
         .map(axiom -> AxiomBundle.create(context, axiom))
         .map(translator::translate)
-        .map(query -> CreateQueryStatement.create(session, query))
+        .map(query -> CreateStatement.create(query, session))
         .map(database::run)
         .reduce(Boolean::logicalAnd)
         .orElse(false);
