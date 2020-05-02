@@ -126,7 +126,12 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAsymmetricObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
+    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
+  }
+
+  private Translation translateObjectPropertyCharacteristicAxiom(@Nonnull OWLObjectPropertyCharacteristicAxiom axiom,
+                                                                 ImmutableList<String> labels) {
+    mainNode = createNode(axiom, labels);
     var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
     var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
@@ -141,16 +146,7 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLReflexiveObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.REFLEXIVE_OBJECT_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+     return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.REFLEXIVE_OBJECT_PROPERTY);
   }
 
   @Nonnull
@@ -331,16 +327,7 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLFunctionalObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.FUNCTIONAL_OBJECT_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.FUNCTIONAL_OBJECT_PROPERTY);
   }
 
   @Nonnull
@@ -383,16 +370,7 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSymmetricObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.SYMMETRIC_OBJECT_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.SYMMETRIC_OBJECT_PROPERTY);
   }
 
   @Nonnull
@@ -502,31 +480,13 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLTransitiveObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.TRANSITIVE_OBJECT_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.TRANSITIVE_OBJECT_PROPERTY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLIrreflexiveObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY);
   }
 
   @Nonnull
@@ -550,16 +510,7 @@ public class AxiomVisitor extends VisitorBase
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLInverseFunctionalObjectPropertyAxiom axiom) {
-    mainNode = createNode(axiom, NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
-    var propertyExprEdge = createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(axiom.getProperty());
-    var annotationEdges = createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
-    var annotationTranslations = createNestedTranslations(axiom.getAnnotations());
-    var allEdges = concatEdges(propertyExprEdge, annotationEdges);
-    var allNestedTranslations = concatTranslations(propertyExprTranslation, annotationTranslations);
-    return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+    return translateObjectPropertyCharacteristicAxiom(axiom, NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
   }
 
   @Nonnull
