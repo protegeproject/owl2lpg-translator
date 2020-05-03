@@ -11,5 +11,5 @@ public interface FrameAccessorFactory<T> {
 
   FrameAccessor<T> getAccessor(Database database, Session session);
 
-  boolean isAccessorFor(Class<T> frameClass);
+  boolean isAccessorFor(Class<?> frameClass);
 }
