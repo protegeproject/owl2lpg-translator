@@ -1,14 +1,14 @@
 package edu.stanford.owl2lpg.client;
 
+import edu.stanford.owl2lpg.client.read.DataAccessor;
+import edu.stanford.owl2lpg.client.read.DataAccessorFactory;
+import edu.stanford.owl2lpg.client.read.MatchStatement;
 import edu.stanford.owl2lpg.client.write.AxiomStorer;
 import edu.stanford.owl2lpg.client.write.AxiomToCypherQuery;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
 import edu.stanford.owl2lpg.translator.TranslatorFactory;
 import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Session;
+import org.neo4j.driver.*;
 
 import javax.annotation.Nonnull;
 
@@ -23,15 +23,17 @@ public class Database implements AutoCloseable {
   @Nonnull
   private final Driver driver;
 
-  public Database(@Nonnull Driver driver) {
+  @Nonnull
+  private final DataAccessorFactory dataAccessorFactory;
+
+  public Database(@Nonnull Driver driver,
+                  @Nonnull DataAccessorFactory dataAccessorFactory) {
     this.driver = checkNotNull(driver);
+    this.dataAccessorFactory = dataAccessorFactory;
   }
 
-  public static Database connect(@Nonnull String uri,
-                                 @Nonnull String username,
-                                 @Nonnull String password) throws Exception {
-    var driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-    return new Database(driver);
+  public static Builder builder() {
+    return new Builder();
   }
 
   private Session getSession() {
@@ -46,12 +48,49 @@ public class Database implements AutoCloseable {
             new AxiomContextTranslator()));
   }
 
+  public DataAccessor getDataAccessor() {
+    return DataAccessor.create(this,
+        getSession(),
+        dataAccessorFactory);
+  }
+
   public boolean run(CreateStatement statement) {
+    return statement.run();
+  }
+
+  public Result run(MatchStatement statement) {
     return statement.run();
   }
 
   @Override
   public void close() throws Exception {
     driver.close();
+  }
+
+  public static class Builder {
+
+    private String uri;
+    private String username;
+    private String password;
+    private DataAccessorFactory dataAccessorFactory;
+
+    public Builder setConnection(@Nonnull String uri,
+                                 @Nonnull String username,
+                                 @Nonnull String password) {
+      this.uri = checkNotNull(uri);
+      this.username = checkNotNull(username);
+      this.password = checkNotNull(password);
+      return this;
+    }
+
+    public Builder setAccessors(@Nonnull DataAccessorFactory dataAccessorFactory) {
+      this.dataAccessorFactory = checkNotNull(dataAccessorFactory);
+      return this;
+    }
+
+    public Database connect() {
+      var driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
+      return new Database(driver, dataAccessorFactory);
+    }
   }
 }
