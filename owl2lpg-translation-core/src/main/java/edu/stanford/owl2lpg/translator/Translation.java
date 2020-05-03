@@ -30,6 +30,10 @@ public abstract class Translation {
     return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
   }
 
+  public static TranslationBuilder builder() {
+    return new TranslationBuilder();
+  }
+
   public abstract Node getMainNode();
 
   public abstract ImmutableList<Edge> getEdges();
