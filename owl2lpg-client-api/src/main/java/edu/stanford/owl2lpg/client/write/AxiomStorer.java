@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.client.write;
 
 import edu.stanford.owl2lpg.client.Database;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
-import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -20,16 +20,16 @@ public class AxiomStorer implements AutoCloseable {
   private final Database database;
 
   @Nonnull
-  private final Session session;
+  private final DatabaseConnection connection;
 
   @Nonnull
   private final AxiomToCypherQuery translator;
 
   public AxiomStorer(@Nonnull Database database,
-                     @Nonnull Session session,
+                     @Nonnull DatabaseConnection connection,
                      @Nonnull AxiomToCypherQuery translator) {
     this.database = checkNotNull(database);
-    this.session = session;
+    this.connection = checkNotNull(connection);
     this.translator = checkNotNull(translator);
   }
 
@@ -37,7 +37,7 @@ public class AxiomStorer implements AutoCloseable {
     return axioms.stream()
         .map(axiom -> AxiomBundle.create(context, axiom))
         .map(translator::translate)
-        .map(query -> CreateStatement.create(query, session))
+        .map(connection::createStatement)
         .map(database::run)
         .reduce(Boolean::logicalAnd)
         .orElse(false);
@@ -45,6 +45,6 @@ public class AxiomStorer implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    session.close();
+    connection.close();
   }
 }

@@ -42,7 +42,7 @@ public class Database implements AutoCloseable {
 
   public AxiomStorer getAxiomStorer() {
     return new AxiomStorer(this,
-        getSession(),
+        getConnection(),
         new AxiomToCypherQuery(
             TranslatorFactory.getAxiomTranslator(),
             new AxiomContextTranslator()));
@@ -52,6 +52,10 @@ public class Database implements AutoCloseable {
     return DataAccessor.create(this,
         getSession(),
         dataAccessorFactory);
+  }
+
+  public DatabaseConnection getConnection() {
+    return new DatabaseConnection(getSession());
   }
 
   public boolean run(CreateStatement statement) {
