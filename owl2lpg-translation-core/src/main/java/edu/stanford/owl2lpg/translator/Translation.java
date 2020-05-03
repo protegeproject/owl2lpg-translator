@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.Properties;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
@@ -32,6 +33,23 @@ public abstract class Translation {
 
   public static TranslationBuilder builder() {
     return new TranslationBuilder();
+  }
+
+  public Translation connectWith(@Nonnull Translation otherTranslation,
+                                 @Nonnull String edgeLabel,
+                                 @Nonnull Properties edgeProperties) {
+    var fromNode = Node.create(getMainNode().getNodeId(),
+        getMainNode().getLabels(),
+        getMainNode().getProperties());
+    var toNode = otherTranslation.getMainNode();
+    var connectingEdge = Edge.create(fromNode, toNode, edgeLabel, edgeProperties);
+    return create(getMainNode(),
+        ImmutableList.<Edge>builder()
+            .addAll(getEdges())
+            .add(connectingEdge).build(),
+        ImmutableList.<Translation>builder()
+            .addAll(getNestedTranslations())
+            .add(otherTranslation).build());
   }
 
   public abstract Node getMainNode();
