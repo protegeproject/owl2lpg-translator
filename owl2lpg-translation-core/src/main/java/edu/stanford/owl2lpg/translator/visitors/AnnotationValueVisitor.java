@@ -20,9 +20,8 @@ public class AnnotationValueVisitor extends VisitorBase
   private final VisitorFactory visitorFactory;
 
   @Inject
-  public AnnotationValueVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                                @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public AnnotationValueVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

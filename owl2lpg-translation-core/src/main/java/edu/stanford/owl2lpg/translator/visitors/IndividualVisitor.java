@@ -29,9 +29,8 @@ public class IndividualVisitor extends VisitorBase
   private final VisitorFactory visitorFactory;
 
   @Inject
-  public IndividualVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                           @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public IndividualVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

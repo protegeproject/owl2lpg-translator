@@ -16,9 +16,8 @@ public class AnnotationSubjectVisitor extends VisitorBase
 
   private final VisitorFactory visitorFactory;
 
-  protected AnnotationSubjectVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                                     @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  protected AnnotationSubjectVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

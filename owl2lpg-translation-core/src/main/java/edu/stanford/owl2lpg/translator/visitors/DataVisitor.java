@@ -33,9 +33,8 @@ public class DataVisitor extends VisitorBase
   private final VisitorFactory visitorFactory;
 
   @Inject
-  public DataVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                     @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public DataVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

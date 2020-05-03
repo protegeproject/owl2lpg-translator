@@ -26,9 +26,8 @@ public class ClassExpressionVisitor extends VisitorBase
   private final VisitorFactory visitorFactory;
 
   @Inject
-  public ClassExpressionVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                                @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public ClassExpressionVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

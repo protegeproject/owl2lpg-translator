@@ -34,9 +34,8 @@ public class AxiomVisitor extends VisitorBase
   private final VisitorFactory visitorFactory;
 
   @Inject
-  public AxiomVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                      @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public AxiomVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

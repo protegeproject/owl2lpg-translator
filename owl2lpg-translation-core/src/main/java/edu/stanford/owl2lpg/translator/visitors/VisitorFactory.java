@@ -22,51 +22,56 @@ public class VisitorFactory {
   }
 
   @Nonnull
+  public NodeIdMapper getNodeIdMapper() {
+    return nodeIdMapper;
+  }
+
+  @Nonnull
   public OWLEntityVisitorEx<Translation> createEntityVisitor() {
-    return new EntityVisitor(nodeIdMapper, this);
+    return new EntityVisitor(this);
   }
 
   @Nonnull
   public OWLDataVisitorEx<Translation> createDataVisitor() {
-    return new DataVisitor(nodeIdMapper, this);
+    return new DataVisitor(this);
   }
 
   @Nonnull
   public OWLIndividualVisitorEx<Translation> createIndividualVisitor() {
-    return new IndividualVisitor(nodeIdMapper, this);
+    return new IndividualVisitor(this);
   }
 
   @Nonnull
   public OWLAnnotationSubjectVisitorEx<Translation> createAnnotationSubjectVisitor() {
-    return new AnnotationSubjectVisitor(nodeIdMapper, this);
+    return new AnnotationSubjectVisitor(this);
   }
 
   public OWLAnnotationObjectVisitorEx<Translation> createAnnotationObjectVisitor() {
-    return new AnnotationObjectVisitor(nodeIdMapper, this);
+    return new AnnotationObjectVisitor(this);
   }
 
   @Nonnull
   public OWLAnnotationValueVisitorEx<Translation> createAnnotationValueVisitor() {
-    return new AnnotationValueVisitor(nodeIdMapper, this);
+    return new AnnotationValueVisitor(this);
   }
 
   @Nonnull
   public OWLClassExpressionVisitorEx<Translation> createClassExpressionVisitor() {
-    return new ClassExpressionVisitor(nodeIdMapper, this);
+    return new ClassExpressionVisitor(this);
   }
 
   @Nonnull
   public OWLPropertyExpressionVisitorEx<Translation> createPropertyExpressionVisitor() {
-    return new PropertyExpressionVisitor(nodeIdMapper, this);
+    return new PropertyExpressionVisitor(this);
   }
 
   @Nonnull
   public OWLAxiomVisitorEx<Translation> createAxiomVisitor() {
-    return new AxiomVisitor(nodeIdMapper, this);
+    return new AxiomVisitor(this);
   }
 
   @Nonnull
   public OWLNamedObjectVisitorEx<Translation> createOntologyVisitor() {
-    return new OntologyVisitor(nodeIdMapper, this);
+    return new OntologyVisitor(this);
   }
 }

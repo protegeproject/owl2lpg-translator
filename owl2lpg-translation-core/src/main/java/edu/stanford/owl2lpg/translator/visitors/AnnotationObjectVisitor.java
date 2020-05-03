@@ -25,9 +25,8 @@ public class AnnotationObjectVisitor extends VisitorBase
 
   private Node mainNode;
 
-  public AnnotationObjectVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                                 @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public AnnotationObjectVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

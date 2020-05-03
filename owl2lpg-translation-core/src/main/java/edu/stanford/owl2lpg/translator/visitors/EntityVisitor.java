@@ -25,9 +25,8 @@ public class EntityVisitor extends VisitorBase
 
   private final VisitorFactory visitorFactory;
 
-  public EntityVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                       @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public EntityVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 

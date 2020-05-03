@@ -34,9 +34,8 @@ public class OntologyVisitor extends VisitorBase
   private final VisitorFactory visitorFactory;
 
   @Inject
-  public OntologyVisitor(@Nonnull NodeIdMapper nodeIdMapper,
-                         @Nonnull VisitorFactory visitorFactory) {
-    super(nodeIdMapper);
+  public OntologyVisitor(@Nonnull VisitorFactory visitorFactory) {
+    super(visitorFactory.getNodeIdMapper());
     this.visitorFactory = checkNotNull(visitorFactory);
   }
 
