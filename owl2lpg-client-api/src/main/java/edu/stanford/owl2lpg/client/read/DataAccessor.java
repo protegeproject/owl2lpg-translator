@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class DataAccessor {
+public abstract class DataAccessor implements AutoCloseable {
 
   public static DataAccessor create(@Nonnull Database database,
                                     @Nonnull Session session,
@@ -60,6 +60,11 @@ public abstract class DataAccessor {
         .setParameter(context)
         .setParameter(subject)
         .getFrame();
+  }
+
+  @Override
+  public void close() throws Exception {
+    getSession().close();
   }
 
   public abstract Database getDatabase();
