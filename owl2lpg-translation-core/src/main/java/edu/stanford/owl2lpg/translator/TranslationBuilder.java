@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,46 +17,46 @@ import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
 public class TranslationBuilder {
 
   private final Map<Node, Set<Edge>> nodeConnections = Maps.newHashMap();
-  private final Map<Edge, Node> outEdgeMap = Maps.newHashMap();
-  private final Map<Edge, Node> inEdgeMap = Maps.newHashMap();
+  private final Map<Edge, Node> sourceNodes = Maps.newHashMap();
+  private final Map<Edge, Node> targetNodes = Maps.newHashMap();
 
   public TranslationBuilder() {
     // NO-OP
   }
 
-  public TranslationBuilder add(Node fromNode,
-                                Node toNode,
-                                String edgeLabel,
-                                Properties edgeProperties) {
-    var edge = Edge(fromNode, toNode, edgeLabel, edgeProperties);
-    addConnection(fromNode, edge);
-    addOutNode(edge, fromNode);
-    addInNode(edge, toNode);
+  public TranslationBuilder add(@Nonnull Node sourceNode,
+                                @Nonnull Node targetNode,
+                                @Nonnull String edgeLabel,
+                                @Nonnull Properties edgeProperties) {
+    var edge = Edge(sourceNode, targetNode, edgeLabel, edgeProperties);
+    addNodeConnection(sourceNode, edge);
+    addSourceNode(edge, sourceNode);
+    addTargetNode(edge, targetNode);
     return this;
   }
 
-  public TranslationBuilder add(Node fromNode,
-                                Node toNode,
-                                String edgeLabel) {
+  public TranslationBuilder add(@Nonnull Node fromNode,
+                                @Nonnull Node toNode,
+                                @Nonnull String edgeLabel) {
     return add(fromNode, toNode, edgeLabel, Properties.empty());
   }
 
-  private void addConnection(Node node, Edge edge) {
+  public Translation build() {
+    var mainNode = getMainNode();
+    return createTranslation(mainNode);
+  }
+
+  private void addNodeConnection(Node node, Edge edge) {
     nodeConnections.putIfAbsent(node, Sets.newHashSet());
     nodeConnections.get(node).add(edge);
   }
 
-  private void addOutNode(Edge edge, Node fromNode) {
-    outEdgeMap.put(edge, fromNode);
+  private void addSourceNode(Edge edge, Node sourceNode) {
+    sourceNodes.put(edge, sourceNode);
   }
 
-  private void addInNode(Edge edge, Node toNode) {
-    inEdgeMap.put(edge, toNode);
-  }
-
-  public Translation build() {
-    var rootNode = getRootNode();
-    return createTranslation(rootNode);
+  private void addTargetNode(Edge edge, Node targetNode) {
+    targetNodes.put(edge, targetNode);
   }
 
   private Translation createTranslation(Node mainNode) {
@@ -64,10 +65,8 @@ public class TranslationBuilder {
       return Translation.create(mainNode);
     } else {
       var nestedTranslations = edges.stream()
-          .map(edge -> {
-            var inNode = inEdgeMap.get(edge);
-            return createTranslation(inNode);
-          })
+          .map(targetNodes::get)
+          .map(this::createTranslation)
           .collect(Collectors.toList());
       return Translation.create(mainNode,
           ImmutableList.copyOf(edges),
@@ -75,12 +74,14 @@ public class TranslationBuilder {
     }
   }
 
-  private Node getRootNode() {
-    var parentNodes = Sets.newHashSet(outEdgeMap.values());
-    var childNodes = Sets.newHashSet(inEdgeMap.values());
+  private Node getMainNode() {
+    var parentNodes = Sets.newHashSet(sourceNodes.values());
+    var childNodes = Sets.newHashSet(targetNodes.values());
     var diff = Sets.difference(parentNodes, childNodes);
-    if (diff.size() != 1) {
-      throw new RuntimeException("Translation graph has multiple main nodes");
+    if (diff.size() == 0) {
+      throw new RuntimeException("Translation has no main node");
+    } else if (diff.size() > 1) {
+      throw new RuntimeException("Translation has multiple main nodes");
     }
     return diff.stream().findFirst().get();
   }
