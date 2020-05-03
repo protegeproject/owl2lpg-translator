@@ -9,7 +9,7 @@ import org.neo4j.driver.Session;
  */
 public interface HierarchyAccessorFactory<T> {
 
-  HierarchyAccessor<T> initialize(Database database, Session session);
+  HierarchyAccessor<T> getAccessor(Database database, Session session);
 
   boolean isAccessorFor(Class<?> hierarchyClass);
 }

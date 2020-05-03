@@ -9,7 +9,7 @@ import org.neo4j.driver.Session;
  */
 public interface FrameAccessorFactory<T> {
 
-  FrameAccessor<T> initialize(Database database, Session session);
+  FrameAccessor<T> getAccessor(Database database, Session session);
 
   boolean isAccessorFor(Class<T> frameClass);
 }

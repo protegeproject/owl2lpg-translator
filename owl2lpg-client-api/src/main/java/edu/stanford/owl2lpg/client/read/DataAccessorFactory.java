@@ -30,10 +30,10 @@ public class DataAccessorFactory {
                                                @Nonnull Session session) {
     for (var frameAccessorFactory : frameAccessorFactories) {
       if (frameAccessorFactory.isAccessorFor(frameClass)) {
-        return frameAccessorFactory.initialize(database, session);
+        return frameAccessorFactory.getAccessor(database, session);
       }
     }
-    throw new IllegalArgumentException(format("Unable to find frame accessor for %s", frameClass));
+    throw new IllegalArgumentException(format("Unable to get frame accessor for %s", frameClass));
   }
 
   public <T> HierarchyAccessor<T> getHierarchyAccessor(@Nonnull Class<T> hierarchyClass,
@@ -41,9 +41,9 @@ public class DataAccessorFactory {
                                                        @Nonnull Session session) {
     for (var hierarchyAccessorFactory : hierarchyAccessorFactories) {
       if (hierarchyAccessorFactory.isAccessorFor(hierarchyClass)) {
-        return hierarchyAccessorFactory.initialize(database, session);
+        return hierarchyAccessorFactory.getAccessor(database, session);
       }
     }
-    throw new IllegalArgumentException(format("Unable to find hierarchy accessor for %s", hierarchyClass));
+    throw new IllegalArgumentException(format("Unable to get hierarchy accessor for %s", hierarchyClass));
   }
 }
