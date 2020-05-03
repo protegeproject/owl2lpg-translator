@@ -13,14 +13,14 @@ import static java.lang.String.format;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class DataAccessorFactory {
+public class AccessorFactory {
 
   private final ImmutableList<FrameAccessorFactory> frameAccessorFactories;
 
   private final ImmutableList<HierarchyAccessorFactory> hierarchyAccessorFactories;
 
-  public DataAccessorFactory(@Nonnull ImmutableList<FrameAccessorFactory> frameAccessorFactories,
-                             @Nonnull ImmutableList<HierarchyAccessorFactory> hierarchyAccessorFactories) {
+  public AccessorFactory(@Nonnull ImmutableList<FrameAccessorFactory> frameAccessorFactories,
+                         @Nonnull ImmutableList<HierarchyAccessorFactory> hierarchyAccessorFactories) {
     this.frameAccessorFactories = checkNotNull(frameAccessorFactories);
     this.hierarchyAccessorFactories = checkNotNull(hierarchyAccessorFactories);
   }

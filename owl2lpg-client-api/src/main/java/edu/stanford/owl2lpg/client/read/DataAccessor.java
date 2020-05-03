@@ -23,18 +23,18 @@ public class DataAccessor implements AutoCloseable {
   private final DatabaseConnection connection;
 
   @Nonnull
-  private final DataAccessorFactory dataAccessorFactory;
+  private final AccessorFactory accessorFactory;
 
   public DataAccessor(@Nonnull Database database,
                       @Nonnull DatabaseConnection connection,
-                      @Nonnull DataAccessorFactory dataAccessorFactory) {
+                      @Nonnull AccessorFactory accessorFactory) {
     this.database = checkNotNull(database);
     this.connection = checkNotNull(connection);
-    this.dataAccessorFactory = checkNotNull(dataAccessorFactory);
+    this.accessorFactory = checkNotNull(accessorFactory);
   }
 
   public ClassFrame getFrame(AxiomContext context, OWLClass subject) {
-    return dataAccessorFactory
+    return accessorFactory
         .getFrameAccessor(ClassFrame.class, database, connection)
         .setParameter(context)
         .setParameter(subject)
@@ -42,7 +42,7 @@ public class DataAccessor implements AutoCloseable {
   }
 
   public ObjectPropertyFrame getFrame(AxiomContext context, OWLObjectProperty subject) {
-    return dataAccessorFactory
+    return accessorFactory
         .getFrameAccessor(ObjectPropertyFrame.class, database, connection)
         .setParameter(context)
         .setParameter(subject)
@@ -50,7 +50,7 @@ public class DataAccessor implements AutoCloseable {
   }
 
   public DataPropertyFrame getFrame(AxiomContext context, OWLDataProperty subject) {
-    return dataAccessorFactory
+    return accessorFactory
         .getFrameAccessor(DataPropertyFrame.class, database, connection)
         .setParameter(context)
         .setParameter(subject)
@@ -58,7 +58,7 @@ public class DataAccessor implements AutoCloseable {
   }
 
   public AnnotationPropertyFrame getFrame(AxiomContext context, OWLAnnotationProperty subject) {
-    return dataAccessorFactory
+    return accessorFactory
         .getFrameAccessor(AnnotationPropertyFrame.class, database, connection)
         .setParameter(context)
         .setParameter(subject)
@@ -66,7 +66,7 @@ public class DataAccessor implements AutoCloseable {
   }
 
   public NamedIndividualFrame getFrame(AxiomContext context, OWLNamedIndividual subject) {
-    return dataAccessorFactory
+    return accessorFactory
         .getFrameAccessor(NamedIndividualFrame.class, database, connection)
         .setParameter(context)
         .setParameter(subject)

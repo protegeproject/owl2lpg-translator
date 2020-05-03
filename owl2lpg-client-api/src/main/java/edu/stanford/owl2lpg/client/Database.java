@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client;
 
+import edu.stanford.owl2lpg.client.read.AccessorFactory;
 import edu.stanford.owl2lpg.client.read.DataAccessor;
-import edu.stanford.owl2lpg.client.read.DataAccessorFactory;
 import edu.stanford.owl2lpg.client.read.MatchStatement;
 import edu.stanford.owl2lpg.client.write.AxiomStorer;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
@@ -25,14 +25,14 @@ public class Database implements AutoCloseable {
   private final AxiomStorer axiomStorer;
 
   @Nonnull
-  private final DataAccessorFactory dataAccessorFactory;
+  private final AccessorFactory accessorFactory;
 
   public Database(@Nonnull Driver driver,
                   @Nonnull AxiomStorer axiomStorer,
-                  @Nonnull DataAccessorFactory dataAccessorFactory) {
+                  @Nonnull AccessorFactory accessorFactory) {
     this.driver = checkNotNull(driver);
     this.axiomStorer = checkNotNull(axiomStorer);
-    this.dataAccessorFactory = checkNotNull(dataAccessorFactory);
+    this.accessorFactory = checkNotNull(accessorFactory);
   }
 
   public static Builder builder() {
@@ -52,7 +52,7 @@ public class Database implements AutoCloseable {
   public DataAccessor getDataAccessor() {
     return new DataAccessor(this,
         getConnection(),
-        dataAccessorFactory);
+        accessorFactory);
   }
 
   public DatabaseConnection getConnection() {
@@ -78,7 +78,7 @@ public class Database implements AutoCloseable {
     private String username;
     private String password;
     private AxiomStorer axiomStorer;
-    private DataAccessorFactory dataAccessorFactory;
+    private AccessorFactory accessorFactory;
 
     public Builder setConnection(@Nonnull String uri,
                                  @Nonnull String username,
@@ -94,14 +94,14 @@ public class Database implements AutoCloseable {
       return this;
     }
 
-    public Builder setAccessors(@Nonnull DataAccessorFactory dataAccessorFactory) {
-      this.dataAccessorFactory = checkNotNull(dataAccessorFactory);
+    public Builder setAccessors(@Nonnull AccessorFactory accessorFactory) {
+      this.accessorFactory = checkNotNull(accessorFactory);
       return this;
     }
 
     public Database connect() {
       var driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-      return new Database(driver, axiomStorer, dataAccessorFactory);
+      return new Database(driver, axiomStorer, accessorFactory);
     }
   }
 }
