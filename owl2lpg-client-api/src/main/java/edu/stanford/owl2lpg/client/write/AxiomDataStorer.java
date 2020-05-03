@@ -2,67 +2,67 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
+import edu.stanford.owl2lpg.client.Database;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
+import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
+import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomToCypherQuery {
+public class AxiomDataStorer {
 
   @Nonnull
-  private final AxiomTranslator axiomTranslator;
+  private final Database database;
 
   @Nonnull
-  private final AxiomContextTranslator contextTranslator;
+  private final DatabaseConnection connection;
 
-  public AxiomToCypherQuery(@Nonnull AxiomTranslator axiomTranslator,
-                            @Nonnull AxiomContextTranslator contextTranslator) {
-    this.axiomTranslator = checkNotNull(axiomTranslator);
-    this.contextTranslator = checkNotNull(contextTranslator);
+  @Nonnull
+  private final AxiomTranslatorEx translator;
+
+  public AxiomDataStorer(@Nonnull Database database,
+                         @Nonnull DatabaseConnection connection,
+                         @Nonnull AxiomTranslatorEx translator) {
+    this.database = database;
+    this.connection = connection;
+    this.translator = translator;
   }
 
-  public String translate(@Nonnull AxiomBundle bundle) {
-    checkNotNull(bundle);
+  public boolean storeAxiom(@Nonnull AxiomContext context,
+                            @Nonnull OWLAxiom axiom) {
+    var axiomTranslation = translator.translate(context, axiom);
+    var query = getCypherQuery(axiomTranslation);
+    var statement = connection.createStatement(query);
+    return database.run(statement);
+  }
+
+  private String getCypherQuery(Translation translation) {
     var sb = new StringBuilder();
-    var axiomTranslation = axiomTranslator.translate(bundle.getAxiom());
-    translateToCypher(axiomTranslation, sb);
-    var contextTranslation = contextTranslator.translate(bundle.getContext());
-    translateToCypher(contextTranslation, sb);
-    var contextEdge = createContextEdge(contextTranslation, axiomTranslation);
-    translateToCypher(contextEdge, sb);
+    getCypherQuery(translation, sb);
     return sb.toString();
   }
 
-  private static void translateToCypher(Translation translation, StringBuilder stringBuilder) {
-    translation.nodes().distinct().forEach(node -> translateToCypher(node, stringBuilder));
-    translation.edges().distinct().forEach(edge -> translateToCypher(edge, stringBuilder));
+  private static void getCypherQuery(Translation translation, StringBuilder stringBuilder) {
+    translation.nodes().distinct().forEach(node -> getCypherQuery(node, stringBuilder));
+    translation.edges().distinct().forEach(edge -> getCypherQuery(edge, stringBuilder));
   }
 
-  private Edge createContextEdge(Translation contextTranslation, Translation axiomTranslation) {
-    return Edge.create(
-        contextTranslation.nodes("OntologyDocument").findFirst().get(),
-        axiomTranslation.nodes("Axiom").findFirst().get(),
-        EdgeLabels.AXIOM,
-        Properties.empty());
-  }
-
-  private static void translateToCypher(Node node, StringBuilder stringBuilder) {
+  private static void getCypherQuery(Node node, StringBuilder stringBuilder) {
     if (isReusableNode(node)) {
       stringBuilder.append(format("MERGE (%s%s %s)",
           printNodeId(node.getNodeId()),
@@ -77,7 +77,7 @@ public class AxiomToCypherQuery {
     stringBuilder.append("\n");
   }
 
-  private static void translateToCypher(Edge edge, StringBuilder stringBuilder) {
+  private static void getCypherQuery(Edge edge, StringBuilder stringBuilder) {
     stringBuilder.append(format("MERGE (%s)-[%s %s]->(%s)",
         printNodeId(edge.getFromNode().getNodeId()),
         printEdgeLabel(edge.getLabel()),
@@ -108,17 +108,17 @@ public class AxiomToCypherQuery {
 
   private static boolean isProjectNode(Node node) {
     var nodeLabels = node.getLabels();
-    return edu.stanford.owl2lpg.versioning.translator.NodeLabels.PROJECT.equals(nodeLabels);
+    return AxiomTranslatorEx.NodeLabels.PROJECT.equals(nodeLabels);
   }
 
   private static boolean isBranchNode(Node node) {
     var nodeLabels = node.getLabels();
-    return edu.stanford.owl2lpg.versioning.translator.NodeLabels.BRANCH.equals(nodeLabels);
+    return AxiomTranslatorEx.NodeLabels.BRANCH.equals(nodeLabels);
   }
 
   private static boolean isOntologyDocumentNode(Node node) {
     var nodeLabels = node.getLabels();
-    return edu.stanford.owl2lpg.versioning.translator.NodeLabels.ONTOLOGY_DOCUMENT.equals(nodeLabels);
+    return AxiomTranslatorEx.NodeLabels.ONTOLOGY_DOCUMENT.equals(nodeLabels);
   }
 
   private static boolean isLiteralNode(Node node) {

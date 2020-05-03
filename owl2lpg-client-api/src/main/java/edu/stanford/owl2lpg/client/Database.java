@@ -3,11 +3,9 @@ package edu.stanford.owl2lpg.client;
 import edu.stanford.owl2lpg.client.read.DataAccessor;
 import edu.stanford.owl2lpg.client.read.DataAccessorFactory;
 import edu.stanford.owl2lpg.client.read.MatchStatement;
-import edu.stanford.owl2lpg.client.write.AxiomStorer;
-import edu.stanford.owl2lpg.client.write.AxiomToCypherQuery;
+import edu.stanford.owl2lpg.client.write.AxiomDataStorer;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
-import edu.stanford.owl2lpg.translator.TranslatorFactory;
-import edu.stanford.owl2lpg.versioning.translator.AxiomContextTranslator;
+import edu.stanford.owl2lpg.client.write.DataStorer;
 import org.neo4j.driver.*;
 
 import javax.annotation.Nonnull;
@@ -24,12 +22,17 @@ public class Database implements AutoCloseable {
   private final Driver driver;
 
   @Nonnull
+  private final AxiomDataStorer axiomDataStorer;
+
+  @Nonnull
   private final DataAccessorFactory dataAccessorFactory;
 
   public Database(@Nonnull Driver driver,
+                  @Nonnull AxiomDataStorer axiomDataStorer,
                   @Nonnull DataAccessorFactory dataAccessorFactory) {
     this.driver = checkNotNull(driver);
-    this.dataAccessorFactory = dataAccessorFactory;
+    this.axiomDataStorer = checkNotNull(axiomDataStorer);
+    this.dataAccessorFactory = checkNotNull(dataAccessorFactory);
   }
 
   public static Builder builder() {
@@ -40,12 +43,10 @@ public class Database implements AutoCloseable {
     return driver.session();
   }
 
-  public AxiomStorer getAxiomStorer() {
-    return new AxiomStorer(this,
+  public DataStorer getDataStorer() {
+    return new DataStorer(this,
         getConnection(),
-        new AxiomToCypherQuery(
-            TranslatorFactory.getAxiomTranslator(),
-            new AxiomContextTranslator()));
+        axiomDataStorer);
   }
 
   public DataAccessor getDataAccessor() {
@@ -76,6 +77,7 @@ public class Database implements AutoCloseable {
     private String uri;
     private String username;
     private String password;
+    private AxiomDataStorer axiomDataStorer;
     private DataAccessorFactory dataAccessorFactory;
 
     public Builder setConnection(@Nonnull String uri,
@@ -87,6 +89,11 @@ public class Database implements AutoCloseable {
       return this;
     }
 
+    public Builder setStorers(@Nonnull AxiomDataStorer axiomDataStorer) {
+      this.axiomDataStorer = axiomDataStorer;
+      return this;
+    }
+
     public Builder setAccessors(@Nonnull DataAccessorFactory dataAccessorFactory) {
       this.dataAccessorFactory = checkNotNull(dataAccessorFactory);
       return this;
@@ -94,7 +101,7 @@ public class Database implements AutoCloseable {
 
     public Database connect() {
       var driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-      return new Database(driver, dataAccessorFactory);
+      return new Database(driver, axiomDataStorer, dataAccessorFactory);
     }
   }
 }

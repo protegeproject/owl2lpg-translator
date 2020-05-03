@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomStorer implements AutoCloseable {
+public class DataStorer implements AutoCloseable {
 
   @Nonnull
   private final Database database;
@@ -23,22 +23,19 @@ public class AxiomStorer implements AutoCloseable {
   private final DatabaseConnection connection;
 
   @Nonnull
-  private final AxiomToCypherQuery translator;
+  private final AxiomDataStorer axiomDataStorer;
 
-  public AxiomStorer(@Nonnull Database database,
-                     @Nonnull DatabaseConnection connection,
-                     @Nonnull AxiomToCypherQuery translator) {
+  public DataStorer(@Nonnull Database database,
+                    @Nonnull DatabaseConnection connection,
+                    @Nonnull AxiomDataStorer axiomDataStorer) {
     this.database = checkNotNull(database);
     this.connection = checkNotNull(connection);
-    this.translator = checkNotNull(translator);
+    this.axiomDataStorer = checkNotNull(axiomDataStorer);
   }
 
   public boolean add(AxiomContext context, Collection<OWLAxiom> axioms) {
     return axioms.stream()
-        .map(axiom -> AxiomBundle.create(context, axiom))
-        .map(translator::translate)
-        .map(connection::createStatement)
-        .map(database::run)
+        .map(axiom -> axiomDataStorer.storeAxiom(context, axiom))
         .reduce(Boolean::logicalAnd)
         .orElse(false);
   }
