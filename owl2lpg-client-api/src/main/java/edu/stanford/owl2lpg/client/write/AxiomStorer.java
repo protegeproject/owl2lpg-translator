@@ -24,7 +24,7 @@ import static java.lang.String.format;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomDataStorer {
+public class AxiomStorer {
 
   @Nonnull
   private final Database database;
@@ -35,9 +35,9 @@ public class AxiomDataStorer {
   @Nonnull
   private final AxiomTranslatorEx translator;
 
-  public AxiomDataStorer(@Nonnull Database database,
-                         @Nonnull DatabaseConnection connection,
-                         @Nonnull AxiomTranslatorEx translator) {
+  public AxiomStorer(@Nonnull Database database,
+                     @Nonnull DatabaseConnection connection,
+                     @Nonnull AxiomTranslatorEx translator) {
     this.database = database;
     this.connection = connection;
     this.translator = translator;
