@@ -37,7 +37,7 @@ public class AxiomToCypherQuery {
     this.contextTranslator = checkNotNull(contextTranslator);
   }
 
-  public CypherQuery translate(@Nonnull AxiomBundle bundle) {
+  public String translate(@Nonnull AxiomBundle bundle) {
     checkNotNull(bundle);
     var sb = new StringBuilder();
     var axiomTranslation = axiomTranslator.translate(bundle.getAxiom());
@@ -46,7 +46,7 @@ public class AxiomToCypherQuery {
     translateToCypher(contextTranslation, sb);
     var contextEdge = createContextEdge(contextTranslation, axiomTranslation);
     translateToCypher(contextEdge, sb);
-    return CypherQuery.create(sb.toString());
+    return sb.toString();
   }
 
   private static void translateToCypher(Translation translation, StringBuilder stringBuilder) {

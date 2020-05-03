@@ -12,17 +12,17 @@ import javax.annotation.Nonnull;
 @AutoValue
 public abstract class CreateStatement {
 
-  public static CreateStatement create(@Nonnull CypherQuery query,
+  public static CreateStatement create(@Nonnull String cypherQuery,
                                        @Nonnull Session session) {
-    return new AutoValue_CreateStatement(query, session);
+    return new AutoValue_CreateStatement(cypherQuery, session);
   }
 
   public boolean run() {
-    getSession().writeTransaction(getQuery()::run);
+    getSession().writeTransaction(tx -> tx.run(getCypherQuery()));
     return true;
   }
 
-  protected abstract CypherQuery getQuery();
+  protected abstract String getCypherQuery();
 
   protected abstract Session getSession();
 }

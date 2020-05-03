@@ -3,7 +3,6 @@ package edu.stanford.owl2lpg.client.read;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.client.Database;
-import edu.stanford.owl2lpg.client.write.CypherQuery;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
@@ -44,7 +43,7 @@ public abstract class FrameAccessor<T> {
     return getFrame(result);
   }
 
-  protected abstract CypherQuery getCypherQuery(ImmutableList<Object> parameters);
+  protected abstract String getCypherQuery(ImmutableList<Object> parameters);
 
   protected abstract T getFrame(Result result);
 }

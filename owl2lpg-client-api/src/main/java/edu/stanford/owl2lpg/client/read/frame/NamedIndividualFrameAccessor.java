@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.shared.frame.NamedIndividualFrame;
 import edu.stanford.owl2lpg.client.Database;
 import edu.stanford.owl2lpg.client.read.FrameAccessor;
-import edu.stanford.owl2lpg.client.write.CypherQuery;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
@@ -22,7 +21,7 @@ public class NamedIndividualFrameAccessor extends FrameAccessor<NamedIndividualF
   }
 
   @Override
-  protected CypherQuery getCypherQuery(ImmutableList<Object> parameters) {
+  protected String getCypherQuery(ImmutableList<Object> parameters) {
     return null;
   }
 
