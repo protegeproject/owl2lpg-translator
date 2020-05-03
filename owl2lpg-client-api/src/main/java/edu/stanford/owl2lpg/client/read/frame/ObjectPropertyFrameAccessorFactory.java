@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.ObjectPropertyFrame;
 import edu.stanford.owl2lpg.client.Database;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.client.read.FrameAccessorFactory;
-import org.neo4j.driver.Session;
 
 import javax.annotation.Nonnull;
 
@@ -16,8 +16,8 @@ public class ObjectPropertyFrameAccessorFactory
 
   @Override
   public ObjectPropertyFrameAccessor getAccessor(@Nonnull Database database,
-                                                 @Nonnull Session session) {
-    return new ObjectPropertyFrameAccessor(database, session);
+                                                 @Nonnull DatabaseConnection connection) {
+    return new ObjectPropertyFrameAccessor(database, connection);
   }
 
   @Override

@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.client.Database;
-import org.neo4j.driver.Session;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 
 import javax.annotation.Nonnull;
 
@@ -27,10 +27,10 @@ public class DataAccessorFactory {
 
   public <T> FrameAccessor<T> getFrameAccessor(@Nonnull Class<T> frameClass,
                                                @Nonnull Database database,
-                                               @Nonnull Session session) {
+                                               @Nonnull DatabaseConnection connection) {
     for (var frameAccessorFactory : frameAccessorFactories) {
       if (frameAccessorFactory.isAccessorFor(frameClass)) {
-        return frameAccessorFactory.getAccessor(database, session);
+        return frameAccessorFactory.getAccessor(database, connection);
       }
     }
     throw new IllegalArgumentException(format("Unable to get frame accessor for %s", frameClass));
@@ -38,10 +38,10 @@ public class DataAccessorFactory {
 
   public <T> HierarchyAccessor<T> getHierarchyAccessor(@Nonnull Class<T> hierarchyClass,
                                                        @Nonnull Database database,
-                                                       @Nonnull Session session) {
+                                                       @Nonnull DatabaseConnection connection) {
     for (var hierarchyAccessorFactory : hierarchyAccessorFactories) {
       if (hierarchyAccessorFactory.isAccessorFor(hierarchyClass)) {
-        return hierarchyAccessorFactory.getAccessor(database, session);
+        return hierarchyAccessorFactory.getAccessor(database, connection);
       }
     }
     throw new IllegalArgumentException(format("Unable to get hierarchy accessor for %s", hierarchyClass));

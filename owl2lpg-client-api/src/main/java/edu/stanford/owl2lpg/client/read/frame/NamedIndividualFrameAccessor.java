@@ -3,9 +3,9 @@ package edu.stanford.owl2lpg.client.read.frame;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.shared.frame.NamedIndividualFrame;
 import edu.stanford.owl2lpg.client.Database;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.client.read.FrameAccessor;
 import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
 
 import javax.annotation.Nonnull;
 
@@ -16,8 +16,8 @@ import javax.annotation.Nonnull;
 public class NamedIndividualFrameAccessor extends FrameAccessor<NamedIndividualFrame> {
 
   public NamedIndividualFrameAccessor(@Nonnull Database database,
-                                      @Nonnull Session session) {
-    super(database, session);
+                                      @Nonnull DatabaseConnection connection) {
+    super(database, connection);
   }
 
   @Override

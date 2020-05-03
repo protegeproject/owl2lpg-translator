@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.NamedIndividualFrame;
 import edu.stanford.owl2lpg.client.Database;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.client.read.FrameAccessorFactory;
-import org.neo4j.driver.Session;
 
 import javax.annotation.Nonnull;
 
@@ -16,8 +16,8 @@ public class NamedIndividualFrameAccessorFactory
 
   @Override
   public NamedIndividualFrameAccessor getAccessor(@Nonnull Database database,
-                                                  @Nonnull Session session) {
-    return new NamedIndividualFrameAccessor(database, session);
+                                                  @Nonnull DatabaseConnection connection) {
+    return new NamedIndividualFrameAccessor(database, connection);
   }
 
   @Override

@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read;
 
 import edu.stanford.owl2lpg.client.Database;
-import org.neo4j.driver.Session;
+import edu.stanford.owl2lpg.client.DatabaseConnection;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -9,7 +9,7 @@ import org.neo4j.driver.Session;
  */
 public interface FrameAccessorFactory<T> {
 
-  FrameAccessor<T> getAccessor(Database database, Session session);
+  FrameAccessor<T> getAccessor(Database database, DatabaseConnection connection);
 
   boolean isAccessorFor(Class<?> frameClass);
 }

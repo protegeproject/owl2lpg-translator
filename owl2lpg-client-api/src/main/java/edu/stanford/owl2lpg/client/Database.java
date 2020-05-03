@@ -49,8 +49,8 @@ public class Database implements AutoCloseable {
   }
 
   public DataAccessor getDataAccessor() {
-    return DataAccessor.create(this,
-        getSession(),
+    return new DataAccessor(this,
+        getConnection(),
         dataAccessorFactory);
   }
 
