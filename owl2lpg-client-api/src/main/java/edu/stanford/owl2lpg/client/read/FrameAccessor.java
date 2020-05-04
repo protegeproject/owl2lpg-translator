@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.client.read;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.client.DatabaseSession;
+import edu.stanford.owl2lpg.client.shared.Arguments;
 import org.neo4j.driver.Result;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -14,21 +14,22 @@ import java.util.List;
  */
 public abstract class FrameAccessor<T> {
 
-  private final List<Object> parameters = Lists.newArrayList();
+  private final Map<String, Object> arguments = Maps.newHashMap();
 
-  public FrameAccessor<T> setParameter(@Nonnull Object parameter) {
-    parameters.add(parameter);
+  public FrameAccessor<T> setArgument(@Nonnull String parameter,
+                                      @Nonnull Object argument) {
+    arguments.put(parameter, argument);
     return this;
   }
 
   public T getFrame(@Nonnull DatabaseSession session) {
-    var query = getCypherQuery(ImmutableList.copyOf(parameters));
+    var query = getCypherQuery(Arguments.create(arguments));
     var statement = session.matchStatement(query);
     var result = statement.run();
     return getFrame(result);
   }
 
-  protected abstract String getCypherQuery(ImmutableList<Object> parameters);
+  protected abstract String getCypherQuery(Arguments arguments);
 
   protected abstract T getFrame(Result result);
 }

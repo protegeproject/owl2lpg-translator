@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.read;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -11,10 +11,11 @@ import java.util.List;
  */
 public abstract class HierarchyAccessor<T> {
 
-  private final List<Object> parameters = Lists.newArrayList();
+  private final Map<String, Object> arguments = Maps.newHashMap();
 
-  public HierarchyAccessor<T> setParameter(@Nonnull Object parameter) {
-    parameters.add(parameter);
+  public HierarchyAccessor<T> setArgument(@Nonnull String parameter,
+                                          @Nonnull Object argument) {
+    arguments.put(parameter, argument);
     return this;
   }
 }

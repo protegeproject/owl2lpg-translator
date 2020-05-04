@@ -30,40 +30,40 @@ public class DataAccessor implements AutoCloseable {
   public ClassFrame getFrame(AxiomContext context, OWLClass subject) {
     return accessorFactory
         .getFrameAccessor(ClassFrame.class)
-        .setParameter(context)
-        .setParameter(subject)
+        .setArgument("context", context)
+        .setArgument("subject", subject)
         .getFrame(session);
   }
 
   public ObjectPropertyFrame getFrame(AxiomContext context, OWLObjectProperty subject) {
     return accessorFactory
         .getFrameAccessor(ObjectPropertyFrame.class)
-        .setParameter(context)
-        .setParameter(subject)
+        .setArgument("context", context)
+        .setArgument("subject", subject)
         .getFrame(session);
   }
 
   public DataPropertyFrame getFrame(AxiomContext context, OWLDataProperty subject) {
     return accessorFactory
         .getFrameAccessor(DataPropertyFrame.class)
-        .setParameter(context)
-        .setParameter(subject)
+        .setArgument("context", context)
+        .setArgument("subject", subject)
         .getFrame(session);
   }
 
   public AnnotationPropertyFrame getFrame(AxiomContext context, OWLAnnotationProperty subject) {
     return accessorFactory
         .getFrameAccessor(AnnotationPropertyFrame.class)
-        .setParameter(context)
-        .setParameter(subject)
+        .setArgument("context", context)
+        .setArgument("subject", subject)
         .getFrame(session);
   }
 
   public NamedIndividualFrame getFrame(AxiomContext context, OWLNamedIndividual subject) {
     return accessorFactory
         .getFrameAccessor(NamedIndividualFrame.class)
-        .setParameter(context)
-        .setParameter(subject)
+        .setArgument("context", context)
+        .setArgument("subject", subject)
         .getFrame(session);
   }
 

@@ -31,8 +31,8 @@ public class DataStorer implements AutoCloseable {
     var storer = storerFactory.getStorer(OWLAxiom.class, Mode.CYPHER);
     return axioms.stream()
         .map(axiom -> storer
-            .addParameter(context)
-            .addParameter(axiom)
+            .addArgument("context", context)
+            .addArgument("axiom", axiom)
             .store(session))
         .reduce(Boolean::logicalAnd)
         .orElse(false);

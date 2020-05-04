@@ -2,14 +2,13 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
+import edu.stanford.owl2lpg.client.shared.Arguments;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -33,10 +32,10 @@ public class AxiomStorer extends Storer<OWLAxiom> {
   }
 
   @Override
-  protected Translation getTranslation(ImmutableMap<Class<?>, Object> parameters) {
+  protected Translation getTranslation(Arguments arguments) {
     return translator.translate(
-        AxiomContext.class.cast(parameters.get(AxiomContext.class)),
-        OWLAxiom.class.cast(parameters.get(OWLAxiom.class)));
+        arguments.get("context"),
+        arguments.get("axiom"));
   }
 
   @Override

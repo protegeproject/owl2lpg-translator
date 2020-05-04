@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.client.write;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.client.DatabaseSession;
+import edu.stanford.owl2lpg.client.shared.Arguments;
 import edu.stanford.owl2lpg.translator.Translation;
 
 import javax.annotation.Nonnull;
@@ -14,21 +14,22 @@ import java.util.Map;
  */
 public abstract class Storer<T> {
 
-  private Map<Class<?>, Object> parameters = Maps.newHashMap();
+  private Map<String, Object> arguments = Maps.newHashMap();
 
-  public Storer<T> addParameter(@Nonnull Object parameter) {
-    parameters.put(parameter.getClass(), parameter);
+  public Storer<T> addArgument(@Nonnull String parameter,
+                               @Nonnull Object argument) {
+    arguments.put(parameter, argument);
     return this;
   }
 
   public boolean store(@Nonnull DatabaseSession session) {
-    var translation = getTranslation(ImmutableMap.copyOf(parameters));
+    var translation = getTranslation(Arguments.create(arguments));
     var query = getCypherQuery(translation);
     var statement = session.createStatement(query);
     return statement.run();
   }
 
-  protected abstract Translation getTranslation(ImmutableMap<Class<?>, Object> parameters);
+  protected abstract Translation getTranslation(Arguments arguments);
 
   protected abstract String getCypherQuery(Translation translation);
 }

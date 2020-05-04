@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
-import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.shared.frame.DataPropertyFrame;
 import edu.stanford.owl2lpg.client.read.FrameAccessor;
+import edu.stanford.owl2lpg.client.shared.Arguments;
 import org.neo4j.driver.Result;
 
 /**
@@ -12,7 +12,7 @@ import org.neo4j.driver.Result;
 public class DataPropertyFrameAccessor extends FrameAccessor<DataPropertyFrame> {
 
   @Override
-  protected String getCypherQuery(ImmutableList<Object> parameters) {
+  protected String getCypherQuery(Arguments arguments) {
     return null;
   }
 
