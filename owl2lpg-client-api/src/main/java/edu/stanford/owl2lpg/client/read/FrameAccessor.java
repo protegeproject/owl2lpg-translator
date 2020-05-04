@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import edu.stanford.owl2lpg.client.DatabaseConnection;
+import edu.stanford.owl2lpg.client.DatabaseSession;
 import org.neo4j.driver.Result;
 
 import javax.annotation.Nonnull;
@@ -21,9 +21,9 @@ public abstract class FrameAccessor<T> {
     return this;
   }
 
-  public T getFrame(@Nonnull DatabaseConnection connection) {
+  public T getFrame(@Nonnull DatabaseSession session) {
     var query = getCypherQuery(ImmutableList.copyOf(parameters));
-    var statement = connection.matchStatement(query);
+    var statement = session.matchStatement(query);
     var result = statement.run();
     return getFrame(result);
   }

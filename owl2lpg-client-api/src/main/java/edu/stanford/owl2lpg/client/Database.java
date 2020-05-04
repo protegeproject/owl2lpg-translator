@@ -6,7 +6,10 @@ import edu.stanford.owl2lpg.client.read.MatchStatement;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
 import edu.stanford.owl2lpg.client.write.DataStorer;
 import edu.stanford.owl2lpg.client.write.StorerFactory;
-import org.neo4j.driver.*;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Result;
 
 import javax.annotation.Nonnull;
 
@@ -39,20 +42,16 @@ public class Database implements AutoCloseable {
     return new Builder();
   }
 
-  private Session getSession() {
-    return driver.session();
-  }
-
   public DataStorer getDataStorer() {
-    return new DataStorer(getConnection(), storerFactory);
+    return new DataStorer(getSession(), storerFactory);
   }
 
   public DataAccessor getDataAccessor() {
-    return new DataAccessor(getConnection(), accessorFactory);
+    return new DataAccessor(getSession(), accessorFactory);
   }
 
-  public DatabaseConnection getConnection() {
-    return new DatabaseConnection(getSession());
+  public DatabaseSession getSession() {
+    return new DatabaseSession(driver.session());
   }
 
   public boolean run(CreateStatement statement) {

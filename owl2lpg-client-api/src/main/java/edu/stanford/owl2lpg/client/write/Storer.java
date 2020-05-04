@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import edu.stanford.owl2lpg.client.DatabaseConnection;
+import edu.stanford.owl2lpg.client.DatabaseSession;
 import edu.stanford.owl2lpg.translator.Translation;
 
 import javax.annotation.Nonnull;
@@ -21,10 +21,10 @@ public abstract class Storer<T> {
     return this;
   }
 
-  public boolean store(@Nonnull DatabaseConnection connection) {
+  public boolean store(@Nonnull DatabaseSession session) {
     var translation = getTranslation(ImmutableMap.copyOf(parameters));
     var query = getCypherQuery(translation);
-    var statement = connection.createStatement(query);
+    var statement = session.createStatement(query);
     return statement.run();
   }
 

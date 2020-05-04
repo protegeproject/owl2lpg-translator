@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.write;
 
-import edu.stanford.owl2lpg.client.DatabaseConnection;
+import edu.stanford.owl2lpg.client.DatabaseSession;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -16,14 +16,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DataStorer implements AutoCloseable {
 
   @Nonnull
-  private final DatabaseConnection connection;
+  private final DatabaseSession session;
 
   @Nonnull
   private final StorerFactory storerFactory;
 
-  public DataStorer(@Nonnull DatabaseConnection connection,
+  public DataStorer(@Nonnull DatabaseSession session,
                     @Nonnull StorerFactory storerFactory) {
-    this.connection = checkNotNull(connection);
+    this.session = checkNotNull(session);
     this.storerFactory = checkNotNull(storerFactory);
   }
 
@@ -33,13 +33,13 @@ public class DataStorer implements AutoCloseable {
         .map(axiom -> storer
             .addParameter(context)
             .addParameter(axiom)
-            .store(connection))
+            .store(session))
         .reduce(Boolean::logicalAnd)
         .orElse(false);
   }
 
   @Override
   public void close() throws Exception {
-    connection.close();
+    session.close();
   }
 }

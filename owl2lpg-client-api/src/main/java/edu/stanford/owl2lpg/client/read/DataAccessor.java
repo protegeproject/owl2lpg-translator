@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read;
 
 import edu.stanford.bmir.protege.web.shared.frame.*;
-import edu.stanford.owl2lpg.client.DatabaseConnection;
+import edu.stanford.owl2lpg.client.DatabaseSession;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import org.semanticweb.owlapi.model.*;
 
@@ -16,14 +16,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DataAccessor implements AutoCloseable {
 
   @Nonnull
-  private final DatabaseConnection connection;
+  private final DatabaseSession session;
 
   @Nonnull
   private final AccessorFactory accessorFactory;
 
-  public DataAccessor(@Nonnull DatabaseConnection connection,
+  public DataAccessor(@Nonnull DatabaseSession session,
                       @Nonnull AccessorFactory accessorFactory) {
-    this.connection = checkNotNull(connection);
+    this.session = checkNotNull(session);
     this.accessorFactory = checkNotNull(accessorFactory);
   }
 
@@ -32,7 +32,7 @@ public class DataAccessor implements AutoCloseable {
         .getFrameAccessor(ClassFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame(connection);
+        .getFrame(session);
   }
 
   public ObjectPropertyFrame getFrame(AxiomContext context, OWLObjectProperty subject) {
@@ -40,7 +40,7 @@ public class DataAccessor implements AutoCloseable {
         .getFrameAccessor(ObjectPropertyFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame(connection);
+        .getFrame(session);
   }
 
   public DataPropertyFrame getFrame(AxiomContext context, OWLDataProperty subject) {
@@ -48,7 +48,7 @@ public class DataAccessor implements AutoCloseable {
         .getFrameAccessor(DataPropertyFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame(connection);
+        .getFrame(session);
   }
 
   public AnnotationPropertyFrame getFrame(AxiomContext context, OWLAnnotationProperty subject) {
@@ -56,7 +56,7 @@ public class DataAccessor implements AutoCloseable {
         .getFrameAccessor(AnnotationPropertyFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame(connection);
+        .getFrame(session);
   }
 
   public NamedIndividualFrame getFrame(AxiomContext context, OWLNamedIndividual subject) {
@@ -64,11 +64,11 @@ public class DataAccessor implements AutoCloseable {
         .getFrameAccessor(NamedIndividualFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame(connection);
+        .getFrame(session);
   }
 
   @Override
   public void close() throws Exception {
-    connection.close();
+    session.close();
   }
 }

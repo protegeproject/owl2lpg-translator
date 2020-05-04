@@ -12,12 +12,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class DatabaseConnection implements AutoCloseable {
+public class DatabaseSession implements AutoCloseable {
 
   @Nonnull
   private final Session session;
 
-  public DatabaseConnection(@Nonnull Session session) {
+  public DatabaseSession(@Nonnull Session session) {
     this.session = checkNotNull(session);
   }
 
