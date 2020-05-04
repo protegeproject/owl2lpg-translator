@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read;
 
 import edu.stanford.bmir.protege.web.shared.frame.*;
-import edu.stanford.owl2lpg.client.Database;
 import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import org.semanticweb.owlapi.model.*;
@@ -17,60 +16,55 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DataAccessor implements AutoCloseable {
 
   @Nonnull
-  private final Database database;
-
-  @Nonnull
   private final DatabaseConnection connection;
 
   @Nonnull
   private final AccessorFactory accessorFactory;
 
-  public DataAccessor(@Nonnull Database database,
-                      @Nonnull DatabaseConnection connection,
+  public DataAccessor(@Nonnull DatabaseConnection connection,
                       @Nonnull AccessorFactory accessorFactory) {
-    this.database = checkNotNull(database);
     this.connection = checkNotNull(connection);
     this.accessorFactory = checkNotNull(accessorFactory);
   }
 
   public ClassFrame getFrame(AxiomContext context, OWLClass subject) {
     return accessorFactory
-        .getFrameAccessor(ClassFrame.class, database, connection)
+        .getFrameAccessor(ClassFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame();
+        .getFrame(connection);
   }
 
   public ObjectPropertyFrame getFrame(AxiomContext context, OWLObjectProperty subject) {
     return accessorFactory
-        .getFrameAccessor(ObjectPropertyFrame.class, database, connection)
+        .getFrameAccessor(ObjectPropertyFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame();
+        .getFrame(connection);
   }
 
   public DataPropertyFrame getFrame(AxiomContext context, OWLDataProperty subject) {
     return accessorFactory
-        .getFrameAccessor(DataPropertyFrame.class, database, connection)
+        .getFrameAccessor(DataPropertyFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame();
+        .getFrame(connection);
   }
 
   public AnnotationPropertyFrame getFrame(AxiomContext context, OWLAnnotationProperty subject) {
     return accessorFactory
-        .getFrameAccessor(AnnotationPropertyFrame.class, database, connection)
+        .getFrameAccessor(AnnotationPropertyFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame();
+        .getFrame(connection);
   }
 
   public NamedIndividualFrame getFrame(AxiomContext context, OWLNamedIndividual subject) {
     return accessorFactory
-        .getFrameAccessor(NamedIndividualFrame.class, database, connection)
+        .getFrameAccessor(NamedIndividualFrame.class)
         .setParameter(context)
         .setParameter(subject)
-        .getFrame();
+        .getFrame(connection);
   }
 
   @Override

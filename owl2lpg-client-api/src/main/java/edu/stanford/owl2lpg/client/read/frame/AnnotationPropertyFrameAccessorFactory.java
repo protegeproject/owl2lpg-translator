@@ -1,11 +1,7 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.AnnotationPropertyFrame;
-import edu.stanford.owl2lpg.client.Database;
-import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.client.read.FrameAccessorFactory;
-
-import javax.annotation.Nonnull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -15,9 +11,8 @@ public class AnnotationPropertyFrameAccessorFactory
     implements FrameAccessorFactory<AnnotationPropertyFrame> {
 
   @Override
-  public AnnotationPropertyFrameAccessor getAccessor(@Nonnull Database database,
-                                                     @Nonnull DatabaseConnection connection) {
-    return new AnnotationPropertyFrameAccessor(database, connection);
+  public AnnotationPropertyFrameAccessor getAccessor() {
+    return new AnnotationPropertyFrameAccessor();
   }
 
   @Override

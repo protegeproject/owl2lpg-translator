@@ -1,8 +1,6 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.ClassFrame;
-import edu.stanford.owl2lpg.client.Database;
-import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.client.read.FrameAccessorFactory;
 
 import javax.annotation.Nonnull;
@@ -14,9 +12,8 @@ import javax.annotation.Nonnull;
 public class ClassFrameAccessorFactory implements FrameAccessorFactory<ClassFrame> {
 
   @Override
-  public ClassFrameAccessor getAccessor(@Nonnull Database database,
-                                        @Nonnull DatabaseConnection connection) {
-    return new ClassFrameAccessor(database, connection);
+  public ClassFrameAccessor getAccessor() {
+    return new ClassFrameAccessor();
   }
 
   @Override
