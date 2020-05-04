@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.client.Database;
 import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.model.Edge;
@@ -24,13 +25,7 @@ import static java.lang.String.format;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomStorer {
-
-  @Nonnull
-  private final Database database;
-
-  @Nonnull
-  private final DatabaseConnection connection;
+public class AxiomStorer extends Storer<OWLAxiom> {
 
   @Nonnull
   private final AxiomTranslatorEx translator;
@@ -38,20 +33,19 @@ public class AxiomStorer {
   public AxiomStorer(@Nonnull Database database,
                      @Nonnull DatabaseConnection connection,
                      @Nonnull AxiomTranslatorEx translator) {
-    this.database = database;
-    this.connection = connection;
+    super(database, connection);
     this.translator = translator;
   }
 
-  public boolean storeAxiom(@Nonnull AxiomContext context,
-                            @Nonnull OWLAxiom axiom) {
-    var axiomTranslation = translator.translate(context, axiom);
-    var query = getCypherQuery(axiomTranslation);
-    var statement = connection.createStatement(query);
-    return database.run(statement);
+  @Override
+  protected Translation getTranslation(ImmutableMap<Class<?>, Object> parameters) {
+    return translator.translate(
+        AxiomContext.class.cast(parameters.get(AxiomContext.class)),
+        OWLAxiom.class.cast(parameters.get(OWLAxiom.class)));
   }
 
-  private String getCypherQuery(Translation translation) {
+  @Override
+  protected String getCypherQuery(Translation translation) {
     var sb = new StringBuilder();
     getCypherQuery(translation, sb);
     return sb.toString();
