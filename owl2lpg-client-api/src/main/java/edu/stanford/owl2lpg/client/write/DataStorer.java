@@ -23,19 +23,23 @@ public class DataStorer implements AutoCloseable {
   private final DatabaseConnection connection;
 
   @Nonnull
-  private final AxiomStorer axiomStorer;
+  private final StorerFactory storerFactory;
 
   public DataStorer(@Nonnull Database database,
                     @Nonnull DatabaseConnection connection,
-                    @Nonnull AxiomStorer axiomStorer) {
+                    @Nonnull StorerFactory storerFactory) {
     this.database = checkNotNull(database);
     this.connection = checkNotNull(connection);
-    this.axiomStorer = checkNotNull(axiomStorer);
+    this.storerFactory = checkNotNull(storerFactory);
   }
 
   public boolean add(AxiomContext context, Collection<OWLAxiom> axioms) {
+    var storer = storerFactory.getStorer(OWLAxiom.class, Mode.CYPHER);
     return axioms.stream()
-        .map(axiom -> axiomStorer.storeAxiom(context, axiom))
+        .map(axiom -> storer
+            .addParameter(context)
+            .addParameter(axiom)
+            .store())
         .reduce(Boolean::logicalAnd)
         .orElse(false);
   }

@@ -3,9 +3,9 @@ package edu.stanford.owl2lpg.client;
 import edu.stanford.owl2lpg.client.read.AccessorFactory;
 import edu.stanford.owl2lpg.client.read.DataAccessor;
 import edu.stanford.owl2lpg.client.read.MatchStatement;
-import edu.stanford.owl2lpg.client.write.AxiomStorer;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
 import edu.stanford.owl2lpg.client.write.DataStorer;
+import edu.stanford.owl2lpg.client.write.StorerFactory;
 import org.neo4j.driver.*;
 
 import javax.annotation.Nonnull;
@@ -22,16 +22,16 @@ public class Database implements AutoCloseable {
   private final Driver driver;
 
   @Nonnull
-  private final AxiomStorer axiomStorer;
+  private final StorerFactory storerFactory;
 
   @Nonnull
   private final AccessorFactory accessorFactory;
 
   public Database(@Nonnull Driver driver,
-                  @Nonnull AxiomStorer axiomStorer,
+                  @Nonnull StorerFactory storerFactory,
                   @Nonnull AccessorFactory accessorFactory) {
     this.driver = checkNotNull(driver);
-    this.axiomStorer = checkNotNull(axiomStorer);
+    this.storerFactory = checkNotNull(storerFactory);
     this.accessorFactory = checkNotNull(accessorFactory);
   }
 
@@ -46,7 +46,7 @@ public class Database implements AutoCloseable {
   public DataStorer getDataStorer() {
     return new DataStorer(this,
         getConnection(),
-        axiomStorer);
+        storerFactory);
   }
 
   public DataAccessor getDataAccessor() {
@@ -77,7 +77,7 @@ public class Database implements AutoCloseable {
     private String uri;
     private String username;
     private String password;
-    private AxiomStorer axiomStorer;
+    private StorerFactory storerFactory;
     private AccessorFactory accessorFactory;
 
     public Builder setConnection(@Nonnull String uri,
@@ -89,8 +89,8 @@ public class Database implements AutoCloseable {
       return this;
     }
 
-    public Builder setStorers(@Nonnull AxiomStorer axiomStorer) {
-      this.axiomStorer = axiomStorer;
+    public Builder setStorers(@Nonnull StorerFactory storerFactory) {
+      this.storerFactory = checkNotNull(storerFactory);
       return this;
     }
 
@@ -101,7 +101,7 @@ public class Database implements AutoCloseable {
 
     public Database connect() {
       var driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-      return new Database(driver, axiomStorer, accessorFactory);
+      return new Database(driver, storerFactory, accessorFactory);
     }
   }
 }
