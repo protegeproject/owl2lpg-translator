@@ -3,8 +3,6 @@ package edu.stanford.owl2lpg.client.write;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
-import edu.stanford.owl2lpg.client.Database;
-import edu.stanford.owl2lpg.client.DatabaseConnection;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
@@ -30,10 +28,7 @@ public class AxiomStorer extends Storer<OWLAxiom> {
   @Nonnull
   private final AxiomTranslatorEx translator;
 
-  public AxiomStorer(@Nonnull Database database,
-                     @Nonnull DatabaseConnection connection,
-                     @Nonnull AxiomTranslatorEx translator) {
-    super(database, connection);
+  public AxiomStorer(@Nonnull AxiomTranslatorEx translator) {
     this.translator = translator;
   }
 
