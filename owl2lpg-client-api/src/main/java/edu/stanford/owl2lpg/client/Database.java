@@ -44,15 +44,11 @@ public class Database implements AutoCloseable {
   }
 
   public DataStorer getDataStorer() {
-    return new DataStorer(this,
-        getConnection(),
-        storerFactory);
+    return new DataStorer(getConnection(), storerFactory);
   }
 
   public DataAccessor getDataAccessor() {
-    return new DataAccessor(this,
-        getConnection(),
-        accessorFactory);
+    return new DataAccessor(getConnection(), accessorFactory);
   }
 
   public DatabaseConnection getConnection() {
