@@ -45,7 +45,8 @@ public class DataVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new DataVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new DataVisitor(visitorFactory));
     when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
     when(visitorFactory.createAnnotationValueVisitor()).thenReturn(annotationValueVisitor);
     when(visitor.getTranslation(anyDataRange)).thenReturn(nestedTranslation);
@@ -212,15 +213,9 @@ public class DataVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new DataVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new DataVisitor(nodeIdMapper, nullVisitorFactory);
+    new DataVisitor(nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

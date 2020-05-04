@@ -32,7 +32,8 @@ public class EntityVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new EntityVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new EntityVisitor(visitorFactory));
     when(visitor.getTranslation(anyIRI)).thenReturn(nestedTranslation);
     when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
   }
@@ -116,15 +117,9 @@ public class EntityVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new EntityVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new EntityVisitor(nodeIdMapper, nullVisitorFactory);
+    new EntityVisitor(nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

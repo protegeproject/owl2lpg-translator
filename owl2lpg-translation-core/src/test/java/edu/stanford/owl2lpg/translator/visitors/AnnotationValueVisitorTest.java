@@ -28,7 +28,8 @@ public class AnnotationValueVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new AnnotationValueVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new AnnotationValueVisitor(visitorFactory));
     when(visitorFactory.createIndividualVisitor()).thenReturn(individualVisitor);
     when(visitorFactory.createDataVisitor()).thenReturn(dataVisitor);
   }
@@ -62,15 +63,9 @@ public class AnnotationValueVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new AnnotationValueVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new AnnotationValueVisitor(nodeIdMapper, nullVisitorFactory);
+    new AnnotationValueVisitor(nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

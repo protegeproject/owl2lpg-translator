@@ -41,7 +41,8 @@ public class AnnotationObjectVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new AnnotationObjectVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new AnnotationObjectVisitor(visitorFactory));
     when(visitor.getTranslation(annotationProperty)).thenReturn(nestedTranslation);
     when(visitor.getTranslation(annotationValue)).thenReturn(nestedTranslation);
     when(visitor.getTranslation(annotationAnnotation)).thenReturn(nestedTranslation);
@@ -98,15 +99,9 @@ public class AnnotationObjectVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new AnnotationObjectVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new AnnotationObjectVisitor(nodeIdMapper, nullVisitorFactory);
+    new AnnotationObjectVisitor(nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

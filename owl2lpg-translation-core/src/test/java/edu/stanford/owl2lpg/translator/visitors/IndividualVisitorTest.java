@@ -26,7 +26,8 @@ public class IndividualVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new IndividualVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new IndividualVisitor(visitorFactory));
     when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
   }
 
@@ -50,15 +51,9 @@ public class IndividualVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new IndividualVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new IndividualVisitor(nodeIdMapper, nullVisitorFactory);
+    new IndividualVisitor(nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)

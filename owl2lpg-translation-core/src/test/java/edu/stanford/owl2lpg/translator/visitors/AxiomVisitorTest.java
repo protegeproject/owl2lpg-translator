@@ -63,7 +63,8 @@ public class AxiomVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new AxiomVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new AxiomVisitor(visitorFactory));
     when(visitor.getTranslation(anyClass)).thenReturn(nestedTranslation);
     when(visitor.getTranslation(anyDatatype)).thenReturn(nestedTranslation);
     when(visitor.getTranslation(anyAnnotationProperty)).thenReturn(nestedTranslation);
@@ -783,14 +784,8 @@ public class AxiomVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new AxiomVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new AxiomVisitor(nodeIdMapper, nullVisitorFactory);
+    new AxiomVisitor(nullVisitorFactory);
   }
 }

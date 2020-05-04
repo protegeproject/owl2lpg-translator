@@ -33,7 +33,8 @@ public class OntologyVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new OntologyVisitor(nodeIdMapper, visitorFactory));
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new OntologyVisitor(visitorFactory));
   }
 
   @Test
@@ -102,14 +103,8 @@ public class OntologyVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new OntologyVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new OntologyVisitor(nodeIdMapper, nullVisitorFactory);
+    new OntologyVisitor(nullVisitorFactory);
   }
 }

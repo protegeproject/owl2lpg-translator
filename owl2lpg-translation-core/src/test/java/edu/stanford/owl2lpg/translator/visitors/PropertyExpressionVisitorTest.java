@@ -33,9 +33,10 @@ public class PropertyExpressionVisitorTest {
 
   @Before
   public void setUp() {
-    visitor = spy(new PropertyExpressionVisitor(nodeIdMapper, visitorFactory));
-    when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
+    when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
+    visitor = spy(new PropertyExpressionVisitor(visitorFactory));
     when(visitor.getTranslation(objectPropertyExpression)).thenReturn(nestedTranslation);
+    when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
     when(nestedTranslation.getMainNode()).thenReturn(nestedTranslationMainNode);
   }
 
@@ -80,15 +81,9 @@ public class PropertyExpressionVisitorTest {
   }
 
   @Test(expected = NullPointerException.class)
-  public void shouldThrowNPEWhenNodeIdMapperNull() {
-    NodeIdMapper nullIdMapper = null;
-    new PropertyExpressionVisitor(nullIdMapper, visitorFactory);
-  }
-
-  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new PropertyExpressionVisitor(nodeIdMapper, nullVisitorFactory);
+    new PropertyExpressionVisitor(nullVisitorFactory);
   }
 
   @Test(expected = NullPointerException.class)
