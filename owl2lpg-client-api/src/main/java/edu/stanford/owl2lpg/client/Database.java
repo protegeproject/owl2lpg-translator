@@ -2,14 +2,14 @@ package edu.stanford.owl2lpg.client;
 
 import edu.stanford.owl2lpg.client.read.AccessorFactory;
 import edu.stanford.owl2lpg.client.read.DataAccessor;
-import edu.stanford.owl2lpg.client.read.MatchStatement;
+import edu.stanford.owl2lpg.client.read.statement.GraphMatchStatement;
+import edu.stanford.owl2lpg.client.read.statement.GraphResult;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
 import edu.stanford.owl2lpg.client.write.DataStorer;
 import edu.stanford.owl2lpg.client.write.StorerFactory;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Result;
 
 import javax.annotation.Nonnull;
 
@@ -58,7 +58,7 @@ public class Database implements AutoCloseable {
     return statement.run();
   }
 
-  public Result run(MatchStatement statement) {
+  public GraphResult run(GraphMatchStatement statement) {
     return statement.run();
   }
 

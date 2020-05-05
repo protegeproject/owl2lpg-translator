@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client;
 
-import edu.stanford.owl2lpg.client.read.MatchStatement;
+import edu.stanford.owl2lpg.client.read.statement.GraphMatchStatement;
 import edu.stanford.owl2lpg.client.write.CreateStatement;
 import org.neo4j.driver.Session;
 
@@ -25,8 +25,8 @@ public class DatabaseSession implements AutoCloseable {
     return CreateStatement.create(cypherQuery, session);
   }
 
-  public MatchStatement matchStatement(String cypherQuery) {
-    return MatchStatement.create(cypherQuery, session);
+  public GraphMatchStatement graphMatchStatement(String cypherQuery) {
+    return GraphMatchStatement.create(cypherQuery, session);
   }
 
   @Override

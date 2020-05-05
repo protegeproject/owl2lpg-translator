@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.ObjectPropertyFrame;
 import edu.stanford.owl2lpg.client.read.FrameAccessor;
+import edu.stanford.owl2lpg.client.read.statement.GraphResult;
 import edu.stanford.owl2lpg.client.shared.Arguments;
-import org.neo4j.driver.Result;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -17,7 +17,7 @@ public class ObjectPropertyFrameAccessor extends FrameAccessor<ObjectPropertyFra
   }
 
   @Override
-  protected ObjectPropertyFrame getFrame(Result result) {
+  protected ObjectPropertyFrame getFrame(GraphResult result) {
     return null;
   }
 }
