@@ -61,8 +61,11 @@ public abstract class VisitorBase {
   @Nonnull
   protected Node createLiteralNode(@Nonnull OWLLiteral anyLiteral,
                                    @Nonnull ImmutableList<String> nodeLabels) {
+    // TODO: A temporary workaround. Remove LiteralWrapper when the OWLAPI
+    //  can assert that Literal("ABC", RDF_PLAIN_LITERAL) and
+    //  Literal("ABC", XSD_STRING) are not equal.
     return createNode(
-        anyLiteral,
+        LiteralWrapper.create(anyLiteral),
         nodeLabels,
         PropertiesBuilder.create()
             .set(PropertyFields.LEXICAL_FORM, anyLiteral.getLiteral())

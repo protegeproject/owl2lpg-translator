@@ -69,9 +69,12 @@ public class DataVisitorTest {
     var lt = mock(OWLLiteral.class);
     when(lt.getLiteral()).thenReturn("value");
     when(lt.getDatatype()).thenReturn(anyDatatype);
+    when(anyDatatype.toStringID()).thenReturn("datatypeId");
     when(anyDatatype.getIRI()).thenReturn(anyIri);
     when(lt.isRDFPlainLiteral()).thenReturn(false);
-    when(nodeIdMapper.get(lt)).thenReturn(nodeId);
+    when(lt.getLang()).thenReturn("");
+    var ltWrap = LiteralWrapper.create(lt);
+    when(nodeIdMapper.get(ltWrap)).thenReturn(nodeId);
 
     visitor.visit(lt);
     verify(visitor).visit(lt);
@@ -90,9 +93,12 @@ public class DataVisitorTest {
     when(lt.getLiteral()).thenReturn("value");
     when(lt.getDatatype()).thenReturn(anyDatatype);
     when(anyDatatype.getIRI()).thenReturn(anyIri);
+    when(anyDatatype.toStringID()).thenReturn("datatypeId");
     when(lt.isRDFPlainLiteral()).thenReturn(true);
     when(lt.hasLang()).thenReturn(false);
-    when(nodeIdMapper.get(lt)).thenReturn(nodeId);
+    when(lt.getLang()).thenReturn("");
+    var ltWrap = LiteralWrapper.create(lt);
+    when(nodeIdMapper.get(ltWrap)).thenReturn(nodeId);
 
     visitor.visit(lt);
     verify(visitor).visit(lt);
@@ -111,10 +117,12 @@ public class DataVisitorTest {
     when(lt.getLiteral()).thenReturn("value");
     when(lt.getDatatype()).thenReturn(anyDatatype);
     when(anyDatatype.getIRI()).thenReturn(anyIri);
+    when(anyDatatype.toStringID()).thenReturn("datatypeId");
     when(lt.isRDFPlainLiteral()).thenReturn(true);
     when(lt.hasLang()).thenReturn(true);
     when(lt.getLang()).thenReturn("lang");
-    when(nodeIdMapper.get(lt)).thenReturn(nodeId);
+    var ltWrap = LiteralWrapper.create(lt);
+    when(nodeIdMapper.get(ltWrap)).thenReturn(nodeId);
     when(nodeIdMapper.get("lang")).thenReturn(nodeId);
 
     visitor.visit(lt);
