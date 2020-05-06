@@ -202,16 +202,20 @@ public class CsvExporter {
 
   private <T> void writeCsv(Set<T> input, Class<T> beanClass, String fileName)
       throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    writeCsv(input, beanClass, new PrintWriter(new FileWriter(fileName)));
+    if (!input.isEmpty()) {
+      writeCsv(input, beanClass, new PrintWriter(new FileWriter(fileName)));
+    }
   }
 
 
   private <T> void writeCsv(Set<T> input, Class<T> beanClass, Writer writer)
       throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    var csvBuilder = createCsvBuilder(writer, beanClass);
-    csvBuilder.write(input.stream());
-    writer.flush();
-    writer.close();
+    if (!input.isEmpty()) {
+      var csvBuilder = createCsvBuilder(writer, beanClass);
+      csvBuilder.write(input.stream());
+      writer.flush();
+      writer.close();
+    }
   }
 
   private StatefulBeanToCsv createCsvBuilder(Writer writer, Class<?> cls) {
