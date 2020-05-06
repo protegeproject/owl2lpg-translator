@@ -4,8 +4,6 @@ import com.google.auto.value.AutoValue;
 
 import javax.annotation.Nonnull;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Represents the versioning provenance for a given OWL axiom.
  *
@@ -19,10 +17,14 @@ public abstract class AxiomContext {
   public static AxiomContext create(@Nonnull ProjectId projectId,
                                     @Nonnull BranchId branchId,
                                     @Nonnull OntologyDocumentId docId) {
-    checkNotNull(projectId);
-    checkNotNull(branchId);
-    checkNotNull(docId);
     return new AutoValue_AxiomContext(projectId, branchId, docId);
+  }
+
+  @Nonnull
+  public static AxiomContext create() {
+    return create(ProjectId.create(),
+        BranchId.create(),
+        OntologyDocumentId.create());
   }
 
   @Nonnull

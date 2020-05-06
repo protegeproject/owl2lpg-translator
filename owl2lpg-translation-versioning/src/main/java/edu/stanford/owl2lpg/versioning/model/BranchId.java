@@ -5,8 +5,6 @@ import com.google.auto.value.AutoValue;
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Represents the branch identifier.
  *
@@ -18,8 +16,12 @@ public abstract class BranchId {
 
   @Nonnull
   public static BranchId create(@Nonnull UUID identifier) {
-    checkNotNull(identifier);
     return new AutoValue_BranchId(identifier);
+  }
+
+  @Nonnull
+  public static BranchId create() {
+    return create(UUID.randomUUID());
   }
 
   @Nonnull
