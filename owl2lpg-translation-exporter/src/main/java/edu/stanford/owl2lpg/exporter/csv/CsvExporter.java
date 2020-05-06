@@ -8,9 +8,9 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import edu.stanford.owl2lpg.exporter.csv.beans.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.OntologyTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -31,7 +31,10 @@ import static java.lang.String.format;
 public class CsvExporter {
 
   @Nonnull
-  private final OntologyTranslator ontologyTranslator;
+  private final AxiomTranslatorEx axiomTranslator;
+
+  @Nonnull
+  private final AxiomContext context;
 
   @Nonnull
   private final OWLOntology ontology;
@@ -50,18 +53,23 @@ public class CsvExporter {
   private Set<PropertylessNode> propertylessNodes = Sets.newHashSet();
   private Set<PropertylessEdge> propertylessEdges = Sets.newHashSet();
 
-  public CsvExporter(@Nonnull OntologyTranslator ontologyTranslator,
+  public CsvExporter(@Nonnull AxiomTranslatorEx axiomTranslator,
+                     @Nonnull AxiomContext context,
                      @Nonnull OWLOntology ontology,
                      @Nonnull Writer writer) {
-    this.ontologyTranslator = checkNotNull(ontologyTranslator);
+    this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.context = checkNotNull(context);
     this.ontology = checkNotNull(ontology);
     this.writer = checkNotNull(writer);
   }
 
   public void write() throws IOException {
-    Translation ontologyTranslation = ontologyTranslator.translate(ontology);
-    collectNodes(ontologyTranslation.nodes());
-    collectEdges(ontologyTranslation.edges());
+    ontology.getAxioms().stream()
+        .map(axiom -> axiomTranslator.translate(context, axiom))
+        .forEach(translation -> {
+          collectNodes(translation.nodes());
+          collectEdges(translation.edges());
+        });
     writeCsv();
   }
 
