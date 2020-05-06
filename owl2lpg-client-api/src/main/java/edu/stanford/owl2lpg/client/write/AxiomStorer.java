@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Charsets;
 import edu.stanford.owl2lpg.client.shared.Arguments;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
@@ -160,10 +159,14 @@ public class AxiomStorer extends Storer<OWLAxiom> {
   }
 
   private static String escape(String value) {
-    var bytes = value.replaceAll("\n", " ")
-        .replaceAll("'", "\\\\'")
-        .replaceAll("\"", "\\\\\"")
-        .getBytes();
-    return new String(bytes, Charsets.UTF_8);
+    String escaped = value;
+    escaped = escaped.replace("\\", "\\\\");
+    escaped = escaped.replace("\"", "\\\"");
+    escaped = escaped.replace("\b", "\\b");
+    escaped = escaped.replace("\f", "\\f");
+    escaped = escaped.replace("\n", "\\n");
+    escaped = escaped.replace("\r", "\\r");
+    escaped = escaped.replace("\t", "\\t");
+    return escaped;
   }
 }
