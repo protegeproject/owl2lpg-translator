@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 /*
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -44,6 +43,9 @@ public class CsvExporter {
 
   private Set<GraphDataElement> allElements = Sets.newHashSet();
 
+  private Set<ProjectNode> projectNodes = Sets.newHashSet();
+  private Set<BranchNode> branchNodes = Sets.newHashSet();
+  private Set<OntologyDocumentNode> ontoDocNodes = Sets.newHashSet();
   private Set<EntityNode> entityNodes = Sets.newHashSet();
   private Set<IriNode> iriNodes = Sets.newHashSet();
   private Set<LiteralNode> literalNodes = Sets.newHashSet();
@@ -75,7 +77,19 @@ public class CsvExporter {
 
   private void collectNodes(Stream<Node> nodeStream) {
     nodeStream.forEach(node -> {
-      if (isEntity(node)) {
+      if (isProject(node)) {
+        var projectNode = ProjectNode.of(node);
+        projectNodes.add(projectNode);
+        allElements.add(GraphDataElement.of(projectNode));
+      } else if (isBranch(node)) {
+        var branchNode = BranchNode.of(node);
+        branchNodes.add(branchNode);
+        allElements.add(GraphDataElement.of(branchNode));
+      } else if (isOntologyDocument(node)) {
+        var ontoDocNode = OntologyDocumentNode.of(node);
+        ontoDocNodes.add(ontoDocNode);
+        allElements.add(GraphDataElement.of(ontoDocNode));
+      } else if (isEntity(node)) {
         var entityNode = EntityNode.of(node);
         entityNodes.add(entityNode);
         allElements.add(GraphDataElement.of(entityNode));
@@ -115,6 +129,18 @@ public class CsvExporter {
     });
   }
 
+  private boolean isProject(Node node) {
+    return AxiomTranslatorEx.NodeLabels.PROJECT.equals(node.getLabels());
+  }
+
+  private boolean isBranch(Node node) {
+    return AxiomTranslatorEx.NodeLabels.BRANCH.equals(node.getLabels());
+  }
+
+  private boolean isOntologyDocument(Node node) {
+    return AxiomTranslatorEx.NodeLabels.ONTOLOGY_DOCUMENT.equals(node.getLabels());
+  }
+
   private static boolean isEntity(Node node) {
     var nodeLabels = node.getLabels();
     return NodeLabels.CLASS.equals(nodeLabels) ||
@@ -151,112 +177,46 @@ public class CsvExporter {
         NodeLabels.DATA_MAX_CARDINALITY.equals(nodeLabels);
   }
 
-  private static String printNodeId(int nodeId) {
-    return format("NodeId_%d", nodeId);
-  }
-
   public void flush() throws IOException {
     writer.flush();
   }
 
   void writeCsv() throws IOException {
     try {
-      writeFatCsv(allElements, writer);
-      var entityNodeWriter = createPrinterWriter("entity-node.csv");
-      writeEntityNodeCsv(entityNodes, entityNodeWriter);
-      var iriNodeWriter = createPrinterWriter("iri-node.csv");
-      writeIriNodeCsv(iriNodes, iriNodeWriter);
-      var literalNodeWriter = createPrinterWriter("literal-node.csv");
-      writeLiteralNodeCsv(literalNodes, literalNodeWriter);
-      var languageTagWriter = createPrinterWriter("language-tag-node.csv");
-      writeLanguageTagNodeCsv(languageTagNodes, languageTagWriter);
-      var anonymousIndividualNodeWriter = createPrinterWriter("anonymous-individual-node.csv");
-      writeAnonymousIndividualNodeCsv(individualNodes, anonymousIndividualNodeWriter);
-      var cardinalityAxiomNodeWriter = createPrinterWriter("cardinality-axiom-node.csv");
-      writeCardinalityAxiomNodeCsv(cardinalityNodes, cardinalityAxiomNodeWriter);
-      var propertylessNodeWriter = createPrinterWriter("propertyless-node.csv");
-      writePropertylessNodeCsv(propertylessNodes, propertylessNodeWriter);
-      var propertylessEdgeWriter = createPrinterWriter("propertyless-edge.csv");
-      writePropertylessEdgeCsv(propertylessEdges, propertylessEdgeWriter);
+      writeCsv(allElements, GraphDataElement.class, writer);
+      writeCsv(projectNodes, ProjectNode.class, "project-node.csv");
+      writeCsv(branchNodes, BranchNode.class, "branch-node.csv");
+      writeCsv(ontoDocNodes, OntologyDocumentNode.class, "ontology-document-node.csv");
+      writeCsv(entityNodes, EntityNode.class, "entity-node.csv");
+      writeCsv(iriNodes, IriNode.class, "iri-node.csv");
+      writeCsv(literalNodes, LiteralNode.class, "literal-node.csv");
+      writeCsv(languageTagNodes, LanguageTagNode.class, "language-tag-node.csv");
+      writeCsv(individualNodes, AnonymousIndividualNode.class, "anonymous-individual-node.csv");
+      writeCsv(cardinalityNodes, CardinalityAxiomNode.class, "cardinality-axiom-node.csv");
+      writeCsv(propertylessNodes, PropertylessNode.class, "propertyless-node.csv");
+      writeCsv(propertylessEdges, PropertylessEdge.class, "propertyless-edge.csv");
     } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
       throw new IOException(e);
     }
   }
 
-  private PrintWriter createPrinterWriter(String filename) throws IOException {
-    return new PrintWriter(new FileWriter(filename));
+  private <T> void writeCsv(Set<T> input, Class<T> beanClass, String fileName)
+      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
+    writeCsv(input, beanClass, new PrintWriter(new FileWriter(fileName)));
   }
 
-  private void writeFatCsv(Set<GraphDataElement> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, GraphDataElement.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
 
-  private void writeEntityNodeCsv(Set<EntityNode> input, Writer writer)
+  private <T> void writeCsv(Set<T> input, Class<T> beanClass, Writer writer)
       throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, EntityNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writeIriNodeCsv(Set<IriNode> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, IriNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writeLiteralNodeCsv(Set<LiteralNode> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, LiteralNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writeLanguageTagNodeCsv(Set<LanguageTagNode> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, LanguageTagNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writeAnonymousIndividualNodeCsv(Set<AnonymousIndividualNode> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, AnonymousIndividualNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writeCardinalityAxiomNodeCsv(Set<CardinalityAxiomNode> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, CardinalityAxiomNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writePropertylessNodeCsv(Set<PropertylessNode> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, PropertylessNode.class).write(input.stream());
-    writer.flush();
-    writer.close();
-  }
-
-  private void writePropertylessEdgeCsv(Set<PropertylessEdge> input, Writer writer)
-      throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-    createCsvBuilder(writer, PropertylessEdge.class).write(input.stream());
+    var csvBuilder = createCsvBuilder(writer, beanClass);
+    csvBuilder.write(input.stream());
     writer.flush();
     writer.close();
   }
 
   private StatefulBeanToCsv createCsvBuilder(Writer writer, Class<?> cls) {
     return new StatefulBeanToCsvBuilder(writer)
-        .withMappingStrategy(getCustomMappingStrategy(cls))
+        .withMappingStrategy(new CsvWritingStrategy(cls))
         .build();
-  }
-
-  private CsvWritingStrategy getCustomMappingStrategy(Class<?> cls) {
-    return new CsvWritingStrategy(cls);
   }
 }

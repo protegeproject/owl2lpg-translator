@@ -23,6 +23,18 @@ public class GraphDataElement {
   private final String nodeId;
 
   @Nullable
+  @CsvBindByName(column = "projectId:string")
+  private final String projectId;
+
+  @Nullable
+  @CsvBindByName(column = "branchId:string")
+  private final String branchId;
+
+  @Nullable
+  @CsvBindByName(column = "ontologyDocumentId:string")
+  private final String ontoDocId;
+
+  @Nullable
   @CsvBindByName(column = "iri:string")
   private final String propertyIri;
 
@@ -61,6 +73,9 @@ public class GraphDataElement {
   private final String edgeType;
 
   private GraphDataElement(@Nullable String nodeId,
+                           @Nullable String projectId,
+                           @Nullable String branchId,
+                           @Nullable String ontoDocId,
                            @Nullable String propertyIri,
                            @Nullable String propertyLexicalForm,
                            @Nullable String propertyLanguageTag,
@@ -71,6 +86,9 @@ public class GraphDataElement {
                            @Nullable String endNodeId,
                            @Nullable String edgeType) {
     this.nodeId = nodeId;
+    this.projectId = projectId;
+    this.branchId = branchId;
+    this.ontoDocId = ontoDocId;
     this.propertyIri = propertyIri;
     this.propertyLexicalForm = propertyLexicalForm;
     this.propertyLanguageTag = propertyLanguageTag;
@@ -84,48 +102,71 @@ public class GraphDataElement {
 
   public static GraphDataElement of(@Nonnull PropertylessNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, bean.getNodeLabels(), null, null, null);
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, null, null, null,
+        bean.getNodeLabels(), null, null, null);
+  }
+
+  public static GraphDataElement of(@Nonnull ProjectNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), bean.getProjectId(), null, null, null, null, null, null, null,
+        bean.getNodeLabels(), null, null, null);
+  }
+
+  public static GraphDataElement of(@Nonnull BranchNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, bean.getBranchId(), null, null, null, null, null, null,
+        bean.getNodeLabels(), null, null, null);
+  }
+
+  public static GraphDataElement of(@Nonnull OntologyDocumentNode bean) {
+    checkNotNull(bean);
+    return new GraphDataElement(bean.getNodeId(), null, null, bean.getOntologyDocumentId(), null, null, null, null,
+        null,
+        bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull EntityNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), bean.getPropertyIri(), null, null, null, null,
+    return new GraphDataElement(bean.getNodeId(), null, null, null, bean.getPropertyIri(), null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull IriNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), bean.getPropertyIri(), null, null, null, null,
+    return new GraphDataElement(bean.getNodeId(), null, null, null, bean.getPropertyIri(), null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull LiteralNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, bean.getPropertyLexicalForm(), null, null, null
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, bean.getPropertyLexicalForm(), null, null,
+        null
         , bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull LanguageTagNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, bean.getPropertyLang(), null, null,
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, bean.getPropertyLang(), null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull AnonymousIndividualNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, bean.getPropertyNodeId(), null,
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, null, bean.getPropertyNodeId(), null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull CardinalityAxiomNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, bean.getPropertyCardinality(),
+    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, null, null,
+        bean.getPropertyCardinality(),
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull PropertylessEdge bean) {
     checkNotNull(bean);
-    return new GraphDataElement(null, null, null, null, null, null, null, bean.getStartNodeId(), bean.getEndNodeId(),
+    return new GraphDataElement(null, null, null, null, null, null, null, null, null, null, bean.getStartNodeId(),
+        bean.getEndNodeId(),
         bean.getEdgeType());
   }
 
