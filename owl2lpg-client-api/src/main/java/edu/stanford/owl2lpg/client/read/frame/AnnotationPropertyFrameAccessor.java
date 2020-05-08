@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.AnnotationPropertyFrame;
 import edu.stanford.owl2lpg.client.read.FrameAccessor;
-import edu.stanford.owl2lpg.client.read.statement.GraphResult;
+import edu.stanford.owl2lpg.client.read.statement.SelectResult;
 import edu.stanford.owl2lpg.client.shared.Arguments;
 
 /**
@@ -17,7 +17,7 @@ public class AnnotationPropertyFrameAccessor extends FrameAccessor<AnnotationPro
   }
 
   @Override
-  protected AnnotationPropertyFrame getFrame(GraphResult result) {
+  protected AnnotationPropertyFrame getFrame(SelectResult result) {
     return null;
   }
 }

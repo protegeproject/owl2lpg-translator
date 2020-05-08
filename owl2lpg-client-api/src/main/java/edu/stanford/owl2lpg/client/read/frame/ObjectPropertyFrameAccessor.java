@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.ObjectPropertyFrame;
 import edu.stanford.owl2lpg.client.read.FrameAccessor;
-import edu.stanford.owl2lpg.client.read.statement.GraphResult;
+import edu.stanford.owl2lpg.client.read.statement.SelectResult;
 import edu.stanford.owl2lpg.client.shared.Arguments;
 
 /**
@@ -17,7 +17,7 @@ public class ObjectPropertyFrameAccessor extends FrameAccessor<ObjectPropertyFra
   }
 
   @Override
-  protected ObjectPropertyFrame getFrame(GraphResult result) {
+  protected ObjectPropertyFrame getFrame(SelectResult result) {
     return null;
   }
 }

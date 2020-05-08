@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read;
 
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.client.DatabaseSession;
-import edu.stanford.owl2lpg.client.read.statement.GraphResult;
+import edu.stanford.owl2lpg.client.read.statement.SelectResult;
 import edu.stanford.owl2lpg.client.shared.Arguments;
 
 import javax.annotation.Nonnull;
@@ -24,12 +24,12 @@ public abstract class FrameAccessor<T> {
 
   public T getFrame(@Nonnull DatabaseSession session) {
     var query = getCypherQuery(Arguments.create(arguments));
-    var statement = session.graphMatchStatement(query);
+    var statement = session.selectStatement(query);
     var result = statement.run();
     return getFrame(result);
   }
 
   protected abstract String getCypherQuery(Arguments arguments);
 
-  protected abstract T getFrame(GraphResult result);
+  protected abstract T getFrame(SelectResult result);
 }
