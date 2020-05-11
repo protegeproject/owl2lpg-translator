@@ -41,7 +41,8 @@ public class ClassFrameAccessorImpl implements ClassFrameAccessor {
 
   @Nonnull
   @Override
-  public Optional<ClassFrame> getClassFrame(@Nonnull AxiomContext context, @Nonnull OWLClass subject) {
+  public Optional<ClassFrame> getFrame(@Nonnull AxiomContext context,
+                                       @Nonnull OWLClass subject) {
     var args = Parameters.forSubject(context, subject);
     return session.readTransaction(tx ->
         tx.run(QUERY_TEMPLATE, args)

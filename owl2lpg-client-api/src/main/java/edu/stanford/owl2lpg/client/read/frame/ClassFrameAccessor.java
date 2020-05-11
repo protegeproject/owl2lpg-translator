@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface ClassFrameAccessor {
 
   @Nonnull
-  Optional<ClassFrame> getClassFrame(@Nonnull AxiomContext context, @Nonnull OWLClass cls);
+  Optional<ClassFrame> getFrame(@Nonnull AxiomContext context, @Nonnull OWLClass cls);
 }
