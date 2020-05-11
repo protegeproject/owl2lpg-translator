@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.shared.entity.OWLClassData;
 import edu.stanford.bmir.protege.web.shared.entity.OWLObjectPropertyData;
-import edu.stanford.bmir.protege.web.shared.frame.PropertyClassValue;
-import edu.stanford.bmir.protege.web.shared.frame.PropertyValue;
-import edu.stanford.bmir.protege.web.shared.frame.State;
+import edu.stanford.bmir.protege.web.shared.frame.*;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory;
 
@@ -21,16 +19,20 @@ import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Objec
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class SharedFrameResultHandler {
+public class FrameStructureRecordHandler {
 
   @Inject
-  public SharedFrameResultHandler() {
+  public FrameStructureRecordHandler() {
 
   }
 
-  public OWLClassData getSubject(Map<String, Object> row) {
+  public OWLClassData getClass(Map<String, Object> row) {
     var subjectMap = get("subjectClass", row, Map.class);
     return getClassData(subjectMap);
+  }
+
+  public OWLObjectPropertyData getObjectProperty(Map<String, Object> row) {
+    return null;
   }
 
   public ImmutableSet<OWLClassData> getClassEntries(Map<String, Object> row) {
@@ -41,6 +43,26 @@ public class SharedFrameResultHandler {
   public ImmutableSet<PropertyValue> getPropertyValues(Map<String, Object> row) {
     var listOfPropertyValues = get("propertyValues", row, List.class);
     return getObjectPropertyData(listOfPropertyValues);
+  }
+
+  public ImmutableSet<PropertyAnnotationValue> getAnnotationValues(Map<String, Object> row) {
+    return null;
+  }
+
+  public ImmutableSet<OWLClassData> getDomains(Map<String, Object> row) {
+    return null;
+  }
+
+  public ImmutableSet<OWLClassData> getRanges(Map<String, Object> row) {
+    return null;
+  }
+
+  public ImmutableSet<OWLObjectPropertyData> getInverseProperties(Map<String, Object> row) {
+    return null;
+  }
+
+  public ImmutableSet<ObjectPropertyCharacteristic> getObjectPropertyCharacteristics(Map<String, Object> row) {
+    return null;
   }
 
   @SuppressWarnings("unchecked")

@@ -15,18 +15,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ClassFrameRecordHandler {
 
   @Nonnull
-  private final SharedFrameResultHandler sharedResultHandler;
+  private final FrameStructureRecordHandler recordHandler;
 
   @Inject
-  public ClassFrameRecordHandler(@Nonnull SharedFrameResultHandler sharedResultHandler) {
-    this.sharedResultHandler = checkNotNull(sharedResultHandler);
+  public ClassFrameRecordHandler(@Nonnull FrameStructureRecordHandler recordHandler) {
+    this.recordHandler = checkNotNull(recordHandler);
   }
 
   public ClassFrame translate(Record record) {
     var map = record.asMap();
     return ClassFrame.get(
-        sharedResultHandler.getSubject(map),
-        sharedResultHandler.getClassEntries(map),
-        sharedResultHandler.getPropertyValues(map));
+        recordHandler.getClassSubject(map),
+        recordHandler.getClassEntries(map),
+        recordHandler.getPropertyValues(map));
   }
 }
