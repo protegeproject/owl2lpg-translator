@@ -17,7 +17,8 @@ import static java.lang.String.format;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class ClassFrameAccessorImpl implements ClassFrameAccessor {
+public class ClassFrameAccessorImpl
+    implements ClassFrameAccessor, AutoCloseable {
 
   @Nonnull
   private final Session session;
@@ -37,6 +38,11 @@ public class ClassFrameAccessorImpl implements ClassFrameAccessor {
         context.getProjectId(),
         context.getBranchId(),
         context.getOntologyDocumentId());
+  }
+
+  @Override
+  public void close() throws Exception {
+    session.close();
   }
 
   @Nonnull
