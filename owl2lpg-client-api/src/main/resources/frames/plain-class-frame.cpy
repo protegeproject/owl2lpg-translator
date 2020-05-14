@@ -41,7 +41,7 @@ RETURN { type: "ClassFrame",
           WHEN 'IRI' IN LABELS(object) AND property.type = 'AnnotationProperty' THEN
              { type: "PropertyAnnotationValue",
                property: { type: "owl:AnnotationProperty", iri: property.iri },
-               value: { iri: object.iri }
+               value: object.iri
              }
           END
        ))} AS result
