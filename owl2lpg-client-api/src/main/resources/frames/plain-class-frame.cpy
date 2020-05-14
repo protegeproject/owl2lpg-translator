@@ -1,5 +1,5 @@
 MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom)
-MATCH (axiom)<-[:IS_SUBJECT_OF]-(entity:Class)
+MATCH (entity:Class)-[:IS_SUBJECT_OF]->(axiom)
 MATCH (entity)-[:SUB_CLASS_OF]->(parent:Class)
 MATCH (entity)-[object_property:RELATED_TO {type:'ObjectProperty'}]->(filler)
 WHERE entity.iri = $subjectIri
