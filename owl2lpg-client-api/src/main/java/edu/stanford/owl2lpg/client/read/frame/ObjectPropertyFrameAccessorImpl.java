@@ -6,7 +6,6 @@ import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import javax.annotation.Nonnull;
-import javax.inject.Provider;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,13 +20,8 @@ public class ObjectPropertyFrameAccessorImpl
   @Nonnull
   private final Session session;
 
-  @Nonnull
-  private final Provider<ObjectPropertyFrameRecordHandler> provider;
-
-  public ObjectPropertyFrameAccessorImpl(@Nonnull Session session,
-                                         @Nonnull Provider<ObjectPropertyFrameRecordHandler> provider) {
+  public ObjectPropertyFrameAccessorImpl(@Nonnull Session session) {
     this.session = checkNotNull(session);
-    this.provider = checkNotNull(provider);
   }
 
   @Nonnull

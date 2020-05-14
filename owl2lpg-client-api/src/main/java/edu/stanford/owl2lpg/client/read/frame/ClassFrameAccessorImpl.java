@@ -1,96 +1,82 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import edu.stanford.bmir.protege.web.shared.frame.ClassFrame;
+import edu.stanford.bmir.protege.web.shared.frame.PlainClassFrame;
+import edu.stanford.bmir.protege.web.shared.frame.PropertyValue;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
-import org.neo4j.driver.Session;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLNamedObject;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class ClassFrameAccessorImpl
-    implements ClassFrameAccessor, AutoCloseable {
+public class ClassFrameAccessorImpl implements ClassFrameAccessor {
 
   @Nonnull
-  private final Session session;
+  private final PlainClassFrameAccessor delegate;
 
   @Nonnull
-  private final Provider<ClassFrameRecordHandler> provider;
+  private final IriShortFormsAccessor shortFormsAccessor;
+
+  @Nonnull
+  private final SimpleFrameComponentRendererFactory rendererFactory;
+
+  @Nonnull
+  private final Comparator<PropertyValue> propertyValueComparator;
 
   @Inject
-  public ClassFrameAccessorImpl(@Nonnull Session session,
-                                @Nonnull Provider<ClassFrameRecordHandler> provider) {
-    this.session = checkNotNull(session);
-    this.provider = checkNotNull(provider);
-  }
-
-  private static String getCypherQuery(AxiomContext context, OWLClass subject) {
-    return format(QUERY_TEMPLATE, subject.getIRI(),
-        context.getProjectId(),
-        context.getBranchId(),
-        context.getOntologyDocumentId());
-  }
-
-  @Override
-  public void close() throws Exception {
-    session.close();
+  public ClassFrameAccessorImpl(@Nonnull PlainClassFrameAccessor delegate,
+                                @Nonnull IriShortFormsAccessor shortFormsAccessor,
+                                @Nonnull SimpleFrameComponentRendererFactory rendererFactory,
+                                @Nonnull Comparator<PropertyValue> propertyValueComparator) {
+    this.delegate = checkNotNull(delegate);
+    this.shortFormsAccessor = checkNotNull(shortFormsAccessor);
+    this.rendererFactory = checkNotNull(rendererFactory);
+    this.propertyValueComparator = checkNotNull(propertyValueComparator);
   }
 
   @Nonnull
   @Override
   public Optional<ClassFrame> getFrame(@Nonnull AxiomContext context,
                                        @Nonnull OWLClass subject) {
-    var args = Parameters.forSubject(context, subject);
-    return session.readTransaction(tx ->
-        tx.run(QUERY_TEMPLATE, args)
-            .stream()
-            .findFirst()
-            .map(provider.get()::translate));
+    return delegate.getFrame(context, subject)
+        .map(this::toClassFrame);
   }
 
-  // TODO: Get from a file
-  private static final String QUERY_TEMPLATE = String.join(System.getProperty("line.separator"),
-      "MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom)",
-      "MATCH (axiom)<-[:IS_SUBJECT_OF]-(subject:Class)",
-      "WHERE subject.iri = $subjectIri",
-      "AND project.projectId = $projectId",
-      "AND branch.branchId = $branchId",
-      "AND document.ontologyDocumentId = $ontoDocId",
-      "WITH DISTINCT(subject) AS subject",
-      "",
-      "MATCH (:IRI {iri:subject.iri})-[:RELATED_TO {iri:'http://www.w3.org/2000/01/rdf-schema#label'}]->" +
-          "(subject_label)",
-      "WITH subject, COLLECT({ label: subject_label.lexicalForm, language: subject_label.language }) AS shortForms",
-      "WITH { iri: subject.iri, shortForms: shortForms } AS subjectClass",
-      "",
-      "MATCH (subject:Class {iri:subjectClass.iri})-[:SUB_CLASS_OF]->(parent:Class)",
-      "MATCH (:IRI {iri:parent.iri})-[:RELATED_TO {iri:'http://www.w3.org/2000/01/rdf-schema#label'}]->" +
-          "(parent_label)",
-      "WITH parent, subjectClass,",
-      "   COLLECT({ label: parent_label.lexicalForm, language: parent_label.language}) AS shortForms",
-      "WITH subjectClass,",
-      "	COLLECT({iri: parent.iri, shortForms: shortForms}) AS classEntries",
-      "",
-      "MATCH (subject:Class {iri:subjectClass.iri})-[property:RELATED_TO]->(filler)",
-      "MATCH (:IRI {iri:property.iri})-[:RELATED_TO {iri:'http://www.w3.org/2000/01/rdf-schema#label'}]->" +
-          "(property_label)",
-      "WITH property, filler, subjectClass, classEntries,",
-      "   COLLECT({ label: property_label.lexicalForm, language: property_label.language}) AS propertyShortForms",
-      "MATCH (:IRI {iri:filler.iri})-[:RELATED_TO {iri:'http://www.w3.org/2000/01/rdf-schema#label'}]->" +
-          "(filler_label)",
-      "WITH property, filler, subjectClass, classEntries, propertyShortForms,",
-      "   COLLECT({ label: filler_label.lexicalForm, language: filler_label.language}) AS fillerShortForms",
-      "WITH subjectClass, classEntries,",
-      "	  COLLECT({property: {iri: property.iri, shortForms: propertyShortForms}, ",
-      "		   value: {iri: filler.iri, shortForms: fillerShortForms}}) AS propertyValues",
-      "RETURN subjectClass, classEntries, propertyValues");
+  private ClassFrame toClassFrame(@Nonnull PlainClassFrame plainFrame) {
+    var rdfsLabel = ImmutableList.of(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+    var entityIris = getEntityIrisFrom(plainFrame);
+    var dictionaryMap = shortFormsAccessor.getDictionaryMap(entityIris, rdfsLabel);
+    var frameComponentRenderer = rendererFactory.get(dictionaryMap);
+    return plainFrame.toEntityFrame(frameComponentRenderer, propertyValueComparator);
+  }
+
+  private ImmutableList<IRI> getEntityIrisFrom(PlainClassFrame plainFrame) {
+    var entityIriList = Lists.<IRI>newArrayList();
+    entityIriList.add(plainFrame.getSubject().getIRI());
+    entityIriList.addAll(
+        plainFrame.getParents()
+            .stream()
+            .map(OWLNamedObject::getIRI)
+            .collect(Collectors.toList()));
+    entityIriList.addAll(
+        plainFrame.getPropertyValues()
+            .stream()
+            .map(p -> p.getProperty().getIRI())
+            .collect(Collectors.toList()));
+    return ImmutableList.copyOf(entityIriList);
+  }
 }

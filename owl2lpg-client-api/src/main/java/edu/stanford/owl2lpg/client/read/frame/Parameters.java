@@ -1,9 +1,12 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
+import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import org.neo4j.driver.Value;
+import org.neo4j.driver.internal.value.ListValue;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
@@ -21,5 +24,26 @@ public class Parameters {
         "projectId", new StringValue(context.getProjectId().toString()),
         "branchId", new StringValue(context.getBranchId().toString()),
         "ontoDocId", new StringValue(context.getOntologyDocumentId().toString())));
+  }
+
+  public static MapValue forShortForm(@Nonnull ImmutableList<IRI> entities,
+                                      @Nonnull ImmutableList<IRI> annotationProperties) {
+    return new MapValue(Map.of(
+        "entityIriList", toListValue(entities),
+        "annotationPropertyIriList", toListValue(annotationProperties)));
+  }
+
+  public static MapValue forShortForm(@Nonnull IRI entity,
+                                      @Nonnull ImmutableList<IRI> annotationProperties) {
+    return forShortForm(ImmutableList.of(entity), annotationProperties);
+  }
+
+  private static ListValue toListValue(ImmutableList<IRI> list) {
+    var values = list
+        .stream()
+        .map(IRI::toString)
+        .map(StringValue::new)
+        .toArray(Value[]::new);
+    return new ListValue(values);
   }
 }
