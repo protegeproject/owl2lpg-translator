@@ -8,9 +8,9 @@ AND document.ontologyDocumentId = $ontoDocId
 
 RETURN { type: "ClassFrame",
        subject: { type: "owl:Class", iri: entity.iri },
-       parents: COLLECT(DISTINCT({ type: "owl:Class", iri: parent.iri })),
+       parents: COLLECT(DISTINCT( CASE WHEN parent IS NOT NULL THEN { type: "owl:Class", iri: parent.iri } END )),
        propertyValues:
-       COLLECT(DISTINCT(
+       COLLECT(DISTINCT( CASE WHEN object IS NOT NULL THEN
           CASE WHEN 'Class' IN LABELS(object) AND property.type = 'ObjectProperty' THEN
              { type: "PropertyClassValue",
                property: { type: "owl:ObjectProperty", iri: property.iri },
@@ -47,4 +47,4 @@ RETURN { type: "ClassFrame",
                value: object.iri
              }
           END
-       ))} AS result
+       END ))} AS result
