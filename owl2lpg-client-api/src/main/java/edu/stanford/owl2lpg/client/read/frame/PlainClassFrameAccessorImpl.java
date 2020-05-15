@@ -37,7 +37,7 @@ public class PlainClassFrameAccessorImpl implements PlainClassFrameAccessor {
                                             @Nonnull OWLClass subject) {
     var args = Parameters.forSubject(context, subject);
     return session.readTransaction(tx ->
-        tx.run(FrameQueries.PLAIN_FRAME_QUERY, args)
+        tx.run(FrameQueries.PLAIN_CLASS_FRAME_QUERY, args)
             .stream()
             .findFirst()
             .map(record -> mapper.convertValue(
