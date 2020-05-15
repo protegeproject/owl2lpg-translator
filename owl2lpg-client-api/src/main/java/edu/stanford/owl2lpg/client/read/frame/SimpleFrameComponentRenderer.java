@@ -73,7 +73,12 @@ public class SimpleFrameComponentRenderer implements FrameComponentRenderer {
   @Nonnull
   @Override
   public OWLPrimitiveData getRendering(@Nonnull OWLAnnotationValue annotationValue) {
-    return null;
+    if (annotationValue.isLiteral()) {
+      return getRendering(annotationValue.asLiteral().get());
+    } else if (annotationValue.isIRI()) {
+      return IRIData.get(annotationValue.asIRI().get(), getShortForms(annotationValue.asIRI().get()));
+    }
+    throw new IllegalArgumentException("Unable to get the rendering for " + annotationValue);
   }
 
   @Nonnull
@@ -85,7 +90,20 @@ public class SimpleFrameComponentRenderer implements FrameComponentRenderer {
   @Nonnull
   @Override
   public OWLEntityData getEntityRendering(@Nonnull OWLEntity entity) {
-    return null;
+    if (entity.isOWLClass()) {
+      return getRendering(entity.asOWLClass());
+    } else if (entity.isOWLObjectProperty()) {
+      return getRendering(entity.asOWLObjectProperty());
+    } else if (entity.isOWLDataProperty()) {
+      return getRendering(entity.asOWLDataProperty());
+    } else if (entity.isOWLAnnotationProperty()) {
+      return getRendering(entity.asOWLAnnotationProperty());
+    } else if (entity.isOWLDatatype()) {
+      return getRendering(entity.asOWLDatatype());
+    } else if (entity.isOWLNamedIndividual()) {
+      return getRendering(entity.asOWLNamedIndividual());
+    }
+    throw new IllegalArgumentException("Unable to get the rendering for " + entity);
   }
 
   private ImmutableMap<DictionaryLanguage, String> getShortForms(@Nonnull IRI entityIri) {
