@@ -28,7 +28,7 @@ AND document.ontologyDocumentId = $ontoDocId
 
 RETURN { type: "ObjectPropertyFrame",
          subject: { type: "owl:ObjectProperty", iri: entity.iri },
-         annotationValues:
+         propertyValues:
          COLLECT(DISTINCT( CASE WHEN object IS NOT NULL THEN
             CASE WHEN 'Literal' IN LABELS(object) AND property.type = 'AnnotationProperty' THEN
                { type: "PropertyAnnotationValue",
