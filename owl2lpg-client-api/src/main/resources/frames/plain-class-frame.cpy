@@ -36,7 +36,12 @@ RETURN { type: "ClassFrame",
           WHEN 'Literal' IN LABELS(object) AND property.type = 'AnnotationProperty' THEN
              { type: "PropertyAnnotationValue",
                property: { type: "owl:AnnotationProperty", iri: property.iri },
-               value: { type: object.datatype, value: object.lexicalForm, lang: object.language }
+               value:
+               CASE WHEN object.datatype = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral' THEN
+                  { value: object.lexicalForm, lang: object.language }
+               ELSE
+                  { type: object.datatype, value: object.lexicalForm }
+               END
              }
           WHEN 'IRI' IN LABELS(object) AND property.type = 'AnnotationProperty' THEN
              { type: "PropertyAnnotationValue",
