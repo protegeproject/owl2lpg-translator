@@ -1,12 +1,10 @@
 MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom)
-MATCH (entity:Class)-[:IS_SUBJECT_OF]->(axiom)
-MATCH (entity)-[:SUB_CLASS_OF]->(parent:Class)
-MATCH (entity)-[property:RELATED_TO]->(object)
-WHERE entity.iri = 'http://purl.obolibrary.org/obo/CIDO_0000002'
-AND project.projectId = 'c5d78f23-5992-4a9b-9a36-9567059209b0'
-AND branch.branchId = 'b6dbf7a0-79cc-4776-afd8-7d1502fc63a6'
-AND document.ontologyDocumentId = 'd6d0a42c-fe98-424f-9791-65cea5ef8261'
-
+MATCH (entity:Class { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
+OPTIONAL MATCH (entity)-[:SUB_CLASS_OF]->(parent:Class)
+OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
+WHERE project.projectId = $projectId
+AND branch.branchId = $branchId
+AND document.ontologyDocumentId = $ontoDocId
 
 RETURN { type: "ClassFrame",
        subject: { type: "owl:Class", iri: entity.iri },
