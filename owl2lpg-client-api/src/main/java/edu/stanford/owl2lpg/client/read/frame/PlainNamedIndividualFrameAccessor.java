@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
-import edu.stanford.bmir.protege.web.shared.frame.NamedIndividualFrame;
+import edu.stanford.bmir.protege.web.shared.frame.PlainNamedIndividualFrame;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -11,9 +11,8 @@ import java.util.Optional;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface NamedIndividualFrameAccessor {
+public interface PlainNamedIndividualFrameAccessor {
 
-  @Nonnull
-  Optional<NamedIndividualFrame> getFrame(@Nonnull AxiomContext context,
-                                          @Nonnull OWLNamedIndividual subject);
+  Optional<PlainNamedIndividualFrame> getFrame(@Nonnull AxiomContext context,
+                                               @Nonnull OWLNamedIndividual subject);
 }

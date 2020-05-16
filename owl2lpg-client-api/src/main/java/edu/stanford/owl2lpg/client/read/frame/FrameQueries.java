@@ -15,6 +15,7 @@ public class FrameQueries {
   private static final String PLAIN_OBJECT_PROPERTY_FRAME_QUERY_FILE = "frames/plain-object-property-frame.cpy";
   private static final String PLAIN_DATA_PROPERTY_FRAME_QUERY_FILE = "frames/plain-data-property-frame.cpy";
   private static final String PLAIN_ANNOTATION_PROPERTY_FRAME_QUERY_FILE = "frames/plain-annotation-property-frame.cpy";
+  private static final String PLAIN_NAMED_INDIVIDUAL_FRAME_QUERY_FILE = "frames/plain-named-individual-frame.cpy";
   private static final String SHORT_FORMS_QUERY_FILE = "frames/short-forms.cpy";
 
   public static final String PLAIN_CLASS_FRAME_QUERY = readResource(PLAIN_CLASS_FRAME_QUERY_FILE);
@@ -22,6 +23,7 @@ public class FrameQueries {
   public static final String PLAIN_DATA_PROPERTY_FRAME_QUERY = readResource(PLAIN_DATA_PROPERTY_FRAME_QUERY_FILE);
   public static final String PLAIN_ANNOTATION_PROPERTY_FRAME_QUERY =
       readResource(PLAIN_ANNOTATION_PROPERTY_FRAME_QUERY_FILE);
+  public static final String PLAIN_NAMED_INDIVIDUAL_FRAME_QUERY = readResource(PLAIN_NAMED_INDIVIDUAL_FRAME_QUERY_FILE);
   public static final String SHORT_FORMS_QUERY = readResource(SHORT_FORMS_QUERY_FILE);
 
   private static String readResource(String fileName) {
