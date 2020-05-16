@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
-import edu.stanford.bmir.protege.web.shared.frame.DataPropertyFrame;
+import edu.stanford.bmir.protege.web.shared.frame.PlainDataPropertyFrame;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 
@@ -11,9 +11,8 @@ import java.util.Optional;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface DataPropertyFrameAccessor {
+public interface PlainDataPropertyFrameAccessor {
 
-  @Nonnull
-  Optional<DataPropertyFrame> getFrame(@Nonnull AxiomContext context,
-                                       @Nonnull OWLDataProperty subject);
+  Optional<PlainDataPropertyFrame> getFrame(@Nonnull AxiomContext context,
+                                            @Nonnull OWLDataProperty subject);
 }
