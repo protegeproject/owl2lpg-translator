@@ -50,5 +50,5 @@ RETURN { type: "ObjectPropertyFrame",
          characteristics: characteristics,
          domains: COLLECT(DISTINCT( CASE WHEN domain IS NOT NULL THEN { type: "owl:Class", iri: domain.iri } END )),
          ranges: COLLECT(DISTINCT( CASE WHEN range IS NOT NULL THEN { type: "owl:Class", iri: range.iri } END )),
-         inverses: COLLECT(DISTINCT( CASE WHEN inverse_property IS NOT NULL THEN { type: "owl:ObjectPoperty", iri: inverse_property.iri } END ))
+         inverses: COLLECT(DISTINCT( CASE WHEN inverse_property IS NOT NULL THEN { type: "owl:ObjectProperty", iri: inverse_property.iri } END ))
        } AS result
