@@ -1,11 +1,12 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.utils.PropertiesBuilder;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
@@ -69,15 +70,15 @@ public class OntologyVisitor extends VisitorBase
   }
 
   private Node createOntologyIdNode(@Nonnull OWLOntologyID ontologyId) {
-    var ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : null;
-    var versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : null;
+    var ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : "";
+    var versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : "";
     return Node(
-        nodeIdMapper.get(ontologyId),
-        NodeLabels.ONTOLOGY_ID,
-        PropertiesBuilder.create()
-            .set(PropertyFields.ONTOLOGY_IRI, ontologyIri)
-            .set(PropertyFields.ONTOLOGY_VERSION_IRI, versionIri)
-            .build());
+            nodeIdMapper.get(ontologyId),
+            NodeLabels.ONTOLOGY_ID,
+            Properties.create(ImmutableMap.of(
+                    PropertyFields.ONTOLOGY_IRI, ontologyIri,
+                    PropertyFields.ONTOLOGY_VERSION_IRI, versionIri
+            )));
   }
 
   @Nonnull
