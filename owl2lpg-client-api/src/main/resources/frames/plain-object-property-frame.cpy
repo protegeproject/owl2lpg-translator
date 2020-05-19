@@ -1,22 +1,3 @@
-MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:ObjectPropertyAxiom)
-MATCH (document)-[:AXIOM]->(annotation:AnnotationAssertion)
-MATCH (axiom)-[:OBJECT_PROPERTY_EXPRESSION]->(entity:ObjectProperty { iri: $subjectIri })
-MATCH (entity)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
-WHERE project.projectId = $projectId
-AND branch.branchId = $branchId
-AND document.ontologyDocumentId = $ontoDocId
-WITH DISTINCT LABELS(axiom) as axiomLabels
-WITH
-   CASE WHEN 'FunctionalObjectProperty' IN axiomLabels THEN 'Functional'
-   WHEN 'InverseFunctionalObjectProperty' IN axiomLabels THEN 'InverseFunctional'
-   WHEN 'ReflexiveObjectProperty' IN axiomLabels THEN 'Reflexive'
-   WHEN 'IrreflexiveObjectProperty' IN axiomLabels THEN 'Irreflexive'
-   WHEN 'SymmetricObjectProperty' IN axiomLabels THEN 'Symmetric'
-   WHEN 'AsymmetricObjectProperty' IN axiomLabels THEN 'Asymmetric'
-   WHEN 'TransitiveObjectProperty' IN axiomLabels THEN 'Transitive'
-   END as characteristic
-WITH COLLECT(characteristic) AS characteristics
-
 CALL {
    MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:ObjectPropertyAxiom)
    MATCH (entity:ObjectProperty { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
@@ -31,6 +12,24 @@ CALL {
    AND branch.branchId = $branchId
    AND document.ontologyDocumentId = $ontoDocId
    RETURN entity
+}
+CALL {
+   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:ObjectPropertyAxiom)
+   MATCH (entity:ObjectProperty { iri: $subjectIri })<-[:OBJECT_PROPERTY_EXPRESSION]-(axiom)
+   WHERE project.projectId = $projectId
+   AND branch.branchId = $branchId
+   AND document.ontologyDocumentId = $ontoDocId
+   WITH DISTINCT LABELS(axiom) as axiomLabels
+   WITH
+      CASE WHEN 'FunctionalObjectProperty' IN axiomLabels THEN 'Functional'
+      WHEN 'InverseFunctionalObjectProperty' IN axiomLabels THEN 'InverseFunctional'
+      WHEN 'ReflexiveObjectProperty' IN axiomLabels THEN 'Reflexive'
+      WHEN 'IrreflexiveObjectProperty' IN axiomLabels THEN 'Irreflexive'
+      WHEN 'SymmetricObjectProperty' IN axiomLabels THEN 'Symmetric'
+      WHEN 'AsymmetricObjectProperty' IN axiomLabels THEN 'Asymmetric'
+      WHEN 'TransitiveObjectProperty' IN axiomLabels THEN 'Transitive'
+   END as characteristic
+   RETURN COLLECT(characteristic) AS characteristics
 }
 OPTIONAL MATCH (entity)-[:SUB_OBJECT_PROPERTY_OF]->(parent:ObjectProperty)
 OPTIONAL MATCH (entity)-[:DOMAIN]->(domain:Class)
