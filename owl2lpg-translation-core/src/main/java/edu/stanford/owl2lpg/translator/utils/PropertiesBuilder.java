@@ -5,6 +5,8 @@ import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.model.Properties;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -17,20 +19,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class PropertiesBuilder {
 
+  @Nullable
   private final Map<String, Object> map;
-
-  private PropertiesBuilder() {
-    this(Maps.newHashMap());
-  }
 
   private PropertiesBuilder(@Nonnull Map<String, Object> map) {
     this.map = checkNotNull(Maps.newHashMap(map));
   }
 
   public static PropertiesBuilder create() {
-    return new PropertiesBuilder();
+    return new PropertiesBuilder(new HashMap<>(2));
   }
-  
+
   public PropertiesBuilder set(String key, Object value) {
     if (value != null) {
       map.put(key, value);
