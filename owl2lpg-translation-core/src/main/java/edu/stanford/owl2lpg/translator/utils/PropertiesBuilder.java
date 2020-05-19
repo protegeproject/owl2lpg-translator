@@ -30,11 +30,7 @@ public class PropertiesBuilder {
   public static PropertiesBuilder create() {
     return new PropertiesBuilder();
   }
-
-  public static PropertiesBuilder from(@Nonnull Map<String, Object> map) {
-    return new PropertiesBuilder(map);
-  }
-
+  
   public PropertiesBuilder set(String key, Object value) {
     if (value != null) {
       map.put(key, value);
