@@ -1,5 +1,7 @@
 package edu.stanford.owl2lpg.versioning.translator;
 
+import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
+
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
@@ -17,7 +19,6 @@ import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
