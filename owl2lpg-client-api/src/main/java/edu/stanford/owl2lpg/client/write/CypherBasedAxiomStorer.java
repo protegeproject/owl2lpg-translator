@@ -73,25 +73,38 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
 
   private static void getCypherQuery(Node node, StringBuilder stringBuilder) {
     if (isReusableNode(node)) {
-      stringBuilder.append(format("MERGE (%s%s %s)",
-          printNodeId(node.getNodeId()),
-          printNodeLabel(node.getLabels()),
-          node.getProperties().printProperties()));
+      stringBuilder.append("MERGE (")
+                   .append(printNodeId(node.getNodeId()))
+                   .append(printNodeLabel(node.getLabels()))
+                   .append(" ")
+                   .append(node.getProperties()
+                               .printProperties())
+                   .append(")");
     } else {
-      stringBuilder.append(format("CREATE (%s%s %s)",
-          printNodeId(node.getNodeId()),
-          printNodeLabel(node.getLabels()),
-          node.getProperties().printProperties()));
+      stringBuilder.append("CREATE (")
+                   .append(printNodeId(node.getNodeId()))
+                   .append(printNodeLabel(node.getLabels()))
+                   .append(" ")
+                   .append(node.getProperties()
+                               .printProperties())
+                   .append(")");
     }
     stringBuilder.append("\n");
   }
 
   private static void getCypherQuery(Edge edge, StringBuilder stringBuilder) {
-    stringBuilder.append(format("MERGE (%s)-[%s %s]->(%s)",
-        printNodeId(edge.getFromNode().getNodeId()),
-        printEdgeLabel(edge.getLabel()),
-        edge.getProperties().printProperties(),
-        printNodeId(edge.getToNode().getNodeId())));
+    stringBuilder.append("MERGE (")
+                 .append(printNodeId(edge.getFromNode()
+                                         .getNodeId()))
+                 .append(")-[")
+                 .append(printEdgeLabel(edge.getLabel()))
+                 .append(" ")
+                 .append(edge
+                                 .getProperties()
+                                 .printProperties())
+                 .append("]->(")
+                 .append(printNodeId(edge.getToNode().getNodeId()))
+                 .append(")");
     stringBuilder.append("\n");
   }
 
@@ -151,7 +164,7 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
 
   private static String printNodeLabel(List<String> nodeLabels) {
     return nodeLabels.stream()
-        .map(label -> format(":%s", label))
+        .map(label -> ":" + label)
         .collect(Collectors.joining(""));
   }
 
