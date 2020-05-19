@@ -12,7 +12,7 @@ MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(
 MATCH (entity:DataProperty { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
 OPTIONAL MATCH (entity)-[:SUB_DATA_PROPERTY_OF]->(parent:DataProperty)
 OPTIONAL MATCH (entity)-[:DOMAIN]->(domain:Class)
-OPTIONAL MATCH (entity)-[:RANGE]->(range:Class)
+OPTIONAL MATCH (entity)-[:RANGE]->(range:Datatype)
 OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
 WHERE project.projectId = $projectId
 AND branch.branchId = $branchId
@@ -41,5 +41,5 @@ RETURN { type: "DataPropertyFrame",
          END )),
          functional: CASE WHEN 'Functional' IN characteristics THEN true ELSE false END,
          domains: COLLECT(DISTINCT( CASE WHEN domain IS NOT NULL THEN { type: "owl:Class", iri: domain.iri } END )),
-         ranges: COLLECT(DISTINCT( CASE WHEN range IS NOT NULL THEN { type: "owl:Class", iri: range.iri } END )),
+         ranges: COLLECT(DISTINCT( CASE WHEN range IS NOT NULL THEN { type: "owl:Datatype", iri: range.iri } END ))
        } AS result
