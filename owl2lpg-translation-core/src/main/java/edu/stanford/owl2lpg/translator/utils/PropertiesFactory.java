@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator.utils;
 
+import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Properties;
 
 /**
@@ -19,23 +20,6 @@ public class PropertiesFactory {
    * @return An instance of java.util.Properties
    */
   public static Properties Properties(String key, Object value) {
-    return PropertiesBuilder.create().set(key, value).build();
-  }
-
-  /**
-   * Creates a Properties instance with multiple key-value pairs.
-   * The value's order in the {@param keys} and {@param values}
-   * arrays must be properly matched.
-   *
-   * @param keys   The field names
-   * @param values The field values
-   * @return An instance of java.util.Properties
-   */
-  public static Properties Properties(String[] keys, Object[] values) {
-    PropertiesBuilder builder = PropertiesBuilder.create();
-    for (int i = 0; i < keys.length; i++) {
-      builder = builder.set(keys[i], values[i]);
-    }
-    return builder.build();
+    return Properties.create(ImmutableMap.of(key, value));
   }
 }

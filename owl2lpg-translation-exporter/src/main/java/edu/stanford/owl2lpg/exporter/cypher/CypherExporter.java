@@ -50,7 +50,7 @@ public class CypherExporter {
         .stream().forEach(node -> {
       var nodeId = node.getNodeId();
       var nodeLabel = printNodeLabel(node.getLabels());
-      var nodeProperties = printNodeProperties(node.getProperties());
+      var nodeProperties = node.getProperties().printProperties();
       var s = "CREATE (" +
               nodeId +
               nodeLabel +
@@ -66,7 +66,7 @@ public class CypherExporter {
       var fromNodeId = edge.getFromNode().getNodeId();
       var toNodeId = edge.getToNode().getNodeId();
       var edgeLabel = printEdgeLabel(edge.getLabel());
-      var edgeProperties = printEdgeProperties(edge.getProperties());
+      var edgeProperties = edge.getProperties().printProperties();
       var s = "CREATE (" +
               fromNodeId +
               ")-[" +
@@ -106,34 +106,7 @@ public class CypherExporter {
         .collect(Collectors.joining(""));
   }
 
-  private static String printNodeProperties(Properties nodeProperties) {
-    return printProperties(nodeProperties);
-  }
-
-  private static String printProperties(Properties properties) {
-    return properties.getMap().keySet().stream()
-        .map(key -> {
-          var value = properties.get(key);
-          if (value instanceof String) {
-            return key + ": \"" + escape((String) value) + "\"";
-          } else {
-            return key + ": " + value;
-          }
-        })
-        .collect(Collectors.joining(",", "{", "}"));
-  }
-
-  private static String escape(String value) {
-    return value.replace("\n", " ")
-        .replace("'", "\\\\'")
-        .replace("\"", "\\\\\"");
-  }
-
   private static String printEdgeLabel(EdgeLabel edgeLabel) {
     return ":" + edgeLabel.name();
-  }
-
-  private static String printEdgeProperties(Properties edgeProperties) {
-    return printProperties(edgeProperties);
   }
 }
