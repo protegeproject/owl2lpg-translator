@@ -17,7 +17,7 @@ public class NodeLabels {
 
   public static final ImmutableList<String> IRI = ImmutableList.of("IRI");
   public static final ImmutableList<String> CLASS = ImmutableList.of("Class", "ClassExpression", "Entity");
-  public static final ImmutableList<String> DATATYPE = ImmutableList.of("Datatype", "Entity");
+  public static final ImmutableList<String> DATATYPE = ImmutableList.of("Datatype", "DataRange", "Entity");
   public static final ImmutableList<String> OBJECT_PROPERTY = ImmutableList.of("ObjectProperty", "ObjectPropertyExpression", "Entity");
   public static final ImmutableList<String> DATA_PROPERTY = ImmutableList.of("DataProperty", "DataPropertyExpression", "Entity");
   public static final ImmutableList<String> ANNOTATION_PROPERTY = ImmutableList.of("AnnotationProperty", "Entity");
