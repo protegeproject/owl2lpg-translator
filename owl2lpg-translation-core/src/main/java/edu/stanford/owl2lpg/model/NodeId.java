@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Stopwatch;
 
 import static java.lang.String.format;
 
@@ -21,6 +22,6 @@ public abstract class NodeId {
 
   @Override
   public String toString() {
-    return format("NodeId_%s", getIdentifierObject());
+    return "NodeId_" + getIdentifierObject();
   }
 }
