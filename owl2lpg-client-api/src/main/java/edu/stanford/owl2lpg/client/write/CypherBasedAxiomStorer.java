@@ -76,12 +76,12 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
       stringBuilder.append(format("MERGE (%s%s %s)",
           printNodeId(node.getNodeId()),
           printNodeLabel(node.getLabels()),
-          printNodeProperties(node.getProperties())));
+          node.getProperties().printProperties()));
     } else {
       stringBuilder.append(format("CREATE (%s%s %s)",
           printNodeId(node.getNodeId()),
           printNodeLabel(node.getLabels()),
-          printNodeProperties(node.getProperties())));
+          node.getProperties().printProperties()));
     }
     stringBuilder.append("\n");
   }
@@ -90,7 +90,7 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     stringBuilder.append(format("MERGE (%s)-[%s %s]->(%s)",
         printNodeId(edge.getFromNode().getNodeId()),
         printEdgeLabel(edge.getLabel()),
-        printEdgeProperties(edge.getProperties()),
+        edge.getProperties().printProperties(),
         printNodeId(edge.getToNode().getNodeId())));
     stringBuilder.append("\n");
   }
@@ -157,27 +157,6 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
 
   private static String printEdgeLabel(EdgeLabel edgeLabel) {
     return ":" + edgeLabel.name();
-  }
-
-  private static String printNodeProperties(Properties nodeProperties) {
-    return printProperties(nodeProperties);
-  }
-
-  private static String printEdgeProperties(Properties edgeProperties) {
-    return printProperties(edgeProperties);
-  }
-
-  private static String printProperties(Properties properties) {
-    return properties.getMap().keySet().stream()
-        .map(key -> {
-          var value = properties.get(key);
-          if (value instanceof String) {
-            return format("%s: \"%s\"", key, escape((String) value));
-          } else {
-            return format("%s: %s", key, value);
-          }
-        })
-        .collect(Collectors.joining(",", "{", "}"));
   }
 
   private static String escape(String value) {
