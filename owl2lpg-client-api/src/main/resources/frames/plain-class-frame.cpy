@@ -1,10 +1,21 @@
-MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom)
-MATCH (entity:Class { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
+// Get Class Frame
+CALL {
+   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:ClassAxiom)
+   MATCH (entity:Class { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
+   WHERE project.projectId = $projectId
+   AND branch.branchId = $branchId
+   AND document.ontologyDocumentId = $ontoDocId
+   RETURN entity
+   UNION
+   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(annotation:AnnotationAssertion)
+   MATCH (entity)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
+   WHERE project.projectId = $projectId
+   AND branch.branchId = $branchId
+   AND document.ontologyDocumentId = $ontoDocId
+   RETURN entity
+}
 OPTIONAL MATCH (entity)-[:SUB_CLASS_OF]->(parent:Class)
 OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
-WHERE project.projectId = $projectId
-AND branch.branchId = $branchId
-AND document.ontologyDocumentId = $ontoDocId
 
 RETURN { type: "ClassFrame",
        subject: { type: "owl:Class", iri: entity.iri },

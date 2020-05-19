@@ -1,5 +1,7 @@
 MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:DataPropertyAxiom)
+MATCH (document)-[:AXIOM]->(annotation:AnnotationAssertion)
 MATCH (axiom)-[:DATA_PROPERTY_EXPRESSION]->(entity:DataProperty { iri: $subjectIri })
+MATCH (entity)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
 WHERE project.projectId = $projectId
 AND branch.branchId = $branchId
 AND document.ontologyDocumentId = $ontoDocId
@@ -8,15 +10,25 @@ WITH CASE WHEN 'FunctionalDataProperty' IN axiomLabels THEN 'Functional'
    END as characteristic
 WITH COLLECT(characteristic) AS characteristics
 
-MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom)
-MATCH (entity:DataProperty { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
+CALL {
+   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:DataPropertyAxiom)
+   MATCH (entity:DataProperty { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
+   WHERE project.projectId = $projectId
+   AND branch.branchId = $branchId
+   AND document.ontologyDocumentId = $ontoDocId
+   RETURN entity
+   UNION
+   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(annotation:AnnotationAssertion)
+   MATCH (entity)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
+   WHERE project.projectId = $projectId
+   AND branch.branchId = $branchId
+   AND document.ontologyDocumentId = $ontoDocId
+   RETURN entity
+}
 OPTIONAL MATCH (entity)-[:SUB_DATA_PROPERTY_OF]->(parent:DataProperty)
 OPTIONAL MATCH (entity)-[:DOMAIN]->(domain:Class)
 OPTIONAL MATCH (entity)-[:RANGE]->(range:Datatype)
 OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
-WHERE project.projectId = $projectId
-AND branch.branchId = $branchId
-AND document.ontologyDocumentId = $ontoDocId
 
 RETURN { type: "DataPropertyFrame",
          subject: { type: "owl:DataProperty", iri: entity.iri },
