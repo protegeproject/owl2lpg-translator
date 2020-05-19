@@ -13,8 +13,10 @@ import javax.annotation.Nullable;
 @AutoValue
 public abstract class Properties {
 
+  private static final Properties EMPTY = create(ImmutableMap.of());
+
   public static Properties empty() {
-    return create(ImmutableMap.of());
+    return EMPTY;
   }
 
   public static Properties create(@Nonnull ImmutableMap<String, Object> map) {

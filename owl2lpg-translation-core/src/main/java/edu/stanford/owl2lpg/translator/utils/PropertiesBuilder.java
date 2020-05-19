@@ -43,6 +43,11 @@ public class PropertiesBuilder {
   }
 
   public Properties build() {
-    return Properties.create(ImmutableMap.copyOf(map));
+    if(map.isEmpty()) {
+      return Properties.empty();
+    }
+    else {
+      return Properties.create(ImmutableMap.copyOf(map));
+    }
   }
 }
