@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 public class CypherExporter {
 
@@ -51,7 +50,12 @@ public class CypherExporter {
       var nodeId = node.getNodeId();
       var nodeLabel = printNodeLabel(node.getLabels());
       var nodeProperties = printNodeProperties(node.getProperties());
-      var s = format("CREATE (%s%s %s)", nodeId, nodeLabel, nodeProperties);
+      var s = "CREATE (" +
+              nodeId +
+              nodeLabel +
+              " " +
+              nodeProperties +
+              ")";
       writeLine(s);
     });
   }
@@ -62,12 +66,20 @@ public class CypherExporter {
       var toNodeId = edge.getToNode().getNodeId();
       var edgeLabel = printEdgeLabel(edge.getLabel());
       var edgeProperties = printEdgeProperties(edge.getProperties());
-      var s = format("CREATE (%s)-[%s %s]->(%s)", fromNodeId, edgeLabel, edgeProperties, toNodeId);
+      var s = "CREATE (" +
+              fromNodeId +
+              ")-[" +
+              edgeLabel +
+              " " +
+              edgeProperties +
+              "]->(" +
+              toNodeId +
+              ")";
       writeLine(s);
     });
   }
 
-  public void flush() {
+  void flush() {
     try {
       writer.flush();
     } catch (IOException e) {
@@ -75,7 +87,7 @@ public class CypherExporter {
     }
   }
 
-  void writeLine(@Nullable String s) {
+  private void writeLine(@Nullable String s) {
     if (s == null) {
       return;
     }
@@ -89,7 +101,7 @@ public class CypherExporter {
 
   private static String printNodeLabel(List<String> nodeLabels) {
     return nodeLabels.stream()
-        .map(label -> format(":%s", label))
+        .map(label -> ":" + label)
         .collect(Collectors.joining(""));
   }
 
@@ -102,9 +114,9 @@ public class CypherExporter {
         .map(key -> {
           var value = properties.get(key);
           if (value instanceof String) {
-            return format("%s: \"%s\"", key, escape((String) value));
+            return key + ": \"" + escape((String) value) + "\"";
           } else {
-            return format("%s: %s", key, value);
+            return key + ": " + value;
           }
         })
         .collect(Collectors.joining(",", "{", "}"));
@@ -119,7 +131,7 @@ public class CypherExporter {
   }
 
   private static String printEdgeLabel(String edgeLabel) {
-    return format(":%s", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edgeLabel));
+    return ":" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edgeLabel);
   }
 
   private static String printEdgeProperties(Properties edgeProperties) {
