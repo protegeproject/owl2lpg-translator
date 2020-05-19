@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,11 +63,11 @@ public class AnnotationObjectVisitorTest {
     visitor.visit(annotation);
     verify(visitor).visit(annotation);
     verify(visitor).createNode(annotation, NodeLabels.ANNOTATION);
-    verify(visitor).createEdge(annotation.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(annotation.getProperty(), EdgeLabel.ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(annotation.getProperty());
-    verify(visitor).createEdge(annotation.getValue(), EdgeLabels.ANNOTATION_VALUE);
+    verify(visitor).createEdge(annotation.getValue(), EdgeLabel.ANNOTATION_VALUE);
     verify(visitor).createNestedTranslation(annotation.getValue());
-    verify(visitor).createEdges(annotation.getAnnotations(), EdgeLabels.ANNOTATION_ANNOTATION);
+    verify(visitor).createEdges(annotation.getAnnotations(), EdgeLabel.ANNOTATION_ANNOTATION);
     verify(visitor).createNestedTranslations(annotation.getAnnotations());
   }
 

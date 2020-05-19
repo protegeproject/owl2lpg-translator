@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +76,7 @@ public class PropertyExpressionVisitorTest {
     visitor.visit(ope);
     verify(visitor).visit(ope);
     verify(visitor).createNode(ope, NodeLabels.OBJECT_INVERSE_OF);
-    verify(visitor).createEdge(ope.getInverseProperty(), EdgeLabels.OBJECT_PROPERTY);
+    verify(visitor).createEdge(ope.getInverseProperty(), EdgeLabel.OBJECT_PROPERTY);
     verify(visitor).createNestedTranslation(ope.getInverseProperty());
   }
 

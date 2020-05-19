@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
@@ -48,11 +48,11 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLLiteral lt) {
     mainNode = createLiteralNode(lt, NodeLabels.LITERAL);
-    var datatypeEdge = createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
+    var datatypeEdge = createEdge(lt.getDatatype(), EdgeLabel.DATATYPE);
     var datatypeTranslation = createNestedTranslation(lt.getDatatype());
     if (lt.isRDFPlainLiteral() && lt.hasLang()) {
       var languageTagNode = createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
-      var languageTagEdge = createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
+      var languageTagEdge = createLanguageTagEdge(lt.getLang(), EdgeLabel.LANGUAGE_TAG);
       var languageTagTranslation = Translation.create(languageTagNode, ImmutableList.of(), ImmutableList.of());
       return Translation.create(mainNode,
           ImmutableList.of(datatypeEdge, languageTagEdge),
@@ -72,7 +72,7 @@ public class DataVisitor extends VisitorBase
   }
 
   protected Edge createLanguageTagEdge(@Nonnull String languageTag,
-                                       @Nonnull String edgeLabel) {
+                                       @Nonnull EdgeLabel edgeLabel) {
     var languageTagNode = createLanguageTagNode(languageTag, NodeLabels.LANGUAGE_TAG);
     return Edge(mainNode, languageTagNode, edgeLabel);
   }
@@ -81,7 +81,7 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataComplementOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_COMPLEMENT_OF);
-    var dataRangeEdge = createEdge(dr.getDataRange(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdge = createEdge(dr.getDataRange(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(dr.getDataRange());
     return Translation.create(mainNode,
         ImmutableList.of(dataRangeEdge),
@@ -92,7 +92,7 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataOneOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_ONE_OF);
-    var literalEdges = createEdges(dr.getValues(), EdgeLabels.LITERAL);
+    var literalEdges = createEdges(dr.getValues(), EdgeLabel.LITERAL);
     var literalTranslations = createNestedTranslations(dr.getValues());
     return Translation.create(mainNode,
         ImmutableList.copyOf(literalEdges),
@@ -103,7 +103,7 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataIntersectionOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_INTERSECTION_OF);
-    var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslations = createNestedTranslations(dr.getOperands());
     return Translation.create(mainNode,
         ImmutableList.copyOf(dataRangeEdges),
@@ -114,7 +114,7 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataUnionOf dr) {
     mainNode = createNode(dr, NodeLabels.DATA_UNION_OF);
-    var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdges = createEdges(dr.getOperands(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslations = createNestedTranslations(dr.getOperands());
     return Translation.create(mainNode,
         ImmutableList.copyOf(dataRangeEdges),
@@ -125,9 +125,9 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDatatypeRestriction dr) {
     mainNode = createNode(dr, NodeLabels.DATATYPE_RESTRICTION);
-    var datatypeEdge = createEdge(dr.getDatatype(), EdgeLabels.DATATYPE);
+    var datatypeEdge = createEdge(dr.getDatatype(), EdgeLabel.DATATYPE);
     var datatypeTranslation = createNestedTranslation(dr.getDatatype());
-    var facetRestrictionEdges = createEdges(dr.getFacetRestrictions(), EdgeLabels.RESTRICTION);
+    var facetRestrictionEdges = createEdges(dr.getFacetRestrictions(), EdgeLabel.RESTRICTION);
     var facetRestrictionTranslations = createNestedTranslations(dr.getFacetRestrictions());
     var allEdges = Lists.newArrayList(datatypeEdge);
     allEdges.addAll(facetRestrictionEdges);
@@ -142,9 +142,9 @@ public class DataVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLFacetRestriction facet) {
     mainNode = createNode(facet, NodeLabels.FACET_RESTRICTION);
-    var constrainingFacetEdge = createEdge(facet.getFacet().getIRI(), EdgeLabels.CONSTRAINING_FACET);
+    var constrainingFacetEdge = createEdge(facet.getFacet().getIRI(), EdgeLabel.CONSTRAINING_FACET);
     var constrainingFacetTranslation = createNestedTranslation(facet.getFacet().getIRI());
-    var restrictionValueEdge = createEdge(facet.getFacetValue(), EdgeLabels.RESTRICTION_VALUE);
+    var restrictionValueEdge = createEdge(facet.getFacetValue(), EdgeLabel.RESTRICTION_VALUE);
     var restrictionValueTranslation = createNestedTranslation(facet.getFacetValue());
     return Translation.create(mainNode,
         ImmutableList.of(constrainingFacetEdge, restrictionValueEdge),

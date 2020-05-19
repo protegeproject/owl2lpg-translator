@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.utils.PropertiesBuilder;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
@@ -112,7 +113,7 @@ public abstract class VisitorBase {
 
   @Nonnull
   protected Edge createEdge(@Nonnull OWLObject anyObject,
-                            @Nonnull String edgeLabel) {
+                            @Nonnull EdgeLabel edgeLabel) {
     checkNotNull(anyObject);
     checkNotNull(edgeLabel);
     return Edge(getMainNode(), getMainNode(anyObject),
@@ -123,7 +124,7 @@ public abstract class VisitorBase {
   @Nonnull
   protected Collection<Edge> createEdges(
       @Nonnull Set<? extends OWLObject> anyObjects,
-      @Nonnull String edgeLabel) {
+      @Nonnull EdgeLabel edgeLabel) {
     checkNotNull(anyObjects);
     checkNotNull(edgeLabel);
     return anyObjects.stream()
@@ -134,7 +135,7 @@ public abstract class VisitorBase {
   @Nonnull
   protected Edge createAugmentedEdge(@Nonnull Node fromNode,
                                      @Nonnull Node toNode,
-                                     @Nonnull String edgeLabel) {
+                                     @Nonnull EdgeLabel edgeLabel) {
     checkNotNull(fromNode);
     checkNotNull(toNode);
     checkNotNull(edgeLabel);

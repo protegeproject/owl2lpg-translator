@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -79,10 +79,10 @@ public class DataVisitorTest {
     visitor.visit(lt);
     verify(visitor).visit(lt);
     verify(visitor).createLiteralNode(lt, NodeLabels.LITERAL);
-    verify(visitor).createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
+    verify(visitor).createEdge(lt.getDatatype(), EdgeLabel.DATATYPE);
     verify(visitor).createNestedTranslation(lt.getDatatype());
     verify(visitor, times(0))
-        .createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
+        .createLanguageTagEdge(lt.getLang(), EdgeLabel.LANGUAGE_TAG);
     verify(visitor, times(0))
         .createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
   }
@@ -103,10 +103,10 @@ public class DataVisitorTest {
     visitor.visit(lt);
     verify(visitor).visit(lt);
     verify(visitor).createLiteralNode(lt, NodeLabels.LITERAL);
-    verify(visitor).createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
+    verify(visitor).createEdge(lt.getDatatype(), EdgeLabel.DATATYPE);
     verify(visitor).createNestedTranslation(lt.getDatatype());
     verify(visitor, times(0))
-        .createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
+        .createLanguageTagEdge(lt.getLang(), EdgeLabel.LANGUAGE_TAG);
     verify(visitor, times(0))
         .createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
   }
@@ -128,9 +128,9 @@ public class DataVisitorTest {
     visitor.visit(lt);
     verify(visitor).visit(lt);
     verify(visitor).createLiteralNode(lt, NodeLabels.LITERAL);
-    verify(visitor).createEdge(lt.getDatatype(), EdgeLabels.DATATYPE);
+    verify(visitor).createEdge(lt.getDatatype(), EdgeLabel.DATATYPE);
     verify(visitor).createNestedTranslation(lt.getDatatype());
-    verify(visitor).createLanguageTagEdge(lt.getLang(), EdgeLabels.LANGUAGE_TAG);
+    verify(visitor).createLanguageTagEdge(lt.getLang(), EdgeLabel.LANGUAGE_TAG);
     verify(visitor, times(2)).createLanguageTagNode(lt.getLang(), NodeLabels.LANGUAGE_TAG);
   }
 
@@ -143,7 +143,7 @@ public class DataVisitorTest {
     visitor.visit(dr);
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_COMPLEMENT_OF);
-    verify(visitor).createEdge(dr.getDataRange(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(dr.getDataRange(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(dr.getDataRange());
   }
 
@@ -156,7 +156,7 @@ public class DataVisitorTest {
     visitor.visit(dr);
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_ONE_OF);
-    verify(visitor).createEdges(dr.getValues(), EdgeLabels.LITERAL);
+    verify(visitor).createEdges(dr.getValues(), EdgeLabel.LITERAL);
     verify(visitor).createNestedTranslations(dr.getValues());
   }
 
@@ -169,7 +169,7 @@ public class DataVisitorTest {
     visitor.visit(dr);
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_INTERSECTION_OF);
-    verify(visitor).createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdges(dr.getOperands(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslations(dr.getOperands());
   }
 
@@ -182,7 +182,7 @@ public class DataVisitorTest {
     visitor.visit(dr);
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATA_UNION_OF);
-    verify(visitor).createEdges(dr.getOperands(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdges(dr.getOperands(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslations(dr.getOperands());
   }
 
@@ -196,9 +196,9 @@ public class DataVisitorTest {
     visitor.visit(dr);
     verify(visitor).visit(dr);
     verify(visitor).createNode(dr, NodeLabels.DATATYPE_RESTRICTION);
-    verify(visitor).createEdge(dr.getDatatype(), EdgeLabels.DATATYPE);
+    verify(visitor).createEdge(dr.getDatatype(), EdgeLabel.DATATYPE);
     verify(visitor).createNestedTranslation(dr.getDatatype());
-    verify(visitor).createEdges(dr.getFacetRestrictions(), EdgeLabels.RESTRICTION);
+    verify(visitor).createEdges(dr.getFacetRestrictions(), EdgeLabel.RESTRICTION);
     verify(visitor).createNestedTranslations(dr.getFacetRestrictions());
   }
 
@@ -214,9 +214,9 @@ public class DataVisitorTest {
     visitor.visit(restriction);
     verify(visitor).visit(restriction);
     verify(visitor).createNode(restriction, NodeLabels.FACET_RESTRICTION);
-    verify(visitor).createEdge(restriction.getFacet().getIRI(), EdgeLabels.CONSTRAINING_FACET);
+    verify(visitor).createEdge(restriction.getFacet().getIRI(), EdgeLabel.CONSTRAINING_FACET);
     verify(visitor).createNestedTranslation(restriction.getFacet().getIRI());
-    verify(visitor).createEdge(restriction.getFacetValue(), EdgeLabels.RESTRICTION_VALUE);
+    verify(visitor).createEdge(restriction.getFacetValue(), EdgeLabel.RESTRICTION_VALUE);
     verify(visitor).createNestedTranslation(restriction.getFacetValue());
   }
 

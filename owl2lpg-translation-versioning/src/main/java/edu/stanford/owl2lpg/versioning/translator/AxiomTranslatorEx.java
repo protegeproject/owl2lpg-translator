@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import edu.stanford.owl2lpg.versioning.model.BranchId;
 import edu.stanford.owl2lpg.versioning.model.OntologyDocumentId;
@@ -34,13 +35,13 @@ public class AxiomTranslatorEx extends AxiomTranslator {
     var axiomTranslation = translate(axiom);
     var docNode = createOntologyDocumentNode(context.getOntologyDocumentId());
     var documentTranslation = Translation.create(docNode)
-        .connectWith(axiomTranslation, EdgeLabels.AXIOM, Properties.empty());
+        .connectWith(axiomTranslation, EdgeLabel.AXIOM, Properties.empty());
     var branchNode = createBranchNode(context.getBranchId());
     var branchTranslation = Translation.create(branchNode)
-        .connectWith(documentTranslation, EdgeLabels.ONTOLOGY_DOCUMENT, Properties.empty());
+        .connectWith(documentTranslation, EdgeLabel.ONTOLOGY_DOCUMENT, Properties.empty());
     var projectNode = createProjectNode(context.getProjectId());
     var projectTranslation = Translation.create(projectNode)
-        .connectWith(branchTranslation, EdgeLabels.BRANCH, Properties.empty());
+        .connectWith(branchTranslation, EdgeLabel.BRANCH, Properties.empty());
     return projectTranslation;
   }
 

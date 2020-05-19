@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,9 +101,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DECLARATION);
-    verify(visitor).createEdge(axiom.getEntity(), EdgeLabels.ENTITY);
+    verify(visitor).createEdge(axiom.getEntity(), EdgeLabel.ENTITY);
     verify(visitor).createNestedTranslation(axiom.getEntity());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -118,11 +118,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DATATYPE_DEFINITION);
-    verify(visitor).createEdge(axiom.getDatatype(), EdgeLabels.DATATYPE);
+    verify(visitor).createEdge(axiom.getDatatype(), EdgeLabel.DATATYPE);
     verify(visitor).createNestedTranslation(axiom.getDatatype());
-    verify(visitor).createEdge(axiom.getDataRange(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(axiom.getDataRange(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(axiom.getDataRange());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -137,11 +137,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SUB_CLASS_OF);
-    verify(visitor).createEdge(axiom.getSubClass(), EdgeLabels.SUB_CLASS_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSubClass(), EdgeLabel.SUB_CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSubClass());
-    verify(visitor).createEdge(axiom.getSuperClass(), EdgeLabels.SUPER_CLASS_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSuperClass(), EdgeLabel.SUPER_CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSuperClass());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -156,11 +156,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SUB_OBJECT_PROPERTY_OF);
-    verify(visitor).createEdge(axiom.getSubProperty(), EdgeLabels.SUB_OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSubProperty(), EdgeLabel.SUB_OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSubProperty());
-    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabel.SUPER_OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSuperProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -175,11 +175,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SUB_DATA_PROPERTY_OF);
-    verify(visitor).createEdge(axiom.getSubProperty(), EdgeLabels.SUB_DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSubProperty(), EdgeLabel.SUB_DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSubProperty());
-    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabel.SUPER_DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSuperProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -196,11 +196,12 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SUB_OBJECT_PROPERTY_OF);
-    verify(visitor).createEdge(axiom.getPropertyChain().get(0), EdgeLabels.SUB_OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getPropertyChain().get(0),
+                               EdgeLabel.SUB_OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createChainTranslation(axiom.getPropertyChain());
-    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabel.SUPER_OBJECT_PROPERTY_EXPRESSION);
     verify(visitor, times(2)).createNestedTranslation(axiom.getSuperProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -215,11 +216,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SUB_ANNOTATION_PROPERTY_OF);
-    verify(visitor).createEdge(axiom.getSubProperty(), EdgeLabels.SUB_ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(axiom.getSubProperty(), EdgeLabel.SUB_ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(axiom.getSubProperty());
-    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabels.SUPER_ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(axiom.getSuperProperty(), EdgeLabel.SUPER_ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(axiom.getSuperProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -234,11 +235,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.OBJECT_PROPERTY_DOMAIN);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
+    verify(visitor).createEdge(axiom.getDomain(), EdgeLabel.DOMAIN);
     verify(visitor).createNestedTranslation(axiom.getDomain());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -253,11 +254,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.OBJECT_PROPERTY_RANGE);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getRange(), EdgeLabels.RANGE);
+    verify(visitor).createEdge(axiom.getRange(), EdgeLabel.RANGE);
     verify(visitor).createNestedTranslation(axiom.getRange());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -272,11 +273,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DATA_PROPERTY_DOMAIN);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
+    verify(visitor).createEdge(axiom.getDomain(), EdgeLabel.DOMAIN);
     verify(visitor).createNestedTranslation(axiom.getDomain());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -291,11 +292,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DATA_PROPERTY_RANGE);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getRange(), EdgeLabels.RANGE);
+    verify(visitor).createEdge(axiom.getRange(), EdgeLabel.RANGE);
     verify(visitor).createNestedTranslation(axiom.getRange());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -310,11 +311,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.ANNOTATION_PROPERTY_DOMAIN);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getDomain(), EdgeLabels.DOMAIN);
+    verify(visitor).createEdge(axiom.getDomain(), EdgeLabel.DOMAIN);
     verify(visitor).createNestedTranslation(axiom.getDomain());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -329,11 +330,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.ANNOTATION_PROPERTY_RANGE);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getRange(), EdgeLabels.RANGE);
+    verify(visitor).createEdge(axiom.getRange(), EdgeLabel.RANGE);
     verify(visitor).createNestedTranslation(axiom.getRange());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -347,9 +348,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.EQUIVALENT_CLASSES);
-    verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getClassExpressions());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -363,9 +364,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.EQUIVALENT_OBJECT_PROPERTIES);
-    verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdges(axiom.getProperties(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -379,9 +380,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.EQUIVALENT_DATA_PROPERTIES);
-    verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdges(axiom.getProperties(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -395,9 +396,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_CLASSES);
-    verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getClassExpressions());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -412,11 +413,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_UNION);
-    verify(visitor).createEdge(axiom.getOWLClass(), EdgeLabels.CLASS);
+    verify(visitor).createEdge(axiom.getOWLClass(), EdgeLabel.CLASS);
     verify(visitor).createNestedTranslation(axiom.getOWLClass());
-    verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabels.DISJOINT_CLASS_EXPRESSION);
+    verify(visitor).createEdges(axiom.getClassExpressions(), EdgeLabel.DISJOINT_CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getClassExpressions());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -430,9 +431,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_OBJECT_PROPERTIES);
-    verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdges(axiom.getProperties(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -446,9 +447,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DISJOINT_DATA_PROPERTIES);
-    verify(visitor).createEdges(axiom.getProperties(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdges(axiom.getProperties(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getProperties());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -462,9 +463,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SAME_INDIVIDUAL);
-    verify(visitor).createEdges(axiom.getIndividuals(), EdgeLabels.INDIVIDUAL);
+    verify(visitor).createEdges(axiom.getIndividuals(), EdgeLabel.INDIVIDUAL);
     verify(visitor).createNestedTranslations(axiom.getIndividuals());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -478,9 +479,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DIFFERENT_INDIVIDUALS);
-    verify(visitor).createEdges(axiom.getIndividuals(), EdgeLabels.INDIVIDUAL);
+    verify(visitor).createEdges(axiom.getIndividuals(), EdgeLabel.INDIVIDUAL);
     verify(visitor).createNestedTranslations(axiom.getIndividuals());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -495,11 +496,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.INVERSE_OBJECT_PROPERTIES);
-    verify(visitor).createEdge(axiom.getFirstProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getFirstProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getFirstProperty());
-    verify(visitor).createEdge(axiom.getSecondProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getSecondProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getSecondProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -515,13 +516,14 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.HAS_KEY);
-    verify(visitor).createEdge(axiom.getClassExpression(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(axiom.getClassExpression(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getClassExpression());
-    verify(visitor).createEdges(axiom.getObjectPropertyExpressions(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdges(axiom.getObjectPropertyExpressions(),
+                                EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getObjectPropertyExpressions());
-    verify(visitor).createEdges(axiom.getDataPropertyExpressions(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdges(axiom.getDataPropertyExpressions(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslations(axiom.getDataPropertyExpressions());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -536,11 +538,11 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.CLASS_ASSERTION);
-    verify(visitor).createEdge(axiom.getClassExpression(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(axiom.getClassExpression(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getClassExpression());
-    verify(visitor).createEdge(axiom.getIndividual(), EdgeLabels.INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getIndividual(), EdgeLabel.INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getIndividual());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -556,13 +558,13 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.OBJECT_PROPERTY_ASSERTION);
-    verify(visitor).createEdge(axiom.getSubject(), EdgeLabels.SOURCE_INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getSubject(), EdgeLabel.SOURCE_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getSubject());
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getObject(), EdgeLabel.TARGET_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getObject());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -578,13 +580,13 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.DATA_PROPERTY_ASSERTION);
-    verify(visitor).createEdge(axiom.getSubject(), EdgeLabels.SOURCE_INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getSubject(), EdgeLabel.SOURCE_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getSubject());
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_VALUE);
+    verify(visitor).createEdge(axiom.getObject(), EdgeLabel.TARGET_VALUE);
     verify(visitor).createNestedTranslation(axiom.getObject());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -601,13 +603,13 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.ANNOTATION_ASSERTION);
-    verify(visitor).createEdge(axiom.getSubject(), EdgeLabels.ANNOTATION_SUBJECT);
+    verify(visitor).createEdge(axiom.getSubject(), EdgeLabel.ANNOTATION_SUBJECT);
     verify(visitor).createNestedTranslation(axiom.getSubject());
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.ANNOTATION_PROPERTY);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getValue(), EdgeLabels.ANNOTATION_VALUE);
+    verify(visitor).createEdge(axiom.getValue(), EdgeLabel.ANNOTATION_VALUE);
     verify(visitor).createNestedTranslation(axiom.getValue());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -623,13 +625,13 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.NEGATIVE_OBJECT_PROPERTY_ASSERTION);
-    verify(visitor).createEdge(axiom.getSubject(), EdgeLabels.SOURCE_INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getSubject(), EdgeLabel.SOURCE_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getSubject());
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getObject(), EdgeLabel.TARGET_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getObject());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -645,13 +647,13 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.NEGATIVE_DATA_PROPERTY_ASSERTION);
-    verify(visitor).createEdge(axiom.getSubject(), EdgeLabels.SOURCE_INDIVIDUAL);
+    verify(visitor).createEdge(axiom.getSubject(), EdgeLabel.SOURCE_INDIVIDUAL);
     verify(visitor).createNestedTranslation(axiom.getSubject());
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdge(axiom.getObject(), EdgeLabels.TARGET_VALUE);
+    verify(visitor).createEdge(axiom.getObject(), EdgeLabel.TARGET_VALUE);
     verify(visitor).createNestedTranslation(axiom.getObject());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -665,9 +667,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.FUNCTIONAL_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -681,9 +683,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -697,9 +699,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.SYMMETRIC_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -713,9 +715,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.ASYMMETRIC_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -729,9 +731,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.REFLEXIVE_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -745,9 +747,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -761,9 +763,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.TRANSITIVE_OBJECT_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 
@@ -777,9 +779,9 @@ public class AxiomVisitorTest {
     visitor.visit(axiom);
     verify(visitor).visit(axiom);
     verify(visitor).createNode(axiom, NodeLabels.FUNCTIONAL_DATA_PROPERTY);
-    verify(visitor).createEdge(axiom.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(axiom.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(axiom.getProperty());
-    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabels.AXIOM_ANNOTATION);
+    verify(visitor).createEdges(axiom.getAnnotations(), EdgeLabel.AXIOM_ANNOTATION);
     verify(visitor).createNestedTranslations(axiom.getAnnotations());
   }
 

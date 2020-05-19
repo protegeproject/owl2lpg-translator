@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
@@ -41,7 +41,7 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectIntersectionOf ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_INTERSECTION_OF);
-    var classExprEdges = createEdges(ce.getOperands(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdges = createEdges(ce.getOperands(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslations = createNestedTranslations(ce.getOperands());
     return Translation.create(mainNode,
         ImmutableList.copyOf(classExprEdges),
@@ -52,7 +52,7 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectUnionOf ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_UNION_OF);
-    var classExprEdges = createEdges(ce.getOperands(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdges = createEdges(ce.getOperands(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslations = createNestedTranslations(ce.getOperands());
     return Translation.create(mainNode,
         ImmutableList.copyOf(classExprEdges),
@@ -63,7 +63,7 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectComplementOf ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_COMPLEMENT_OF);
-    var classExprEdge = createEdge(ce.getOperand(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdge = createEdge(ce.getOperand(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslation = createNestedTranslation(ce.getOperand());
     return Translation.create(mainNode,
         ImmutableList.of(classExprEdge),
@@ -74,9 +74,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectSomeValuesFrom ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_SOME_VALUES_FROM);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdge = createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, classExprEdge),
@@ -87,9 +87,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectAllValuesFrom ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_ALL_VALUES_FROM);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdge = createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, classExprEdge),
@@ -100,9 +100,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectHasValue ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_HAS_VALUE);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var individualEdge = createEdge(ce.getFiller(), EdgeLabels.INDIVIDUAL);
+    var individualEdge = createEdge(ce.getFiller(), EdgeLabel.INDIVIDUAL);
     var individualTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, individualEdge),
@@ -113,9 +113,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectMinCardinality ce) {
     mainNode = createCardinalityNode(ce, NodeLabels.OBJECT_MIN_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdge = createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, classExprEdge),
@@ -126,9 +126,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectExactCardinality ce) {
     mainNode = createCardinalityNode(ce, NodeLabels.OBJECT_EXACT_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdge = createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, classExprEdge),
@@ -139,9 +139,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectMaxCardinality ce) {
     mainNode = createCardinalityNode(ce, NodeLabels.OBJECT_MAX_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    var classExprEdge = createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     var classExprTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, classExprEdge),
@@ -152,7 +152,7 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectHasSelf ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_HAS_SELF);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge),
@@ -163,7 +163,7 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLObjectOneOf ce) {
     mainNode = createNode(ce, NodeLabels.OBJECT_ONE_OF);
-    var individualEdges = createEdges(ce.getIndividuals(), EdgeLabels.INDIVIDUAL);
+    var individualEdges = createEdges(ce.getIndividuals(), EdgeLabel.INDIVIDUAL);
     var individualTranslations = createNestedTranslations(ce.getIndividuals());
     return Translation.create(mainNode,
         ImmutableList.copyOf(individualEdges),
@@ -174,9 +174,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataSomeValuesFrom ce) {
     mainNode = createNode(ce, NodeLabels.DATA_SOME_VALUES_FROM);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, dataRangeEdge),
@@ -187,9 +187,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataAllValuesFrom ce) {
     mainNode = createNode(ce, NodeLabels.DATA_ALL_VALUES_FROM);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, dataRangeEdge),
@@ -200,9 +200,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataHasValue ce) {
     mainNode = createNode(ce, NodeLabels.DATA_HAS_VALUE);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var literalEdge = createEdge(ce.getFiller(), EdgeLabels.LITERAL);
+    var literalEdge = createEdge(ce.getFiller(), EdgeLabel.LITERAL);
     var literalTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, literalEdge),
@@ -213,9 +213,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataMinCardinality ce) {
     mainNode = createCardinalityNode(ce, NodeLabels.DATA_MIN_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, dataRangeEdge),
@@ -226,9 +226,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataExactCardinality ce) {
     mainNode = createCardinalityNode(ce, NodeLabels.DATA_EXACT_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, dataRangeEdge),
@@ -239,9 +239,9 @@ public class ClassExpressionVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLDataMaxCardinality ce) {
     mainNode = createCardinalityNode(ce, NodeLabels.DATA_MAX_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    var propertyExprEdge = createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    var dataRangeEdge = createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     var dataRangeTranslation = createNestedTranslation(ce.getFiller());
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge, dataRangeEdge),

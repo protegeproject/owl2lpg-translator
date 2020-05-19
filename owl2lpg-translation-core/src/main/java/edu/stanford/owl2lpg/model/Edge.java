@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +18,7 @@ public abstract class Edge {
 
   public static Edge create(@Nonnull Node fromNode,
                             @Nonnull Node toNode,
-                            @Nonnull String label,
+                            @Nonnull EdgeLabel label,
                             @Nonnull Properties properties) {
     return new AutoValue_Edge(fromNode, toNode, label, properties);
   }
@@ -30,7 +31,7 @@ public abstract class Edge {
 
   public abstract Node getToNode();
 
-  public abstract String getLabel();
+  public abstract EdgeLabel getLabel();
 
   public abstract Properties getProperties();
 }

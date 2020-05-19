@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
@@ -34,11 +34,11 @@ public class AnnotationObjectVisitor extends VisitorBase
   @Override
   public Translation visit(@Nonnull OWLAnnotation annotation) {
     mainNode = createNode(annotation, NodeLabels.ANNOTATION);
-    var annotationPropertyEdge = createEdge(annotation.getProperty(), EdgeLabels.ANNOTATION_PROPERTY);
+    var annotationPropertyEdge = createEdge(annotation.getProperty(), EdgeLabel.ANNOTATION_PROPERTY);
     var annotationPropertyTranslation = createNestedTranslation(annotation.getProperty());
-    var annotationValueEdge = createEdge(annotation.getValue(), EdgeLabels.ANNOTATION_VALUE);
+    var annotationValueEdge = createEdge(annotation.getValue(), EdgeLabel.ANNOTATION_VALUE);
     var annotationValueTranslation = createNestedTranslation(annotation.getValue());
-    var annotationAnnotationEdges = createEdges(annotation.getAnnotations(), EdgeLabels.ANNOTATION_ANNOTATION);
+    var annotationAnnotationEdges = createEdges(annotation.getAnnotations(), EdgeLabel.ANNOTATION_ANNOTATION);
     var annotationAnnotationTranslations = createNestedTranslations(annotation.getAnnotations());
     var allEdges = Lists.newArrayList(annotationPropertyEdge, annotationValueEdge);
     allEdges.addAll(annotationAnnotationEdges);

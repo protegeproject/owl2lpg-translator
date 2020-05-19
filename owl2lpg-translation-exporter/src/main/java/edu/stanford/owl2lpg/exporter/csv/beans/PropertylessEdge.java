@@ -36,7 +36,7 @@ public class PropertylessEdge {
     return new PropertylessEdge(
         edge.getFromNode().getNodeId().toString(),
         edge.getToNode().getNodeId().toString(),
-        CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edge.getLabel()));
+        edge.getLabel().name());
   }
 
   @Nonnull

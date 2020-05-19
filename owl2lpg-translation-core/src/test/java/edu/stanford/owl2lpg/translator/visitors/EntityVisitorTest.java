@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class EntityVisitorTest {
     visitor.visit(cls);
     verify(visitor).visit(cls);
     verify(visitor).createEntityNode(cls, NodeLabels.CLASS);
-    verify(visitor).createEdge(cls.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createEdge(cls.getIRI(), EdgeLabel.ENTITY_IRI);
     verify(visitor).createNestedTranslation(cls.getIRI());
   }
 
@@ -60,7 +60,7 @@ public class EntityVisitorTest {
     visitor.visit(dt);
     verify(visitor).visit(dt);
     verify(visitor).createEntityNode(dt, NodeLabels.DATATYPE);
-    verify(visitor).createEdge(dt.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createEdge(dt.getIRI(), EdgeLabel.ENTITY_IRI);
     verify(visitor).createNestedTranslation(dt.getIRI());
   }
 
@@ -73,7 +73,7 @@ public class EntityVisitorTest {
     visitor.visit(op);
     verify(visitor).visit(op);
     verify(visitor).createEntityNode(op, NodeLabels.OBJECT_PROPERTY);
-    verify(visitor).createEdge(op.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createEdge(op.getIRI(), EdgeLabel.ENTITY_IRI);
     verify(visitor).createNestedTranslation(op.getIRI());
   }
 
@@ -86,7 +86,7 @@ public class EntityVisitorTest {
     visitor.visit(dp);
     verify(visitor).visit(dp);
     verify(visitor).createEntityNode(dp, NodeLabels.DATA_PROPERTY);
-    verify(visitor).createEdge(dp.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createEdge(dp.getIRI(), EdgeLabel.ENTITY_IRI);
     verify(visitor).createNestedTranslation(dp.getIRI());
   }
 
@@ -99,7 +99,7 @@ public class EntityVisitorTest {
     visitor.visit(ap);
     verify(visitor).visit(ap);
     verify(visitor).createEntityNode(ap, NodeLabels.ANNOTATION_PROPERTY);
-    verify(visitor).createEdge(ap.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createEdge(ap.getIRI(), EdgeLabel.ENTITY_IRI);
     verify(visitor).createNestedTranslation(ap.getIRI());
   }
 
@@ -112,7 +112,7 @@ public class EntityVisitorTest {
     visitor.visit(a);
     verify(visitor).visit(a);
     verify(visitor).createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
-    verify(visitor).createEdge(a.getIRI(), EdgeLabels.ENTITY_IRI);
+    verify(visitor).createEdge(a.getIRI(), EdgeLabel.ENTITY_IRI);
     verify(visitor).createNestedTranslation(a.getIRI());
   }
 

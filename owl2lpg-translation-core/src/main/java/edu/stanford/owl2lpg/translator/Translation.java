@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
@@ -36,7 +37,7 @@ public abstract class Translation {
   }
 
   public Translation connectWith(@Nonnull Translation otherTranslation,
-                                 @Nonnull String edgeLabel,
+                                 @Nonnull EdgeLabel edgeLabel,
                                  @Nonnull Properties edgeProperties) {
     var fromNode = Node.create(getMainNode().getNodeId(),
         getMainNode().getLabels(),
@@ -66,16 +67,6 @@ public abstract class Translation {
    */
   public Stream<Node> nodes(String label) {
     return nodes().filter(node -> node.getLabels().contains(label));
-  }
-
-  /**
-   * Gets all the edges with the given edge label.
-   *
-   * @param label The edge label to filter.
-   * @return A collection of edges.
-   */
-  public Stream<Edge> edges(String label) {
-    return edges().filter(edge -> edge.getLabel().contains(label));
   }
 
   /**

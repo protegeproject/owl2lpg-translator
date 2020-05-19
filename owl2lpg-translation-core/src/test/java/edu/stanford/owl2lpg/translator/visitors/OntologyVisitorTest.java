@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.base.Optional;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,9 +54,9 @@ public class OntologyVisitorTest {
     verify(visitor).createNode(ontology, NodeLabels.ONTOLOGY);
     verify(visitor).createOntologyIdEdge(ontology.getOntologyID());
     verify(visitor).createOntologyIdTranslation(ontology.getOntologyID());
-    verify(visitor).createEdges(ontology.getAnnotations(), EdgeLabels.ONTOLOGY_ANNOTATION);
+    verify(visitor).createEdges(ontology.getAnnotations(), EdgeLabel.ONTOLOGY_ANNOTATION);
     verify(visitor).createNestedTranslations(ontology.getAnnotations());
-    verify(visitor).createEdges(ontology.getAxioms(), EdgeLabels.AXIOM);
+    verify(visitor).createEdges(ontology.getAxioms(), EdgeLabel.AXIOM);
     verify(visitor).createNestedTranslations(ontology.getAxioms());
   }
 

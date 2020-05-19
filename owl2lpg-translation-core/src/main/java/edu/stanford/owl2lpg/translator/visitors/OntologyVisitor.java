@@ -6,7 +6,7 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.utils.PropertiesBuilder;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
@@ -44,9 +44,9 @@ public class OntologyVisitor extends VisitorBase
     mainNode = createNode(ontology, NodeLabels.ONTOLOGY);
     var ontologyIdEdge = createOntologyIdEdge(ontology.getOntologyID());
     var ontologyIdTranslation = createOntologyIdTranslation(ontology.getOntologyID());
-    var ontologyAnnotationEdges = createEdges(ontology.getAnnotations(), EdgeLabels.ONTOLOGY_ANNOTATION);
+    var ontologyAnnotationEdges = createEdges(ontology.getAnnotations(), EdgeLabel.ONTOLOGY_ANNOTATION);
     var ontologyAnnotationTranslations = createNestedTranslations(ontology.getAnnotations());
-    var ontologyAxiomEdges = createEdges(ontology.getAxioms(), EdgeLabels.AXIOM);
+    var ontologyAxiomEdges = createEdges(ontology.getAxioms(), EdgeLabel.AXIOM);
     var ontologyAxiomTranslations = createNestedTranslations(ontology.getAxioms());
     var allEdges = Stream.concat(Lists.newArrayList(ontologyIdEdge).stream(),
         Stream.concat(ontologyAnnotationEdges.stream(), ontologyAxiomEdges.stream()))
@@ -58,7 +58,7 @@ public class OntologyVisitor extends VisitorBase
   }
 
   protected Edge createOntologyIdEdge(OWLOntologyID ontologyId) {
-    return Edge(mainNode, createOntologyIdNode(ontologyId), EdgeLabels.ONTOLOGY_ID);
+    return Edge(mainNode, createOntologyIdNode(ontologyId), EdgeLabel.ONTOLOGY_ID);
   }
 
   protected Translation createOntologyIdTranslation(OWLOntologyID ontologyID) {

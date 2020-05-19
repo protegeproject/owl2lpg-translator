@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
@@ -57,7 +57,7 @@ public class PropertyExpressionVisitor extends VisitorBase
   public Translation visit(@Nonnull OWLObjectInverseOf ope) {
     mainNode = createNode(ope, NodeLabels.OBJECT_INVERSE_OF);
     var inverseProperty = ope.getInverseProperty();
-    var objectPropertyEdge = createEdge(inverseProperty, EdgeLabels.OBJECT_PROPERTY);
+    var objectPropertyEdge = createEdge(inverseProperty, EdgeLabel.OBJECT_PROPERTY);
     var inversePropertyTranslation = createNestedTranslation(inverseProperty);
     return Translation.create(mainNode,
         ImmutableList.of(objectPropertyEdge),

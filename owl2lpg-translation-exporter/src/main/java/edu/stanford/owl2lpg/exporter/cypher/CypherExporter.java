@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.OntologyTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -128,8 +129,8 @@ public class CypherExporter {
         .replace("\"", "\\\\\"");
   }
 
-  private static String printEdgeLabel(String edgeLabel) {
-    return ":" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edgeLabel);
+  private static String printEdgeLabel(EdgeLabel edgeLabel) {
+    return ":" + edgeLabel.name();
   }
 
   private static String printEdgeProperties(Properties edgeProperties) {

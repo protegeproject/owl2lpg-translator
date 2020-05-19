@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_INTERSECTION_OF);
-    verify(visitor).createEdges(ce.getOperands(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdges(ce.getOperands(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(ce.getOperands());
   }
 
@@ -85,7 +85,7 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_UNION_OF);
-    verify(visitor).createEdges(ce.getOperands(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdges(ce.getOperands(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslations(ce.getOperands());
   }
 
@@ -98,7 +98,7 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_COMPLEMENT_OF);
-    verify(visitor).createEdge(ce.getOperand(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(ce.getOperand(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getOperand());
   }
 
@@ -112,9 +112,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_SOME_VALUES_FROM);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -128,9 +128,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_ALL_VALUES_FROM);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -144,9 +144,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_HAS_VALUE);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.INDIVIDUAL);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.INDIVIDUAL);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -160,9 +160,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createCardinalityNode(ce, NodeLabels.OBJECT_MIN_CARDINALITY);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -176,9 +176,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createCardinalityNode(ce, NodeLabels.OBJECT_EXACT_CARDINALITY);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -192,9 +192,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createCardinalityNode(ce, NodeLabels.OBJECT_MAX_CARDINALITY);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.CLASS_EXPRESSION);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.CLASS_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -207,7 +207,7 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_HAS_SELF);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.OBJECT_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.OBJECT_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
   }
 
@@ -219,7 +219,7 @@ public class ClassExpressionVisitorTest {
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.OBJECT_ONE_OF);
-    verify(visitor).createEdges(ce.getIndividuals(), EdgeLabels.INDIVIDUAL);
+    verify(visitor).createEdges(ce.getIndividuals(), EdgeLabel.INDIVIDUAL);
     verify(visitor).createNestedTranslations(ce.getIndividuals());
   }
 
@@ -232,9 +232,9 @@ public class ClassExpressionVisitorTest {
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.DATA_SOME_VALUES_FROM);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -247,9 +247,9 @@ public class ClassExpressionVisitorTest {
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.DATA_ALL_VALUES_FROM);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -262,9 +262,9 @@ public class ClassExpressionVisitorTest {
 
     visitor.visit(ce);
     verify(visitor).createNode(ce, NodeLabels.DATA_HAS_VALUE);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.LITERAL);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.LITERAL);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -278,9 +278,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createCardinalityNode(ce, NodeLabels.DATA_MIN_CARDINALITY);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -294,9 +294,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createCardinalityNode(ce, NodeLabels.DATA_EXACT_CARDINALITY);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 
@@ -310,9 +310,9 @@ public class ClassExpressionVisitorTest {
     visitor.visit(ce);
     verify(visitor).visit(ce);
     verify(visitor).createCardinalityNode(ce, NodeLabels.DATA_MAX_CARDINALITY);
-    verify(visitor).createEdge(ce.getProperty(), EdgeLabels.DATA_PROPERTY_EXPRESSION);
+    verify(visitor).createEdge(ce.getProperty(), EdgeLabel.DATA_PROPERTY_EXPRESSION);
     verify(visitor).createNestedTranslation(ce.getProperty());
-    verify(visitor).createEdge(ce.getFiller(), EdgeLabels.DATA_RANGE);
+    verify(visitor).createEdge(ce.getFiller(), EdgeLabel.DATA_RANGE);
     verify(visitor).createNestedTranslation(ce.getFiller());
   }
 

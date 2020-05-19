@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.versioning.model.AxiomContext;
 import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
@@ -154,8 +155,8 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
         .collect(Collectors.joining(""));
   }
 
-  private static String printEdgeLabel(String edgeLabel) {
-    return format(":%s", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, edgeLabel));
+  private static String printEdgeLabel(EdgeLabel edgeLabel) {
+    return ":" + edgeLabel.name();
   }
 
   private static String printNodeProperties(Properties nodeProperties) {

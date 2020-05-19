@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +23,7 @@ public class EdgeTest {
 
   @Before
   public void setUp() {
-    edge = Edge.create(fromNode, toNode, "anEdge", properties);
+    edge = Edge.create(fromNode, toNode, EdgeLabel.AXIOM, properties);
   }
 
   @Test
@@ -32,12 +33,12 @@ public class EdgeTest {
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenFromNodeNull() {
-    Edge.create(null, toNode, "anEdge", properties);
+    Edge.create(null, toNode, EdgeLabel.AXIOM, properties);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenToNodeNull() {
-    Edge.create(fromNode, null, "anEdge", properties);
+    Edge.create(fromNode, null, EdgeLabel.AXIOM, properties);
   }
 
   @Test(expected = NullPointerException.class)
@@ -47,7 +48,7 @@ public class EdgeTest {
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenPropertiesNull() {
-    Edge.create(fromNode, toNode, "anEdge", null);
+    Edge.create(fromNode, toNode, EdgeLabel.AXIOM, null);
   }
 
   @Test
@@ -65,7 +66,7 @@ public class EdgeTest {
   @Test
   public void shouldGetLabel() {
     var actualLabel = edge.getLabel();
-    assertThat(actualLabel, equalTo("anEdge"));
+    assertThat(actualLabel, equalTo(EdgeLabel.AXIOM));
   }
 
   @Test

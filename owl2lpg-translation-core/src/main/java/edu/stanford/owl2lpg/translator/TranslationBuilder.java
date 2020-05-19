@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class TranslationBuilder {
 
   public TranslationBuilder add(@Nonnull Node sourceNode,
                                 @Nonnull Node targetNode,
-                                @Nonnull String edgeLabel,
+                                @Nonnull EdgeLabel edgeLabel,
                                 @Nonnull Properties edgeProperties) {
     var edge = Edge(sourceNode, targetNode, edgeLabel, edgeProperties);
     addNodeConnection(sourceNode, edge);
@@ -37,7 +38,7 @@ public class TranslationBuilder {
 
   public TranslationBuilder add(@Nonnull Node fromNode,
                                 @Nonnull Node toNode,
-                                @Nonnull String edgeLabel) {
+                                @Nonnull EdgeLabel edgeLabel) {
     return add(fromNode, toNode, edgeLabel, Properties.empty());
   }
 

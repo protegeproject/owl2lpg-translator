@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabels;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,24 +47,24 @@ public class GraphFactoryTest {
   @Test
   public void shouldCreateEdge() {
     var edge = GraphFactory.Edge(
-        fromNode, toNode,
-        EdgeLabels.ENTITY_IRI,
-        properties);
-    assertEdgeMatches(edge, fromNode, toNode, EdgeLabels.ENTITY_IRI, properties);
+            fromNode, toNode,
+            EdgeLabel.ENTITY_IRI,
+            properties);
+    assertEdgeMatches(edge, fromNode, toNode, EdgeLabel.ENTITY_IRI, properties);
   }
 
   @Test
   public void shouldCreateEdgeWithEmptyProperties() {
     var edge = GraphFactory.Edge(
-        fromNode, toNode,
-        EdgeLabels.ENTITY_IRI);
-    assertEdgeMatches(edge, fromNode, toNode, EdgeLabels.ENTITY_IRI, Properties.empty());
+            fromNode, toNode,
+            EdgeLabel.ENTITY_IRI);
+    assertEdgeMatches(edge, fromNode, toNode, EdgeLabel.ENTITY_IRI, Properties.empty());
   }
 
   private static void assertEdgeMatches(Edge actualNode,
                                         Node expectedFromNode,
                                         Node expectedToNode,
-                                        String expectedNodeLabel,
+                                        EdgeLabel expectedNodeLabel,
                                         Properties expectedProperties) {
     assertThat(actualNode.getFromNode(), equalTo(expectedFromNode));
     assertThat(actualNode.getToNode(), equalTo(expectedToNode));
