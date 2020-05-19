@@ -123,11 +123,9 @@ public class CypherExporter {
   }
 
   private static String escape(String value) {
-    var bytes = value.replaceAll("\n", " ")
-        .replaceAll("'", "\\\\'")
-        .replaceAll("\"", "\\\\\"")
-        .getBytes();
-    return new String(bytes, Charsets.UTF_8);
+    return value.replace("\n", " ")
+        .replace("'", "\\\\'")
+        .replace("\"", "\\\\\"");
   }
 
   private static String printEdgeLabel(String edgeLabel) {
