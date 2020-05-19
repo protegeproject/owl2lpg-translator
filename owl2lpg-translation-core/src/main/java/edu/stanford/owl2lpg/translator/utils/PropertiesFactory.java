@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator.utils;
 
+import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Properties;
 
 /**
@@ -19,7 +20,7 @@ public class PropertiesFactory {
    * @return An instance of java.util.Properties
    */
   public static Properties Properties(String key, Object value) {
-    return PropertiesBuilder.create().set(key, value).build();
+    return Properties.create(ImmutableMap.of(key, value));
   }
 
   /**
