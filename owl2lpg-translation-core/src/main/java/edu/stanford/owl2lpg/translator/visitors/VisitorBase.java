@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
@@ -68,11 +69,13 @@ public abstract class VisitorBase {
     return createNode(
         LiteralWrapper.create(anyLiteral),
         nodeLabels,
-        PropertiesBuilder.create()
-            .set(PropertyFields.LEXICAL_FORM, anyLiteral.getLiteral())
-            .set(PropertyFields.DATATYPE, anyLiteral.getDatatype().getIRI().toString())
-            .set(PropertyFields.LANGUAGE, anyLiteral.getLang())
-            .build());
+        Properties.create(
+                ImmutableMap.of(
+                        PropertyFields.LEXICAL_FORM, anyLiteral.getLiteral(),
+                        PropertyFields.DATATYPE, anyLiteral.getDatatype().getIRI().toString(),
+                        PropertyFields.LANGUAGE, anyLiteral.getLang()
+                )
+        ));
   }
 
   @Nonnull
