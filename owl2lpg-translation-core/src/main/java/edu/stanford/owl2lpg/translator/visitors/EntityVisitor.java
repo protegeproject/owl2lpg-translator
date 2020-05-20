@@ -1,16 +1,20 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.EdgeFactory;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 entities.
@@ -18,118 +22,71 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class EntityVisitor extends VisitorBase
-    implements OWLEntityVisitorEx<Translation> {
+public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
-  private Node mainNode;
+  @Nonnull
+  private final NodeFactory nodeFactory;
 
-  private final VisitorFactory visitorFactory;
+  @Nonnull
+  private final EdgeFactory edgeFactory;
 
-  public EntityVisitor(@Nonnull VisitorFactory visitorFactory) {
-    super(visitorFactory.getNodeIdMapper());
-    this.visitorFactory = checkNotNull(visitorFactory);
+  @Nonnull
+  private final AnnotationValueTranslator translator;
+
+  @Inject
+  public EntityVisitor(@Nonnull NodeFactory nodeFactory,
+                       @Nonnull EdgeFactory edgeFactory,
+                       @Nonnull AnnotationValueTranslator translator) {
+    this.nodeFactory = checkNotNull(nodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
+    this.translator = checkNotNull(translator);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLClass c) {
-    mainNode = createEntityNode(c, NodeLabels.CLASS);
-    var entityIriEdge = createEdge(c.getIRI(), EdgeLabel.ENTITY_IRI);
-    var iriTranslation = createNestedTranslation(c.getIRI());
-    return createEntityTranslation(
-        mainNode,
-        ImmutableList.of(entityIriEdge),
-        ImmutableList.of(iriTranslation));
+    return translateEntity(c, CLASS);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatype dt) {
-    mainNode = createEntityNode(dt, NodeLabels.DATATYPE);
-    var entityIriEdge = createEdge(dt.getIRI(), EdgeLabel.ENTITY_IRI);
-    var iriTranslation = createNestedTranslation(dt.getIRI());
-    return createEntityTranslation(
-        mainNode,
-        ImmutableList.of(entityIriEdge),
-        ImmutableList.of(iriTranslation));
+    return translateEntity(dt, DATATYPE);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
-    mainNode = createEntityNode(op, NodeLabels.OBJECT_PROPERTY);
-    var entityIriEdge = createEdge(op.getIRI(), EdgeLabel.ENTITY_IRI);
-    var iriTranslation = createNestedTranslation(op.getIRI());
-    return createEntityTranslation(
-        mainNode,
-        ImmutableList.of(entityIriEdge),
-        ImmutableList.of(iriTranslation));
+    return translateEntity(op, OBJECT_PROPERTY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
-    mainNode = createEntityNode(dp, NodeLabels.DATA_PROPERTY);
-    var entityIriEdge = createEdge(dp.getIRI(), EdgeLabel.ENTITY_IRI);
-    var iriTranslation = createNestedTranslation(dp.getIRI());
-    return createEntityTranslation(
-        mainNode,
-        ImmutableList.of(entityIriEdge),
-        ImmutableList.of(iriTranslation));
+    return translateEntity(dp, DATA_PROPERTY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
-    mainNode = createEntityNode(ap, NodeLabels.ANNOTATION_PROPERTY);
-    var entityIriEdge = createEdge(ap.getIRI(), EdgeLabel.ENTITY_IRI);
-    var iriTranslation = createNestedTranslation(ap.getIRI());
-    return createEntityTranslation(
-        mainNode,
+    return translateEntity(ap, ANNOTATION_PROPERTY);
+  }
+
+  @Nonnull
+  @Override
+  public Translation visit(@Nonnull OWLNamedIndividual ind) {
+    return translateEntity(ind, NAMED_INDIVIDUAL);
+  }
+
+  private Translation translateEntity(OWLEntity entity, ImmutableList<String> nodeLabels) {
+    var mainNode = nodeFactory.createNode(entity, nodeLabels,
+        Properties(PropertyFields.IRI, String.valueOf(entity.getIRI())));
+    var iriTranslation = translator.translate(entity.getIRI());
+    var entityIriEdge = edgeFactory.createEdge(mainNode,
+        iriTranslation.getMainNode(),
+        EdgeLabel.ENTITY_IRI);
+    return Translation.create(mainNode,
         ImmutableList.of(entityIriEdge),
         ImmutableList.of(iriTranslation));
-  }
-
-  @Nonnull
-  @Override
-  public Translation visit(@Nonnull OWLNamedIndividual a) {
-    mainNode = createEntityNode(a, NodeLabels.NAMED_INDIVIDUAL);
-    var entityIriEdge = createEdge(a.getIRI(), EdgeLabel.ENTITY_IRI);
-    var iriTranslation = createNestedTranslation(a.getIRI());
-    return createEntityTranslation(
-        mainNode,
-        ImmutableList.of(entityIriEdge),
-        ImmutableList.of(iriTranslation));
-  }
-
-  @Nonnull
-  protected Translation createEntityTranslation(@Nonnull Node mainNode,
-                                                @Nonnull ImmutableList<Edge> edges,
-                                                @Nonnull ImmutableList<Translation> nestedTranslations) {
-    checkNotNull(mainNode);
-    checkNotNull(edges);
-    checkNotNull(nestedTranslations);
-    return Translation.create(mainNode, edges, nestedTranslations);
-  }
-
-  @Nonnull
-  @Override
-  protected Node getMainNode() {
-    return mainNode;
-  }
-
-  @Nonnull
-  @Override
-  protected Translation getTranslation(OWLObject anyObject) {
-    checkNotNull(anyObject);
-    if (anyObject instanceof IRI) {
-      return getIriTranslation((IRI) anyObject);
-    }
-    throw new IllegalArgumentException("Implementation error");
-  }
-
-  private Translation getIriTranslation(IRI iri) {
-    var annotationValueVisitor = visitorFactory.createAnnotationValueVisitor();
-    return iri.accept(annotationValueVisitor);
   }
 }
