@@ -17,11 +17,11 @@ import java.util.Objects;
 @AutoValue
 public abstract class IriNode {
 
-  public static final String NODE_ID = "nodeId";
+  public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_IRI = "propertyIri";
+  public static final String PROPERTY_IRI = "iri:string";
 
-  public static final String NODE_LABELS = "nodeLabels";
+  public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull

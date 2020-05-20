@@ -1,5 +1,7 @@
 package edu.stanford.owl2lpg.exporter.csv.beans;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.model.Edge;
 
@@ -14,12 +16,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @AutoValue
 public abstract class PropertylessEdge {
 
-  public static PropertylessEdge create(@Nonnull String startNodeId,
-                                        @Nonnull String endNodeId,
-                                        @Nonnull String edgeType) {
+  public static final String START_NODE_ID = ":START_ID";
+
+  public static final String END_NODE_ID = ":END_ID";
+
+  public static final String EDGE_TYPE = ":TYPE";
+
+  @JsonCreator
+  @Nonnull
+  public static PropertylessEdge create(@JsonProperty(START_NODE_ID) @Nonnull String startNodeId,
+                                        @JsonProperty(END_NODE_ID) @Nonnull String endNodeId,
+                                        @JsonProperty(EDGE_TYPE) @Nonnull String edgeType) {
     return new AutoValue_PropertylessEdge(startNodeId, endNodeId, edgeType);
   }
 
+  @Nonnull
   public static PropertylessEdge of(@Nonnull Edge edge) {
     checkNotNull(edge);
     return create(
@@ -28,12 +39,15 @@ public abstract class PropertylessEdge {
         edge.getLabel().name());
   }
 
+  @JsonProperty(START_NODE_ID)
   @Nonnull
   public abstract String getStartNodeId();
 
+  @JsonProperty(END_NODE_ID)
   @Nonnull
   public abstract String getEndNodeId();
 
+  @JsonProperty(EDGE_TYPE)
   @Nonnull
   public abstract String getEdgeType();
 }

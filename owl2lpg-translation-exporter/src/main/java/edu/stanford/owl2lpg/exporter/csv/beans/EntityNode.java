@@ -1,5 +1,7 @@
 package edu.stanford.owl2lpg.exporter.csv.beans;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
@@ -16,12 +18,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @AutoValue
 public abstract class EntityNode {
 
-  public static EntityNode create(@Nonnull String nodeId,
-                                  @Nonnull String propertyIri,
-                                  @Nonnull ImmutableList<String> nodeLabels) {
+  public static final String NODE_ID = ":ID";
+
+  public static final String PROPERTY_CARDINALITY = "cardinality:int";
+
+  public static final String NODE_LABELS = ":LABEL";
+
+  @JsonCreator
+  @Nonnull
+  public static EntityNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                                  @JsonProperty(PROPERTY_CARDINALITY) @Nonnull String propertyIri,
+                                  @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
     return new AutoValue_EntityNode(nodeId, propertyIri, nodeLabels);
   }
 
+  @Nonnull
   public static EntityNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
@@ -30,12 +41,15 @@ public abstract class EntityNode {
         node.getLabels());
   }
 
+  @JsonProperty(NODE_ID)
   @Nonnull
   public abstract String getNodeId();
 
+  @JsonProperty(PROPERTY_CARDINALITY)
   @Nonnull
   public abstract String getPropertyIri();
 
+  @JsonProperty(NODE_LABELS)
   @Nonnull
   public abstract ImmutableList<String> getNodeLabels();
 }
