@@ -100,15 +100,13 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectSomeValuesFrom ce) {
-    return translateObjectRestriction(ce, OBJECT_SOME_VALUES_FROM
-    );
+    return translateObjectRestriction(ce, OBJECT_SOME_VALUES_FROM);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectAllValuesFrom ce) {
-    return translateObjectRestriction(ce, OBJECT_ALL_VALUES_FROM
-    );
+    return translateObjectRestriction(ce, OBJECT_ALL_VALUES_FROM);
   }
 
   @Nonnull
@@ -132,23 +130,20 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectMinCardinality ce) {
-    return translateObjectRestriction(ce, OBJECT_MIN_CARDINALITY
-    );
+    return translateObjectRestriction(ce, OBJECT_MIN_CARDINALITY);
   }
 
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectExactCardinality ce) {
-    return translateObjectRestriction(ce, OBJECT_EXACT_CARDINALITY
-    );
+    return translateObjectRestriction(ce, OBJECT_EXACT_CARDINALITY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectMaxCardinality ce) {
-    return translateObjectRestriction(ce, OBJECT_MAX_CARDINALITY
-    );
+    return translateObjectRestriction(ce, OBJECT_MAX_CARDINALITY);
   }
 
   @Nonnull
@@ -171,8 +166,8 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var translations = ImmutableList.<Translation>builder();
     var edges = ImmutableList.<Edge>builder();
     var individuals = ce.getIndividuals();
-    for (var a : individuals) {
-      var translation = individualTranslator.translate(a);
+    for (var ind : individuals) {
+      var translation = individualTranslator.translate(ind);
       translations.add(translation);
       edges.add(edgeFactory.createEdge(mainNode,
           translation.getMainNode(),
