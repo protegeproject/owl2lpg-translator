@@ -57,7 +57,8 @@ public class VisitorFactory {
 
   @Nonnull
   public OWLClassExpressionVisitorEx<Translation> createClassExpressionVisitor() {
-    return new ClassExpressionVisitor(this);
+    return new ClassExpressionVisitor(this, edgeFactory, nodeFactory, ceTranslator, entityTranslator,
+                                      propertyExpressionTranslator);
   }
 
   @Nonnull

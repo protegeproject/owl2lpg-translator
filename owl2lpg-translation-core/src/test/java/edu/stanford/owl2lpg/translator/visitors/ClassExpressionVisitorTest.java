@@ -43,7 +43,8 @@ public class ClassExpressionVisitorTest {
   @Before
   public void setUp() {
     when(visitorFactory.getNodeIdMapper()).thenReturn(nodeIdMapper);
-    visitor = spy(new ClassExpressionVisitor(visitorFactory));
+    visitor = spy(new ClassExpressionVisitor(visitorFactory, edgeFactory, nodeFactory, ceTranslator, entityTranslator,
+                                             propertyExpressionTranslator));
     when(visitorFactory.createEntityVisitor()).thenReturn(entityVisitor);
     when(visitor.getTranslation(anyClassExpression)).thenReturn(nestedTranslation);
     when(visitor.getTranslation(anyObjectPropertyExpression)).thenReturn(nestedTranslation);
@@ -319,6 +320,7 @@ public class ClassExpressionVisitorTest {
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenVisitorFactoryNull() {
     VisitorFactory nullVisitorFactory = null;
-    new ClassExpressionVisitor(nullVisitorFactory);
+    new ClassExpressionVisitor(nullVisitorFactory, edgeFactory, nodeFactory, ceTranslator, entityTranslator,
+                               propertyExpressionTranslator);
   }
 }

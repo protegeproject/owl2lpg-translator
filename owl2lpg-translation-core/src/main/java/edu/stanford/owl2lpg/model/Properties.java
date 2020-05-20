@@ -25,6 +25,11 @@ public abstract class Properties {
     return new AutoValue_Properties(map);
   }
 
+  @Nonnull
+  public static Properties of(@Nonnull String property, @Nonnull String value) {
+    return create(ImmutableMap.of(property, value));
+  }
+
   protected abstract ImmutableMap<String, Object> getMap();
 
   @Nullable
