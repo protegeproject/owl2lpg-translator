@@ -1,16 +1,18 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.EdgeFactory;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.translator.*;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 annotations.
@@ -18,109 +20,108 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AnnotationObjectVisitor extends VisitorBase
-    implements OWLAnnotationObjectVisitorEx<Translation> {
+public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Translation> {
 
-  private final VisitorFactory visitorFactory;
+  @Nonnull
+  private final NodeFactory nodeFactory;
 
-  private Node mainNode;
+  @Nonnull
+  private final EdgeFactory edgeFactory;
 
-  public AnnotationObjectVisitor(@Nonnull VisitorFactory visitorFactory) {
-    super(visitorFactory.getNodeIdMapper());
-    this.visitorFactory = checkNotNull(visitorFactory);
+  @Nonnull
+  private final PropertyExpressionTranslator propertyExprTranslator;
+
+  @Nonnull
+  private final AnnotationValueTranslator annotationValueTranslator;
+
+  @Nonnull
+  private final AnnotationObjectTranslator annotationObjectTranslator;
+
+  @Nonnull
+  private final AxiomTranslator axiomTranslator;
+
+  @Inject
+  public AnnotationObjectVisitor(@Nonnull NodeFactory nodeFactory,
+                                 @Nonnull EdgeFactory edgeFactory,
+                                 @Nonnull PropertyExpressionTranslator propertyExprTranslator,
+                                 @Nonnull AnnotationValueTranslator annotationValueTranslator,
+                                 @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
+                                 @Nonnull AxiomTranslator axiomTranslator) {
+    this.nodeFactory = checkNotNull(nodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
+    this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
+    this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
+    this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
+    this.axiomTranslator = checkNotNull(axiomTranslator);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotation annotation) {
-    mainNode = createNode(annotation, NodeLabels.ANNOTATION);
-    var annotationPropertyEdge = createEdge(annotation.getProperty(), EdgeLabel.ANNOTATION_PROPERTY);
-    var annotationPropertyTranslation = createNestedTranslation(annotation.getProperty());
-    var annotationValueEdge = createEdge(annotation.getValue(), EdgeLabel.ANNOTATION_VALUE);
-    var annotationValueTranslation = createNestedTranslation(annotation.getValue());
-    var annotationAnnotationEdges = createEdges(annotation.getAnnotations(), EdgeLabel.ANNOTATION_ANNOTATION);
-    var annotationAnnotationTranslations = createNestedTranslations(annotation.getAnnotations());
-    var allEdges = Lists.newArrayList(annotationPropertyEdge, annotationValueEdge);
-    allEdges.addAll(annotationAnnotationEdges);
-    var allNestedTranslations = Lists.newArrayList(annotationPropertyTranslation, annotationValueTranslation);
-    allNestedTranslations.addAll(annotationAnnotationTranslations);
+    var mainNode = nodeFactory.createNode(annotation, NodeLabels.ANNOTATION);
+    var translations = new ImmutableList.Builder<Translation>();
+    var edges = new ImmutableList.Builder<Edge>();
+    var annotationPropertyTranslation = propertyExprTranslator.translate(annotation.getProperty());
+    translations.add(annotationPropertyTranslation);
+    edges.add(edgeFactory.createEdge(mainNode,
+        annotationPropertyTranslation.getMainNode(),
+        ANNOTATION_PROPERTY));
+    var annotationValueTranslation = annotationValueTranslator.translate(annotation.getValue());
+    translations.add(annotationValueTranslation);
+    edges.add(edgeFactory.createEdge(mainNode,
+        annotationValueTranslation.getMainNode(),
+        ANNOTATION_VALUE));
+    for (var ann : annotation.getAnnotations()) {
+      var translation = annotationObjectTranslator.translate(ann);
+      translations.add(translation);
+      edges.add(edgeFactory.createEdge(mainNode,
+          translation.getMainNode(),
+          ANNOTATION_ANNOTATION));
+    }
     return Translation.create(mainNode,
-        ImmutableList.copyOf(allEdges),
-        ImmutableList.copyOf(allNestedTranslations));
+        edges.build(),
+        translations.build());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull IRI iri) {
-    return visitorFactory.createAnnotationValueVisitor().visit(iri);
+    return annotationValueTranslator.translate(iri);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    return visitorFactory.createIndividualVisitor().visit(individual);
+    return annotationValueTranslator.translate(individual);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLLiteral literal) {
-    return visitorFactory.createDataVisitor().visit(literal);
+    return annotationValueTranslator.translate(literal);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationAssertionAxiom axiom) {
-    throw new UnsupportedOperationException("Use the AxiomVisitor to visit OWLAnnotationAssertionAxiom");
+    return axiomTranslator.translate(axiom);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLSubAnnotationPropertyOfAxiom axiom) {
-    throw new UnsupportedOperationException("Use the AxiomVisitor to visit OWLSubAnnotationPropertyOfAxiom");
+    return axiomTranslator.translate(axiom);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationPropertyDomainAxiom axiom) {
-    throw new UnsupportedOperationException("Use the AxiomVisitor to visit OWLAnnotationPropertyDomainAxiom");
+    return axiomTranslator.translate(axiom);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationPropertyRangeAxiom axiom) {
-    throw new UnsupportedOperationException("Use the AxiomVisitor to visit OWLAnnotationPropertyRangeAxiom");
-  }
-
-  @Override
-  protected Node getMainNode() {
-    return mainNode;
-  }
-
-  @Override
-  protected Translation getTranslation(@Nonnull OWLObject anyObject) {
-    checkNotNull(anyObject);
-    if (anyObject instanceof OWLAnnotation) {
-      return getAnnotationTranslation((OWLAnnotation) anyObject);
-    } else if (anyObject instanceof OWLAnnotationProperty) {
-      return getAnnotationPropertyTranslation((OWLAnnotationProperty) anyObject);
-    } else if (anyObject instanceof OWLAnnotationValue) {
-      return getAnnotationValueTranslation((OWLAnnotationValue) anyObject);
-    }
-    throw new IllegalArgumentException("Implementation error");
-  }
-
-  private Translation getAnnotationTranslation(OWLAnnotation annotation) {
-    var annotationVisitor = visitorFactory.createAnnotationObjectVisitor();
-    return annotation.accept(annotationVisitor);
-  }
-
-  private Translation getAnnotationPropertyTranslation(OWLAnnotationProperty annotationProperty) {
-    var entityVisitor = visitorFactory.createEntityVisitor();
-    return annotationProperty.accept(entityVisitor);
-  }
-
-  private Translation getAnnotationValueTranslation(OWLAnnotationValue value) {
-    var annotationObjectVisitor = visitorFactory.createAnnotationObjectVisitor();
-    return value.accept(annotationObjectVisitor);
+    return axiomTranslator.translate(axiom);
   }
 }
