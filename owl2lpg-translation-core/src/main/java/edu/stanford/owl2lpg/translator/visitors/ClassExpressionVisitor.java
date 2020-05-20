@@ -2,18 +2,16 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.*;
-import edu.stanford.owl2lpg.translator.ClassExpressionTranslator;
-import edu.stanford.owl2lpg.translator.EntityTranslator;
-import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import edu.stanford.owl2lpg.translator.*;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 
@@ -26,28 +24,46 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Translation> {
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
-
-  @Nonnull
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final ClassExpressionTranslator ceTranslator;
+  private final EdgeFactory edgeFactory;
 
   @Nonnull
   private final EntityTranslator entityTranslator;
 
   @Nonnull
-  private final PropertyExpressionTranslator propertyExpressionTranslator;
+  private final ClassExpressionTranslator classExprTranslator;
 
+  @Nonnull
+  private final PropertyExpressionTranslator propertyExprTranslator;
+
+  @Nonnull
+  private final DataRangeTranslator dataRangeTranslator;
+
+  @Nonnull
+  private final LiteralTranslator literalTranslator;
+
+  @Nonnull
+  private final IndividualTranslator individualTranslator;
 
   @Inject
-  public ClassExpressionVisitor(@Nonnull EdgeFactory edgeFactory, @Nonnull NodeFactory nodeFactory, @Nonnull ClassExpressionTranslator ceTranslator, @Nonnull EntityTranslator entityTranslator, @Nonnull PropertyExpressionTranslator propertyExpressionTranslator) {
-    this.entityTranslator = entityTranslator;
-    this.edgeFactory = checkNotNull(edgeFactory);
+  public ClassExpressionVisitor(@Nonnull NodeFactory nodeFactory,
+                                @Nonnull EdgeFactory edgeFactory,
+                                @Nonnull EntityTranslator entityTranslator,
+                                @Nonnull ClassExpressionTranslator classExprTranslator,
+                                @Nonnull PropertyExpressionTranslator propertyExprTranslator,
+                                @Nonnull DataRangeTranslator dataRangeTranslator,
+                                @Nonnull LiteralTranslator literalTranslator,
+                                @Nonnull IndividualTranslator individualTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.ceTranslator = checkNotNull(ceTranslator);
-    this.propertyExpressionTranslator = propertyExpressionTranslator;
+    this.edgeFactory = checkNotNull(edgeFactory);
+    this.entityTranslator = checkNotNull(entityTranslator);
+    this.classExprTranslator = checkNotNull(classExprTranslator);
+    this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
+    this.dataRangeTranslator = checkNotNull(dataRangeTranslator);
+    this.literalTranslator = checkNotNull(literalTranslator);
+    this.individualTranslator = checkNotNull(individualTranslator);
   }
 
   @Nonnull
@@ -62,24 +78,6 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     return translateNaryClassExpression(ce, OBJECT_INTERSECTION_OF);
   }
 
-  private Translation translateNaryClassExpression(@Nonnull OWLNaryBooleanClassExpression ce, ImmutableList<String> labels) {
-    var mainNode = nodeFactory.createNode(ce, labels);
-    var translations = ImmutableList.<Translation>builder();
-    var edges = ImmutableList.<Edge>builder();
-    var operands = ce.getOperands();
-    for(var op : operands) {
-      var translation = ceTranslator.translate(op);
-      translations.add(translation);
-      var edge = edgeFactory.createEdge(mainNode,
-                                        translation.getMainNode(),
-                                        CLASS_EXPRESSION, Properties.empty());
-      edges.add(edge);
-    }
-    return Translation.create(mainNode,
-        edges.build(),
-        translations.build());
-  }
-
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectUnionOf ce) {
@@ -89,94 +87,78 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectComplementOf ce) {
-    return translateNaryClassExpression(ce, )
+    var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_COMPLEMENT_OF);
+    var classExprTranslation = classExprTranslator.translate(ce.getOperand());
+    var classExprEdge = edgeFactory.createEdge(mainNode,
+        classExprTranslation.getMainNode(),
+        CLASS_EXPRESSION);
+    return Translation.create(mainNode,
+        ImmutableList.of(classExprEdge),
+        ImmutableList.of(classExprTranslation));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectSomeValuesFrom ce) {
-    return translateRestriction(ce,
-                                OBJECT_SOME_VALUES_FROM,
-                                OBJECT_PROPERTY_EXPRESSION,
-                                CLASS_EXPRESSION);
-  }
-
-  private Translation translateRestriction(@Nonnull OWLQuantifiedObjectRestriction ce, ImmutableList<String> labels, EdgeLabel propertyEdgeLabel, EdgeLabel fillerEdgeLabel) {
-    var mainNode = nodeFactory.createNode(ce, labels);
-    var propertyTranslation = propertyExpressionTranslator.translate(ce.getProperty());
-    var fillerTranslation = ceTranslator.translate(ce.getFiller());
-    var edges = ImmutableList.<Edge>builder();
-    edges.add(edgeFactory.createEdge(mainNode, propertyTranslation.getMainNode(),
-                                     propertyEdgeLabel, Properties.empty()));
-    edges.add(edgeFactory.createEdge(mainNode, fillerTranslation.getMainNode(), fillerEdgeLabel, Properties.empty()));
-    return Translation.create(mainNode,
-                              edges.build(),
-                              ImmutableList.of(propertyTranslation, fillerTranslation));
+    return translateObjectRestriction(ce, OBJECT_SOME_VALUES_FROM
+    );
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectAllValuesFrom ce) {
-    return translateRestriction(ce,
-                                OBJECT_ALL_VALUES_FROM,
-                                OBJECT_PROPERTY_EXPRESSION,
-                                CLASS_EXPRESSION);
+    return translateObjectRestriction(ce, OBJECT_ALL_VALUES_FROM
+    );
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectHasValue ce) {
-    return translateRestriction(ce,
-                                OBJECT_HAS_VALUE,
-                                OBJECT_PROPERTY_EXPRESSION,
-                                INDIVIDUAL);
+    var mainNode = nodeFactory.createNode(ce, OBJECT_HAS_VALUE);
+    var propertyTranslation = propertyExprTranslator.translate(ce.getProperty());
+    var fillerTranslation = individualTranslator.translate(ce.getFiller());
+    var edges = ImmutableList.<Edge>builder();
+    edges.add(edgeFactory.createEdge(mainNode,
+        propertyTranslation.getMainNode(),
+        OBJECT_PROPERTY_EXPRESSION));
+    edges.add(edgeFactory.createEdge(mainNode,
+        fillerTranslation.getMainNode(),
+        INDIVIDUAL));
+    return Translation.create(mainNode,
+        edges.build(),
+        ImmutableList.of(propertyTranslation, fillerTranslation));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectMinCardinality ce) {
-    mainNode = createCardinalityNode(ce, NodeLabels.OBJECT_MIN_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), CLASS_EXPRESSION);
-    var classExprTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, classExprEdge),
-        ImmutableList.of(propertyExprTranslation, classExprTranslation));
+    return translateObjectRestriction(ce, OBJECT_MIN_CARDINALITY
+    );
   }
+
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectExactCardinality ce) {
-    mainNode = createCardinalityNode(ce, NodeLabels.OBJECT_EXACT_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), CLASS_EXPRESSION);
-    var classExprTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, classExprEdge),
-        ImmutableList.of(propertyExprTranslation, classExprTranslation));
+    return translateObjectRestriction(ce, OBJECT_EXACT_CARDINALITY
+    );
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectMaxCardinality ce) {
-    mainNode = createCardinalityNode(ce, NodeLabels.OBJECT_MAX_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var classExprEdge = createEdge(ce.getFiller(), CLASS_EXPRESSION);
-    var classExprTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, classExprEdge),
-        ImmutableList.of(propertyExprTranslation, classExprTranslation));
+    return translateObjectRestriction(ce, OBJECT_MAX_CARDINALITY
+    );
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectHasSelf ce) {
-    mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_HAS_SELF);
-    var propertyExprEdge = createEdge(ce.getProperty(), OBJECT_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
+    var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_HAS_SELF);
+    var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
+    var propertyExprEdge = edgeFactory.createEdge(mainNode,
+        propertyExprTranslation.getMainNode(),
+        OBJECT_PROPERTY_EXPRESSION);
     return Translation.create(mainNode,
         ImmutableList.of(propertyExprEdge),
         ImmutableList.of(propertyExprTranslation));
@@ -185,89 +167,130 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectOneOf ce) {
-    mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_ONE_OF);
-    var individualEdges = createEdges(ce.getIndividuals(), INDIVIDUAL);
-    var individualTranslations = createNestedTranslations(ce.getIndividuals());
+    var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_ONE_OF);
+    var translations = ImmutableList.<Translation>builder();
+    var edges = ImmutableList.<Edge>builder();
+    var individuals = ce.getIndividuals();
+    for (var a : individuals) {
+      var translation = individualTranslator.translate(a);
+      translations.add(translation);
+      edges.add(edgeFactory.createEdge(mainNode,
+          translation.getMainNode(),
+          INDIVIDUAL));
+    }
     return Translation.create(mainNode,
-        ImmutableList.copyOf(individualEdges),
-        ImmutableList.copyOf(individualTranslations));
+        edges.build(),
+        translations.build());
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataSomeValuesFrom ce) {
-    mainNode = nodeFactory.createNode(ce, NodeLabels.DATA_SOME_VALUES_FROM);
-    var propertyExprEdge = createEdge(ce.getProperty(), DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), DATA_RANGE);
-    var dataRangeTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, dataRangeEdge),
-        ImmutableList.of(propertyExprTranslation, dataRangeTranslation));
+    return translateDataRestriction(ce, DATA_SOME_VALUES_FROM);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataAllValuesFrom ce) {
-    mainNode = nodeFactory.createNode(ce, NodeLabels.DATA_ALL_VALUES_FROM);
-    var propertyExprEdge = createEdge(ce.getProperty(), DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), DATA_RANGE);
-    var dataRangeTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, dataRangeEdge),
-        ImmutableList.of(propertyExprTranslation, dataRangeTranslation));
+    return translateDataRestriction(ce, DATA_ALL_VALUES_FROM);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataHasValue ce) {
-    mainNode = nodeFactory.createNode(ce, NodeLabels.DATA_HAS_VALUE);
-    var propertyExprEdge = createEdge(ce.getProperty(), DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var literalEdge = createEdge(ce.getFiller(), LITERAL);
-    var literalTranslation = createNestedTranslation(ce.getFiller());
+    var mainNode = nodeFactory.createNode(ce, NodeLabels.DATA_HAS_VALUE);
+    var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
+    var fillerTranslation = literalTranslator.translate(ce.getFiller());
+    var edges = ImmutableList.<Edge>builder();
+    edges.add(edgeFactory.createEdge(mainNode,
+        propertyExprTranslation.getMainNode(),
+        DATA_PROPERTY_EXPRESSION));
+    edges.add(edgeFactory.createEdge(mainNode,
+        fillerTranslation.getMainNode(),
+        LITERAL));
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, literalEdge),
-        ImmutableList.of(propertyExprTranslation, literalTranslation));
+        edges.build(),
+        ImmutableList.of(propertyExprTranslation, fillerTranslation));
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataMinCardinality ce) {
-    mainNode = createCardinalityNode(ce, NodeLabels.DATA_MIN_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), DATA_RANGE);
-    var dataRangeTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, dataRangeEdge),
-        ImmutableList.of(propertyExprTranslation, dataRangeTranslation));
+    return translateDataRestriction(ce, DATA_MIN_CARDINALITY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataExactCardinality ce) {
-    mainNode = createCardinalityNode(ce, NodeLabels.DATA_EXACT_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), DATA_RANGE);
-    var dataRangeTranslation = createNestedTranslation(ce.getFiller());
-    return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, dataRangeEdge),
-        ImmutableList.of(propertyExprTranslation, dataRangeTranslation));
+    return translateDataRestriction(ce, DATA_EXACT_CARDINALITY);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataMaxCardinality ce) {
-    mainNode = createCardinalityNode(ce, NodeLabels.DATA_MAX_CARDINALITY);
-    var propertyExprEdge = createEdge(ce.getProperty(), DATA_PROPERTY_EXPRESSION);
-    var propertyExprTranslation = createNestedTranslation(ce.getProperty());
-    var dataRangeEdge = createEdge(ce.getFiller(), DATA_RANGE);
-    var dataRangeTranslation = createNestedTranslation(ce.getFiller());
+    return translateDataRestriction(ce, DATA_MAX_CARDINALITY);
+  }
+
+  private Translation translateNaryClassExpression(@Nonnull OWLNaryBooleanClassExpression ce,
+                                                   @Nonnull ImmutableList<String> labels) {
+    var mainNode = nodeFactory.createNode(ce, labels);
+    var translations = ImmutableList.<Translation>builder();
+    var edges = ImmutableList.<Edge>builder();
+    var operands = ce.getOperands();
+    for (var op : operands) {
+      var translation = classExprTranslator.translate(op);
+      translations.add(translation);
+      edges.add(edgeFactory.createEdge(mainNode,
+          translation.getMainNode(),
+          CLASS_EXPRESSION, Properties.empty()));
+    }
     return Translation.create(mainNode,
-        ImmutableList.of(propertyExprEdge, dataRangeEdge),
-        ImmutableList.of(propertyExprTranslation, dataRangeTranslation));
+        edges.build(),
+        translations.build());
+  }
+
+  private Translation translateObjectRestriction(@Nonnull OWLQuantifiedObjectRestriction ce,
+                                                 @Nonnull ImmutableList<String> labels) {
+    var mainNode = getMainNode(ce, labels);
+    var propertyTranslation = propertyExprTranslator.translate(ce.getProperty());
+    var fillerTranslation = classExprTranslator.translate(ce.getFiller());
+    var edges = ImmutableList.<Edge>builder();
+    edges.add(edgeFactory.createEdge(mainNode,
+        propertyTranslation.getMainNode(),
+        OBJECT_PROPERTY_EXPRESSION));
+    edges.add(edgeFactory.createEdge(mainNode,
+        fillerTranslation.getMainNode(),
+        CLASS_EXPRESSION));
+    return Translation.create(mainNode,
+        edges.build(),
+        ImmutableList.of(propertyTranslation, fillerTranslation));
+  }
+
+  private Translation translateDataRestriction(@Nonnull OWLQuantifiedDataRestriction ce,
+                                               @Nonnull ImmutableList<String> nodeLabels) {
+    var mainNode = getMainNode(ce, nodeLabels);
+    var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
+    var fillerTranslation = dataRangeTranslator.translate(ce.getFiller());
+    var edges = ImmutableList.<Edge>builder();
+    edges.add(edgeFactory.createEdge(mainNode,
+        propertyExprTranslation.getMainNode(),
+        DATA_PROPERTY_EXPRESSION));
+    edges.add(edgeFactory.createEdge(mainNode,
+        fillerTranslation.getMainNode(),
+        DATA_RANGE));
+    return Translation.create(mainNode,
+        edges.build(),
+        ImmutableList.of(propertyExprTranslation, fillerTranslation));
+  }
+
+  private Node getMainNode(@Nonnull OWLRestriction restriction,
+                           @Nonnull ImmutableList<String> labels) {
+    if (restriction instanceof HasCardinality) {
+      var cardinality = ((HasCardinality) restriction).getCardinality();
+      return nodeFactory.createNode(restriction, labels,
+          Properties.of(PropertyFields.CARDINALITY, cardinality));
+    } else {
+      return nodeFactory.createNode(restriction, labels);
+    }
   }
 }

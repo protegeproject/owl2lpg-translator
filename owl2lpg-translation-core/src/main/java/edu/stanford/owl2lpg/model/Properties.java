@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
-import com.google.auto.value.extension.memoized.Memoized;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
@@ -26,7 +25,7 @@ public abstract class Properties {
   }
 
   @Nonnull
-  public static Properties of(@Nonnull String property, @Nonnull String value) {
+  public static Properties of(@Nonnull String property, @Nonnull Object value) {
     return create(ImmutableMap.of(property, value));
   }
 

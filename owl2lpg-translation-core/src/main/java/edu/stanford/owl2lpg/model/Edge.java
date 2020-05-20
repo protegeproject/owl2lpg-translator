@@ -23,6 +23,12 @@ public abstract class Edge {
     return new AutoValue_Edge(fromNode, toNode, label, properties);
   }
 
+  public static Edge create(@Nonnull Node fromNode,
+                            @Nonnull Node toNode,
+                            @Nonnull EdgeLabel label) {
+    return create(fromNode, toNode, label, Properties.empty());
+  }
+
   public boolean isReflexive() {
     return getFromNode().equals(getToNode());
   }
