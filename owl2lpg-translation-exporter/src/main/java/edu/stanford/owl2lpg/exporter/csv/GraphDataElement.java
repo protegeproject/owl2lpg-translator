@@ -1,10 +1,7 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import com.opencsv.bean.CsvBindAndSplitByName;
-import com.opencsv.bean.CsvBindByName;
 import edu.stanford.owl2lpg.exporter.csv.beans.*;
 
 import javax.annotation.Nonnull;
@@ -16,251 +13,133 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class GraphDataElement {
+@AutoValue
+public abstract class GraphDataElement {
 
-  @Nullable
-  @CsvBindByName(column = ":ID")
-  private final String nodeId;
-
-  @Nullable
-  @CsvBindByName(column = "projectId:string")
-  private final String projectId;
-
-  @Nullable
-  @CsvBindByName(column = "branchId:string")
-  private final String branchId;
-
-  @Nullable
-  @CsvBindByName(column = "ontologyDocumentId:string")
-  private final String ontoDocId;
-
-  @Nullable
-  @CsvBindByName(column = "iri:string")
-  private final String propertyIri;
-
-  @Nullable
-  @CsvBindByName(column = "lexicalForm:string")
-  private final String propertyLexicalForm;
-
-  @Nullable
-  @CsvBindByName(column = "lang:string")
-  private final String propertyLanguageTag;
-
-  @Nullable
-  @CsvBindByName(column = "nodeID:string")
-  private final String propertyNodeId;
-
-  @Nullable
-  @CsvBindByName(column = "cardinality:int")
-  private final Integer propertyCardinality;
-
-  @Nullable
-  @CsvBindAndSplitByName(column = ":LABEL",
-      elementType = String.class, splitOn = ";",
-      writeDelimiter = ";")
-  private final ImmutableList<String> nodeLabels;
-
-  @Nullable
-  @CsvBindByName(column = ":START_ID")
-  private final String startNodeId;
-
-  @Nullable
-  @CsvBindByName(column = ":END_ID")
-  private final String endNodeId;
-
-  @Nullable
-  @CsvBindByName(column = ":TYPE")
-  private final String edgeType;
-
-  private GraphDataElement(@Nullable String nodeId,
-                           @Nullable String projectId,
-                           @Nullable String branchId,
-                           @Nullable String ontoDocId,
-                           @Nullable String propertyIri,
-                           @Nullable String propertyLexicalForm,
-                           @Nullable String propertyLanguageTag,
-                           @Nullable String propertyNodeId,
-                           @Nullable Integer propertyCardinality,
-                           @Nullable ImmutableList<String> nodeLabels,
-                           @Nullable String startNodeId,
-                           @Nullable String endNodeId,
-                           @Nullable String edgeType) {
-    this.nodeId = nodeId;
-    this.projectId = projectId;
-    this.branchId = branchId;
-    this.ontoDocId = ontoDocId;
-    this.propertyIri = propertyIri;
-    this.propertyLexicalForm = propertyLexicalForm;
-    this.propertyLanguageTag = propertyLanguageTag;
-    this.propertyNodeId = propertyNodeId;
-    this.propertyCardinality = propertyCardinality;
-    this.nodeLabels = nodeLabels;
-    this.startNodeId = startNodeId;
-    this.endNodeId = endNodeId;
-    this.edgeType = edgeType;
+  public static GraphDataElement create(@Nullable String nodeId,
+                                        @Nullable String projectId,
+                                        @Nullable String branchId,
+                                        @Nullable String ontoDocId,
+                                        @Nullable String propertyIri,
+                                        @Nullable String propertyLexicalForm,
+                                        @Nullable String propertyLanguageTag,
+                                        @Nullable String propertyNodeId,
+                                        @Nullable Integer propertyCardinality,
+                                        @Nullable ImmutableList<String> nodeLabels,
+                                        @Nullable String startNodeId,
+                                        @Nullable String endNodeId,
+                                        @Nullable String edgeType) {
+    return new AutoValue_GraphDataElement(nodeId, projectId, branchId, ontoDocId,
+        propertyIri, propertyLexicalForm, propertyLanguageTag, propertyNodeId,
+        propertyCardinality, nodeLabels, startNodeId, endNodeId, edgeType);
   }
 
   public static GraphDataElement of(@Nonnull PropertylessNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, null, null, null,
+    return create(bean.getNodeId(), null, null, null, null, null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull ProjectNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), bean.getProjectId(), null, null, null, null, null, null, null,
+    return create(bean.getNodeId(), bean.getProjectId(), null, null, null, null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull BranchNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, bean.getBranchId(), null, null, null, null, null, null,
+    return create(bean.getNodeId(), null, bean.getBranchId(), null, null, null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull OntologyDocumentNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, bean.getOntologyDocumentId(), null, null, null, null,
+    return create(bean.getNodeId(), null, null, bean.getOntologyDocumentId(), null, null, null, null,
         null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull EntityNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, bean.getPropertyIri(), null, null, null, null,
+    return create(bean.getNodeId(), null, null, null, bean.getPropertyIri(), null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull IriNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, bean.getPropertyIri(), null, null, null, null,
+    return create(bean.getNodeId(), null, null, null, bean.getPropertyIri(), null, null, null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull LiteralNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, bean.getPropertyLexicalForm(), null, null,
+    return create(bean.getNodeId(), null, null, null, null, bean.getPropertyLexicalForm(), null, null,
         null
         , bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull LanguageTagNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, bean.getPropertyLang(), null, null,
+    return create(bean.getNodeId(), null, null, null, null, null, bean.getPropertyLang(), null, null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull AnonymousIndividualNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, null, bean.getPropertyNodeId(), null,
+    return create(bean.getNodeId(), null, null, null, null, null, null, bean.getPropertyNodeId(), null,
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull CardinalityAxiomNode bean) {
     checkNotNull(bean);
-    return new GraphDataElement(bean.getNodeId(), null, null, null, null, null, null, null,
+    return create(bean.getNodeId(), null, null, null, null, null, null, null,
         bean.getPropertyCardinality(),
         bean.getNodeLabels(), null, null, null);
   }
 
   public static GraphDataElement of(@Nonnull PropertylessEdge bean) {
     checkNotNull(bean);
-    return new GraphDataElement(null, null, null, null, null, null, null, null, null, null, bean.getStartNodeId(),
+    return create(null, null, null, null, null, null, null, null, null, null, bean.getStartNodeId(),
         bean.getEndNodeId(),
         bean.getEdgeType());
   }
 
   @Nullable
-  public String getNodeId() {
-    return nodeId;
-  }
+  public abstract String getNodeId();
 
   @Nullable
-  public String getPropertyIri() {
-    return propertyIri;
-  }
+  public abstract String getProjectId();
 
   @Nullable
-  public String getPropertyLexicalForm() {
-    return propertyLexicalForm;
-  }
+  public abstract String getBranchId();
 
   @Nullable
-  public String getPropertyLanguageTag() {
-    return propertyLanguageTag;
-  }
+  public abstract String getOntologyDocumentId();
 
   @Nullable
-  public String getPropertyNodeId() {
-    return propertyNodeId;
-  }
+  public abstract String getPropertyIri();
 
   @Nullable
-  public Integer getPropertyCardinality() {
-    return propertyCardinality;
-  }
+  public abstract String getPropertyLexicalForm();
 
   @Nullable
-  public ImmutableList<String> getNodeLabels() {
-    return nodeLabels;
-  }
+  public abstract String getPropertyLanguageTag();
 
   @Nullable
-  public String getStartNodeId() {
-    return startNodeId;
-  }
+  public abstract String getPropertyNodeId();
 
   @Nullable
-  public String getEndNodeId() {
-    return endNodeId;
-  }
+  public abstract Integer getPropertyCardinality();
 
   @Nullable
-  public String getEdgeType() {
-    return edgeType;
-  }
+  public abstract ImmutableList<String> getNodeLabels();
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    GraphDataElement that = (GraphDataElement) o;
-    return Objects.equal(nodeId, that.nodeId) &&
-        Objects.equal(propertyIri, that.propertyIri) &&
-        Objects.equal(propertyLexicalForm, that.propertyLexicalForm) &&
-        Objects.equal(propertyLanguageTag, that.propertyLanguageTag) &&
-        Objects.equal(propertyNodeId, that.propertyNodeId) &&
-        Objects.equal(propertyCardinality, that.propertyCardinality) &&
-        Objects.equal(nodeLabels, that.nodeLabels) &&
-        Objects.equal(startNodeId, that.startNodeId) &&
-        Objects.equal(endNodeId, that.endNodeId) &&
-        Objects.equal(edgeType, that.edgeType);
-  }
+  @Nullable
+  public abstract String getStartNodeId();
 
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(nodeId, propertyIri, propertyLexicalForm,
-        propertyLanguageTag, propertyNodeId, propertyCardinality,
-        nodeLabels, startNodeId, endNodeId, edgeType);
-  }
+  @Nullable
+  public abstract String getEndNodeId();
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("nodeId", nodeId)
-        .add("propertyIri", propertyIri)
-        .add("propertyLexicalForm", propertyLexicalForm)
-        .add("propertyLanguageTag", propertyLanguageTag)
-        .add("propertyNodeId", propertyNodeId)
-        .add("propertyCardinality", propertyCardinality)
-        .add("nodeLabels", nodeLabels)
-        .add("startNodeId", startNodeId)
-        .add("endNodeId", endNodeId)
-        .add("edgeType", edgeType)
-        .toString();
-  }
+  @Nullable
+  public abstract String getEdgeType();
 }
