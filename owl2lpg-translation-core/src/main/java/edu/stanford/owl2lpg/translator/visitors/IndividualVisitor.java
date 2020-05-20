@@ -1,16 +1,18 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.EdgeFactory;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLIndividualVisitorEx;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,41 +23,37 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class IndividualVisitor extends VisitorBase
-    implements OWLIndividualVisitorEx<Translation> {
+public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
 
-  private Node mainNode;
+  @Nonnull
+  private final NodeFactory nodeFactory;
 
-  private final VisitorFactory visitorFactory;
+  @Nonnull
+  private final EdgeFactory edgeFactory;
+
+  @Nonnull
+  private final EntityTranslator translator;
 
   @Inject
-  public IndividualVisitor(@Nonnull VisitorFactory visitorFactory) {
-    super(visitorFactory.getNodeIdMapper());
-    this.visitorFactory = checkNotNull(visitorFactory);
+  public IndividualVisitor(@Nonnull NodeFactory nodeFactory,
+                           @Nonnull EdgeFactory edgeFactory,
+                           @Nonnull EntityTranslator translator) {
+    this.nodeFactory = checkNotNull(nodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
+    this.translator = checkNotNull(translator);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLNamedIndividual individual) {
-    return visitorFactory.createEntityVisitor().visit(individual);
+    return translator.translate(individual);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
-    mainNode = createAnonymousIndividualNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL);
+    var mainNode = nodeFactory.createNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL,
+        Properties.of(PropertyFields.NODE_ID, String.valueOf(individual.getID())));
     return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
-  }
-
-  @Override
-  @Nullable
-  protected Node getMainNode() {
-    return mainNode;
-  }
-
-  @Nonnull
-  @Override
-  protected Translation getTranslation(OWLObject anyObject) {
-    throw new IllegalArgumentException("Implementation error");
   }
 }
