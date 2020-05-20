@@ -20,14 +20,14 @@ public abstract class EntityNode {
 
   public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_CARDINALITY = "cardinality:int";
+  public static final String PROPERTY_IRI = "iri:string";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
   public static EntityNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                  @JsonProperty(PROPERTY_CARDINALITY) @Nonnull String propertyIri,
+                                  @JsonProperty(PROPERTY_IRI) @Nonnull String propertyIri,
                                   @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
     return new AutoValue_EntityNode(nodeId, propertyIri, nodeLabels);
   }
@@ -45,7 +45,7 @@ public abstract class EntityNode {
   @Nonnull
   public abstract String getNodeId();
 
-  @JsonProperty(PROPERTY_CARDINALITY)
+  @JsonProperty(PROPERTY_IRI)
   @Nonnull
   public abstract String getPropertyIri();
 
