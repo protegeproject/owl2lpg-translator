@@ -2,10 +2,12 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationValueVisitorEx;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
@@ -40,7 +42,8 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull IRI iri) {
-    var mainNode = nodeFactory.createNode(iri, NodeLabels.IRI);
+    var mainNode = nodeFactory.createNode(iri, NodeLabels.IRI,
+        Properties.of(PropertyFields.IRI, String.valueOf(iri)));
     return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
   }
 
