@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
-import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
@@ -44,7 +43,7 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Trans
   public Translation visit(@Nonnull IRI iri) {
     var mainNode = nodeFactory.createNode(iri, NodeLabels.IRI,
         Properties.of(PropertyFields.IRI, String.valueOf(iri)));
-    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+    return Translation.create(mainNode);
   }
 
   @Nonnull
