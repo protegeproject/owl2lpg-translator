@@ -1,16 +1,19 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.EdgeFactory;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.translator.EntityTranslator;
+import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_INVERSE_OF;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 property expressions.
@@ -18,70 +21,59 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class PropertyExpressionVisitor extends VisitorBase
-    implements OWLPropertyExpressionVisitorEx<Translation> {
+public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx<Translation> {
 
-  private Node mainNode;
+  @Nonnull
+  private final NodeFactory nodeFactory;
 
-  private final VisitorFactory visitorFactory;
+  @Nonnull
+  private final EdgeFactory edgeFactory;
+
+  @Nonnull
+  private final EntityTranslator entityTranslator;
+
+  @Nonnull
+  private final PropertyExpressionTranslator propertyExprTranslator;
 
   @Inject
-  public PropertyExpressionVisitor(@Nonnull VisitorFactory visitorFactory) {
-    super(visitorFactory.getNodeIdMapper());
-    this.visitorFactory = checkNotNull(visitorFactory);
+  public PropertyExpressionVisitor(@Nonnull NodeFactory nodeFactory,
+                                   @Nonnull EdgeFactory edgeFactory,
+                                   @Nonnull EntityTranslator entityTranslator,
+                                   @Nonnull PropertyExpressionTranslator propertyExprTranslator) {
+    this.nodeFactory = checkNotNull(nodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
+    this.entityTranslator = checkNotNull(entityTranslator);
+    this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataProperty dp) {
-    checkNotNull(dp);
-    return visitorFactory.createEntityVisitor().visit(dp);
+    return entityTranslator.translate(dp);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty ap) {
-    checkNotNull(ap);
-    return visitorFactory.createEntityVisitor().visit(ap);
+    return entityTranslator.translate(ap);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectProperty op) {
-    checkNotNull(op);
-    return visitorFactory.createEntityVisitor().visit(op);
+    return entityTranslator.translate(op);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectInverseOf ope) {
-    mainNode = createNode(ope, NodeLabels.OBJECT_INVERSE_OF);
-    var inverseProperty = ope.getInverseProperty();
-    var objectPropertyEdge = createEdge(inverseProperty, EdgeLabel.OBJECT_PROPERTY);
-    var inversePropertyTranslation = createNestedTranslation(inverseProperty);
+    var mainNode = nodeFactory.createNode(ope, OBJECT_INVERSE_OF);
+    var inversePropertyTranslation = propertyExprTranslator.translate(ope.getInverseProperty());
+    var objectPropertyEdge = edgeFactory.createEdge(mainNode,
+        inversePropertyTranslation.getMainNode(),
+        OBJECT_PROPERTY);
     return Translation.create(mainNode,
         ImmutableList.of(objectPropertyEdge),
         ImmutableList.of(inversePropertyTranslation));
-  }
-
-  @Nonnull
-  @Override
-  protected Node getMainNode() {
-    return mainNode;
-  }
-
-  @Nonnull
-  @Override
-  protected Translation getTranslation(@Nonnull OWLObject anyObject) {
-    checkNotNull(anyObject);
-    if (anyObject instanceof OWLPropertyExpression) {
-      return getPropertyExpressionTranslation((OWLPropertyExpression) anyObject);
-    }
-    throw new IllegalArgumentException("Implementation error");
-  }
-
-  private Translation getPropertyExpressionTranslation(OWLPropertyExpression propertyExpression) {
-    var propertyExpressionVisitor = visitorFactory.createPropertyExpressionVisitor();
-    return propertyExpression.accept(propertyExpressionVisitor);
   }
 }
