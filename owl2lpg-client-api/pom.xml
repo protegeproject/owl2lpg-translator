@@ -27,11 +27,6 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
-      <groupId>edu.stanford.owl2lpg</groupId>
-      <artifactId>owl2lpg-translation-versioning</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
       <groupId>edu.stanford.protege</groupId>
       <artifactId>webprotege-shared</artifactId>
       <version>${webprotege-shared.version}</version>
