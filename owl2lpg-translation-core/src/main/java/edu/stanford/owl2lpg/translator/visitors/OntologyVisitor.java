@@ -2,24 +2,21 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.model.*;
+import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
+import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-import static edu.stanford.owl2lpg.model.GraphFactory.Node;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 ontology.
@@ -27,39 +24,65 @@ import static edu.stanford.owl2lpg.model.GraphFactory.Node;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologyVisitor extends VisitorBase
-    implements OWLNamedObjectVisitorEx<Translation> {
+public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
-  private Node mainNode;
+  @Nonnull
+  private final NodeFactory nodeFactory;
 
-  private final VisitorFactory visitorFactory;
+  @Nonnull
+  private final EdgeFactory edgeFactory;
+
+  @Nonnull
+  private final AxiomTranslator axiomTranslator;
+
+  @Nonnull
+  private final EntityTranslator entityTranslator;
+
+  @Nonnull
+  private final AnnotationObjectTranslator annotationTranslator;
 
   @Inject
-  public OntologyVisitor(@Nonnull VisitorFactory visitorFactory) {
-    super(visitorFactory.getNodeIdMapper());
-    this.visitorFactory = checkNotNull(visitorFactory);
+  public OntologyVisitor(@Nonnull NodeFactory nodeFactory,
+                         @Nonnull EdgeFactory edgeFactory,
+                         @Nonnull AxiomTranslator axiomTranslator,
+                         @Nonnull EntityTranslator entityTranslator,
+                         @Nonnull AnnotationObjectTranslator annotationTranslator) {
+    this.nodeFactory = checkNotNull(nodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
+    this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.entityTranslator = checkNotNull(entityTranslator);
+    this.annotationTranslator = checkNotNull(annotationTranslator);
   }
 
   @Nonnull
   public Translation visit(@Nonnull OWLOntology ontology) {
-    mainNode = createNode(ontology, NodeLabels.ONTOLOGY);
-    var ontologyIdEdge = createOntologyIdEdge(ontology.getOntologyID());
+    var mainNode = nodeFactory.createNode(ontology, ONTOLOGY);
+    var translations = new ImmutableList.Builder<Translation>();
+    var edges = new ImmutableList.Builder<Edge>();
     var ontologyIdTranslation = createOntologyIdTranslation(ontology.getOntologyID());
-    var ontologyAnnotationEdges = createEdges(ontology.getAnnotations(), EdgeLabel.ONTOLOGY_ANNOTATION);
-    var ontologyAnnotationTranslations = createNestedTranslations(ontology.getAnnotations());
-    var ontologyAxiomEdges = createEdges(ontology.getAxioms(), EdgeLabel.AXIOM);
-    var ontologyAxiomTranslations = createNestedTranslations(ontology.getAxioms());
-    var allEdges = Stream.concat(Lists.newArrayList(ontologyIdEdge).stream(),
-        Stream.concat(ontologyAnnotationEdges.stream(), ontologyAxiomEdges.stream()))
-        .collect(Collectors.toList());
-    var allTranslations = Stream.concat(Lists.newArrayList(ontologyIdTranslation).stream(),
-        Stream.concat(ontologyAnnotationTranslations.stream(), ontologyAxiomTranslations.stream()))
-        .collect(Collectors.toList());
-    return Translation.create(mainNode, ImmutableList.copyOf(allEdges), ImmutableList.copyOf(allTranslations));
-  }
-
-  protected Edge createOntologyIdEdge(OWLOntologyID ontologyId) {
-    return Edge(mainNode, createOntologyIdNode(ontologyId), EdgeLabel.ONTOLOGY_ID);
+    translations.add(ontologyIdTranslation);
+    edges.add(edgeFactory.createEdge(mainNode,
+        ontologyIdTranslation.getMainNode(),
+        ONTOLOGY_ID));
+    var annotations = ontology.getAnnotations();
+    for (var ann : annotations) {
+      var translation = annotationTranslator.translate(ann);
+      translations.add(translation);
+      edges.add(edgeFactory.createEdge(mainNode,
+          translation.getMainNode(),
+          ONTOLOGY_ANNOTATION));
+    }
+    var axioms = ontology.getAxioms();
+    for (var ax : axioms) {
+      var translation = axiomTranslator.translate(ax);
+      translations.add(translation);
+      edges.add(edgeFactory.createEdge(mainNode,
+          translation.getMainNode(),
+          AXIOM));
+    }
+    return Translation.create(mainNode,
+        edges.build(),
+        translations.build());
   }
 
   protected Translation createOntologyIdTranslation(OWLOntologyID ontologyID) {
@@ -72,74 +95,48 @@ public class OntologyVisitor extends VisitorBase
   private Node createOntologyIdNode(@Nonnull OWLOntologyID ontologyId) {
     var ontologyIri = ontologyId.getOntologyIRI().isPresent() ? ontologyId.getOntologyIRI().toString() : "";
     var versionIri = ontologyId.getVersionIRI().isPresent() ? ontologyId.getVersionIRI().toString() : "";
-    return Node(
-            nodeIdMapper.get(ontologyId),
-            NodeLabels.ONTOLOGY_ID,
-            Properties.create(ImmutableMap.of(
-                    PropertyFields.ONTOLOGY_IRI, ontologyIri,
-                    PropertyFields.ONTOLOGY_VERSION_IRI, versionIri
-            )));
+    return nodeFactory.createNode(
+        ontologyId,
+        NodeLabels.ONTOLOGY_ID,
+        Properties.create(ImmutableMap.of(
+            PropertyFields.ONTOLOGY_IRI, ontologyIri,
+            PropertyFields.ONTOLOGY_VERSION_IRI, versionIri
+        )));
   }
 
   @Nonnull
   @Override
-  public Translation visit(@Nonnull OWLClass owlClass) {
-    throw new UnsupportedOperationException("Use the EntityVisitor to visit OWLClass");
+  public Translation visit(@Nonnull OWLClass clasz) {
+    return entityTranslator.translate(clasz);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectProperty property) {
-    throw new UnsupportedOperationException("Use the EntityVisitor to visit OWLObjectProperty");
+    return entityTranslator.translate(property);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataProperty property) {
-    throw new UnsupportedOperationException("Use the EntityVisitor to visit OWLDataProperty");
+    return entityTranslator.translate(property);
   }
 
   @Nonnull
   @Override
-  public Translation visit(@Nonnull OWLNamedIndividual owlIndividual) {
-    throw new UnsupportedOperationException("Use the EntityVisitor to visit OWLNamedIndividual");
+  public Translation visit(@Nonnull OWLNamedIndividual individual) {
+    return entityTranslator.translate(individual);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDatatype datatype) {
-    throw new UnsupportedOperationException("Use the EntityVisitor to visit OWLDatatype");
+    return entityTranslator.translate(datatype);
   }
 
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLAnnotationProperty property) {
-    throw new UnsupportedOperationException("Use the EntityVisitor to visit OWLAnnotationProperty");
-  }
-
-  @Override
-  protected Node getMainNode() {
-    return mainNode;
-  }
-
-  @Override
-  protected Translation getTranslation(@Nonnull OWLObject anyObject) {
-    checkNotNull(anyObject);
-    if (anyObject instanceof OWLAnnotation) {
-      return getAnnotationTranslation((OWLAnnotation) anyObject);
-    } else if (anyObject instanceof OWLAxiom) {
-      return getAxiomTranslation((OWLAxiom) anyObject);
-    }
-    throw new IllegalArgumentException("Implementation error");
-  }
-
-  private Translation getAnnotationTranslation(OWLAnnotation annotation) {
-    var annotationVisitor = visitorFactory.createAnnotationObjectVisitor();
-    return annotation.accept(annotationVisitor);
-  }
-
-  private Translation getAxiomTranslation(OWLAxiom axiom) {
-    var axiomVisitor = visitorFactory.createAxiomVisitor();
-    return axiom.accept(axiomVisitor);
+    return entityTranslator.translate(property);
   }
 }
