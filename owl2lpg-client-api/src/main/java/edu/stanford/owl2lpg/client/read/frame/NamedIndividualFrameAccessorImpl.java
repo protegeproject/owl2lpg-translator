@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import edu.stanford.bmir.protege.web.shared.frame.NamedIndividualFrame;
 import edu.stanford.bmir.protege.web.shared.frame.PlainNamedIndividualFrame;
 import edu.stanford.bmir.protege.web.shared.frame.PropertyValue;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.model.AxiomContext;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLNamedObject;

@@ -9,6 +9,9 @@ package edu.stanford.owl2lpg.translator.vocab;
  */
 public class PropertyFields {
 
+  public static final String PROJECT_ID = "projectId";
+  public static final String BRANCH_ID = "branchId";
+  public static final String ONTOLOGY_DOCUMENT_ID = "ontologyDocumentId";
   public static final String ONTOLOGY_IRI = "ontologyIri";
   public static final String ONTOLOGY_VERSION_IRI = "ontologyVersionIri";
   public static final String IRI = "iri";

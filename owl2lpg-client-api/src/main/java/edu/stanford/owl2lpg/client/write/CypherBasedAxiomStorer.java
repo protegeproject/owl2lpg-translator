@@ -1,15 +1,13 @@
 package edu.stanford.owl2lpg.client.write;
 
-import com.google.common.base.CaseFormat;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
-import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
+import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -31,10 +29,10 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
   private final Session session;
 
   @Nonnull
-  private final AxiomTranslatorEx translator;
+  private final VersionedOntologyTranslator translator;
 
   public CypherBasedAxiomStorer(@Nonnull Session session,
-                                @Nonnull AxiomTranslatorEx translator) {
+                                @Nonnull VersionedOntologyTranslator translator) {
     this.session = checkNotNull(session);
     this.translator = checkNotNull(translator);
   }
@@ -130,17 +128,17 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
 
   private static boolean isProjectNode(Node node) {
     var nodeLabels = node.getLabels();
-    return AxiomTranslatorEx.NodeLabels.PROJECT.equals(nodeLabels);
+    return NodeLabels.PROJECT.equals(nodeLabels);
   }
 
   private static boolean isBranchNode(Node node) {
     var nodeLabels = node.getLabels();
-    return AxiomTranslatorEx.NodeLabels.BRANCH.equals(nodeLabels);
+    return NodeLabels.BRANCH.equals(nodeLabels);
   }
 
   private static boolean isOntologyDocumentNode(Node node) {
     var nodeLabels = node.getLabels();
-    return AxiomTranslatorEx.NodeLabels.ONTOLOGY_DOCUMENT.equals(nodeLabels);
+    return NodeLabels.ONTOLOGY_DOCUMENT.equals(nodeLabels);
   }
 
   private static boolean isLiteralNode(Node node) {

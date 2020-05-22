@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.versioning.model;
+package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
 

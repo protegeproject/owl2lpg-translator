@@ -9,8 +9,8 @@ import edu.stanford.owl2lpg.exporter.csv.beans.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
-import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
+import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CsvExporter {
 
   @Nonnull
-  private final AxiomTranslatorEx axiomTranslator;
+  private final VersionedOntologyTranslator axiomTranslator;
 
   @Nonnull
   private final AxiomContext context;
@@ -55,7 +55,7 @@ public class CsvExporter {
   private Set<PropertylessNode> propertylessNodes = Sets.newHashSet();
   private Set<PropertylessEdge> propertylessEdges = Sets.newHashSet();
 
-  public CsvExporter(@Nonnull AxiomTranslatorEx axiomTranslator,
+  public CsvExporter(@Nonnull VersionedOntologyTranslator axiomTranslator,
                      @Nonnull AxiomContext context,
                      @Nonnull OWLOntology ontology,
                      @Nonnull Writer writer) {
@@ -130,15 +130,15 @@ public class CsvExporter {
   }
 
   private boolean isProject(Node node) {
-    return AxiomTranslatorEx.NodeLabels.PROJECT.equals(node.getLabels());
+    return NodeLabels.PROJECT.equals(node.getLabels());
   }
 
   private boolean isBranch(Node node) {
-    return AxiomTranslatorEx.NodeLabels.BRANCH.equals(node.getLabels());
+    return NodeLabels.BRANCH.equals(node.getLabels());
   }
 
   private boolean isOntologyDocument(Node node) {
-    return AxiomTranslatorEx.NodeLabels.ONTOLOGY_DOCUMENT.equals(node.getLabels());
+    return NodeLabels.ONTOLOGY_DOCUMENT.equals(node.getLabels());
   }
 
   private static boolean isEntity(Node node) {

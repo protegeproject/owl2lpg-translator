@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.model.AxiomContext;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.ListValue;
 import org.neo4j.driver.internal.value.MapValue;

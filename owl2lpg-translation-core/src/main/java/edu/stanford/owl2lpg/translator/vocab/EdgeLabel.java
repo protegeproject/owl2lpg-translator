@@ -4,6 +4,7 @@ public enum EdgeLabel {
     ONTOLOGY_ID("ontologyID"),
     ONTOLOGY_DOCUMENT("ontologyDocument"),
     DIRECTLY_IMPORTS_DOCUMENT("directlyImportsDocument"),
+    PROJECT("project"),
     BRANCH("branch"),
     ONTOLOGY_ANNOTATION("ontologyAnnotation"), AXIOM_ANNOTATION("axiomAnnotation"), ANNOTATION_ANNOTATION("annotationAnnotation"), AXIOM(
             "axiom"), ENTITY("entity"), ENTITY_IRI("entityIri"), OBJECT_PROPERTY("objectProperty"), DATA_PROPERTY(

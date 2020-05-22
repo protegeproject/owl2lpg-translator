@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.versioning.model;
+package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
 
@@ -12,15 +12,15 @@ import java.util.UUID;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class OntologyDocumentId {
+public abstract class BranchId {
 
   @Nonnull
-  public static OntologyDocumentId create(@Nonnull UUID identifier) {
-    return new AutoValue_OntologyDocumentId(identifier);
+  public static BranchId create(@Nonnull UUID identifier) {
+    return new AutoValue_BranchId(identifier);
   }
 
   @Nonnull
-  public static OntologyDocumentId create() {
+  public static BranchId create() {
     return create(UUID.randomUUID());
   }
 

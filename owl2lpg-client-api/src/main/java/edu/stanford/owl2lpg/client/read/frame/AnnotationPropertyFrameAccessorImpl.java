@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import edu.stanford.bmir.protege.web.shared.frame.AnnotationPropertyFrame;
 import edu.stanford.bmir.protege.web.shared.frame.PlainAnnotationPropertyFrame;
 import edu.stanford.bmir.protege.web.shared.frame.PropertyValue;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.model.AxiomContext;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;

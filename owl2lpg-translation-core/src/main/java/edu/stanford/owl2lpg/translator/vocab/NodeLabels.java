@@ -12,6 +12,10 @@ import com.google.common.collect.ImmutableList;
 public class NodeLabels {
 
   // @formatter:off
+  public static final ImmutableList<String> PROJECT = ImmutableList.of("Project");
+  public static final ImmutableList<String> BRANCH = ImmutableList.of("Branch");
+  public static final ImmutableList<String> ONTOLOGY_DOCUMENT = ImmutableList.of("OntologyDocument");
+
   public static final ImmutableList<String> ONTOLOGY = ImmutableList.of("Ontology");
   public static final ImmutableList<String> ONTOLOGY_ID = ImmutableList.of("OntologyID");
 

@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.bmir.protege.web.shared.frame.PlainDataPropertyFrame;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.model.AxiomContext;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 

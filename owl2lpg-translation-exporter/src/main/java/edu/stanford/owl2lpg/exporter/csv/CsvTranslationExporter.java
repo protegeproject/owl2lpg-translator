@@ -4,9 +4,8 @@ import edu.stanford.owl2lpg.exporter.AbstractTranslationExporter;
 import edu.stanford.owl2lpg.translator.NumberIncrementIdProvider;
 import edu.stanford.owl2lpg.translator.visitors.AxiomVisitor;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
-import edu.stanford.owl2lpg.translator.visitors.VisitorFactory;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
-import edu.stanford.owl2lpg.versioning.translator.AxiomTranslatorEx;
+import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -41,7 +40,7 @@ public class CsvTranslationExporter extends AbstractTranslationExporter {
     checkNotNull(writer);
     // TODO: Use injection
     var nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider());
-    var axiomTranslator = new AxiomTranslatorEx(new AxiomVisitor(new VisitorFactory(nodeIdMapper)));
+    var axiomTranslator = new VersionedOntologyTranslator(nodeFactory, edgeFactory, new AxiomVisitor());
     var exporter = new CsvExporter(
         axiomTranslator,
         AxiomContext.create(),

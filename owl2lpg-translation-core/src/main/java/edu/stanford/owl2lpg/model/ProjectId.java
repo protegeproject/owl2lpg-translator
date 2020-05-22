@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.versioning.model;
+package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
 
@@ -6,25 +6,24 @@ import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * Represents the branch identifier.
+ * Represents the project identifier.
  *
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class BranchId {
+public abstract class ProjectId {
 
   @Nonnull
-  public static BranchId create(@Nonnull UUID identifier) {
-    return new AutoValue_BranchId(identifier);
+  public static ProjectId create(@Nonnull UUID identifier) {
+    return new AutoValue_ProjectId(identifier);
   }
 
   @Nonnull
-  public static BranchId create() {
+  public static ProjectId create() {
     return create(UUID.randomUUID());
   }
 
-  @Nonnull
   public abstract UUID getIdentifier();
 
   @Override

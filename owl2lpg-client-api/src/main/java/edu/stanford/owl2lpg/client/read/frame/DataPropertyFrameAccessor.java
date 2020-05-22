@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
 import edu.stanford.bmir.protege.web.shared.frame.DataPropertyFrame;
-import edu.stanford.owl2lpg.versioning.model.AxiomContext;
+import edu.stanford.owl2lpg.model.AxiomContext;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 
 import javax.annotation.Nonnull;
