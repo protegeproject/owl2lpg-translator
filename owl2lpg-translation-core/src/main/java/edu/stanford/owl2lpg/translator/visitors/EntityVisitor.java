@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
@@ -13,7 +14,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 
 /**
@@ -80,7 +80,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   private Translation translateEntity(OWLEntity entity, ImmutableList<String> nodeLabels) {
     var mainNode = nodeFactory.createNode(entity, nodeLabels,
-        Properties(PropertyFields.IRI, String.valueOf(entity.getIRI())));
+        Properties.of(PropertyFields.IRI, String.valueOf(entity.getIRI())));
     var iriTranslation = translator.translate(entity.getIRI());
     var entityIriEdge = edgeFactory.createEdge(mainNode,
         iriTranslation.getMainNode(),

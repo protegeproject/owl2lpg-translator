@@ -1,7 +1,5 @@
 package edu.stanford.owl2lpg.versioning.translator;
 
-import static edu.stanford.owl2lpg.translator.utils.PropertiesFactory.Properties;
-
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
@@ -51,7 +49,7 @@ public class AxiomTranslatorEx extends AxiomTranslator {
     return Node.create(
         NodeId.create(projectId),
         NodeLabels.PROJECT,
-        Properties(PropertyFields.PROJECT_ID, String.valueOf(projectId.getIdentifier())));
+        Properties.of(PropertyFields.PROJECT_ID, String.valueOf(projectId.getIdentifier())));
   }
 
   @Nonnull
@@ -59,7 +57,7 @@ public class AxiomTranslatorEx extends AxiomTranslator {
     return Node.create(
         NodeId.create(branchId),
         NodeLabels.BRANCH,
-        Properties(PropertyFields.BRANCH_ID, String.valueOf(branchId.getIdentifier())));
+        Properties.of(PropertyFields.BRANCH_ID, String.valueOf(branchId.getIdentifier())));
   }
 
   @Nonnull
@@ -67,7 +65,7 @@ public class AxiomTranslatorEx extends AxiomTranslator {
     return Node.create(
         NodeId.create(docId),
         NodeLabels.ONTOLOGY_DOCUMENT,
-        Properties(PropertyFields.ONTOLOGY_DOCUMENT_ID, String.valueOf(docId.getIdentifier())));
+        Properties.of(PropertyFields.ONTOLOGY_DOCUMENT_ID, String.valueOf(docId.getIdentifier())));
   }
 
   public static class NodeLabels {
