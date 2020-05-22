@@ -719,7 +719,10 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(@Nonnull SWRLRule rule) {
-    throw new UnsupportedOperationException("SWRLRule translation is not supported yet");
+    return Translation.create(
+        Node.create(NodeId.create(""), ImmutableList.of()),
+        ImmutableList.of(),
+        ImmutableList.of());
   }
 
   private Node addIriTranslationAndEdge(@Nonnull IRI iri,
