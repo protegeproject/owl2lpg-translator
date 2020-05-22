@@ -18,7 +18,9 @@ public enum EdgeLabel {
             "dataRange"), DATATYPE("datatype"), RESTRICTION("restriction"), CONSTRAINING_FACET("constrainingFacet"), RESTRICTION_VALUE(
             "restrictionValue"), LANGUAGE_TAG("languageTag"), SOURCE_INDIVIDUAL("sourceIndividual"), TARGET_INDIVIDUAL(
             "targetIndividual"), TARGET_VALUE("targetValue"), DOMAIN("domain"), RANGE("range"), NEXT("next"), SUB_CLASS_OF(
-            "subClassOf"), IS_SUBJECT_OF("isSubjectOf");
+            "subClassOf"), SUB_OBJECT_PROPERTY_OF("subObjectPropertyOf"), SUB_DATA_PROPERTY_OF("subDataPropertyOf"), SUB_ANNOTATION_PROPERTY_OF(
+            "subAnnotationPropertyOf"), IS_SUBJECT_OF("isSubjectOf"), RELATED_TO("relatedTo"), TYPE("type"), SAME_INDIVIDUAL(
+            "sameIndividual"), INVERSE_OF("inverseOf");
 
     private String value;
 

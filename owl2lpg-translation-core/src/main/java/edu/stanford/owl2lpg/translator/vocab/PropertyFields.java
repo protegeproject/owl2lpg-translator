@@ -18,4 +18,5 @@ public class PropertyFields {
   public static final String DATATYPE = "datatype";
   public static final String LANGUAGE = "language";
   public static final String PRIMARY = "primary";
+  public static final String TYPE = "type";
 }
