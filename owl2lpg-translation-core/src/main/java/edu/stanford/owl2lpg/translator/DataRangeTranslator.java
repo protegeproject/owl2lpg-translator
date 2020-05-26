@@ -1,10 +1,12 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.translator.visitors.DataVisitor;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDataVisitorEx;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,16 +19,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DataRangeTranslator {
 
   @Nonnull
-  private final OWLDataVisitorEx<Translation> visitor;
+  private final Provider<DataVisitor> visitor;
 
   @Inject
-  public DataRangeTranslator(OWLDataVisitorEx<Translation> visitor) {
+  public DataRangeTranslator(Provider<DataVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation translate(OWLDataRange dr) {
     checkNotNull(dr);
-    return dr.accept(visitor);
+    return dr.accept(visitor.get());
   }
 }

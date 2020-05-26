@@ -1,10 +1,13 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.translator.visitors.DataVisitor;
 import org.semanticweb.owlapi.model.OWLDataVisitorEx;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.xml.crypto.Data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,16 +20,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class LiteralTranslator {
 
   @Nonnull
-  private final OWLDataVisitorEx<Translation> visitor;
+  private final Provider<DataVisitor> visitor;
 
   @Inject
-  public LiteralTranslator(@Nonnull OWLDataVisitorEx<Translation> visitor) {
+  public LiteralTranslator(@Nonnull Provider<DataVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation translate(@Nonnull OWLLiteral lt) {
     checkNotNull(lt);
-    return lt.accept(visitor);
+    return lt.accept(visitor.get());
   }
 }

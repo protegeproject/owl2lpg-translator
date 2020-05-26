@@ -1,10 +1,12 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.translator.visitors.PropertyExpressionVisitor;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,16 +19,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PropertyExpressionTranslator {
 
   @Nonnull
-  private final OWLPropertyExpressionVisitorEx<Translation> visitor;
+  private final Provider<PropertyExpressionVisitor> visitor;
 
   @Inject
-  public PropertyExpressionTranslator(@Nonnull OWLPropertyExpressionVisitorEx<Translation> visitor) {
+  public PropertyExpressionTranslator(@Nonnull Provider<PropertyExpressionVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation translate(OWLPropertyExpression ope) {
     checkNotNull(ope);
-    return ope.accept(visitor);
+    return ope.accept(visitor.get());
   }
 }

@@ -4,10 +4,15 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Set;
 
 public class EdgeFactory {
+
+  @Inject
+  public EdgeFactory() {
+  }
 
   public Edge createEdge(@Nonnull Node fromNode,
                          @Nonnull Node toNode,

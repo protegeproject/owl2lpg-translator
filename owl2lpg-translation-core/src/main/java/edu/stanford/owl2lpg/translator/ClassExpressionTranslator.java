@@ -1,10 +1,11 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.translator.visitors.ClassExpressionVisitor;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,16 +18,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ClassExpressionTranslator {
 
   @Nonnull
-  private final OWLClassExpressionVisitorEx<Translation> visitor;
+  private final Provider<ClassExpressionVisitor> visitor;
 
   @Inject
-  public ClassExpressionTranslator(OWLClassExpressionVisitorEx<Translation> visitor) {
+  public ClassExpressionTranslator(Provider<ClassExpressionVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation translate(OWLClassExpression ce) {
     checkNotNull(ce);
-    return ce.accept(visitor);
+    return ce.accept(visitor.get());
   }
 }

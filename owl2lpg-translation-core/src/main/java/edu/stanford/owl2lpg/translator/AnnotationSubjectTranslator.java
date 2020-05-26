@@ -1,10 +1,12 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.translator.visitors.AnnotationSubjectVisitor;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationSubjectVisitorEx;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -15,16 +17,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AnnotationSubjectTranslator {
 
   @Nonnull
-  private final OWLAnnotationSubjectVisitorEx<Translation> visitor;
+  private final Provider<AnnotationSubjectVisitor> visitor;
 
   @Inject
-  public AnnotationSubjectTranslator(@Nonnull OWLAnnotationSubjectVisitorEx<Translation> visitor) {
+  public AnnotationSubjectTranslator(@Nonnull Provider<AnnotationSubjectVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 
   @Nonnull
   public Translation translate(@Nonnull OWLAnnotationSubject subject) {
     checkNotNull(subject);
-    return subject.accept(visitor);
+    return subject.accept(visitor.get());
   }
 }
