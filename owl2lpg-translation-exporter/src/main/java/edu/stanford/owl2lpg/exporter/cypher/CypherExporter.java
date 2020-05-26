@@ -1,19 +1,20 @@
 package edu.stanford.owl2lpg.exporter.cypher;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
+import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.Properties;
-import edu.stanford.owl2lpg.translator.OntologyTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,35 +24,45 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CypherExporter {
 
   @Nonnull
-  private final OntologyTranslator ontologyTranslator;
+  private final VersionedOntologyTranslator ontologyTranslator;
+
+  @Nonnull
+  private final AxiomContext axiomContext;
 
   @Nonnull
   private final OWLOntology ontology;
 
   @Nonnull
-  private final Writer writer;
+  private final Path outputFilePath;
 
-  CypherExporter(@Nonnull OntologyTranslator ontologyTranslator,
+  CypherExporter(@Nonnull VersionedOntologyTranslator ontologyTranslator,
+                 @Nonnull AxiomContext axiomContext,
                  @Nonnull OWLOntology ontology,
-                 @Nonnull Writer writer) {
+                 @Nonnull Path outputFilePath) {
     this.ontologyTranslator = checkNotNull(ontologyTranslator);
+    this.axiomContext = axiomContext;
     this.ontology = checkNotNull(ontology);
-    this.writer = checkNotNull(writer);
+    this.outputFilePath = outputFilePath;
   }
 
   public void write() {
-    Translation ontologyTranslation = ontologyTranslator.translate(ontology);
-    writeNodes(ontologyTranslation.nodes());
-    writeEdges(ontologyTranslation.edges());
+    ontology.getAxioms()
+        .stream()
+        .map(axiom -> ontologyTranslator.translate(axiomContext, axiom))
+        .forEach(this::writeTranslation);
+  }
+
+  private void writeTranslation(Translation translation) {
+    writeNodes(translation.nodes());
+    writeEdges(translation.edges());
   }
 
   void writeNodes(Stream<Node> nodeStream) {
-    nodeStream.collect(Collectors.toSet())
-        .stream().forEach(node -> {
+    nodeStream.forEach(node -> {
       var nodeId = node.getNodeId();
       var nodeLabel = printNodeLabel(node.getLabels());
       var nodeProperties = node.getProperties().printProperties();
-      var s = "CREATE (" +
+      var s = "MERGE (" +
               nodeId +
               nodeLabel +
               " " +
@@ -67,7 +78,7 @@ public class CypherExporter {
       var toNodeId = edge.getToNode().getNodeId();
       var edgeLabel = printEdgeLabel(edge.getLabel());
       var edgeProperties = edge.getProperties().printProperties();
-      var s = "CREATE (" +
+      var s = "MERGE (" +
               fromNodeId +
               ")-[" +
               edgeLabel +
@@ -80,21 +91,17 @@ public class CypherExporter {
     });
   }
 
-  void flush() {
-    try {
-      writer.flush();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void writeLine(@Nullable String s) {
-    if (s == null) {
+  private void writeLine(@Nullable String str) {
+    if (str == null) {
       return;
     }
     try {
-      writer.write(s);
-      writer.write(System.getProperty("line.separator"));
+      var strWithNewline = str + "\n";
+      Files.writeString(outputFilePath,
+          strWithNewline,
+          Charsets.UTF_8,
+          StandardOpenOption.CREATE,
+          StandardOpenOption.APPEND);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

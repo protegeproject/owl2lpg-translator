@@ -18,10 +18,6 @@
   </description>
   <packaging>jar</packaging>
 
-  <properties>
-    <opencsv.version>5.1</opencsv.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>edu.stanford.owl2lpg</groupId>
@@ -29,9 +25,16 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
-      <version>${opencsv.version}</version>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>owlapi-distribution</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auto.value</groupId>
+      <artifactId>auto-value-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auto.value</groupId>
+      <artifactId>auto-value</artifactId>
     </dependency>
   </dependencies>
 </project>

@@ -1,40 +1,40 @@
 package edu.stanford.owl2lpg.exporter.cypher;
 
-import edu.stanford.owl2lpg.exporter.AbstractTranslationExporter;
-import edu.stanford.owl2lpg.translator.TranslatorFactory;
+import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
+import java.nio.file.Path;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CypherTranslationExporter extends AbstractTranslationExporter {
+public class CypherTranslationExporter {
 
-  public void export(@Nonnull File ontologyFile, @Nonnull Writer writer) throws IOException {
-    checkNotNull(ontologyFile);
-    checkNotNull(writer);
+  public void export(@Nonnull Path ontologyFilePath, @Nonnull Path outputFilePath) throws IOException {
+    checkNotNull(ontologyFilePath);
+    checkNotNull(outputFilePath);
     try {
+      var ontologyFile = ontologyFilePath.toFile();
       var ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(ontologyFile);
-      export(ontology, writer);
+      export(ontology, outputFilePath);
     } catch (OWLOntologyCreationException e) {
       throw new IOException(e);
     }
   }
 
-  @Override
-  public void export(@Nonnull OWLOntology ontology, @Nonnull Writer writer) throws IOException {
+  public void export(@Nonnull OWLOntology ontology, @Nonnull Path outputFilePath) {
     checkNotNull(ontology);
-    checkNotNull(writer);
+    checkNotNull(outputFilePath);
+    var translator = DaggerTranslatorComponent.create().getVersionedOntologyTranslator();
     var exporter = new CypherExporter(
-        TranslatorFactory.getOntologyTranslator(),
+        translator,
+        AxiomContext.create(),
         ontology,
-        writer);
+        outputFilePath);
     exporter.write();
-    exporter.flush();
   }
 }
