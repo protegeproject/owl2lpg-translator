@@ -1,11 +1,9 @@
 package edu.stanford.owl2lpg.cli;
 
-import edu.stanford.owl2lpg.exporter.csv.CsvTranslationExporter;
 import edu.stanford.owl2lpg.exporter.cypher.CypherTranslationExporter;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.*;
@@ -21,14 +19,20 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   @Parameters(
       index = "0",
       paramLabel = "FILE",
-      description = "An OWL ontology file to translate",
-      type = File.class)
-  File ontologyFile;
+      description = "Input OWL ontology file location",
+      type = Path.class)
+  Path ontologyFileLocation;
 
   @Option(
       names = {"-f", "--format"},
       description = "Translation format: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})")
   Format format = Format.cypher;
+
+  @Option(
+      names = {"-o", "--output"},
+      description = "Output file location",
+      type = Path.class)
+  Path outputFileLocation;
 
   @Option(
       names = {"-h", "--help"},
@@ -54,7 +58,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     CypherTranslationExporter exporter = new CypherTranslationExporter();
     try {
-      exporter.export(ontologyFile, new PrintWriter(System.out));
+      exporter.export(ontologyFileLocation, outputFileLocation);
     } catch (IOException e) {
       exitCode = 1;
     }
@@ -62,13 +66,14 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   }
 
   private int translateOntologyToCsv() {
-    int exitCode = 0;
-    CsvTranslationExporter exporter = new CsvTranslationExporter();
-    try {
-      exporter.export(ontologyFile, new PrintWriter(System.out));
-    } catch (IOException e) {
-      exitCode = 1;
-    }
-    return exitCode;
+//    int exitCode = 0;
+//    CsvTranslationExporter exporter = new CsvTranslationExporter();
+//    try {
+//      exporter.export(ontologyFile, new PrintWriter(System.out));
+//    } catch (IOException e) {
+//      exitCode = 1;
+//    }
+//    return exitCode;
+    return 0;
   }
 }
