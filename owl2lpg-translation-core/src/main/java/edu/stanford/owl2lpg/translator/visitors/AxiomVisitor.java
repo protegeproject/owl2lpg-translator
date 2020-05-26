@@ -483,7 +483,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < propertyExprList.size(); i++) {
       addAugmentedEdge(propertyExprList.get(i), axiomNode, IS_SUBJECT_OF, edges);
-      for (int j = 0; j < propertyExprList.size(); i++) {
+      for (int j = 0; j < propertyExprList.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
               propertyExprList.get(i),
@@ -528,7 +528,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < classList.size(); i++) {
       addAugmentedEdge(classList.get(i), axiomNode, IS_SUBJECT_OF, edges);
-      for (int j = 0; j < classList.size(); i++) {
+      for (int j = 0; j < classList.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
               classList.get(i),
@@ -600,7 +600,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < individualList.size(); i++) {
       addAugmentedEdge(individualList.get(i), axiomNode, IS_SUBJECT_OF, edges);
-      for (int j = 0; j < individualList.size(); i++) {
+      for (int j = 0; j < individualList.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
               individualList.get(i),
