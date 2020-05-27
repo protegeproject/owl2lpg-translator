@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,8 +33,8 @@ public abstract class LiteralNode {
   @Nonnull
   public static LiteralNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
                                    @JsonProperty(PROPERTY_LEXICAL_FORM) @Nonnull String propertyLexicalForm,
-                                   @JsonProperty(PROPERTY_DATATYPE) @Nonnull String propertyDatatype,
-                                   @JsonProperty(PROPERTY_LANGUAGE) @Nonnull String propertyLanguage,
+                                   @JsonProperty(PROPERTY_DATATYPE) @Nullable String propertyDatatype,
+                                   @JsonProperty(PROPERTY_LANGUAGE) @Nullable String propertyLanguage,
                                    @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
     return new AutoValue_LiteralNode(nodeId, propertyLexicalForm,
         propertyDatatype, propertyLanguage, nodeLabels);
@@ -59,11 +60,11 @@ public abstract class LiteralNode {
   public abstract String getPropertyLexicalForm();
 
   @JsonProperty(PROPERTY_DATATYPE)
-  @Nonnull
+  @Nullable
   public abstract String getPropertyDatatype();
 
   @JsonProperty(PROPERTY_LANGUAGE)
-  @Nonnull
+  @Nullable
   public abstract String getPropertyLanguage();
 
   @JsonProperty(NODE_LABELS)
