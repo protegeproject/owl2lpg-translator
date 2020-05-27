@@ -29,6 +29,16 @@ public abstract class Properties {
     return create(ImmutableMap.of(property, value));
   }
 
+  private static String escape(String value) {
+    return value.replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\b", "\\b")
+        .replace("\f", "\\f")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t");
+  }
+
   protected abstract ImmutableMap<String, Object> getMap();
 
   @Nullable
@@ -46,23 +56,20 @@ public abstract class Properties {
     var sb = new StringBuilder();
     sb.append("{");
     forEach((key, value) -> {
-                         if(sb.length() > 1) {
-                           sb.append(",");
-                         }
-                         if (value instanceof String) {
-                           sb.append(key).append(": \"").append(escape((String) value)).append("\"");
-                         } else {
-                           sb.append(key).append(": ").append(value);
-                         }
-                       }
+          if (sb.length() > 1) {
+            sb.append(",");
+          }
+          if (value instanceof String) {
+            sb.append(key)
+                .append(": \"")
+                .append(escape((String) value))
+                .append("\"");
+          } else {
+            sb.append(key).append(": ").append(value);
+          }
+        }
     );
     sb.append("}");
     return sb.toString();
-  }
-
-  private static String escape(String value) {
-    return value.replace("\n", " ")
-                .replace("'", "\\\\'")
-                .replace("\"", "\\\\\"");
   }
 }
