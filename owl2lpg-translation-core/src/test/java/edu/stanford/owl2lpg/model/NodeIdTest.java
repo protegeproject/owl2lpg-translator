@@ -10,7 +10,7 @@ public class NodeIdTest {
   @Test
   public void shouldCreateNodeId() {
     var nodeId = NodeId.create(1);
-    assertThat(nodeId.getIdentifierObject(), equalTo(1));
+    assertThat(nodeId.getIdentifierObject(), equalTo(1L));
     assertThat(nodeId.toString(), equalTo("NodeId_1"));
   }
 }
