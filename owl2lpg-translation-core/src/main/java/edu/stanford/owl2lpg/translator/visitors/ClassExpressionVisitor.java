@@ -11,7 +11,11 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 
