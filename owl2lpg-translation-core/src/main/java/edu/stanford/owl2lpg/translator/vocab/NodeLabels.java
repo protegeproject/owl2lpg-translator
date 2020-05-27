@@ -1,9 +1,7 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nonnull;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,109 +15,159 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public enum NodeLabels {
 
   // @formatter:off
-  PROJECT(ImmutableList.of("Project")),
-  BRANCH(ImmutableList.of("Branch")),
-  ONTOLOGY_DOCUMENT(ImmutableList.of("OntologyDocument")),
+  PROJECT("Project"),
+  BRANCH("Branch"),
+  ONTOLOGY_DOCUMENT("OntologyDocument"),
 
-  ONTOLOGY(ImmutableList.of("Ontology")),
-  ONTOLOGY_ID(ImmutableList.of("OntologyID")),
+  ONTOLOGY("Ontology"),
+  ONTOLOGY_ID("OntologyID"),
+  IRI("IRI"),
 
-  IRI(ImmutableList.of("IRI")),
-  CLASS(ImmutableList.of("Class", "ClassExpression", "Entity")),
-  DATATYPE(ImmutableList.of("Datatype", "DataRange", "Entity")),
-  OBJECT_PROPERTY(ImmutableList.of("ObjectProperty", "ObjectPropertyExpression", "Entity")),
-  DATA_PROPERTY(ImmutableList.of("DataProperty", "DataPropertyExpression", "Entity")),
-  ANNOTATION_PROPERTY(ImmutableList.of("AnnotationProperty", "Entity")),
-  NAMED_INDIVIDUAL(ImmutableList.of("NamedIndividual", "Individual", "Entity")),
-  ANONYMOUS_INDIVIDUAL(ImmutableList.of("AnonymousIndividual", "Individual")),
+  ENTITY("Entity"),
+  CLASS_EXPRESSION_ENTITY("ClassExpression", ENTITY),
+  DATA_RANGE_ENTITY("DataRange", ENTITY),
+  OBJECT_PROPERTY_EXPRESSION_ENTITY("ObjectPropertyExpression", ENTITY),
+  DATA_PROPERTY_EXPRESSION_ENTITY("DataPropertyExpression", ENTITY),
+  INDIVIDUAL_ENTITY("Individual", ENTITY),
 
-  OBJECT_INTERSECTION_OF(ImmutableList.of("ObjectIntersectionOf", "ClassExpression")),
-  OBJECT_UNION_OF(ImmutableList.of("ObjectUnionOf", "ClassExpression")),
-  OBJECT_COMPLEMENT_OF(ImmutableList.of("ObjectComplementOf", "ClassExpression")),
-  OBJECT_SOME_VALUES_FROM(ImmutableList.of("ObjectSomeValuesFrom", "ClassExpression")),
-  OBJECT_ALL_VALUES_FROM(ImmutableList.of("ObjectAllValuesFrom", "ClassExpression")),
-  OBJECT_MIN_CARDINALITY(ImmutableList.of("ObjectMinCardinality", "ClassExpression")),
-  OBJECT_EXACT_CARDINALITY(ImmutableList.of("ObjectExactCardinality", "ClassExpression")),
-  OBJECT_MAX_CARDINALITY(ImmutableList.of("ObjectMaxCardinality", "ClassExpression")),
+  CLASS("Class", CLASS_EXPRESSION_ENTITY),
+  DATATYPE("Datatype", DATA_RANGE_ENTITY),
+  OBJECT_PROPERTY("ObjectProperty", OBJECT_PROPERTY_EXPRESSION_ENTITY),
+  DATA_PROPERTY("DataProperty", DATA_PROPERTY_EXPRESSION_ENTITY),
+  ANNOTATION_PROPERTY("AnnotationProperty", ENTITY),
+  NAMED_INDIVIDUAL("NamedIndividual", INDIVIDUAL_ENTITY),
+  INDIVIDUAL("Individual"),
+  ANONYMOUS_INDIVIDUAL("AnonymousIndividual", INDIVIDUAL),
 
-  DATA_SOME_VALUES_FROM(ImmutableList.of("DataSomeValuesFrom", "ClassExpression")),
-  DATA_ALL_VALUES_FROM(ImmutableList.of("DataAllValuesFrom", "ClassExpression")),
-  DATA_MIN_CARDINALITY(ImmutableList.of("DataMinCardinality", "ClassExpression")),
-  DATA_EXACT_CARDINALITY(ImmutableList.of("DataExactCardinality", "ClassExpression")),
-  DATA_MAX_CARDINALITY(ImmutableList.of("DataMaxCardinality", "ClassExpression")),
-  OBJECT_HAS_VALUE(ImmutableList.of("ObjectHasValue", "ClassExpression")),
-  OBJECT_HAS_SELF(ImmutableList.of("ObjectHasSelf", "ClassExpression")),
-  OBJECT_ONE_OF(ImmutableList.of("ObjectOneOf", "ClassExpression")),
-  DATA_HAS_VALUE(ImmutableList.of("DataHasValue", "ClassExpression")),
+  CLASS_EXPRESSION("ClassExpression"),
+  OBJECT_INTERSECTION_OF("ObjectIntersectionOf", CLASS_EXPRESSION),
+  OBJECT_UNION_OF("ObjectUnionOf", CLASS_EXPRESSION),
+  OBJECT_COMPLEMENT_OF("ObjectComplementOf", CLASS_EXPRESSION),
+  OBJECT_SOME_VALUES_FROM("ObjectSomeValuesFrom", CLASS_EXPRESSION),
+  OBJECT_ALL_VALUES_FROM("ObjectAllValuesFrom", CLASS_EXPRESSION),
+  OBJECT_MIN_CARDINALITY("ObjectMinCardinality", CLASS_EXPRESSION),
+  OBJECT_EXACT_CARDINALITY("ObjectExactCardinality", CLASS_EXPRESSION),
+  OBJECT_MAX_CARDINALITY("ObjectMaxCardinality", CLASS_EXPRESSION),
+  DATA_SOME_VALUES_FROM("DataSomeValuesFrom", CLASS_EXPRESSION),
+  DATA_ALL_VALUES_FROM("DataAllValuesFrom", CLASS_EXPRESSION),
+  DATA_MIN_CARDINALITY("DataMinCardinality", CLASS_EXPRESSION),
+  DATA_EXACT_CARDINALITY("DataExactCardinality", CLASS_EXPRESSION),
+  DATA_MAX_CARDINALITY("DataMaxCardinality", CLASS_EXPRESSION),
+  OBJECT_HAS_VALUE("ObjectHasValue", CLASS_EXPRESSION),
+  OBJECT_HAS_SELF("ObjectHasSelf", CLASS_EXPRESSION),
+  OBJECT_ONE_OF("ObjectOneOf", CLASS_EXPRESSION),
+  DATA_HAS_VALUE("DataHasValue", CLASS_EXPRESSION),
 
-  OBJECT_INVERSE_OF(ImmutableList.of("ObjectInverseOf", "ObjectPropertyExpression")),
+  OBJECT_PROPERTY_EXPRESSION("ObjectPropertyExpression"),
+  OBJECT_INVERSE_OF("ObjectInverseOf", OBJECT_PROPERTY_EXPRESSION),
 
-  DATA_COMPLEMENT_OF(ImmutableList.of("DataComplementOf", "DataRange")),
-  DATA_INTERSECTION_OF(ImmutableList.of("DataIntersectionOf", "DataRange")),
-  DATA_UNION_OF(ImmutableList.of("DataUnionOf", "DataRange")),
-  DATA_ONE_OF(ImmutableList.of("DataOneOf", "DataRange")),
-  DATATYPE_RESTRICTION(ImmutableList.of("DatatypeRestriction", "DataRange")),
-  FACET_RESTRICTION(ImmutableList.of("DatatypeRestriction", "DataRange")),
+  DATA_RANGE("DataRange"),
+  DATA_COMPLEMENT_OF("DataComplementOf", DATA_RANGE),
+  DATA_INTERSECTION_OF("DataIntersectionOf", DATA_RANGE),
+  DATA_UNION_OF("DataUnionOf", DATA_RANGE),
+  DATA_ONE_OF("DataOneOf", DATA_RANGE),
+  DATATYPE_RESTRICTION("DatatypeRestriction", DATA_RANGE),
+  FACET_RESTRICTION("DatatypeRestriction", DATA_RANGE),
 
-  LITERAL(ImmutableList.of("Literal")),
-  LANGUAGE_TAG(ImmutableList.of("LanguageTag")),
+  LITERAL("Literal"),
+  LANGUAGE_TAG("LanguageTag"),
 
-  DECLARATION(ImmutableList.of("Declaration", "Axiom")),
-  SUB_CLASS_OF(ImmutableList.of("SubClassOf", "ClassAxiom", "Axiom")),
-  DATATYPE_DEFINITION(ImmutableList.of("DatatypeDefinition", "Axiom")),
-  EQUIVALENT_CLASSES(ImmutableList.of("EquivalentClasses", "ClassAxiom", "Axiom")),
-  DISJOINT_CLASSES(ImmutableList.of("DisjointClasses", "ClassAxiom", "Axiom")),
-  DISJOINT_UNION(ImmutableList.of("DisjointUnion", "ClassAxiom", "Axiom")),
-  SUB_OBJECT_PROPERTY_OF(ImmutableList.of("SubObjectPropertyOf", "ObjectPropertyAxiom", "Axiom")),
-  EQUIVALENT_OBJECT_PROPERTIES(ImmutableList.of("EquivalentObjectProperties", "ObjectPropertyAxiom", "Axiom")),
-  DISJOINT_OBJECT_PROPERTIES(ImmutableList.of("DisjointObjectProperties", "ObjectPropertyAxiom", "Axiom")),
-  OBJECT_PROPERTY_DOMAIN(ImmutableList.of("ObjectPropertyDomain", "ObjectPropertyAxiom", "Axiom")),
-  OBJECT_PROPERTY_RANGE(ImmutableList.of("ObjectPropertyRange", "ObjectPropertyAxiom", "Axiom")),
-  INVERSE_OBJECT_PROPERTIES(ImmutableList.of("InverseObjectProperties", "ObjectPropertyAxiom", "Axiom")),
-  FUNCTIONAL_OBJECT_PROPERTY(ImmutableList.of("FunctionalObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  INVERSE_FUNCTIONAL_OBJECT_PROPERTY(ImmutableList.of("InverseFunctionalObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  REFLEXIVE_OBJECT_PROPERTY(ImmutableList.of("ReflexiveObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  IRREFLEXIVE_OBJECT_PROPERTY(ImmutableList.of("IrreflexiveObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  SYMMETRIC_OBJECT_PROPERTY(ImmutableList.of("SymmetricObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  ASYMMETRIC_OBJECT_PROPERTY(ImmutableList.of("AsymmetricObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  TRANSITIVE_OBJECT_PROPERTY(ImmutableList.of("TransitiveObjectProperty", "ObjectPropertyAxiom", "Axiom")),
-  SUB_DATA_PROPERTY_OF(ImmutableList.of("SubDataPropertyOf", "DataPropertyAxiom", "Axiom")),
-  EQUIVALENT_DATA_PROPERTIES(ImmutableList.of("EquivalentDataProperties", "DataPropertyAxiom", "Axiom")),
-  DISJOINT_DATA_PROPERTIES(ImmutableList.of("DisjointDataProperties", "DataPropertyAxiom", "Axiom")),
-  DATA_PROPERTY_DOMAIN(ImmutableList.of("DataPropertyDomain", "DataPropertyAxiom", "Axiom")),
-  DATA_PROPERTY_RANGE(ImmutableList.of("DataPropertyRange", "DataPropertyAxiom", "Axiom")),
-  FUNCTIONAL_DATA_PROPERTY(ImmutableList.of("FunctionalDataProperty", "DataPropertyAxiom", "Axiom")),
-  HAS_KEY(ImmutableList.of("HasKey", "Axiom")),
-  SAME_INDIVIDUAL(ImmutableList.of("SameIndividual", "Assertion", "Axiom")),
-  DIFFERENT_INDIVIDUALS(ImmutableList.of("DifferentIndividuals", "Assertion", "Axiom")),
-  CLASS_ASSERTION(ImmutableList.of("ClassAssertion", "Assertion", "Axiom")),
-  OBJECT_PROPERTY_ASSERTION(ImmutableList.of("ObjectPropertyAssertion", "Assertion", "Axiom")),
-  NEGATIVE_OBJECT_PROPERTY_ASSERTION(ImmutableList.of("NegativeObjectPropertyAssertion", "Assertion", "Axiom")),
-  DATA_PROPERTY_ASSERTION(ImmutableList.of("DataPropertyAssertion", "Assertion", "Axiom")),
-  NEGATIVE_DATA_PROPERTY_ASSERTION(ImmutableList.of("NegativeDataPropertyAssertion", "Assertion", "Axiom")),
-  ANNOTATION_ASSERTION(ImmutableList.of("AnnotationAssertion", "AnnotationAxiom", "Axiom")),
-  SUB_ANNOTATION_PROPERTY_OF(ImmutableList.of("SubAnnotationPropertyOf", "AnnotationAxiom", "Axiom")),
-  ANNOTATION_PROPERTY_DOMAIN(ImmutableList.of("AnnotationPropertyDomain", "AnnotationAxiom", "Axiom")),
-  ANNOTATION_PROPERTY_RANGE(ImmutableList.of("AnnotationPropertyRange", "AnnotationAxiom", "Axiom")),
-  ANNOTATION(ImmutableList.of("Annotation")),
-  SWRL_RULE(ImmutableList.of("SWRLRule"));
+  AXIOM("Axiom"),
+  DECLARATION("Declaration", AXIOM),
+  DATATYPE_DEFINITION("DatatypeDefinition", AXIOM),
+  HAS_KEY("HasKey", AXIOM),
+
+  CLASS_AXIOM("ClassAxiom", AXIOM),
+  SUB_CLASS_OF("SubClassOf", CLASS_AXIOM),
+  EQUIVALENT_CLASSES("EquivalentClasses", CLASS_AXIOM),
+  DISJOINT_CLASSES("DisjointClasses", CLASS_AXIOM),
+  DISJOINT_UNION("DisjointUnion", CLASS_AXIOM),
+
+  OBJECT_PROPERTY_AXIOM("ObjectPropertyAxiom", AXIOM),
+  SUB_OBJECT_PROPERTY_OF("SubObjectPropertyOf", OBJECT_PROPERTY_AXIOM),
+  EQUIVALENT_OBJECT_PROPERTIES("EquivalentObjectProperties", OBJECT_PROPERTY_AXIOM),
+  DISJOINT_OBJECT_PROPERTIES("DisjointObjectProperties", OBJECT_PROPERTY_AXIOM),
+  OBJECT_PROPERTY_DOMAIN("ObjectPropertyDomain", OBJECT_PROPERTY_AXIOM),
+  OBJECT_PROPERTY_RANGE("ObjectPropertyRange", OBJECT_PROPERTY_AXIOM),
+  INVERSE_OBJECT_PROPERTIES("InverseObjectProperties", OBJECT_PROPERTY_AXIOM),
+  FUNCTIONAL_OBJECT_PROPERTY("FunctionalObjectProperty", OBJECT_PROPERTY_AXIOM),
+  INVERSE_FUNCTIONAL_OBJECT_PROPERTY("InverseFunctionalObjectProperty", OBJECT_PROPERTY_AXIOM),
+  REFLEXIVE_OBJECT_PROPERTY("ReflexiveObjectProperty", OBJECT_PROPERTY_AXIOM),
+  IRREFLEXIVE_OBJECT_PROPERTY("IrreflexiveObjectProperty", OBJECT_PROPERTY_AXIOM),
+  SYMMETRIC_OBJECT_PROPERTY("SymmetricObjectProperty", OBJECT_PROPERTY_AXIOM),
+  ASYMMETRIC_OBJECT_PROPERTY("AsymmetricObjectProperty", OBJECT_PROPERTY_AXIOM),
+  TRANSITIVE_OBJECT_PROPERTY("TransitiveObjectProperty", OBJECT_PROPERTY_AXIOM),
+
+  DATA_PROPERTY_AXIOM("DataPropertyAxiom", AXIOM),
+  SUB_DATA_PROPERTY_OF("SubDataPropertyOf", DATA_PROPERTY_AXIOM),
+  EQUIVALENT_DATA_PROPERTIES("EquivalentDataProperties", DATA_PROPERTY_AXIOM),
+  DISJOINT_DATA_PROPERTIES("DisjointDataProperties", DATA_PROPERTY_AXIOM),
+  DATA_PROPERTY_DOMAIN("DataPropertyDomain", DATA_PROPERTY_AXIOM),
+  DATA_PROPERTY_RANGE("DataPropertyRange", DATA_PROPERTY_AXIOM),
+  FUNCTIONAL_DATA_PROPERTY("FunctionalDataProperty", DATA_PROPERTY_AXIOM),
+
+  ASSERTION("Assertion", AXIOM),
+  SAME_INDIVIDUAL("SameIndividual", ASSERTION),
+  DIFFERENT_INDIVIDUALS("DifferentIndividuals", ASSERTION),
+  CLASS_ASSERTION("ClassAssertion", ASSERTION),
+  OBJECT_PROPERTY_ASSERTION("ObjectPropertyAssertion", ASSERTION),
+  NEGATIVE_OBJECT_PROPERTY_ASSERTION("NegativeObjectPropertyAssertion", ASSERTION),
+  DATA_PROPERTY_ASSERTION("DataPropertyAssertion", ASSERTION),
+  NEGATIVE_DATA_PROPERTY_ASSERTION("NegativeDataPropertyAssertion", ASSERTION),
+
+  ANNOTATION_AXIOM("AnnotationAxiom", AXIOM),
+  ANNOTATION_ASSERTION("AnnotationAssertion", ANNOTATION_AXIOM),
+  SUB_ANNOTATION_PROPERTY_OF("SubAnnotationPropertyOf", ANNOTATION_AXIOM),
+  ANNOTATION_PROPERTY_DOMAIN("AnnotationPropertyDomain", ANNOTATION_AXIOM),
+  ANNOTATION_PROPERTY_RANGE("AnnotationPropertyRange", ANNOTATION_AXIOM),
+
+  ANNOTATION("Annotation"),
+  SWRL_RULE("SWRLRule");
   // @formatter:on
 
   @Nonnull
-  private final ImmutableList<String> values;
+  private final String label;
+
+  @Nonnull
+  private final Optional<NodeLabels> parentLabels;
 
   @Nonnull
   private final String printLabel;
 
-  NodeLabels(@Nonnull ImmutableList<String> values) {
-    this.values = checkNotNull(values);
-    this.printLabel = values.stream()
-        .collect(Collectors.joining(":", ":", ""));
+  NodeLabels(@Nonnull String label) {
+    this(label, Optional.empty());
   }
 
-  @Nonnull
-  public ImmutableList<String> getValues() {
-    return values;
+  NodeLabels(@Nonnull String label,
+             @Nonnull NodeLabels parentLabels) {
+    this(label, Optional.of(parentLabels));
+  }
+
+  NodeLabels(@Nonnull String label,
+             @Nonnull Optional<NodeLabels> parentLabels) {
+    this.label = checkNotNull(label);
+    this.parentLabels = checkNotNull(parentLabels);
+    this.printLabel = getPrintLabel();
+  }
+
+  private String getPrintLabel() {
+    var printLabel = ":" + label;
+    if (parentLabels.isPresent()) {
+      printLabel += parentLabels.get().printLabels();
+    }
+    return printLabel;
+  }
+
+  public boolean isa(NodeLabels nodeLabels) {
+    return matchLabel(nodeLabels) || matchParentLabel(nodeLabels);
+  }
+
+  private boolean matchLabel(NodeLabels nodeLabels) {
+    return label.equals(nodeLabels.label);
+  }
+
+  private boolean matchParentLabel(NodeLabels nodeLabels) {
+    return (parentLabels.isPresent()) && parentLabels.get().isa(nodeLabels);
   }
 
   @Nonnull
