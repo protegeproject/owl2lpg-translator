@@ -129,7 +129,7 @@ public enum NodeLabels {
   // @formatter:on
 
   @Nonnull
-  private final String label;
+  private final String mainLabel;
 
   @Nonnull
   private final Optional<NodeLabels> parentLabels;
@@ -140,18 +140,18 @@ public enum NodeLabels {
   @Nonnull
   private final ImmutableList<String> labelList;
 
-  NodeLabels(@Nonnull String label) {
-    this(label, Optional.empty());
+  NodeLabels(@Nonnull String mainLabel) {
+    this(mainLabel, Optional.empty());
   }
 
-  NodeLabels(@Nonnull String label,
+  NodeLabels(@Nonnull String mainLabel,
              @Nonnull NodeLabels parentLabels) {
-    this(label, Optional.of(parentLabels));
+    this(mainLabel, Optional.of(parentLabels));
   }
 
-  NodeLabels(@Nonnull String label,
+  NodeLabels(@Nonnull String mainLabel,
              @Nonnull Optional<NodeLabels> parentLabels) {
-    this.label = checkNotNull(label);
+    this.mainLabel = checkNotNull(mainLabel);
     this.parentLabels = checkNotNull(parentLabels);
     this.labelList = getLabelList();
     this.printLabel = getPrintLabel();
@@ -164,14 +164,14 @@ public enum NodeLabels {
 
   @Nonnull
   public Stream<String> labels() {
-    var s1 = Stream.of(label);
+    var s1 = Stream.of(mainLabel);
     var s2 = getParentLabels().flatMap(NodeLabels::labels);
     return Stream.concat(s1, s2);
   }
 
   @Nonnull
   private String getPrintLabel() {
-    var printLabel = ":" + label;
+    var printLabel = ":" + mainLabel;
     if (parentLabels.isPresent()) {
       printLabel += parentLabels.get().printLabels();
     }
@@ -191,7 +191,7 @@ public enum NodeLabels {
   }
 
   private boolean matchLabel(NodeLabels nodeLabels) {
-    return label.equals(nodeLabels.label);
+    return mainLabel.equals(nodeLabels.mainLabel);
   }
 
   private boolean matchParentLabel(NodeLabels nodeLabels) {
