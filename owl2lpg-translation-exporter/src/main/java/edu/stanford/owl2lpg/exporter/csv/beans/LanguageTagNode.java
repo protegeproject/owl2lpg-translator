@@ -37,7 +37,7 @@ public abstract class LanguageTagNode {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperties().get(PropertyFields.LANGUAGE),
+        node.getProperty(PropertyFields.LANGUAGE),
         node.getLabels().asList());
   }
 

@@ -37,7 +37,7 @@ public abstract class OntologyDocumentNode {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperties().get(PropertyFields.ONTOLOGY_DOCUMENT_ID),
+        node.getProperty(PropertyFields.ONTOLOGY_DOCUMENT_ID),
         node.getLabels().asList());
   }
 

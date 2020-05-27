@@ -8,7 +8,6 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -35,7 +34,7 @@ public abstract class IriNode {
   public static IriNode of(@Nonnull Node node) {
     return create(
         node.printNodeId(),
-        Objects.requireNonNull(node.getProperties().get(PropertyFields.IRI)),
+        node.getProperty(PropertyFields.IRI),
         node.getLabels().asList());
   }
 

@@ -37,7 +37,7 @@ public abstract class BranchNode {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperties().get(PropertyFields.BRANCH_ID),
+        node.getProperty(PropertyFields.BRANCH_ID),
         node.getLabels().asList());
   }
 

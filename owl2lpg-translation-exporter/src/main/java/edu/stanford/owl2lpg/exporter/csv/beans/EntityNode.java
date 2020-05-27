@@ -37,7 +37,7 @@ public abstract class EntityNode {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperties().get(PropertyFields.IRI),
+        node.getProperty(PropertyFields.IRI),
         node.getLabels().asList());
   }
 

@@ -44,9 +44,9 @@ public abstract class LiteralNode {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperties().get(PropertyFields.LEXICAL_FORM),
-        node.getProperties().get(PropertyFields.DATATYPE),
-        node.getProperties().get(PropertyFields.LANGUAGE),
+        node.getProperty(PropertyFields.LEXICAL_FORM),
+        node.getProperty(PropertyFields.DATATYPE),
+        node.getProperty(PropertyFields.LANGUAGE),
         node.getLabels().asList());
   }
 

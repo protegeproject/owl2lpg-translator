@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Represents a graph connector (or an edge) from one node to the other.
@@ -27,6 +28,11 @@ public abstract class Edge {
                             @Nonnull Node toNode,
                             @Nonnull EdgeLabel label) {
     return create(fromNode, toNode, label, Properties.empty());
+  }
+
+  @Nullable
+  public <E> E getProperty(String key) {
+    return getProperties().get(key);
   }
 
   public String printLabel() {

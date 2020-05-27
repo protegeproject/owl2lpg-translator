@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Represents a graph node that has a list of labels and a set of key-value
@@ -30,6 +31,11 @@ public abstract class Node {
 
   public boolean isTypeOf(NodeLabels nodeLabels) {
     return getLabels().isa(nodeLabels);
+  }
+
+  @Nullable
+  public <E> E getProperty(String key) {
+    return getProperties().get(key);
   }
 
   public String printNodeId() {
