@@ -1,5 +1,9 @@
 package edu.stanford.owl2lpg.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
@@ -14,7 +18,17 @@ import javax.annotation.Nullable;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
+@JsonTypeName("node")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = Node.N4J_JSON_TYPE)
 public abstract class Node {
+
+  private static final String N4J_JSON_ID = "id";
+
+  private static final String N4J_JSON_LABELS = "labels";
+
+  private static final String N4J_JSON_PROPERTIES = "properties";
+
+  static final String N4J_JSON_TYPE = "type";
 
   @Nonnull
   public static Node create(@Nonnull NodeId nodeId,
@@ -29,6 +43,7 @@ public abstract class Node {
     return create(nodeId, labels, Properties.empty());
   }
 
+  @JsonIgnore
   public boolean isTypeOf(NodeLabels nodeLabels) {
     return getLabels().isa(nodeLabels);
   }
@@ -50,12 +65,15 @@ public abstract class Node {
     return getProperties().printProperties();
   }
 
+  @JsonProperty(N4J_JSON_ID)
   @Nonnull
   public abstract NodeId getNodeId();
 
+  @JsonProperty(N4J_JSON_LABELS)
   @Nonnull
   public abstract NodeLabels getLabels();
 
+  @JsonProperty(N4J_JSON_PROPERTIES)
   @Nonnull
   public abstract Properties getProperties();
 }

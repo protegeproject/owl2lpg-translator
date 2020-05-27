@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
 
@@ -39,6 +40,7 @@ public abstract class Properties {
         .replace("\t", "\\t");
   }
 
+  @JsonValue
   protected abstract ImmutableMap<String, Object> getMap();
 
   @Nullable

@@ -1,5 +1,7 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
@@ -76,6 +78,7 @@ public enum EdgeLabel {
     this.printLabel = ":" + LOWER_CAMEL.to(UPPER_UNDERSCORE, value);
   }
 
+  @JsonValue
   @Nonnull
   public String getValue() {
     return value;

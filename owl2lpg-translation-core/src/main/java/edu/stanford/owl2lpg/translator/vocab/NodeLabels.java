@@ -1,5 +1,7 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
@@ -182,6 +184,7 @@ public enum NodeLabels {
     return parentLabels.stream().flatMap(Stream::of);
   }
 
+  @JsonValue
   public ImmutableList<String> asList() {
     return labelList;
   }

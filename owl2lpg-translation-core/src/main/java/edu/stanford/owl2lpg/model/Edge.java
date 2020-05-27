@@ -1,5 +1,8 @@
 package edu.stanford.owl2lpg.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
@@ -15,7 +18,10 @@ import javax.annotation.Nullable;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
+@JsonTypeName("relationship")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public abstract class Edge {
+
 
   public static Edge create(@Nonnull Node fromNode,
                             @Nonnull Node toNode,
@@ -43,11 +49,15 @@ public abstract class Edge {
     return getProperties().printProperties();
   }
 
+  @JsonProperty("start")
   public abstract Node getFromNode();
 
+  @JsonProperty("end")
   public abstract Node getToNode();
 
+  @JsonProperty("label")
   public abstract EdgeLabel getLabel();
 
+  @JsonProperty("properties")
   public abstract Properties getProperties();
 }
