@@ -66,7 +66,7 @@ public abstract class Translation {
    * @return A collection of nodes.
    */
   public Stream<Node> nodes(String label) {
-    return nodes().filter(node -> node.getLabels().contains(label));
+    return nodes().filter(node -> node.getLabels().getValues().contains(label));
   }
 
   /**

@@ -38,7 +38,7 @@ public abstract class ProjectNode {
     return create(
         node.getNodeId().toString(),
         node.getProperties().get(PropertyFields.PROJECT_ID),
-        node.getLabels());
+        node.getLabels().getValues());
   }
 
   @JsonProperty(NODE_ID)

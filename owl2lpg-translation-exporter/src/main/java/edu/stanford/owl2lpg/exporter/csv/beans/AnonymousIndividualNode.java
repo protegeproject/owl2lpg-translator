@@ -38,7 +38,7 @@ public abstract class AnonymousIndividualNode {
     return create(
         node.getNodeId().toString(),
         node.getProperties().get(PropertyFields.NODE_ID),
-        node.getLabels());
+        node.getLabels().getValues());
   }
 
   @JsonProperty(NODE_ID)

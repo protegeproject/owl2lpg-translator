@@ -36,7 +36,7 @@ public abstract class IriNode {
     return create(
         node.getNodeId().toString(),
         Objects.requireNonNull(node.getProperties().get(PropertyFields.IRI)),
-        node.getLabels());
+        node.getLabels().getValues());
   }
 
   @JsonProperty(NODE_ID)

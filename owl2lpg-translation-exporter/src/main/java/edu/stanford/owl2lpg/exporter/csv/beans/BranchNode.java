@@ -38,7 +38,7 @@ public abstract class BranchNode {
     return create(
         node.getNodeId().toString(),
         node.getProperties().get(PropertyFields.BRANCH_ID),
-        node.getLabels());
+        node.getLabels().getValues());
   }
 
   @JsonProperty(NODE_ID)

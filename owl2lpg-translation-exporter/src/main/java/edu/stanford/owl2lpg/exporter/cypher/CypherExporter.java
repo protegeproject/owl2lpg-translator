@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -14,8 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -47,8 +46,12 @@ public class CypherExporter {
   public void write() {
     ontology.getAxioms()
         .stream()
-        .map(axiom -> ontologyTranslator.translate(axiomContext, axiom))
+        .map(this::translateAxiom)
         .forEach(this::writeTranslation);
+  }
+
+  private Translation translateAxiom(OWLAxiom axiom) {
+    return ontologyTranslator.translate(axiomContext, axiom);
   }
 
   private void writeTranslation(Translation translation) {
@@ -59,14 +62,14 @@ public class CypherExporter {
   void writeNodes(Stream<Node> nodeStream) {
     nodeStream.forEach(node -> {
       var nodeId = node.getNodeId();
-      var nodeLabel = printNodeLabel(node.getLabels());
+      var nodeLabel = node.getLabels().printLabels();
       var nodeProperties = node.getProperties().printProperties();
       var s = "MERGE (" +
-              nodeId +
-              nodeLabel +
-              " " +
-              nodeProperties +
-              ")";
+          nodeId +
+          nodeLabel +
+          " " +
+          nodeProperties +
+          ")";
       writeLine(s);
     });
   }
@@ -75,17 +78,17 @@ public class CypherExporter {
     edgeStream.forEach(edge -> {
       var fromNodeId = edge.getFromNode().getNodeId();
       var toNodeId = edge.getToNode().getNodeId();
-      var edgeLabel = edge.getLabel().getPrintValue();
+      var edgeLabel = edge.getLabel().printLabel();
       var edgeProperties = edge.getProperties().printProperties();
       var s = "MERGE (" +
-              fromNodeId +
-              ")-[" +
-              edgeLabel +
-              " " +
-              edgeProperties +
-              "]->(" +
-              toNodeId +
-              ")";
+          fromNodeId +
+          ")-[" +
+          edgeLabel +
+          " " +
+          edgeProperties +
+          "]->(" +
+          toNodeId +
+          ")";
       writeLine(s);
     });
   }
@@ -104,11 +107,5 @@ public class CypherExporter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private static String printNodeLabel(List<String> nodeLabels) {
-    return nodeLabels.stream()
-        .map(label -> ":" + label)
-        .collect(Collectors.joining(""));
   }
 }

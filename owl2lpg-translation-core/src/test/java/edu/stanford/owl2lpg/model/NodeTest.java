@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
-import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +15,7 @@ public class NodeTest {
 
   private Node node;
 
-  @Mock
-  private ImmutableList<String> labels;
+  private NodeLabels labels = NodeLabels.CLASS;
 
   @Mock
   private Properties properties;

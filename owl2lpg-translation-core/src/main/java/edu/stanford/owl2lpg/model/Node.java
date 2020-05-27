@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
 import javax.annotation.Nonnull;
 
@@ -17,14 +17,14 @@ public abstract class Node {
 
   @Nonnull
   public static Node create(@Nonnull NodeId nodeId,
-                            @Nonnull ImmutableList<String> labels,
+                            @Nonnull NodeLabels labels,
                             @Nonnull Properties properties) {
     return new AutoValue_Node(nodeId, labels, properties);
   }
 
   @Nonnull
   public static Node create(@Nonnull NodeId nodeId,
-                            @Nonnull ImmutableList<String> labels) {
+                            @Nonnull NodeLabels labels) {
     return create(nodeId, labels, Properties.empty());
   }
 
@@ -32,7 +32,7 @@ public abstract class Node {
   public abstract NodeId getNodeId();
 
   @Nonnull
-  public abstract ImmutableList<String> getLabels();
+  public abstract NodeLabels getLabels();
 
   @Nonnull
   public abstract Properties getProperties();

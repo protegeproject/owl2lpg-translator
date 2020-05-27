@@ -198,7 +198,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   }
 
   private Translation translateNaryDataRange(@Nonnull OWLNaryDataRange dr,
-                                             @Nonnull ImmutableList<String> nodeLabels) {
+                                             @Nonnull NodeLabels nodeLabels) {
     var mainNode = nodeFactory.createNode(dr, nodeLabels);
     var translations = new ImmutableList.Builder<Translation>();
     var edges = new ImmutableList.Builder<Edge>();

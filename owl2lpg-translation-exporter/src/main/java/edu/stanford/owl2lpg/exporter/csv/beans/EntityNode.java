@@ -38,7 +38,7 @@ public abstract class EntityNode {
     return create(
         node.getNodeId().toString(),
         node.getProperties().get(PropertyFields.IRI),
-        node.getLabels());
+        node.getLabels().getValues());
   }
 
   @JsonProperty(NODE_ID)

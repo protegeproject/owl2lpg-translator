@@ -227,7 +227,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   }
 
   private Translation translateNaryClassExpression(@Nonnull OWLNaryBooleanClassExpression ce,
-                                                   @Nonnull ImmutableList<String> labels) {
+                                                   @Nonnull NodeLabels labels) {
     var mainNode = nodeFactory.createNode(ce, labels);
     var translations = ImmutableList.<Translation>builder();
     var edges = ImmutableList.<Edge>builder();
@@ -245,7 +245,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   }
 
   private Translation translateObjectRestriction(@Nonnull OWLQuantifiedObjectRestriction ce,
-                                                 @Nonnull ImmutableList<String> labels) {
+                                                 @Nonnull NodeLabels labels) {
     var mainNode = getMainNode(ce, labels);
     var propertyTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = classExprTranslator.translate(ce.getFiller());
@@ -262,7 +262,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   }
 
   private Translation translateDataRestriction(@Nonnull OWLQuantifiedDataRestriction ce,
-                                               @Nonnull ImmutableList<String> nodeLabels) {
+                                               @Nonnull NodeLabels nodeLabels) {
     var mainNode = getMainNode(ce, nodeLabels);
     var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = dataRangeTranslator.translate(ce.getFiller());
@@ -279,7 +279,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   }
 
   private Node getMainNode(@Nonnull OWLRestriction restriction,
-                           @Nonnull ImmutableList<String> labels) {
+                           @Nonnull NodeLabels labels) {
     if (restriction instanceof HasCardinality) {
       var cardinality = ((HasCardinality) restriction).getCardinality();
       return nodeFactory.createNode(restriction, labels,

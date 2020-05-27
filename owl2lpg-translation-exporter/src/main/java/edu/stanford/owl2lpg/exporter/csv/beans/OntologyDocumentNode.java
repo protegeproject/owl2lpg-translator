@@ -38,7 +38,7 @@ public abstract class OntologyDocumentNode {
     return create(
         node.getNodeId().toString(),
         node.getProperties().get(PropertyFields.ONTOLOGY_DOCUMENT_ID),
-        node.getLabels());
+        node.getLabels().getValues());
   }
 
   @JsonProperty(NODE_ID)

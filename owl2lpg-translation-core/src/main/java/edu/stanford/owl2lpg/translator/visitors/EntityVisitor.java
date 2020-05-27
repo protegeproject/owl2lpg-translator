@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
@@ -78,7 +79,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     return translateEntity(ind, NAMED_INDIVIDUAL);
   }
 
-  private Translation translateEntity(OWLEntity entity, ImmutableList<String> nodeLabels) {
+  private Translation translateEntity(OWLEntity entity, NodeLabels nodeLabels) {
     var mainNode = nodeFactory.createNode(entity, nodeLabels,
         Properties.of(PropertyFields.IRI, String.valueOf(entity.getIRI())));
     var iriTranslation = translator.translate(entity.getIRI());

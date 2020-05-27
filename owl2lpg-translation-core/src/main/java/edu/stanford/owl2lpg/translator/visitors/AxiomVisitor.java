@@ -211,7 +211,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   private Translation
   translateObjectPropertyCharacteristic(@Nonnull OWLObjectPropertyCharacteristicAxiom axiom,
-                                        @Nonnull ImmutableList<String> nodeLabels) {
+                                        @Nonnull NodeLabels nodeLabels) {
     var axiomNode = nodeFactory.createNode(axiom, nodeLabels);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
@@ -253,7 +253,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @SuppressWarnings("rawtypes")
   private Translation translatePropertyDomain(@Nonnull OWLPropertyDomainAxiom axiom,
-                                              @Nonnull ImmutableList<String> nodeLabels,
+                                              @Nonnull NodeLabels nodeLabels,
                                               @Nonnull EdgeLabel propertyEdgeLabel) {
     var axiomNode = nodeFactory.createNode(axiom, nodeLabels);
     var translations = new Builder<Translation>();
@@ -780,7 +780,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Override
   public Translation visit(@Nonnull SWRLRule rule) {
     return Translation.create(
-        Node.create(NodeId.create(""), ImmutableList.of()),
+        Node.create(NodeId.create(""), SWRL_RULE),
         ImmutableList.of(),
         ImmutableList.of());
   }
@@ -911,14 +911,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
                                 @Nonnull EdgeLabel edgeLabel,
                                 @Nonnull Properties edgeProperties,
                                 @Nonnull Builder<Edge> edges) {
-//    edges.add(edgeFactory.createEdge(fromNode, toNode, edgeLabel, edgeProperties));
+    edges.add(edgeFactory.createEdge(fromNode, toNode, edgeLabel, edgeProperties));
   }
 
   private void addAugmentedEdge(@Nonnull Node fromNode,
                                 @Nonnull Node toNode,
                                 @Nonnull EdgeLabel edgeLabel,
                                 @Nonnull Builder<Edge> edges) {
-//    edges.add(edgeFactory.createEdge(fromNode, toNode, edgeLabel));
+    edges.add(edgeFactory.createEdge(fromNode, toNode, edgeLabel));
   }
 
   private Translation buildTranslation(@Nonnull Node mainNode,

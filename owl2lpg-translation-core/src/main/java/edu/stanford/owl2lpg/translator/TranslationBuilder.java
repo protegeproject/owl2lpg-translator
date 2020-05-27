@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static edu.stanford.owl2lpg.model.GraphFactory.Edge;
-
 public class TranslationBuilder {
 
   private final Map<Node, Set<Edge>> nodeConnections = Maps.newHashMap();
@@ -29,7 +27,7 @@ public class TranslationBuilder {
                                 @Nonnull Node targetNode,
                                 @Nonnull EdgeLabel edgeLabel,
                                 @Nonnull Properties edgeProperties) {
-    var edge = Edge(sourceNode, targetNode, edgeLabel, edgeProperties);
+    var edge = Edge.create(sourceNode, targetNode, edgeLabel, edgeProperties);
     addNodeConnection(sourceNode, edge);
     addSourceNode(edge, sourceNode);
     addTargetNode(edge, targetNode);
