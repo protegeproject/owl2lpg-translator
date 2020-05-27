@@ -6,7 +6,6 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -14,6 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -71,53 +71,13 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
   }
 
   private static boolean isReusableNode(Node node) {
-    return isEntityNode(node) ||
-        isProjectNode(node) ||
-        isBranchNode(node) ||
-        isOntologyDocumentNode(node) ||
-        isLiteralNode(node) ||
-        isIriNode(node) ||
-        isLanguageTagNode(node);
-  }
-
-  private static boolean isEntityNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.CLASS.getValues().equals(nodeLabels) ||
-        NodeLabels.OBJECT_PROPERTY.getValues().equals(nodeLabels) ||
-        NodeLabels.DATA_PROPERTY.getValues().equals(nodeLabels) ||
-        NodeLabels.ANNOTATION_PROPERTY.getValues().equals(nodeLabels) ||
-        NodeLabels.NAMED_INDIVIDUAL.getValues().equals(nodeLabels) ||
-        NodeLabels.DATATYPE.getValues().equals(nodeLabels);
-  }
-
-  private static boolean isProjectNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.PROJECT.getValues().equals(nodeLabels);
-  }
-
-  private static boolean isBranchNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.BRANCH.getValues().equals(nodeLabels);
-  }
-
-  private static boolean isOntologyDocumentNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.ONTOLOGY_DOCUMENT.getValues().equals(nodeLabels);
-  }
-
-  private static boolean isLiteralNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.LITERAL.getValues().equals(nodeLabels);
-  }
-
-  private static boolean isIriNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.IRI.getValues().equals(nodeLabels);
-  }
-
-  private static boolean isLanguageTagNode(Node node) {
-    var nodeLabels = node.getLabels();
-    return NodeLabels.LANGUAGE_TAG.getValues().equals(nodeLabels);
+    return node.isTypeOf(ENTITY) ||
+        node.isTypeOf(PROJECT) ||
+        node.isTypeOf(BRANCH) ||
+        node.isTypeOf(ONTOLOGY_DOCUMENT) ||
+        node.isTypeOf(LITERAL) ||
+        node.isTypeOf(IRI) ||
+        node.isTypeOf(LANGUAGE_TAG);
   }
 
   private static Object printNodeId(NodeId nodeId) {

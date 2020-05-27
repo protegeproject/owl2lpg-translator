@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
@@ -65,8 +66,8 @@ public abstract class Translation {
    * @param label The node label to filter.
    * @return A collection of nodes.
    */
-  public Stream<Node> nodes(String label) {
-    return nodes().filter(node -> node.getLabels().getValues().contains(label));
+  public Stream<Node> nodes(NodeLabels label) {
+    return nodes().filter(node -> node.isTypeOf(label));
   }
 
   /**

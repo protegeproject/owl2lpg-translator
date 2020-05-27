@@ -28,6 +28,10 @@ public abstract class Node {
     return create(nodeId, labels, Properties.empty());
   }
 
+  public boolean isTypeOf(NodeLabels nodeLabels) {
+    return getLabels().isa(nodeLabels);
+  }
+
   @Nonnull
   public abstract NodeId getNodeId();
 
