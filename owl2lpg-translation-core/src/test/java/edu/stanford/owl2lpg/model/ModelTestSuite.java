@@ -8,7 +8,6 @@ import org.junit.runners.Suite;
     NodeIdTest.class,
     NodeTest.class,
     EdgeTest.class,
-    GraphFactoryTest.class,
     PropertiesTest.class
 })
 public class ModelTestSuite {
