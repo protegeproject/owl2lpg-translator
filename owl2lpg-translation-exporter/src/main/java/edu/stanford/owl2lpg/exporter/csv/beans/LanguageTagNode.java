@@ -38,7 +38,7 @@ public abstract class LanguageTagNode {
     return create(
         node.printNodeId(),
         node.getProperties().get(PropertyFields.LANGUAGE),
-        node.getLabels().getValues());
+        node.getLabels().asList());
   }
 
   @JsonProperty(NODE_ID)

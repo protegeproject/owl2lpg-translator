@@ -47,7 +47,7 @@ public abstract class LiteralNode {
         node.getProperties().get(PropertyFields.LEXICAL_FORM),
         node.getProperties().get(PropertyFields.DATATYPE),
         node.getProperties().get(PropertyFields.LANGUAGE),
-        node.getLabels().getValues());
+        node.getLabels().asList());
   }
 
   @JsonProperty(NODE_ID)

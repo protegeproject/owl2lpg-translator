@@ -38,7 +38,7 @@ public abstract class CardinalityAxiomNode {
     return create(
         node.printNodeId(),
         node.getProperties().get(PropertyFields.CARDINALITY),
-        node.getLabels().getValues());
+        node.getLabels().asList());
   }
 
   @JsonProperty(NODE_ID)

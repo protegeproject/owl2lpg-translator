@@ -33,7 +33,7 @@ public abstract class PropertylessNode {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getLabels().getValues());
+        node.getLabels().asList());
   }
 
   @JsonProperty(NODE_ID)

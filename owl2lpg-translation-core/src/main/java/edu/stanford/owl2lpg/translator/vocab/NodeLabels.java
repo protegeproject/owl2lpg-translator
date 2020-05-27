@@ -1,7 +1,10 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -156,6 +159,22 @@ public enum NodeLabels {
       printLabel += parentLabels.get().printLabels();
     }
     return printLabel;
+  }
+
+  @Nonnull
+  public Stream<String> labels() {
+    var s1 = Stream.of(label);
+    var s2 = getParentLabels().flatMap(NodeLabels::labels);
+    return Stream.concat(s1, s2);
+  }
+
+  private Stream<NodeLabels> getParentLabels() {
+    return parentLabels.stream().flatMap(Stream::of);
+  }
+
+  @Nonnull
+  public ImmutableList<String> asList() {
+    return labels().collect(ImmutableList.toImmutableList());
   }
 
   public boolean isa(NodeLabels nodeLabels) {
