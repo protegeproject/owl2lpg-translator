@@ -43,7 +43,7 @@ public abstract class LiteralNode {
   public static LiteralNode create(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.LEXICAL_FORM),
         node.getProperties().get(PropertyFields.DATATYPE),
         node.getProperties().get(PropertyFields.LANGUAGE),

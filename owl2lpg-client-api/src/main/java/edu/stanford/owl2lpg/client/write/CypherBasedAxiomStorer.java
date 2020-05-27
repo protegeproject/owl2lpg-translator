@@ -42,16 +42,16 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     if (isReusableNode(node)) {
       stringBuilder.append("MERGE (")
           .append(printNodeId(node.getNodeId()))
-          .append(node.getLabels().getValues())
+          .append(node.printLabels())
           .append(" ")
-          .append(node.getProperties().printProperties())
+          .append(node.printProperties())
           .append(")");
     } else {
       stringBuilder.append("CREATE (")
           .append(printNodeId(node.getNodeId()))
-          .append(node.getLabels().getValues())
+          .append(node.printLabels())
           .append(" ")
-          .append(node.getProperties().printProperties())
+          .append(node.printProperties())
           .append(")");
     }
     stringBuilder.append("\n");
@@ -61,9 +61,9 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     stringBuilder.append("MERGE (")
         .append(printNodeId(edge.getFromNode().getNodeId()))
         .append(")-[")
-        .append(edge.getLabel().printLabel())
+        .append(edge.printLabel())
         .append(" ")
-        .append(edge.getProperties().printProperties())
+        .append(edge.printProperties())
         .append("]->(")
         .append(printNodeId(edge.getToNode().getNodeId()))
         .append(")");
@@ -82,18 +82,6 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
 
   private static Object printNodeId(NodeId nodeId) {
     return nodeId.toString().replace("-", "");
-  }
-
-  private static String escape(String value) {
-    String escaped = value;
-    escaped = escaped.replace("\\", "\\\\");
-    escaped = escaped.replace("\"", "\\\"");
-    escaped = escaped.replace("\b", "\\b");
-    escaped = escaped.replace("\f", "\\f");
-    escaped = escaped.replace("\n", "\\n");
-    escaped = escaped.replace("\r", "\\r");
-    escaped = escaped.replace("\t", "\\t");
-    return escaped;
   }
 
   @Override

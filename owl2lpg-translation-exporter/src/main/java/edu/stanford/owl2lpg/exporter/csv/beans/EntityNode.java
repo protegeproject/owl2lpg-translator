@@ -36,7 +36,7 @@ public abstract class EntityNode {
   public static EntityNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.IRI),
         node.getLabels().getValues());
   }

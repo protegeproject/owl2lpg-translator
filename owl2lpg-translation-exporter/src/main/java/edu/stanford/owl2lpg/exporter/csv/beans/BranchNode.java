@@ -36,7 +36,7 @@ public abstract class BranchNode {
   public static BranchNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.BRANCH_ID),
         node.getLabels().getValues());
   }

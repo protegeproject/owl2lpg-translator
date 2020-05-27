@@ -36,7 +36,7 @@ public abstract class AnonymousIndividualNode {
   public static AnonymousIndividualNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.NODE_ID),
         node.getLabels().getValues());
   }

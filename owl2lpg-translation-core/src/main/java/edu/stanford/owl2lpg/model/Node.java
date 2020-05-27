@@ -32,6 +32,18 @@ public abstract class Node {
     return getLabels().isa(nodeLabels);
   }
 
+  public String printNodeId() {
+    return getNodeId().toString();
+  }
+
+  public String printLabels() {
+    return getLabels().printLabels();
+  }
+
+  public String printProperties() {
+    return getProperties().printProperties();
+  }
+
   @Nonnull
   public abstract NodeId getNodeId();
 

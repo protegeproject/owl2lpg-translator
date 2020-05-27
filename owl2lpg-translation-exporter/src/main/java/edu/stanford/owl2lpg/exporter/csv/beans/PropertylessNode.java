@@ -32,7 +32,7 @@ public abstract class PropertylessNode {
   public static PropertylessNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getLabels().getValues());
   }
 

@@ -29,8 +29,12 @@ public abstract class Edge {
     return create(fromNode, toNode, label, Properties.empty());
   }
 
-  public boolean isReflexive() {
-    return getFromNode().equals(getToNode());
+  public String printLabel() {
+    return getLabel().printLabel();
+  }
+
+  public String printProperties() {
+    return getProperties().printProperties();
   }
 
   public abstract Node getFromNode();

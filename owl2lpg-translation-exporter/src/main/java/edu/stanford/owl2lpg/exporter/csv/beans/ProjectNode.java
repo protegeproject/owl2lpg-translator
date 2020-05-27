@@ -36,7 +36,7 @@ public abstract class ProjectNode {
   public static ProjectNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.PROJECT_ID),
         node.getLabels().getValues());
   }

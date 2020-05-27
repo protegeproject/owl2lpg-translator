@@ -36,7 +36,7 @@ public abstract class CardinalityAxiomNode {
   public static CardinalityAxiomNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.CARDINALITY),
         node.getLabels().getValues());
   }

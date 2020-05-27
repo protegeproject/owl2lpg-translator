@@ -36,7 +36,7 @@ public abstract class OntologyDocumentNode {
   public static OntologyDocumentNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         node.getProperties().get(PropertyFields.ONTOLOGY_DOCUMENT_ID),
         node.getLabels().getValues());
   }

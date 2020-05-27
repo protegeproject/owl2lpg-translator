@@ -34,7 +34,7 @@ public abstract class IriNode {
   @Nonnull
   public static IriNode of(@Nonnull Node node) {
     return create(
-        node.getNodeId().toString(),
+        node.printNodeId(),
         Objects.requireNonNull(node.getProperties().get(PropertyFields.IRI)),
         node.getLabels().getValues());
   }
