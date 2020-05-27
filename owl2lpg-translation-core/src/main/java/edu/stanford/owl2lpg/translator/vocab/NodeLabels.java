@@ -137,6 +137,9 @@ public enum NodeLabels {
   @Nonnull
   private final String printLabel;
 
+  @Nonnull
+  private final ImmutableList<String> labelList;
+
   NodeLabels(@Nonnull String label) {
     this(label, Optional.empty());
   }
@@ -150,15 +153,13 @@ public enum NodeLabels {
              @Nonnull Optional<NodeLabels> parentLabels) {
     this.label = checkNotNull(label);
     this.parentLabels = checkNotNull(parentLabels);
+    this.labelList = getLabelList();
     this.printLabel = getPrintLabel();
   }
 
-  private String getPrintLabel() {
-    var printLabel = ":" + label;
-    if (parentLabels.isPresent()) {
-      printLabel += parentLabels.get().printLabels();
-    }
-    return printLabel;
+  @Nonnull
+  private ImmutableList<String> getLabelList() {
+    return labels().collect(ImmutableList.toImmutableList());
   }
 
   @Nonnull
@@ -168,13 +169,21 @@ public enum NodeLabels {
     return Stream.concat(s1, s2);
   }
 
+  @Nonnull
+  private String getPrintLabel() {
+    var printLabel = ":" + label;
+    if (parentLabels.isPresent()) {
+      printLabel += parentLabels.get().printLabels();
+    }
+    return printLabel;
+  }
+
   private Stream<NodeLabels> getParentLabels() {
     return parentLabels.stream().flatMap(Stream::of);
   }
 
-  @Nonnull
   public ImmutableList<String> asList() {
-    return labels().collect(ImmutableList.toImmutableList());
+    return labelList;
   }
 
   public boolean isa(NodeLabels nodeLabels) {
