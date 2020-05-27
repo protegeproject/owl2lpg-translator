@@ -577,7 +577,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         SUB_DATA_PROPERTY_EXPRESSION, axiom.getSubProperty(),
         translations, edges);
     var superPropertyNode = addPropertyExprTranslationAndEdge(axiomNode,
-        SUPER_OBJECT_PROPERTY_EXPRESSION, axiom.getSuperProperty(),
+        SUPER_DATA_PROPERTY_EXPRESSION, axiom.getSuperProperty(),
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(subPropertyNode, superPropertyNode, SUB_DATA_PROPERTY_OF, edges);
