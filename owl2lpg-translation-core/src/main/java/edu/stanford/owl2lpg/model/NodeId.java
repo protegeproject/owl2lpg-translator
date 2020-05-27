@@ -1,8 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
-import com.google.common.base.Stopwatch;
 
 import static java.lang.String.format;
 
@@ -19,10 +17,10 @@ public abstract class NodeId {
     return new AutoValue_NodeId(identifierObject);
   }
 
-  public abstract long getIdentifierObject();
+  public abstract long getId();
 
   @Override
   public String toString() {
-    return "NodeId_" + getIdentifierObject();
+    return "NodeId_" + getId();
   }
 }
