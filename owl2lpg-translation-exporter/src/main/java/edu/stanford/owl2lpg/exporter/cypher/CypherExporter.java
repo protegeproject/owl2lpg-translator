@@ -6,7 +6,6 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -76,7 +75,7 @@ public class CypherExporter {
     edgeStream.forEach(edge -> {
       var fromNodeId = edge.getFromNode().getNodeId();
       var toNodeId = edge.getToNode().getNodeId();
-      var edgeLabel = printEdgeLabel(edge.getLabel());
+      var edgeLabel = edge.getLabel().getPrintValue();
       var edgeProperties = edge.getProperties().printProperties();
       var s = "MERGE (" +
               fromNodeId +
@@ -111,9 +110,5 @@ public class CypherExporter {
     return nodeLabels.stream()
         .map(label -> ":" + label)
         .collect(Collectors.joining(""));
-  }
-
-  private static String printEdgeLabel(EdgeLabel edgeLabel) {
-    return ":" + edgeLabel.name();
   }
 }

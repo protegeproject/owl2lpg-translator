@@ -1,5 +1,8 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+
 public enum EdgeLabel {
     ONTOLOGY_ID("ontologyID"),
     ONTOLOGY_DOCUMENT("ontologyDocument"),
@@ -25,11 +28,18 @@ public enum EdgeLabel {
 
     private String value;
 
+    private String printValue;
+
     EdgeLabel(String value) {
         this.value = value;
+        this.printValue = ":" + LOWER_CAMEL.to(UPPER_UNDERSCORE, value);
     }
 
     public String getValue() {
         return value;
+    }
+
+    public String getPrintValue() {
+        return printValue;
     }
 }
