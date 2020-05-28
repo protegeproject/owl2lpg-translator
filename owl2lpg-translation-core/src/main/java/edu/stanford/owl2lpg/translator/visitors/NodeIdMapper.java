@@ -35,13 +35,9 @@ public class NodeIdMapper {
   private NodeId getExistingOrCreate(@Nonnull Object o) {
     NodeId nodeId = nodeIdMapper.get(o);
     if (nodeId == null) {
-      nodeId = createNewId();
+      nodeId = idProvider.getId();
       nodeIdMapper.put(o, nodeId);
     }
     return nodeId;
-  }
-
-  private NodeId createNewId() {
-    return idProvider.getId();
   }
 }
