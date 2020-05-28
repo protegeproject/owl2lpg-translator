@@ -43,7 +43,7 @@ public abstract class Properties {
   }
 
   @JsonValue
-  protected abstract ImmutableMap<String, Object> getMap();
+  public abstract ImmutableMap<String, Object> getMap();
 
   @Nullable
   public <E> E get(String key) {

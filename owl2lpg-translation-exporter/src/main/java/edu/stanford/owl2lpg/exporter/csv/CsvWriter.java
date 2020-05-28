@@ -1,6 +1,8 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 import javax.annotation.Nonnull;
@@ -12,10 +14,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CsvWriter<T> {
 
     @Nonnull
-    private final Class<T> cls;
+    private final Writer output;
 
     @Nonnull
-    private final Writer output;
+    private N4jNodeCsvSchema schema;
 
     @Nonnull
     private final CsvMapper csvMapper;
@@ -26,11 +28,11 @@ public class CsvWriter<T> {
 
 
     public CsvWriter(@Nonnull CsvMapper csvMapper,
-                     @Nonnull Class<T> cls,
-                     @Nonnull Writer output) {
+                     @Nonnull Writer output,
+                     @Nonnull N4jNodeCsvSchema schema) {
         this.csvMapper = checkNotNull(csvMapper);
-        this.cls = checkNotNull(cls);
         this.output = checkNotNull(output);
+        this.schema = schema;
     }
 
     public void write(@Nonnull T rowObject) throws IOException {
@@ -43,9 +45,11 @@ public class CsvWriter<T> {
     }
 
     private void writeFirstRow(@Nonnull T rowObject) throws IOException {
-        objectWriter = csvMapper.writer(csvMapper.schemaFor(cls).withHeader());
+        csvMapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
+        csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+        objectWriter = csvMapper.writer(schema.getCsvSchemaWithHeader());
         objectWriter.writeValues(output).write(rowObject);
-        objectWriter = csvMapper.writer(csvMapper.schemaFor(cls));
+        objectWriter = csvMapper.writer(schema.getCsvSchema());
         writtenHeader = true;
     }
 

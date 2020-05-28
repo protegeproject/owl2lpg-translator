@@ -3,10 +3,12 @@ package edu.stanford.owl2lpg.model;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Represents a graph node that has a list of labels and a set of key-value
@@ -17,13 +19,11 @@ import javax.annotation.Nullable;
  */
 @AutoValue
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonTypeName("node")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = Node.N4J_JSON_TYPE)
 public abstract class Node {
 
-  private static final String N4J_JSON_ID = "id";
+  private static final String N4J_JSON_ID = ":ID";
 
-  private static final String N4J_JSON_LABELS = "labels";
+  private static final String N4J_JSON_LABELS = ":LABEL";
 
   private static final String N4J_JSON_PROPERTIES = "properties";
 
@@ -68,11 +68,21 @@ public abstract class Node {
   @Nonnull
   public abstract NodeId getNodeId();
 
-  @JsonProperty(N4J_JSON_LABELS)
+  @JsonIgnore
   @Nonnull
   public abstract NodeLabels getLabels();
 
-  @JsonProperty(N4J_JSON_PROPERTIES)
+  @JsonProperty(N4J_JSON_LABELS)
+  public ImmutableList<String> getLabelsList() {
+    return getLabels().asList();
+  }
+
+  @JsonIgnore
   @Nonnull
   public abstract Properties getProperties();
+
+  @JsonUnwrapped
+  public Map<String, Object> properties() {
+    return getProperties().getMap();
+  }
 }
