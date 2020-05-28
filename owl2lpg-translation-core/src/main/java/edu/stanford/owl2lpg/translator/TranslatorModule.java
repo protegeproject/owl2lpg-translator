@@ -19,4 +19,9 @@ public class TranslatorModule {
   NodeIdProvider provideNodeIdProvider() {
     return new NumberIncrementIdProvider();
   }
+
+  @Provides
+  UniqueNodeChecker provideUniqueNodeChecker(UniqueNodeCheckerImpl impl) {
+    return impl;
+  }
 }
