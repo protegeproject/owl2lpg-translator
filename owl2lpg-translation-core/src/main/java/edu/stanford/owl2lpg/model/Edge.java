@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Represents a graph connector (or an edge) from one node to the other.
@@ -17,8 +18,6 @@ import javax.annotation.Nullable;
  */
 @AutoValue
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonTypeName("relationship")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public abstract class Edge {
 
 
@@ -48,26 +47,31 @@ public abstract class Edge {
     return getProperties().printProperties();
   }
 
-
   @JsonIgnore
   public abstract Node getFromNode();
+
+  @JsonProperty("START_ID")
+  public long getStartId() {
+    return getFromNode().getNodeId().getId();
+  }
 
   @JsonIgnore
   public abstract Node getToNode();
 
-  @JsonProperty("start")
-  public long getFromNodeId() {
-    return getFromNode().getNodeId().getId();
-  }
-
-  @JsonProperty("end")
-  public long getEndNodeId() {
+  @JsonProperty("END_ID")
+  public long getEndId() {
     return getToNode().getNodeId().getId();
   }
 
-  @JsonProperty("label")
+  @JsonProperty(":LABEL")
   public abstract EdgeLabel getLabel();
 
-  @JsonProperty("properties")
+  @JsonIgnore
   public abstract Properties getProperties();
+
+  @JsonAnyGetter
+  @JsonUnwrapped
+  public Map<String, Object> properties() {
+    return getProperties().getMap();
+  }
 }

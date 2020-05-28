@@ -67,7 +67,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
 
   private int translateOntologyToCsv() {
 //    int exitCode = 0;
-//    CsvTranslationExporter exporter = new CsvTranslationExporter();
+//    OntologyCsvExporter exporter = new OntologyCsvExporter();
 //    try {
 //      exporter.export(ontologyFile, new PrintWriter(System.out));
 //    } catch (IOException e) {
