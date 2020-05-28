@@ -61,9 +61,6 @@ public class OntologyCsvExporter {
         int percentageComplete = 0;
         int axiomCounter = 0;
         for (var ax : axioms) {
-            if (ax instanceof OWLAnnotationAssertionAxiom) {
-                continue;
-            }
             axiomCounter++;
             var percent = (axiomCounter * 100) / axioms.size();
             if (percent != percentageComplete) {
