@@ -81,6 +81,7 @@ public abstract class Node {
   @Nonnull
   public abstract Properties getProperties();
 
+  @JsonAnyGetter
   @JsonUnwrapped
   public Map<String, Object> properties() {
     return getProperties().getMap();
