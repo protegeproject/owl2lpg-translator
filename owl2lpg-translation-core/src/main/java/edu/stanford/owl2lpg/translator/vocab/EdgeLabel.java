@@ -78,12 +78,12 @@ public enum EdgeLabel {
     this.printLabel = ":" + LOWER_CAMEL.to(UPPER_UNDERSCORE, value);
   }
 
-  @JsonValue
   @Nonnull
   public String getValue() {
     return value;
   }
 
+  @JsonValue
   @Nonnull
   public String printLabel() {
     return printLabel;

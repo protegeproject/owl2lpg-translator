@@ -1,9 +1,7 @@
 package edu.stanford.owl2lpg.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
@@ -18,6 +16,7 @@ import javax.annotation.Nullable;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonTypeName("node")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = Node.N4J_JSON_TYPE)
 public abstract class Node {

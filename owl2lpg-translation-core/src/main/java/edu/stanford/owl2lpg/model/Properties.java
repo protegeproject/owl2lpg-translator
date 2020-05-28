@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
@@ -13,6 +14,7 @@ import java.util.function.BiConsumer;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class Properties {
 
   private static final Properties EMPTY = create(ImmutableMap.of());
