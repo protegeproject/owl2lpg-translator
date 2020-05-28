@@ -27,8 +27,8 @@ public class CsvWriter<T> {
 
 
     public CsvWriter(@Nonnull CsvMapper csvMapper,
-                     @Nonnull Writer output,
-                     @Nonnull Neo4jCsvSchema schema) {
+                     @Nonnull Neo4jCsvSchema schema,
+                     @Nonnull Writer output) {
         this.csvMapper = checkNotNull(csvMapper);
         this.output = checkNotNull(output);
         this.schema = checkNotNull(schema);

@@ -28,7 +28,7 @@ public class CsvWriter_IT {
     @Before
     public void setUp() throws Exception {
         sw = new StringWriter();
-        writer = new CsvWriter<>(new CsvMapper(), sw, new Neo4jNodeCsvSchema());
+        writer = new CsvWriter<>(new CsvMapper(), new Neo4jNodeCsvSchema(), sw);
     }
 
     @Test

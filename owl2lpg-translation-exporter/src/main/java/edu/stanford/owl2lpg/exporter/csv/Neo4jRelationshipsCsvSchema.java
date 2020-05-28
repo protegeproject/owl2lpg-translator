@@ -4,11 +4,16 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.*;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
 
 public class Neo4jRelationshipsCsvSchema implements Neo4jCsvSchema {
+
+    @Inject
+    public Neo4jRelationshipsCsvSchema() {
+    }
 
     @Override
     @Nonnull

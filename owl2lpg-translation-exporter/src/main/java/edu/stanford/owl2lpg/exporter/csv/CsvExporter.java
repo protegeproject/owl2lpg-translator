@@ -31,7 +31,6 @@ public class CsvExporter {
 
   @Nonnull
   private final CsvWriter<Edge> relationshipsCsvWriter;
-  private NodeIdMapper nodeIdMapper;
 
   @Nonnull
   private final Set<Long> exportedNodes = new HashSet<>();
