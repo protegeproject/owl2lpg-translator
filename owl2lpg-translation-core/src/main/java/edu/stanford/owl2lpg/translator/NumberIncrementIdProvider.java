@@ -11,11 +11,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class NumberIncrementIdProvider implements NodeIdProvider {
 
-  private final AtomicLong counter = new AtomicLong(0);
+  private long counter = 0;
 
   @Override
   public NodeId getId() {
-    var numberSequence = counter.incrementAndGet();
-    return NodeId.create(numberSequence);
+    counter++;
+    return NodeId.create(counter);
   }
 }
