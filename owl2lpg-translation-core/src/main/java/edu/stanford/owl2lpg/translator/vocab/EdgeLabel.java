@@ -73,9 +73,12 @@ public enum EdgeLabel {
   @Nonnull
   private final String printLabel;
 
+  private final String neo4jName;
+
   EdgeLabel(@Nonnull String value) {
     this.value = checkNotNull(value);
-    this.printLabel = ":" + LOWER_CAMEL.to(UPPER_UNDERSCORE, value);
+    neo4jName = LOWER_CAMEL.to(UPPER_UNDERSCORE, value);
+    this.printLabel = ":" + neo4jName;
   }
 
   @Nonnull
@@ -83,7 +86,18 @@ public enum EdgeLabel {
     return value;
   }
 
+  /**
+   * Gets the neo4j name for the edge label.  This is the camelCaseEdgeLabel
+   * formatted to be UPPER_SNAKE_CASE
+   */
   @JsonValue
+  public String getNeo4jName() {
+    return neo4jName;
+  }
+
+  /**
+   * The Neo4J name prefixed with a colon
+   */
   @Nonnull
   public String printLabel() {
     return printLabel;
