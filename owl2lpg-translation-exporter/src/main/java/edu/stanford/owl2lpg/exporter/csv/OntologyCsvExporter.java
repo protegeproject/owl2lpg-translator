@@ -57,7 +57,9 @@ public class OntologyCsvExporter {
                 var percent = (axiomCounter * 100) / axioms.size();
                 if (percent != percentageComplete) {
                     percentageComplete = percent;
-                    console.printf("%3d%%\n", percentageComplete);
+                    console.printf("%3d%% [%,d nodes, %,d edges]\n", percentageComplete,
+                                   exporter.getNodeCount(),
+                                   exporter.getEdgeCount());
                     console.flush();
                 }
                 exporter.write(ontologyDocumentId, ax);
