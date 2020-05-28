@@ -4,8 +4,8 @@ import com.google.common.base.Charsets;
 import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CypherExporter {
 
   @Nonnull
-  private final VersionedOntologyTranslator ontologyTranslator;
+  private final OntologyDocumentAxiomTranslator ontologyTranslator;
 
   @Nonnull
   private final AxiomContext axiomContext;
@@ -33,7 +33,7 @@ public class CypherExporter {
   @Nonnull
   private final Path outputFilePath;
 
-  CypherExporter(@Nonnull VersionedOntologyTranslator ontologyTranslator,
+  CypherExporter(@Nonnull OntologyDocumentAxiomTranslator ontologyTranslator,
                  @Nonnull AxiomContext axiomContext,
                  @Nonnull OWLOntology ontology,
                  @Nonnull Path outputFilePath) {
@@ -51,7 +51,7 @@ public class CypherExporter {
   }
 
   private Translation translateAxiom(OWLAxiom axiom) {
-    return ontologyTranslator.translate(axiomContext, axiom);
+    return ontologyTranslator.translate(axiomContext.getOntologyDocumentId(), axiom);
   }
 
   private void writeTranslation(Translation translation) {

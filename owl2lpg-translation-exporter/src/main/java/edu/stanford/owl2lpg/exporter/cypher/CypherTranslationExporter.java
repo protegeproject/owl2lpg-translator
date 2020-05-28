@@ -29,7 +29,7 @@ public class CypherTranslationExporter {
   public void export(@Nonnull OWLOntology ontology, @Nonnull Path outputFilePath) {
     checkNotNull(ontology);
     checkNotNull(outputFilePath);
-    var translator = DaggerTranslatorComponent.create().getVersionedOntologyTranslator();
+    var translator = DaggerTranslatorComponent.create().getOntologyDocumentAxiomTranslator();
     var exporter = new CypherExporter(
         translator,
         AxiomContext.create(),

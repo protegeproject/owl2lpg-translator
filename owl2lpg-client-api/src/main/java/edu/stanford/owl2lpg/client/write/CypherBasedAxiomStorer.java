@@ -4,8 +4,8 @@ import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -25,10 +25,10 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
   private final Session session;
 
   @Nonnull
-  private final VersionedOntologyTranslator translator;
+  private final OntologyDocumentAxiomTranslator translator;
 
   public CypherBasedAxiomStorer(@Nonnull Session session,
-                                @Nonnull VersionedOntologyTranslator translator) {
+                                @Nonnull OntologyDocumentAxiomTranslator translator) {
     this.session = checkNotNull(session);
     this.translator = checkNotNull(translator);
   }
@@ -88,7 +88,7 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
   public boolean add(@Nonnull AxiomContext context, @Nonnull Collection<OWLAxiom> axioms) {
     return axioms
         .stream()
-        .map(axiom -> translator.translate(context, axiom))
+        .map(axiom -> translator.translate(context.getOntologyDocumentId(), axiom))
         .map(this::getCypherQuery)
         .map(query ->
             session.writeTransaction(tx -> {

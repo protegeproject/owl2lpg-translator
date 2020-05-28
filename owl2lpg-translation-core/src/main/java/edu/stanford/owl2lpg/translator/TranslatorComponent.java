@@ -1,8 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
 import dagger.Component;
-
-import javax.inject.Scope;
+import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -12,7 +11,9 @@ import javax.inject.Scope;
 @TranslationSessionScope
 public interface TranslatorComponent {
 
+  NodeIdMapper getNodeIdMapper();
+
   AxiomTranslator getAxiomTranslator();
 
-  VersionedOntologyTranslator getVersionedOntologyTranslator();
+  OntologyDocumentAxiomTranslator getOntologyDocumentAxiomTranslator();
 }

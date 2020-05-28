@@ -16,7 +16,7 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class VersionedOntologyTranslator {
+public class OntologyDocumentAxiomTranslator {
 
   @Nonnull
   private final NodeFactory nodeFactory;
@@ -25,26 +25,19 @@ public class VersionedOntologyTranslator {
   private final AxiomTranslator axiomTranslator;
 
   @Inject
-  public VersionedOntologyTranslator(@Nonnull NodeFactory nodeFactory,
-                                     @Nonnull AxiomTranslator axiomTranslator) {
+  public OntologyDocumentAxiomTranslator(@Nonnull NodeFactory nodeFactory,
+                                         @Nonnull AxiomTranslator axiomTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
     this.axiomTranslator = checkNotNull(axiomTranslator);
   }
 
   @Nonnull
-  public Translation translate(@Nonnull AxiomContext context, @Nonnull OWLAxiom axiom) {
-    checkNotNull(context);
+  public Translation translate(@Nonnull OntologyDocumentId ontologyDocumentId, @Nonnull OWLAxiom axiom) {
+    checkNotNull(ontologyDocumentId);
     var axiomTranslation = axiomTranslator.translate(axiom);
-    var docNode = createOntologyDocumentNode(context.getOntologyDocumentId());
-    var documentTranslation = Translation.create(docNode)
-        .connectWith(axiomTranslation, AXIOM, Properties.empty());
-    var branchNode = createBranchNode(context.getBranchId());
-    var branchTranslation = Translation.create(branchNode)
-        .connectWith(documentTranslation, ONTOLOGY_DOCUMENT, Properties.empty());
-    var projectNode = createProjectNode(context.getProjectId());
-    var projectTranslation = Translation.create(projectNode)
-        .connectWith(branchTranslation, BRANCH, Properties.empty());
-    return projectTranslation;
+    var docNode = createOntologyDocumentNode(ontologyDocumentId);
+    return Translation.create(docNode)
+                      .connectWith(axiomTranslation, AXIOM, Properties.empty());
   }
 
   @Nonnull
