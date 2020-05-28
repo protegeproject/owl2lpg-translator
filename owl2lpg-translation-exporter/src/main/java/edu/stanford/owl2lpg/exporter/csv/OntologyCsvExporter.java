@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
 import edu.stanford.owl2lpg.translator.TranslatorComponent;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -46,27 +47,37 @@ public class OntologyCsvExporter {
                        @Nonnull Writer edgesCsvWriter) throws IOException {
 
         var exporterFactory = DaggerCsvExporterComponent.create().getCsvExporterFactory();
-            var exporter = exporterFactory.create(nodesCsvWriter,
-                                                  edgesCsvWriter);
-            var axioms = ontology.getAxioms();
-            var stopwatch = Stopwatch.createStarted();
-            int percentageComplete = 0;
-            int axiomCounter = 0;
-            for (var ax : axioms) {
-                axiomCounter++;
-                var percent = (axiomCounter * 100) / axioms.size();
-                if (percent != percentageComplete) {
-                    percentageComplete = percent;
-                    console.printf("%3d%% [%,d nodes, %,d edges]\n", percentageComplete,
-                                   exporter.getNodeCount(),
-                                   exporter.getEdgeCount());
-                    console.flush();
-                }
-                exporter.write(ontologyDocumentId, ax);
+        var exporter = exporterFactory.create(nodesCsvWriter,
+                                              edgesCsvWriter);
+        var axioms = ontology.getAxioms();
+
+        int logicalAxiomCount = ontology.getLogicalAxiomCount();
+        console.printf("Logical axioms: %,d\n", logicalAxiomCount);
+        int axiomCount = ontology.getAxiomCount();
+        console.printf("Non-logical axioms: %,d\n", axiomCount - logicalAxiomCount);
+        console.printf("Axioms: %,d\n", axiomCount);
+
+        var stopwatch = Stopwatch.createStarted();
+        int percentageComplete = 0;
+        int axiomCounter = 0;
+        for (var ax : axioms) {
+            if (ax instanceof OWLAnnotationAssertionAxiom) {
+                continue;
             }
-            console.printf("Exported %,d nodes\n", exporter.getNodeCount());
-            console.printf("Exported %,d relationships\n", exporter.getEdgeCount());
-            console.printf("Export complete in %,d ms\n", stopwatch.elapsed().toMillis());
-            console.flush();
+            axiomCounter++;
+            var percent = (axiomCounter * 100) / axioms.size();
+            if (percent != percentageComplete) {
+                percentageComplete = percent;
+                console.printf("%3d%% [%,d nodes, %,d edges]\n", percentageComplete,
+                               exporter.getNodeCount(),
+                               exporter.getEdgeCount());
+                console.flush();
+            }
+            exporter.write(ontologyDocumentId, ax);
+        }
+        console.printf("Exported %,d nodes\n", exporter.getNodeCount());
+        console.printf("Exported %,d relationships\n", exporter.getEdgeCount());
+        console.printf("Export complete in %,d ms\n", stopwatch.elapsed().toMillis());
+        console.flush();
     }
 }
