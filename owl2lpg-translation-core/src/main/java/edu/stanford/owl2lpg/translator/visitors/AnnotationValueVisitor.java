@@ -5,6 +5,7 @@ import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.IRI;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@TranslationSessionScope
 public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Translation> {
 
   @Nonnull

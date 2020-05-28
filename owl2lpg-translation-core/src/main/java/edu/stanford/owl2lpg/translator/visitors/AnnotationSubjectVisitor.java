@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationSubjectVisitorEx;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
@@ -12,6 +13,7 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@TranslationSessionScope
 public class AnnotationSubjectVisitor implements OWLAnnotationSubjectVisitorEx<Translation> {
 
   @Nonnull

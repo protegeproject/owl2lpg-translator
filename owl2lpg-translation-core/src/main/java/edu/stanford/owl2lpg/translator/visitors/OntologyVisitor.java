@@ -3,10 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.*;
-import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import edu.stanford.owl2lpg.translator.EntityTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.*;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
@@ -24,6 +21,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@TranslationSessionScope
 public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Nonnull

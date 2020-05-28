@@ -25,6 +25,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@TranslationSessionScope
 public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Translation> {
 
   @Nonnull
