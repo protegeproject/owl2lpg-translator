@@ -18,11 +18,6 @@ public class UniqueNodeCheckerImpl implements UniqueNodeChecker {
 
     @Override
     public boolean isUniqueNode(Object o) {
-        return o instanceof OntologyDocumentId ||
-                o instanceof BranchId ||
-                o instanceof ProjectId ||
-                o instanceof IRI ||
-                o instanceof OWLEntity ||
-                o instanceof OWLLiteral;
+        return true;
     }
 }

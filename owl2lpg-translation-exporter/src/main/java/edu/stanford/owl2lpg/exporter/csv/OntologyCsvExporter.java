@@ -2,11 +2,14 @@ package edu.stanford.owl2lpg.exporter.csv;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Comparators;
+import com.google.common.collect.ImmutableMultiset;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
 import edu.stanford.owl2lpg.translator.TranslatorComponent;
+import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -14,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -72,9 +76,24 @@ public class OntologyCsvExporter {
             }
             exporter.write(ontologyDocumentId, ax);
         }
-        console.printf("Exported %,d nodes\n", exporter.getNodeCount());
-        console.printf("Exported %,d relationships\n", exporter.getEdgeCount());
-        console.printf("Export complete in %,d ms\n", stopwatch.elapsed().toMillis());
+        console.printf("\nExported %,d nodes\n", exporter.getNodeCount());
+
+        var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
+        nodeLabelsMultiset
+                .forEachEntry((nodeLabels, count) -> {
+                    console.printf("    Node   %-36s %,10d\n", nodeLabels.name(), count);
+                });
+
+
+        console.printf("\nExported %,d relationships\n", exporter.getEdgeCount());
+
+        var edgeLabelMultiset = exporter.getEdgeLabelMultiset();
+        edgeLabelMultiset
+                .forEachEntry((edgeLabel, count) -> {
+                    console.printf("    Rel    %-36s %,10d\n", edgeLabel.printLabel(), count);
+                });
+
+        console.printf("\nExport complete in %,d ms\n", stopwatch.elapsed().toMillis());
         console.flush();
     }
 }
