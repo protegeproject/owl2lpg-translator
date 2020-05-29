@@ -23,6 +23,9 @@ public class NodesCsvWriterFactory {
 
     @Nonnull
     public CsvWriter<Node> create(@Nonnull Writer writer) {
+        if(writer instanceof NoOpWriter) {
+            return new NoOpCsvWriter<>(csvMapper, schema, writer);
+        }
         return new CsvWriter<>(csvMapper, schema, writer);
     }
 }
