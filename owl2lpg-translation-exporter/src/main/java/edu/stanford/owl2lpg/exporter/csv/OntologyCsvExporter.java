@@ -10,13 +10,16 @@ import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
 import edu.stanford.owl2lpg.translator.TranslatorComponent;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -30,8 +33,8 @@ public class OntologyCsvExporter {
     @Nonnull
     private final OntologyDocumentId ontologyDocumentId;
 
-    @Nonnull
-    private final OWLOntology ontology;
+    @Nullable
+    private OWLOntology ontology;
 
     @Nonnull
     private final PrintWriter console;
@@ -50,16 +53,24 @@ public class OntologyCsvExporter {
     public void export(@Nonnull Writer nodesCsvWriter,
                        @Nonnull Writer edgesCsvWriter) throws IOException {
 
+        if(ontology == null) {
+            throw new RuntimeException("Ontology has already been exported");
+        }
         var exporterFactory = DaggerCsvExporterComponent.create().getCsvExporterFactory();
         var exporter = exporterFactory.create(nodesCsvWriter,
                                               edgesCsvWriter);
-        var axioms = ontology.getAxioms();
 
         int logicalAxiomCount = ontology.getLogicalAxiomCount();
-        console.printf("Logical axioms: %,d\n", logicalAxiomCount);
         int axiomCount = ontology.getAxiomCount();
+
+        console.printf("Logical axioms: %,d\n", logicalAxiomCount);
         console.printf("Non-logical axioms: %,d\n", axiomCount - logicalAxiomCount);
         console.printf("Axioms: %,d\n", axiomCount);
+
+
+        var axioms = new ArrayList<>(ontology.getAxioms());
+        // Allow the ontology to be garbage collected
+        ontology = null;
 
         var stopwatch = Stopwatch.createStarted();
         int percentageComplete = 0;
