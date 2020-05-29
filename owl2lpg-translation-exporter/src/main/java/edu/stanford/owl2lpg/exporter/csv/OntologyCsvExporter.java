@@ -76,7 +76,7 @@ public class OntologyCsvExporter {
             }
             exporter.write(ontologyDocumentId, ax);
         }
-        console.printf("\nExported %,d nodes\n", exporter.getNodeCount());
+        console.printf("\nNodes: %,d\n\n", exporter.getNodeCount());
 
         var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
         nodeLabelsMultiset
@@ -85,7 +85,7 @@ public class OntologyCsvExporter {
                 });
 
 
-        console.printf("\nExported %,d relationships\n", exporter.getEdgeCount());
+        console.printf("\nRelationships: %,d\n\n", exporter.getEdgeCount());
 
         var edgeLabelMultiset = exporter.getEdgeLabelMultiset();
         edgeLabelMultiset
