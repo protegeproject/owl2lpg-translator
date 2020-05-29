@@ -81,7 +81,7 @@ public class OntologyCsvExporter {
         var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
         nodeLabelsMultiset
                 .forEachEntry((nodeLabels, count) -> {
-                    console.printf("    Node   %-36s %,10d\n", nodeLabels.name(), count);
+                    console.printf("    Node   %-60s %,10d\n", nodeLabels.printLabels(), count);
                 });
 
 
