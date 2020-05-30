@@ -9,6 +9,8 @@ import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -59,6 +61,47 @@ public abstract class Translation {
   public abstract ImmutableList<Edge> getEdges();
 
   public abstract ImmutableList<Translation> getNestedTranslations();
+
+  /**
+   * Gets all the nodes that are directly connected with the main node
+   * of this translation.
+   *
+   * @return A collection of nodes.
+   */
+  public Collection<Node> getDirectNodes() {
+    return getEdges().stream()
+        .map(Edge::getToNode)
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  /**
+   * Gets all the nodes that are directly connected with the main node
+   * of this translation and connected through the specified edge label.
+   *
+   * @param edgeLabel The edge label to filter
+   * @return A collection of nodes
+   */
+  public Collection<Node> getDirectNodesFrom(EdgeLabel edgeLabel) {
+    return getEdges().stream()
+        .filter(edge -> edge.isTypeOf(edgeLabel))
+        .map(Edge::getToNode)
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  /**
+   * Returns an optional node that is directly connected with the
+   * main node of this translation and connected through the specified
+   * edge label.
+   *
+   * @param edgeLabel The edge label to filter
+   * @return An optional node
+   */
+  public Optional<Node> findFirstDirectNodeFrom(EdgeLabel edgeLabel) {
+    return getEdges().stream()
+        .filter(edge -> edge.isTypeOf(edgeLabel))
+        .map(Edge::getToNode)
+        .findFirst();
+  }
 
   /**
    * Gets all the nodes with the given node label.

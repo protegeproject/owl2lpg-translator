@@ -47,6 +47,10 @@ public abstract class Edge {
     return getProperties().printProperties();
   }
 
+  public boolean isTypeOf(EdgeLabel edgeLabel) {
+    return getLabel().equals(edgeLabel);
+  }
+
   @JsonIgnore
   public abstract Node getFromNode();
 
