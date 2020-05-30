@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.exporter.csv;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 import javax.annotation.Nonnull;
@@ -23,7 +24,7 @@ public class CsvWriter<T> {
 
     private boolean writtenHeader = false;
 
-    private ObjectWriter objectWriter;
+    private SequenceWriter objectWriter;
 
 
     public CsvWriter(@Nonnull CsvMapper csvMapper,
@@ -45,13 +46,19 @@ public class CsvWriter<T> {
 
     private void writeFirstRow(@Nonnull T rowObject) throws IOException {
         csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-        objectWriter = csvMapper.writer(schema.getCsvSchemaWithHeader());
-        objectWriter.writeValues(output).write(rowObject);
-        objectWriter = csvMapper.writer(schema.getCsvSchema());
+        csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
+        objectWriter = csvMapper.writer(schema.getCsvSchemaWithHeader()).writeValues(output);
+        objectWriter.write(rowObject);
+        objectWriter.flush();
+        objectWriter = csvMapper.writer(schema.getCsvSchema()).writeValues(output);
         writtenHeader = true;
     }
 
     private void writeRow(@Nonnull T rowObject) throws IOException {
-        objectWriter.writeValue(output, rowObject);
+        objectWriter.write(rowObject);
+    }
+
+    public void flush() throws IOException {
+        objectWriter.flush();
     }
 }
