@@ -80,7 +80,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     //  Currently, the OWLAPI asserts both are the same.
     var literal = LiteralWrapper.create(lt);
     var literalDatatype = lt.getDatatype();
-    var datatypeIriString = literalDatatype.isString() ? "" : literalDatatype.getIRI().toString();
+    var datatypeIriString = literalDatatype.isString() || literalDatatype.isRDFPlainLiteral() ? "" : literalDatatype.getIRI().toString();
     var mainNode = nodeFactory.createNode(literal, NodeLabels.LITERAL,
         Properties.create(ImmutableMap.of(
                 PropertyFields.LEXICAL_FORM, lt.getLiteral(),
