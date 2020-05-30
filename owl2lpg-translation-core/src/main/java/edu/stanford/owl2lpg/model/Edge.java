@@ -20,6 +20,11 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class Edge {
 
+  private static final String N4J_JSON_LABELS = ":TYPE";
+
+  private static final String N4J_JSON_START_ID = ":START_ID";
+
+  private static final String N4J_JSON_END_ID = ":END_ID";
 
   public static Edge create(@Nonnull Node fromNode,
                             @Nonnull Node toNode,
@@ -54,7 +59,7 @@ public abstract class Edge {
   @JsonIgnore
   public abstract Node getFromNode();
 
-  @JsonProperty("START_ID")
+  @JsonProperty(N4J_JSON_START_ID)
   public long getStartId() {
     return getFromNode().getNodeId().getId();
   }
@@ -62,12 +67,12 @@ public abstract class Edge {
   @JsonIgnore
   public abstract Node getToNode();
 
-  @JsonProperty("END_ID")
+  @JsonProperty(N4J_JSON_END_ID)
   public long getEndId() {
     return getToNode().getNodeId().getId();
   }
 
-  @JsonProperty(":LABEL")
+  @JsonProperty(N4J_JSON_LABELS)
   public abstract EdgeLabel getLabel();
 
   @JsonIgnore
