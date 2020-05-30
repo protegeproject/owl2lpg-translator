@@ -468,25 +468,25 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = nodeFactory.createNode(axiom, OBJECT_PROPERTY_ASSERTION);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
-    var sourceNode = addIndividualTranslationAndEdge(axiomNode,
+    var individualSubjectNode = addIndividualTranslationAndEdge(axiomNode,
         SOURCE_INDIVIDUAL, axiom.getSubject(),
         translations, edges);
     addPropertyExprTranslationAndEdge(axiomNode,
         OBJECT_PROPERTY_EXPRESSION, axiom.getProperty(),
         translations, edges);
-    var targetNode = addIndividualTranslationAndEdge(axiomNode,
+    var individualObjectNode = addIndividualTranslationAndEdge(axiomNode,
         TARGET_INDIVIDUAL, axiom.getObject(),
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     if (axiom.getProperty().isNamed()) {
       var objectProperty = axiom.getProperty().asOWLObjectProperty();
-      addAugmentedEdge(sourceNode, targetNode,
+      addAugmentedEdge(individualSubjectNode, individualObjectNode,
           Properties.create(ImmutableMap.of(
               PropertyFields.IRI, String.valueOf(objectProperty.getIRI()),
               PropertyFields.TYPE, objectProperty.getEntityType().getName())),
           edges);
     }
-    addAugmentedEdge(sourceNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(individualSubjectNode, axiomNode, IS_SUBJECT_OF, edges);
     return buildTranslation(axiomNode, translations, edges);
   }
 
@@ -634,24 +634,24 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = nodeFactory.createNode(axiom, DATA_PROPERTY_ASSERTION);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
-    var sourceNode = addIndividualTranslationAndEdge(axiomNode,
+    var individualNode = addIndividualTranslationAndEdge(axiomNode,
         SOURCE_INDIVIDUAL, axiom.getSubject(),
         translations, edges);
     addPropertyExprTranslationAndEdge(axiomNode,
         DATA_PROPERTY_EXPRESSION, axiom.getProperty(),
         translations, edges);
-    var targetNode = addLiteralTranslationAndEdge(axiom.getObject(),
+    var literalNode = addLiteralTranslationAndEdge(axiom.getObject(),
         axiomNode, translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     if (axiom.getProperty().isNamed()) {
       var dataProperty = axiom.getProperty().asOWLDataProperty();
-      addAugmentedEdge(sourceNode, targetNode,
+      addAugmentedEdge(individualNode, literalNode,
           Properties.create(ImmutableMap.of(
               PropertyFields.IRI, String.valueOf(dataProperty.getIRI()),
               PropertyFields.TYPE, dataProperty.getEntityType().getName())),
           edges);
     }
-    addAugmentedEdge(sourceNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(individualNode, axiomNode, IS_SUBJECT_OF, edges);
     return buildTranslation(axiomNode, translations, edges);
   }
 
@@ -787,22 +787,22 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = nodeFactory.createNode(axiom, ANNOTATION_ASSERTION);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
-    var sourceNode = addAnnotationSubjectTranslationAndEdge(axiomNode,
+    var annotationSubjectNode = addAnnotationSubjectTranslationAndEdge(axiomNode,
         axiom.getSubject(),
         translations, edges);
     addPropertyExprTranslationAndEdge(axiomNode,
         ANNOTATION_PROPERTY, axiom.getProperty(),
         translations, edges);
-    var targetNode = addAnnotationValueTranslationAndEdge(axiomNode,
+    var annotationValueNode = addAnnotationValueTranslationAndEdge(axiomNode,
         axiom.getValue(),
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
-    addAugmentedEdge(sourceNode, targetNode,
+    addAugmentedEdge(annotationSubjectNode, annotationValueNode,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, String.valueOf(axiom.getProperty().getIRI()),
             PropertyFields.TYPE, axiom.getProperty().getEntityType().getName())),
         edges);
-    addAugmentedEdge(sourceNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(annotationSubjectNode, axiomNode, IS_SUBJECT_OF, edges);
     return buildTranslation(axiomNode, translations, edges);
   }
 
