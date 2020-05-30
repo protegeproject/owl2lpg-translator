@@ -41,10 +41,10 @@ public class CsvExporter {
   private final CsvWriter<Edge> relationshipsCsvWriter;
 
   @Nonnull
-  private final LongHashSet exportedNodes = new LongHashSet();
+  private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
 
   @Nonnull
-  private final Set<EdgeKey> writtenNodeEdges = new HashSet<>();
+  private final Set<EdgeKey> writtenNodeEdges = new HashSet<>(1_000_000);
 
   private long nodeCount = 0;
 
@@ -74,6 +74,11 @@ public class CsvExporter {
                     @Nonnull OWLAxiom axiom) throws IOException {
     var translation = axiomTranslator.translate(documentId, axiom);
     writeTranslation(translation);
+  }
+
+  public void flush() throws IOException {
+    nodesCsvWriter.flush();
+    relationshipsCsvWriter.flush();
   }
 
   private void writeTranslation(Translation translation) throws IOException {

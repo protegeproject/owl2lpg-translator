@@ -77,6 +77,7 @@ public class OntologyCsvExporter {
             }
             exporter.write(ontologyDocumentId, ax);
         }
+        exporter.flush();
         console.printf("\nNodes: %,d\n\n", exporter.getNodeCount());
 
         var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
