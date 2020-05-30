@@ -79,15 +79,17 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     //  Literal("ABC", XSD_STRING) are different objects.
     //  Currently, the OWLAPI asserts both are the same.
     var literal = LiteralWrapper.create(lt);
+    var literalDatatype = lt.getDatatype();
+    var datatypeIriString = literalDatatype.isString() ? "" : literalDatatype.getIRI().toString();
     var mainNode = nodeFactory.createNode(literal, NodeLabels.LITERAL,
         Properties.create(ImmutableMap.of(
-            PropertyFields.LEXICAL_FORM, lt.getLiteral(),
-            PropertyFields.DATATYPE, String.valueOf(lt.getDatatype().getIRI()),
-            PropertyFields.LANGUAGE, lt.getLang()
+                PropertyFields.LEXICAL_FORM, lt.getLiteral(),
+                PropertyFields.DATATYPE, datatypeIriString,
+                PropertyFields.LANGUAGE, lt.getLang()
         )));
     var translations = new ImmutableList.Builder<Translation>();
     var edges = new ImmutableList.Builder<Edge>();
-    var datatypeTranslation = entityTranslator.translate(lt.getDatatype());
+    var datatypeTranslation = entityTranslator.translate(literalDatatype);
     translations.add(datatypeTranslation);
     edges.add(edgeFactory.createEdge(mainNode,
         datatypeTranslation.getMainNode(),
