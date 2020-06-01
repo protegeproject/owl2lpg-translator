@@ -24,6 +24,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATATYPE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SAME_INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_ANNOTATION_PROPERTY_OF;
@@ -138,13 +139,94 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var subClassNode = addClassExprTranslationAndEdge(axiomNode,
         SUB_CLASS_EXPRESSION, axiom.getSubClass(),
         translations, edges);
+    var superClassExpresion = axiom.getSuperClass();
     var superClassNode = addClassExprTranslationAndEdge(axiomNode,
-        SUPER_CLASS_EXPRESSION, axiom.getSuperClass(),
+        SUPER_CLASS_EXPRESSION, superClassExpresion,
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(subClassNode, superClassNode, SUB_CLASS_OF, edges);
     addAugmentedEdge(subClassNode, axiomNode, IS_SUBJECT_OF, edges);
+
+    /* Add extra augmented edges when the superclass is an expression */
+    if (superClassExpresion instanceof OWLObjectIntersectionOf) {
+      addAugmentedEdge((OWLObjectIntersectionOf) superClassExpresion,
+          subClassNode, edges);
+    } else if (superClassExpresion instanceof OWLObjectSomeValuesFrom) {
+      addAugmentedEdge((OWLObjectSomeValuesFrom) superClassExpresion,
+          OBJECT_PROPERTY_EXPRESSION,
+          CLASS_EXPRESSION,
+          subClassNode, edges);
+    } else if (superClassExpresion instanceof OWLDataSomeValuesFrom) {
+      addAugmentedEdge((OWLDataSomeValuesFrom) superClassExpresion,
+          DATA_PROPERTY_EXPRESSION,
+          DATA_RANGE,
+          subClassNode, edges);
+    } else if (superClassExpresion instanceof OWLObjectHasValue) {
+      addAugmentedEdge((OWLObjectHasValue) superClassExpresion,
+          OBJECT_PROPERTY_EXPRESSION,
+          INDIVIDUAL,
+          subClassNode, edges);
+    } else if (superClassExpresion instanceof OWLDataHasValue) {
+      addAugmentedEdge((OWLDataHasValue) superClassExpresion,
+          DATA_PROPERTY_EXPRESSION,
+          LITERAL,
+          subClassNode, edges);
+    } else if (superClassExpresion instanceof OWLObjectCardinalityRestriction) {
+      addAugmentedEdge((OWLObjectCardinalityRestriction) superClassExpresion,
+          OBJECT_PROPERTY_EXPRESSION,
+          CLASS_EXPRESSION,
+          subClassNode, edges);
+    } else if (superClassExpresion instanceof OWLDataCardinalityRestriction) {
+      addAugmentedEdge((OWLDataCardinalityRestriction) superClassExpresion,
+          DATA_PROPERTY_EXPRESSION,
+          DATA_RANGE,
+          subClassNode, edges);
+    }
     return buildTranslation(axiom, axiomNode, translations, edges);
+  }
+
+  private void addAugmentedEdge(@Nonnull OWLNaryBooleanClassExpression expression,
+                                @Nonnull Node subClassNode,
+                                @Nonnull Builder<Edge> edges) {
+    var translation = classExprTranslator.translate(expression);
+    translation.getDirectNodes()
+        .forEach(ceNode ->
+            addAugmentedEdge(subClassNode, ceNode, SUB_CLASS_OF, edges));
+  }
+
+  private void addAugmentedEdge(@Nonnull OWLCardinalityRestriction<?> cardinalityRestriction,
+                                @Nonnull EdgeLabel propertyEdgeLabel,
+                                @Nonnull EdgeLabel fillerEdgeLabel,
+                                @Nonnull Node subClassNode,
+                                @Nonnull Builder<Edge> edges) {
+    var cardinality = cardinalityRestriction.getCardinality();
+    if (cardinality >= 1) {
+      addAugmentedEdge((OWLRestriction) cardinalityRestriction,
+          propertyEdgeLabel,
+          fillerEdgeLabel,
+          subClassNode, edges);
+    }
+  }
+
+  private void addAugmentedEdge(@Nonnull OWLRestriction restriction,
+                                @Nonnull EdgeLabel propertyEdgeLabel,
+                                @Nonnull EdgeLabel fillerEdgeLabel,
+                                @Nonnull Node subClassNode,
+                                @Nonnull Builder<Edge> edges) {
+    var property = restriction.getProperty();
+    if (property.isNamed()) {
+      var translation = classExprTranslator.translate(restriction);
+      var propertyNode = translation.findFirstDirectNodeFrom(propertyEdgeLabel);
+      var fillerNode = translation.findFirstDirectNodeFrom(fillerEdgeLabel);
+      if (propertyNode.isPresent() && fillerNode.isPresent()) {
+        addAugmentedEdge(
+            subClassNode, fillerNode.get(),
+            Properties.create(ImmutableMap.of(
+                PropertyFields.IRI, propertyNode.get().getProperty(PropertyFields.IRI),
+                PropertyFields.TYPE, ((OWLEntity) property).getEntityType().getName())),
+            edges);
+      }
+    }
   }
 
   @Nonnull
@@ -386,25 +468,25 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = nodeFactory.createNode(axiom, OBJECT_PROPERTY_ASSERTION);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
-    var sourceNode = addIndividualTranslationAndEdge(axiomNode,
+    var individualSubjectNode = addIndividualTranslationAndEdge(axiomNode,
         SOURCE_INDIVIDUAL, axiom.getSubject(),
         translations, edges);
     addPropertyExprTranslationAndEdge(axiomNode,
         OBJECT_PROPERTY_EXPRESSION, axiom.getProperty(),
         translations, edges);
-    var targetNode = addIndividualTranslationAndEdge(axiomNode,
+    var individualObjectNode = addIndividualTranslationAndEdge(axiomNode,
         TARGET_INDIVIDUAL, axiom.getObject(),
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     if (axiom.getProperty().isNamed()) {
       var objectProperty = axiom.getProperty().asOWLObjectProperty();
-      addAugmentedEdge(sourceNode, targetNode,
+      addAugmentedEdge(individualSubjectNode, individualObjectNode,
           Properties.create(ImmutableMap.of(
               PropertyFields.IRI, String.valueOf(objectProperty.getIRI()),
               PropertyFields.TYPE, objectProperty.getEntityType().getName())),
           edges);
     }
-    addAugmentedEdge(sourceNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(individualSubjectNode, axiomNode, IS_SUBJECT_OF, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -552,24 +634,24 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = nodeFactory.createNode(axiom, DATA_PROPERTY_ASSERTION);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
-    var sourceNode = addIndividualTranslationAndEdge(axiomNode,
+    var individualNode = addIndividualTranslationAndEdge(axiomNode,
         SOURCE_INDIVIDUAL, axiom.getSubject(),
         translations, edges);
     addPropertyExprTranslationAndEdge(axiomNode,
         DATA_PROPERTY_EXPRESSION, axiom.getProperty(),
         translations, edges);
-    var targetNode = addLiteralTranslationAndEdge(axiom.getObject(),
+    var literalNode = addLiteralTranslationAndEdge(axiom.getObject(),
         axiomNode, translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     if (axiom.getProperty().isNamed()) {
       var dataProperty = axiom.getProperty().asOWLDataProperty();
-      addAugmentedEdge(sourceNode, targetNode,
+      addAugmentedEdge(individualNode, literalNode,
           Properties.create(ImmutableMap.of(
               PropertyFields.IRI, String.valueOf(dataProperty.getIRI()),
               PropertyFields.TYPE, dataProperty.getEntityType().getName())),
           edges);
     }
-    addAugmentedEdge(sourceNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(individualNode, axiomNode, IS_SUBJECT_OF, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -705,22 +787,22 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = nodeFactory.createNode(axiom, ANNOTATION_ASSERTION);
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
-    var sourceNode = addAnnotationSubjectTranslationAndEdge(axiomNode,
+    var annotationSubjectNode = addAnnotationSubjectTranslationAndEdge(axiomNode,
         axiom.getSubject(),
         translations, edges);
     addPropertyExprTranslationAndEdge(axiomNode,
         ANNOTATION_PROPERTY, axiom.getProperty(),
         translations, edges);
-    var targetNode = addAnnotationValueTranslationAndEdge(axiomNode,
+    var annotationValueNode = addAnnotationValueTranslationAndEdge(axiomNode,
         axiom.getValue(),
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
-    addAugmentedEdge(sourceNode, targetNode,
+    addAugmentedEdge(annotationSubjectNode, annotationValueNode,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, String.valueOf(axiom.getProperty().getIRI()),
             PropertyFields.TYPE, axiom.getProperty().getEntityType().getName())),
         edges);
-    addAugmentedEdge(sourceNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(annotationSubjectNode, axiomNode, IS_SUBJECT_OF, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
