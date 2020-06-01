@@ -145,7 +145,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(subClassNode, superClassNode, SUB_CLASS_OF, edges);
-    addAugmentedEdge(subClassNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, subClassNode, AXIOM_SUBJECT, edges);
 
     /* Add extra augmented edges when the superclass is an expression */
     if (superClassExpresion instanceof OWLObjectIntersectionOf) {
@@ -354,7 +354,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(propertyExprNode, domainNode, DOMAIN, edges);
-    addAugmentedEdge(propertyExprNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, propertyExprNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -372,7 +372,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .collect(Collectors.toList());
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < propertyExprNodes.size(); i++) {
-      addAugmentedEdge(propertyExprNodes.get(i), axiomNode, IS_SUBJECT_OF, edges);
+      addAugmentedEdge(axiomNode, propertyExprNodes.get(i), AXIOM_SUBJECT, edges);
       for (int j = 0; j < propertyExprNodes.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
@@ -458,7 +458,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(propertyExprNode, rangeNode, RANGE, edges);
-    addAugmentedEdge(propertyExprNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, propertyExprNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -486,7 +486,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
               PropertyFields.TYPE, objectProperty.getEntityType().getName())),
           edges);
     }
-    addAugmentedEdge(individualSubjectNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, individualSubjectNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -539,7 +539,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(propertyExprNode, rangeNode, RANGE, edges);
-    addAugmentedEdge(propertyExprNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, propertyExprNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -570,7 +570,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .collect(Collectors.toList());
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < propertyExprList.size(); i++) {
-      addAugmentedEdge(propertyExprList.get(i), axiomNode, IS_SUBJECT_OF, edges);
+      addAugmentedEdge(axiomNode, propertyExprList.get(i), AXIOM_SUBJECT, edges);
       for (int j = 0; j < propertyExprList.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
@@ -597,7 +597,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(individualNode, classExprNode, TYPE, edges);
-    addAugmentedEdge(individualNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, individualNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -615,7 +615,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .collect(Collectors.toList());
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < classList.size(); i++) {
-      addAugmentedEdge(classList.get(i), axiomNode, IS_SUBJECT_OF, edges);
+      addAugmentedEdge(axiomNode, classList.get(i), AXIOM_SUBJECT, edges);
       for (int j = 0; j < classList.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
@@ -651,7 +651,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
               PropertyFields.TYPE, dataProperty.getEntityType().getName())),
           edges);
     }
-    addAugmentedEdge(individualNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, individualNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -669,7 +669,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(subPropertyNode, superPropertyNode, SUB_DATA_PROPERTY_OF, edges);
-    addAugmentedEdge(subPropertyNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, subPropertyNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -687,7 +687,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         .collect(Collectors.toList());
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     for (int i = 0; i < individualList.size(); i++) {
-      addAugmentedEdge(individualList.get(i), axiomNode, IS_SUBJECT_OF, edges);
+      addAugmentedEdge(axiomNode, individualList.get(i), AXIOM_SUBJECT, edges);
       for (int j = 0; j < individualList.size(); j++) {
         if (i != j) {
           addAugmentedEdge(
@@ -756,7 +756,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(ope1Node, ope2Node, INVERSE_OF, edges);
     addAugmentedEdge(ope2Node, ope1Node, INVERSE_OF, edges);
-    addAugmentedEdge(ope1Node, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, ope1Node, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -802,7 +802,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
             PropertyFields.IRI, String.valueOf(axiom.getProperty().getIRI()),
             PropertyFields.TYPE, axiom.getProperty().getEntityType().getName())),
         edges);
-    addAugmentedEdge(annotationSubjectNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, annotationSubjectNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -820,7 +820,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(subPropertyNode, superPropertyNode, SUB_ANNOTATION_PROPERTY_OF, edges);
-    addAugmentedEdge(subPropertyNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, subPropertyNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -838,7 +838,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(propertyNode, domainNode, DOMAIN, edges);
-    addAugmentedEdge(propertyNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, propertyNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -859,7 +859,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         translations, edges);
     addAxiomAnnotations(axiomNode, axiom, translations, edges);
     addAugmentedEdge(propertyExprNode, rangeNode, RANGE, edges);
-    addAugmentedEdge(propertyExprNode, axiomNode, IS_SUBJECT_OF, edges);
+    addAugmentedEdge(axiomNode, propertyExprNode, AXIOM_SUBJECT, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 

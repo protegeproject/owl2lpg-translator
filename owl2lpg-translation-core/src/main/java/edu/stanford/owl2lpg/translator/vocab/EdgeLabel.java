@@ -61,7 +61,7 @@ public enum EdgeLabel {
   SUB_OBJECT_PROPERTY_OF("subObjectPropertyOf"),
   SUB_DATA_PROPERTY_OF("subDataPropertyOf"),
   SUB_ANNOTATION_PROPERTY_OF("subAnnotationPropertyOf"),
-  IS_SUBJECT_OF("isSubjectOf"),
+  AXIOM_SUBJECT("axiomSubject"),
   RELATED_TO("relatedTo"),
   TYPE("type"),
   SAME_INDIVIDUAL("sameIndividual"),
