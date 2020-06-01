@@ -1058,7 +1058,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     edges.add(edgeFactory.createEdge(fromNode, toNode, edgeLabel));
   }
 
-  private Translation buildTranslation(@Nonnull OWLAxiom axiom,
+  private static Translation buildTranslation(@Nonnull OWLAxiom axiom,
                                        @Nonnull Node mainNode,
                                        @Nonnull Builder<Translation> translations,
                                        @Nonnull Builder<Edge> edges) {
