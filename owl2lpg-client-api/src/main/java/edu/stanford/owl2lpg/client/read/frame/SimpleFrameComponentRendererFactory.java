@@ -5,6 +5,7 @@ import edu.stanford.bmir.protege.web.shared.shortform.ShortForm;
 import org.semanticweb.owlapi.model.IRI;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -14,12 +15,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SimpleFrameComponentRendererFactory {
 
-  public SimpleFrameComponentRenderer get(@Nonnull Multimap<IRI, ShortForm> dictionaryMap) {
-    checkNotNull(dictionaryMap);
-    return create(dictionaryMap);
+  @Inject
+  public SimpleFrameComponentRendererFactory() {
   }
 
   public static SimpleFrameComponentRenderer create(@Nonnull Multimap<IRI, ShortForm> dictionaryMap) {
     return new SimpleFrameComponentRenderer(dictionaryMap);
+  }
+
+  public SimpleFrameComponentRenderer get(@Nonnull Multimap<IRI, ShortForm> dictionaryMap) {
+    checkNotNull(dictionaryMap);
+    return create(dictionaryMap);
   }
 }
