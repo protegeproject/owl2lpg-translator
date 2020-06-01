@@ -1,18 +1,13 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.carrotsearch.hppcrt.sets.LongHashSet;
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.TreeMultiset;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.UniqueNodeChecker;
-import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -96,16 +91,19 @@ public class CsvExporter {
   private void writeTranslation(Translation translation) throws IOException {
     writeNode(translation.getMainNode(), uniqueNodeChecker.isUniqueNode(translation.getTranslatedObject()));
     for(var edge : translation.getEdges()) {
-      writeEdge(edge, isPotentialDuplicate(translation));
+      writeEdge(edge, isPotentialDuplicateEdge(translation));
     }
     for(var t : translation.getNestedTranslations()) {
       writeTranslation(t);
     }
   }
 
-  private static boolean isPotentialDuplicate(Translation t) {
+  private static boolean isPotentialDuplicateEdge(Translation t) {
     // We only visit axioms once in a session
-    return !(t.getTranslatedObject() instanceof OWLAxiom);
+    // Since we only visit axioms once, the edges from axioms will only be written once
+    // and the edge from an ontology document node to the axiom will only be written once
+    return !((t.getTranslatedObject() instanceof OWLAxiom)
+            || t.getTranslatedObject() instanceof OntologyDocumentId);
   }
 
   private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
