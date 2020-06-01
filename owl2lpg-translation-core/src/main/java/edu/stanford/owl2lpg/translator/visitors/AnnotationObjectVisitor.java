@@ -79,7 +79,7 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
           translation.getMainNode(),
           ANNOTATION_ANNOTATION));
     }
-    return Translation.create(mainNode,
+    return Translation.create(annotation, mainNode,
         edges.build(),
         translations.build());
   }

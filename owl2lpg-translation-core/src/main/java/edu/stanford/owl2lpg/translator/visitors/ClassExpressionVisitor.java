@@ -97,7 +97,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var classExprEdge = edgeFactory.createEdge(mainNode,
         classExprTranslation.getMainNode(),
         CLASS_EXPRESSION);
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         ImmutableList.of(classExprEdge),
         ImmutableList.of(classExprTranslation));
   }
@@ -127,7 +127,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     edges.add(edgeFactory.createEdge(mainNode,
         fillerTranslation.getMainNode(),
         INDIVIDUAL));
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyTranslation, fillerTranslation));
   }
@@ -159,7 +159,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var propertyExprEdge = edgeFactory.createEdge(mainNode,
         propertyExprTranslation.getMainNode(),
         OBJECT_PROPERTY_EXPRESSION);
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         ImmutableList.of(propertyExprEdge),
         ImmutableList.of(propertyExprTranslation));
   }
@@ -178,7 +178,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
           translation.getMainNode(),
           INDIVIDUAL));
     }
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         edges.build(),
         translations.build());
   }
@@ -208,7 +208,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     edges.add(edgeFactory.createEdge(mainNode,
         fillerTranslation.getMainNode(),
         LITERAL));
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyExprTranslation, fillerTranslation));
   }
@@ -244,7 +244,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
           translation.getMainNode(),
           CLASS_EXPRESSION, Properties.empty()));
     }
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         edges.build(),
         translations.build());
   }
@@ -261,7 +261,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     edges.add(edgeFactory.createEdge(mainNode,
         fillerTranslation.getMainNode(),
         CLASS_EXPRESSION));
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyTranslation, fillerTranslation));
   }
@@ -278,7 +278,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     edges.add(edgeFactory.createEdge(mainNode,
         fillerTranslation.getMainNode(),
         DATA_RANGE));
-    return Translation.create(mainNode,
+    return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyExprTranslation, fillerTranslation));
   }

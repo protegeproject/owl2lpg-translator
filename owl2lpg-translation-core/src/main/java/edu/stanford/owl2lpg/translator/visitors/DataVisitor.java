@@ -101,7 +101,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
           languageTagTranslation.getMainNode(),
           EdgeLabel.LANGUAGE_TAG));
     }
-    return Translation.create(mainNode,
+    return Translation.create(lt, mainNode,
         edges.build(),
         translations.build());
   }
@@ -109,7 +109,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   private Translation translateLanguageTag(String languageTag) {
     var languageTagNode = nodeFactory.createNode(languageTag, LANGUAGE_TAG,
         Properties.of(PropertyFields.LANGUAGE, languageTag));
-    return Translation.create(languageTagNode);
+    return Translation.create(languageTag, languageTagNode);
   }
 
   @Nonnull
@@ -120,7 +120,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     var dataRangeEdge = edgeFactory.createEdge(mainNode,
         dataRangeTranslation.getMainNode(),
         DATA_RANGE);
-    return Translation.create(mainNode,
+    return Translation.create(dr, mainNode,
         ImmutableList.of(dataRangeEdge),
         ImmutableList.of(dataRangeTranslation));
   }
@@ -139,7 +139,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
           translation.getMainNode(),
           LITERAL));
     }
-    return Translation.create(mainNode,
+    return Translation.create(dr, mainNode,
         edges.build(),
         translations.build());
   }
@@ -175,7 +175,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
           translation.getMainNode(),
           RESTRICTION));
     }
-    return Translation.create(mainNode,
+    return Translation.create(dr, mainNode,
         edges.build(),
         translations.build());
   }
@@ -196,7 +196,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     edges.add(edgeFactory.createEdge(mainNode,
         restrictionValueTranslation.getMainNode(),
         RESTRICTION_VALUE));
-    return Translation.create(mainNode,
+    return Translation.create(facet, mainNode,
         edges.build(),
         translations.build());
   }
@@ -214,7 +214,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
           translation.getMainNode(),
           DATA_RANGE));
     }
-    return Translation.create(mainNode,
+    return Translation.create(dr, mainNode,
         edges.build(),
         translations.build());
   }

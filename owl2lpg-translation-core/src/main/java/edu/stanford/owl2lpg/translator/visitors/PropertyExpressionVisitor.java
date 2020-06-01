@@ -74,7 +74,7 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
     var objectPropertyEdge = edgeFactory.createEdge(mainNode,
         inversePropertyTranslation.getMainNode(),
         OBJECT_PROPERTY);
-    return Translation.create(mainNode,
+    return Translation.create(ope, mainNode,
         ImmutableList.of(objectPropertyEdge),
         ImmutableList.of(inversePropertyTranslation));
   }

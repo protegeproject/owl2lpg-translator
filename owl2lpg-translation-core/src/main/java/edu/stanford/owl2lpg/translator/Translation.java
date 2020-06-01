@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
@@ -18,23 +19,26 @@ import java.util.stream.Stream;
 @AutoValue
 public abstract class Translation {
 
-  public static Translation create(@Nonnull Node mainNode,
+  public static Translation create(@Nonnull Object translatedObject,
+                                   @Nonnull Node mainNode,
                                    @Nonnull ImmutableList<Edge> edges,
                                    @Nonnull ImmutableList<Translation> nestedTranslations) {
-    return new AutoValue_Translation(mainNode, edges, nestedTranslations);
+    return new AutoValue_Translation(translatedObject, mainNode, edges, nestedTranslations);
   }
 
-  public static Translation create(@Nonnull Node mainNode,
+  public static Translation create(@Nonnull Object translatedObject,
+                                   @Nonnull Node mainNode,
                                    @Nonnull ImmutableList<Edge> edges) {
-    return Translation.create(mainNode, edges, ImmutableList.of());
+    return Translation.create(translatedObject, mainNode, edges, ImmutableList.of());
   }
 
-  public static Translation create(@Nonnull Node mainNode) {
-    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+  public static Translation create(@Nonnull Object translatedObject,
+                                   @Nonnull Node mainNode) {
+    return Translation.create(translatedObject, mainNode, ImmutableList.of(), ImmutableList.of());
   }
 
-  public static TranslationBuilder builder() {
-    return new TranslationBuilder();
+  public static TranslationBuilder builder(Object forObject) {
+    return new TranslationBuilder(forObject);
   }
 
   public Translation connectWith(@Nonnull Translation otherTranslation,
@@ -45,7 +49,8 @@ public abstract class Translation {
         getMainNode().getProperties());
     var toNode = otherTranslation.getMainNode();
     var connectingEdge = Edge.create(fromNode, toNode, edgeLabel, edgeProperties);
-    return create(getMainNode(),
+    return create(getTranslatedObject(),
+                  getMainNode(),
         ImmutableList.<Edge>builder()
             .addAll(getEdges())
             .add(connectingEdge).build(),
@@ -53,6 +58,8 @@ public abstract class Translation {
             .addAll(getNestedTranslations())
             .add(otherTranslation).build());
   }
+
+  public abstract Object getTranslatedObject();
 
   public abstract Node getMainNode();
 

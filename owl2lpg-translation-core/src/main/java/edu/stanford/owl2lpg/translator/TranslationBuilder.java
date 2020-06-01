@@ -13,14 +13,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class TranslationBuilder {
 
+  private final Object translatedObject;
   private final Map<Node, Set<Edge>> nodeConnections = Maps.newHashMap();
   private final Map<Edge, Node> sourceNodes = Maps.newHashMap();
   private final Map<Edge, Node> targetNodes = Maps.newHashMap();
 
-  public TranslationBuilder() {
-    // NO-OP
+  public TranslationBuilder(Object translatedObject) {
+    this.translatedObject = checkNotNull(translatedObject);
   }
 
   public TranslationBuilder add(@Nonnull Node sourceNode,
@@ -61,13 +64,14 @@ public class TranslationBuilder {
   private Translation createTranslation(Node mainNode) {
     var edges = nodeConnections.get(mainNode);
     if (edges == null) {
-      return Translation.create(mainNode);
+      return Translation.create(translatedObject, mainNode);
     } else {
       var nestedTranslations = edges.stream()
           .map(targetNodes::get)
           .map(this::createTranslation)
           .collect(Collectors.toList());
-      return Translation.create(mainNode,
+      return Translation.create(translatedObject,
+                                mainNode,
           ImmutableList.copyOf(edges),
           ImmutableList.copyOf(nestedTranslations));
     }

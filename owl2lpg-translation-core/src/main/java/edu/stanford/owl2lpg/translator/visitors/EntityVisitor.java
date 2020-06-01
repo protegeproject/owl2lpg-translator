@@ -88,7 +88,8 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     var entityIriEdge = edgeFactory.createEdge(mainNode,
         iriTranslation.getMainNode(),
         EdgeLabel.ENTITY_IRI);
-    return Translation.create(mainNode,
+    return Translation.create(entity,
+                              mainNode,
         ImmutableList.of(entityIriEdge),
         ImmutableList.of(iriTranslation));
   }

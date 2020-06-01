@@ -56,6 +56,6 @@ public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
   public Translation visit(@Nonnull OWLAnonymousIndividual individual) {
     var mainNode = nodeFactory.createNode(individual, NodeLabels.ANONYMOUS_INDIVIDUAL,
         Properties.of(PropertyFields.NODE_ID, String.valueOf(individual.getID())));
-    return Translation.create(mainNode, ImmutableList.of(), ImmutableList.of());
+    return Translation.create(individual, mainNode, ImmutableList.of(), ImmutableList.of());
   }
 }

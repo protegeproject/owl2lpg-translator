@@ -45,7 +45,7 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Trans
   public Translation visit(@Nonnull IRI iri) {
     var mainNode = nodeFactory.createNode(iri, NodeLabels.IRI,
         Properties.of(PropertyFields.IRI, String.valueOf(iri)));
-    return Translation.create(mainNode);
+    return Translation.create(iri, mainNode);
   }
 
   @Nonnull

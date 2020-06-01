@@ -26,9 +26,12 @@ public class TranslationTest {
   @Mock
   private Node mainNode;
 
+  @Mock
+  private Object object;
+
   @Before
   public void setUp() {
-    translation = Translation.create(mainNode, edges, nestedTranslations);
+    translation = Translation.create(object, mainNode, edges, nestedTranslations);
   }
 
   @Test
@@ -38,23 +41,23 @@ public class TranslationTest {
 
   @Test
   public void shouldCreateTranslationWithEmptyNestedTranslations() {
-    translation = Translation.create(mainNode, edges);
+    translation = Translation.create(object, mainNode, edges);
     assertThat(translation, is(notNullValue()));
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenMainNodeNull() {
-    Translation.create(null, edges, nestedTranslations);
+    Translation.create(object, null, edges, nestedTranslations);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenEdgesNull() {
-    Translation.create(mainNode, null, nestedTranslations);
+    Translation.create(object, mainNode, null, nestedTranslations);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenNestedTranslationsNull() {
-    Translation.create(mainNode, edges, null);
+    Translation.create(object, mainNode, edges, null);
   }
 
   @Test

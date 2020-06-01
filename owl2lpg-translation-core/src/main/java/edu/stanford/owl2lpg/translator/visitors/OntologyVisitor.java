@@ -78,13 +78,14 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
           translation.getMainNode(),
           AXIOM));
     }
-    return Translation.create(mainNode,
+    return Translation.create(ontology, mainNode,
         edges.build(),
         translations.build());
   }
 
   protected Translation createOntologyIdTranslation(OWLOntologyID ontologyID) {
     return Translation.create(
+            ontologyID,
         createOntologyIdNode(ontologyID),
         ImmutableList.of(),
         ImmutableList.of());
