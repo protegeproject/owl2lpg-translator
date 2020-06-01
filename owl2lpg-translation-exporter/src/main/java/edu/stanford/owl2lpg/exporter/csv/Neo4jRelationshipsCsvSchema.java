@@ -1,38 +1,38 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.*;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
+import static edu.stanford.owl2lpg.model.Edge.*;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IRI;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.TYPE;
 
 public class Neo4jRelationshipsCsvSchema implements Neo4jCsvSchema {
 
-    @Inject
-    public Neo4jRelationshipsCsvSchema() {
-    }
+  @Inject
+  public Neo4jRelationshipsCsvSchema() {
+  }
 
-    @Override
-    @Nonnull
-    public CsvSchema getCsvSchema() {
-        return getBuilder().build();
-    }
+  private static CsvSchema.Builder getBuilder() {
+    return CsvSchema.builder()
+        .addColumn(N4J_JSON_LABELS)
+        .addColumn(N4J_JSON_START_ID)
+        .addColumn(N4J_JSON_END_ID)
+        .addColumn(TYPE)
+        .addColumn(IRI);
+  }
 
-    @Override
-    @Nonnull
-    public CsvSchema getCsvSchemaWithHeader() {
-        return getBuilder().setUseHeader(true).build();
-    }
+  @Override
+  @Nonnull
+  public CsvSchema getCsvSchema() {
+    return getBuilder().build();
+  }
 
-    private static CsvSchema.Builder getBuilder() {
-        return CsvSchema.builder()
-                        .addColumn(":LABEL")
-                        .addColumn("START_ID")
-                        .addColumn("END_ID")
-                        .addColumn(TYPE)
-                        .addColumn(IRI);
-    }
+  @Override
+  @Nonnull
+  public CsvSchema getCsvSchemaWithHeader() {
+    return getBuilder().setUseHeader(true).build();
+  }
 }

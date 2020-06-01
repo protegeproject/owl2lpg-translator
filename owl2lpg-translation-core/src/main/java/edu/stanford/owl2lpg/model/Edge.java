@@ -20,11 +20,11 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class Edge {
 
-  private static final String N4J_JSON_LABELS = ":TYPE";
+  public static final String N4J_JSON_LABELS = ":TYPE";
 
-  private static final String N4J_JSON_START_ID = ":START_ID";
+  public static final String N4J_JSON_START_ID = ":START_ID";
 
-  private static final String N4J_JSON_END_ID = ":END_ID";
+  public static final String N4J_JSON_END_ID = ":END_ID";
 
   public static Edge create(@Nonnull Node fromNode,
                             @Nonnull Node toNode,
