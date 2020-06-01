@@ -295,7 +295,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         var axiomNode = nodeFactory.createNode(axiom, NEGATIVE_OBJECT_PROPERTY_ASSERTION);
         var translations = newTranslationBuilder();
         var edges = newEdgesBuilder();
-        addIndividualTranslationAndEdge(axiomNode,
+        var subjectNode = addIndividualTranslationAndEdge(axiomNode,
                                         SOURCE_INDIVIDUAL, axiom.getSubject(),
                                         translations, edges);
         addPropertyExprTranslationAndEdge(axiomNode,
@@ -304,6 +304,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         addIndividualTranslationAndEdge(axiomNode,
                                         TARGET_INDIVIDUAL, axiom.getObject(),
                                         translations, edges);
+        addAxiomSubjectRelation(axiomNode, subjectNode, edges);
         addAxiomAnnotations(axiomNode, axiom, translations, edges);
         return buildTranslation(axiom, axiomNode, translations, edges);
     }
