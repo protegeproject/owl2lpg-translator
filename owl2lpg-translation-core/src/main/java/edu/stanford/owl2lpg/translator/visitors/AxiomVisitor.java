@@ -109,9 +109,10 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         var axiomNode = nodeFactory.createNode(axiom, DECLARATION);
         var translations = newTranslationBuilder();
         var edges = newEdgesBuilder();
-        addEntityTranslationAndEdge(axiomNode,
+        var entityNode = addEntityTranslationAndEdge(axiomNode,
                                     ENTITY, axiom.getEntity(),
                                     translations, edges);
+        addAxiomSubjectRelation(axiomNode, entityNode, edges);
         addAxiomAnnotations(axiomNode, axiom, translations, edges);
         return buildTranslation(axiom, axiomNode, translations, edges);
     }
@@ -956,12 +957,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
                 mainNode, edgeLabel, translations, edges);
     }
 
-    private void addEntityTranslationAndEdge(@Nonnull Node mainNode,
+    private Node addEntityTranslationAndEdge(@Nonnull Node mainNode,
                                              @Nonnull EdgeLabel edgeLabel,
                                              @Nonnull OWLEntity entity,
                                              @Nonnull Builder<Translation> translations,
                                              @Nonnull Builder<Edge> edges) {
-        addTranslationAndEdge(
+        return addTranslationAndEdge(
                 entityTranslator.translate(entity),
                 mainNode, edgeLabel, translations, edges);
     }
