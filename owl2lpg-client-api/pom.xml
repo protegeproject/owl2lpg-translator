@@ -18,6 +18,7 @@
 
   <properties>
     <neo4j-driver.version>4.0.1</neo4j-driver.version>
+    <webprotege-shared.version>4.0.0-beta-3-SNAPSHOT</webprotege-shared.version>
   </properties>
 
   <dependencies>
