@@ -11,6 +11,7 @@ import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
+import edu.stanford.owl2lpg.translator.UniqueNodeChecker;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -39,6 +40,7 @@ public class CsvExporter {
 
   @Nonnull
   private final CsvWriter<Edge> relationshipsCsvWriter;
+  private UniqueNodeChecker uniqueNodeChecker;
 
   @Nonnull
   private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
@@ -56,10 +58,12 @@ public class CsvExporter {
   @Inject
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
-                     @Nonnull CsvWriter<Edge> relationshipsCsvWriter) {
+                     @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
+                     @Nonnull UniqueNodeChecker uniqueNodeChecker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
+    this.uniqueNodeChecker = checkNotNull(uniqueNodeChecker);
   }
 
   public ImmutableMultiset<NodeLabels> getNodeLabelsMultiset() {
@@ -82,7 +86,7 @@ public class CsvExporter {
   }
 
   private void writeTranslation(Translation translation) throws IOException {
-    writeNode(translation.getMainNode());
+    writeNode(translation.getMainNode(), uniqueNodeChecker.isUniqueNode(translation.getTranslatedObject()));
     for(var edge : translation.getEdges()) {
       writeEdge(edge, isPotentialDuplicate(translation));
     }
@@ -116,8 +120,8 @@ public class CsvExporter {
     edgeLabelMultiset.add(edge.getLabel());
   }
 
-  private boolean writeNode(Node node) throws IOException {
-    if (exportedNodes.add(node.getNodeId().getId())) {
+  private boolean writeNode(Node node, boolean unique) throws IOException {
+    if (!unique || exportedNodes.add(node.getNodeId().getId())) {
       nodeCount++;
       nodesCsvWriter.write(node);
       nodeLabelsMultiset.add(node.getLabels());

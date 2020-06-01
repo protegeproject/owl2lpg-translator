@@ -32,7 +32,7 @@ public class NodeIdMapper_TestCase {
 
     @Test
     public void shouldMapToSameNodeForOntologyDocumentId() {
-        var identifier = UUID.randomUUID();
+        var identifier = UUID.randomUUID().toString();
         var ontologyDocumentIdA = OntologyDocumentId.create(identifier);
         var ontologyDocumentIdB = OntologyDocumentId.create(identifier);
         var nodeA = nodeIdMapper.get(ontologyDocumentIdA);

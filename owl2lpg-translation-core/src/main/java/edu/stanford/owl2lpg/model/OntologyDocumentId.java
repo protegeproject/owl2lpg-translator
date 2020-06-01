@@ -15,20 +15,15 @@ import java.util.UUID;
 public abstract class OntologyDocumentId {
 
   @Nonnull
-  public static OntologyDocumentId create(@Nonnull UUID identifier) {
+  public static OntologyDocumentId create(@Nonnull String identifier) {
     return new AutoValue_OntologyDocumentId(identifier);
   }
 
   @Nonnull
   public static OntologyDocumentId create() {
-    return create(UUID.randomUUID());
+    return create(UUID.randomUUID().toString());
   }
 
   @Nonnull
-  public abstract UUID getIdentifier();
-
-  @Override
-  public String toString() {
-    return getIdentifier().toString();
-  }
+  public abstract String getIdentifier();
 }
