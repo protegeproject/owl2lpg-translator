@@ -84,22 +84,36 @@ public class CsvExporter {
   private void writeTranslation(Translation translation) throws IOException {
     writeNode(translation.getMainNode());
     for(var edge : translation.getEdges()) {
-      writeEdge(edge);
+      writeEdge(edge, isPotentialDuplicate(translation));
     }
     for(var t : translation.getNestedTranslations()) {
       writeTranslation(t);
     }
   }
 
-  private void writeEdge(Edge edge) throws IOException {
-    if(writtenNodeEdges.add(EdgeKey.get(edge.getStartId(),
-                                        edge.getEndId(),
-                                        edge.getLabel()))) {
-      edgeCount++;
-      relationshipsCsvWriter.write(edge);
-      edgeLabelMultiset.add(edge.getLabel());
+  private static boolean isPotentialDuplicate(Translation t) {
+    // We only visit axioms once in a session
+    return !(t.getTranslatedObject() instanceof OWLAxiom);
+  }
+
+  private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
+    if (potentialDuplicate) {
+      if(writtenNodeEdges.add(EdgeKey.get(edge.getStartId(),
+                                          edge.getEndId(),
+                                          edge.getLabel()))) {
+        writeEdge(edge);
+      }
+    }
+    else {
+      writeEdge(edge);
     }
 
+  }
+
+  private void writeEdge(Edge edge) throws IOException {
+    edgeCount++;
+    relationshipsCsvWriter.write(edge);
+    edgeLabelMultiset.add(edge.getLabel());
   }
 
   private boolean writeNode(Node node) throws IOException {
