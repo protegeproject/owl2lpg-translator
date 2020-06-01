@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class AnnotationPropertyFrameAccessorImpl implements AnnotationPropertyFr
   @Nonnull
   private final Comparator<PropertyValue> propertyValueComparator;
 
+  @Inject
   public AnnotationPropertyFrameAccessorImpl(@Nonnull PlainAnnotationPropertyFrameAccessor delegate,
                                              @Nonnull IriShortFormsAccessor shortFormsAccessor,
                                              @Nonnull SimpleFrameComponentRendererFactory rendererFactory,
