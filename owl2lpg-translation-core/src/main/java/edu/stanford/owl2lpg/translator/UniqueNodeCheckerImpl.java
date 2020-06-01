@@ -1,12 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.*;
 
 import javax.inject.Inject;
 
@@ -18,6 +12,6 @@ public class UniqueNodeCheckerImpl implements UniqueNodeChecker {
 
     @Override
     public boolean isUniqueNode(Object o) {
-        return true;
+        return !(o instanceof OWLAxiom);
     }
 }

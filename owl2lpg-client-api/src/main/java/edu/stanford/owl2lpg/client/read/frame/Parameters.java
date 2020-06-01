@@ -23,7 +23,7 @@ public class Parameters {
         "subjectIri", new StringValue(subject.getIRI().toString()),
         "projectId", new StringValue(context.getProjectId().toString()),
         "branchId", new StringValue(context.getBranchId().toString()),
-        "ontoDocId", new StringValue(context.getOntologyDocumentId().toString())));
+        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
   }
 
   public static MapValue forShortForm(@Nonnull ImmutableList<IRI> entities,

@@ -15,19 +15,20 @@ import java.util.UUID;
 public abstract class ProjectId {
 
   @Nonnull
-  public static ProjectId create(@Nonnull UUID identifier) {
+  public static ProjectId create(@Nonnull String identifier) {
     return new AutoValue_ProjectId(identifier);
   }
 
   @Nonnull
   public static ProjectId create() {
-    return create(UUID.randomUUID());
+    return create(UUID.randomUUID().toString());
   }
 
-  public abstract UUID getIdentifier();
+  @Nonnull
+  public abstract String getIdentifier();
 
   @Override
-  public String toString() {
-    return getIdentifier().toString();
+  public int hashCode() {
+    return getIdentifier().hashCode();
   }
 }

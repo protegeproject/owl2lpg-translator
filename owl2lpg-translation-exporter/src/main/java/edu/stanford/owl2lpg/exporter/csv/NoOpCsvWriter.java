@@ -16,4 +16,9 @@ public class NoOpCsvWriter<T> extends CsvWriter<T> {
     public void write(@Nonnull T rowObject) throws IOException {
         // Discard
     }
+
+    @Override
+    public void flush() throws IOException {
+
+    }
 }

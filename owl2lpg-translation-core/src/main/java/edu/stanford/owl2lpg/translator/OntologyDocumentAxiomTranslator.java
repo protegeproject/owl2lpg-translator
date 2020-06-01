@@ -35,6 +35,7 @@ public class OntologyDocumentAxiomTranslator {
   public Translation translate(@Nonnull OntologyDocumentId ontologyDocumentId, @Nonnull OWLAxiom axiom) {
     checkNotNull(ontologyDocumentId);
     var axiomTranslation = axiomTranslator.translate(axiom);
+    @Nonnull
     var docNode = createOntologyDocumentNode(ontologyDocumentId);
     return Translation.create(ontologyDocumentId, docNode)
                       .connectWith(axiomTranslation, AXIOM, Properties.empty());

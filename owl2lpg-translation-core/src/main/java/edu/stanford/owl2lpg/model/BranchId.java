@@ -15,20 +15,20 @@ import java.util.UUID;
 public abstract class BranchId {
 
   @Nonnull
-  public static BranchId create(@Nonnull UUID identifier) {
+  public static BranchId create(@Nonnull String identifier) {
     return new AutoValue_BranchId(identifier);
   }
 
   @Nonnull
   public static BranchId create() {
-    return create(UUID.randomUUID());
+    return create(UUID.randomUUID().toString());
   }
 
   @Nonnull
-  public abstract UUID getIdentifier();
+  public abstract String getIdentifier();
 
   @Override
-  public String toString() {
-    return getIdentifier().toString();
+  public int hashCode() {
+    return getIdentifier().hashCode();
   }
 }
