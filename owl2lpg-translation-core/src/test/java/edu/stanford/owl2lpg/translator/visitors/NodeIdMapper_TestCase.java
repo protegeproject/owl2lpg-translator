@@ -42,7 +42,7 @@ public class NodeIdMapper_TestCase {
 
     @Test
     public void shouldMapToSameNodeForBranchId() {
-        var identifier = UUID.randomUUID();
+        var identifier = UUID.randomUUID().toString();
         var branchIdA = BranchId.create(identifier);
         var branchIdB = BranchId.create(identifier);
         var nodeA = nodeIdMapper.get(branchIdA);
@@ -52,7 +52,7 @@ public class NodeIdMapper_TestCase {
 
     @Test
     public void shouldMapToSameNodeForProjectId() {
-        var identifier = UUID.randomUUID();
+        var identifier = UUID.randomUUID().toString();
         var projectIdA = ProjectId.create(identifier);
         var projectIdB = ProjectId.create(identifier);
         var nodeA = nodeIdMapper.get(projectIdA);
