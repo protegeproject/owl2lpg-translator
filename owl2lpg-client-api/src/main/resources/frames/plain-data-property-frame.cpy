@@ -1,17 +1,13 @@
 CALL {
-   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:DataPropertyAxiom)
+   MATCH (document:OntologyDocument {ontologyDocumentId: $ontoDocId})-[:AXIOM]->(axiom:ClassAxiom)
    MATCH (entity:DataProperty { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
-   WHERE project.projectId = $projectId
-   AND branch.branchId = $branchId
-   AND document.ontologyDocumentId = $ontoDocId
-   RETURN entity
+   OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
+   RETURN entity, property, object
    UNION
-   MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(annotation:AnnotationAssertion)
-   MATCH (entity)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
-   WHERE project.projectId = $projectId
-   AND branch.branchId = $branchId
-   AND document.ontologyDocumentId = $ontoDocId
-   RETURN entity
+   MATCH (document:OntologyDocument {ontologyDocumentId: $ontoDocId})-[:AXIOM]->(annotation:AnnotationAssertion)
+   MATCH (entity:DataProperty)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
+   OPTIONAL MATCH (iri)-[property:RELATED_TO]->(object)
+   RETURN entity, property, object
 }
 CALL {
    MATCH (project)-[:BRANCH]->(branch)-[:ONTOLOGY_DOCUMENT]->(document)-[:AXIOM]->(axiom:DataPropertyAxiom)
@@ -27,7 +23,6 @@ CALL {
 OPTIONAL MATCH (entity)-[:SUB_DATA_PROPERTY_OF]->(parent:DataProperty)
 OPTIONAL MATCH (entity)-[:DOMAIN]->(domain:Class)
 OPTIONAL MATCH (entity)-[:RANGE]->(range:Datatype)
-OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
 
 RETURN { type: "DataPropertyFrame",
          subject: { type: "owl:DataProperty", iri: entity.iri },
