@@ -24,11 +24,16 @@ public class OntologyDocumentAxiomTranslator {
   @Nonnull
   private final AxiomTranslator axiomTranslator;
 
+  @Nonnull
+  private final OntologyDocumentIdNodeFactory ontologyDocumentIdNodeFactory;
+
   @Inject
   public OntologyDocumentAxiomTranslator(@Nonnull NodeFactory nodeFactory,
-                                         @Nonnull AxiomTranslator axiomTranslator) {
+                                         @Nonnull AxiomTranslator axiomTranslator,
+                                         @Nonnull OntologyDocumentIdNodeFactory ontologyDocumentIdNodeFactory) {
     this.nodeFactory = checkNotNull(nodeFactory);
     this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.ontologyDocumentIdNodeFactory = checkNotNull(ontologyDocumentIdNodeFactory);
   }
 
   @Nonnull
@@ -36,7 +41,7 @@ public class OntologyDocumentAxiomTranslator {
     checkNotNull(ontologyDocumentId);
     var axiomTranslation = axiomTranslator.translate(axiom);
     @Nonnull
-    var docNode = createOntologyDocumentNode(ontologyDocumentId);
+    var docNode = ontologyDocumentIdNodeFactory.createOntologyDocumentNode(ontologyDocumentId);
     return Translation.create(ontologyDocumentId, docNode)
                       .connectWith(axiomTranslation, AXIOM, Properties.empty());
   }
@@ -55,13 +60,5 @@ public class OntologyDocumentAxiomTranslator {
         branchId,
         NodeLabels.BRANCH,
         Properties.of(BRANCH_ID, String.valueOf(branchId.getIdentifier())));
-  }
-
-  @Nonnull
-  private Node createOntologyDocumentNode(@Nonnull OntologyDocumentId docId) {
-    return nodeFactory.createNode(
-        docId,
-        NodeLabels.ONTOLOGY_DOCUMENT,
-        Properties.of(ONTOLOGY_DOCUMENT_ID, String.valueOf(docId.getIdentifier())));
   }
 }

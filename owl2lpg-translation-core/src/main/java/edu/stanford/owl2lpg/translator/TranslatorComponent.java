@@ -16,4 +16,6 @@ public interface TranslatorComponent {
   AxiomTranslator getAxiomTranslator();
 
   OntologyDocumentAxiomTranslator getOntologyDocumentAxiomTranslator();
+
+  SpecificOntologyDocumentAxiomTranslatorFactory getSpecificOntologyDocumentAxiomTranslator();
 }
