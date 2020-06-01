@@ -123,9 +123,10 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         var axiomNode = nodeFactory.createNode(axiom, NodeLabels.DATATYPE_DEFINITION);
         var translations = newTranslationBuilder();
         var edges = newEdgesBuilder();
-        addEntityTranslationAndEdge(axiomNode,
+        var entityNode = addEntityTranslationAndEdge(axiomNode,
                                     DATATYPE, axiom.getDatatype(),
                                     translations, edges);
+        addAxiomSubjectRelation(axiomNode, entityNode, edges);
         addDataRangeTranslationAndEdge(axiomNode,
                                        DATA_RANGE, axiom.getDataRange(),
                                        translations, edges);
