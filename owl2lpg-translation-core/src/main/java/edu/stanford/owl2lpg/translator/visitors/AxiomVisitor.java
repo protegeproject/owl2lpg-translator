@@ -273,14 +273,18 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var translation = classExprTranslator.translate(restriction);
     var propertyNode = translation.findFirstDirectNodeFrom(propertyEdgeLabel);
     var fillerNode = translation.findFirstDirectNodeFrom(fillerEdgeLabel);
-    if (propertyNode.isPresent() && fillerNode.isPresent()) {
-      addRelatedToEdge(
-          subClassNode, fillerNode.get(),
-          Properties.create(ImmutableMap.of(
-              PropertyFields.IRI, propertyNode.get().getProperty(PropertyFields.IRI),
-              PropertyFields.TYPE, ((OWLEntity) property).getEntityType().getName())),
-          edges);
+    if (propertyNode.isEmpty()) {
+      return;
     }
+    if (fillerNode.isEmpty()) {
+      return;
+    }
+    addRelatedToEdge(
+        subClassNode, fillerNode.get(),
+        Properties.create(ImmutableMap.of(
+            PropertyFields.IRI, propertyNode.get().getProperty(PropertyFields.IRI),
+            PropertyFields.TYPE, ((OWLEntity) property).getEntityType().getName())),
+        edges);
   }
 
   @Nonnull
