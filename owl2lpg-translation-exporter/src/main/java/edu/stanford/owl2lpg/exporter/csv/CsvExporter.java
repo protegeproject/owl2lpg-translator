@@ -20,9 +20,8 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -52,8 +51,9 @@ public class CsvExporter {
 
   private long edgeCount = 0;
 
-  private final Multiset<EdgeLabel> edgeLabelMultiset = TreeMultiset.create(Comparator.comparing(EdgeLabel::name));
-  private final Multiset<NodeLabels> nodeLabelsMultiset = TreeMultiset.create(Comparator.comparing(NodeLabels::name));
+  private final EnumMap<EdgeLabel, Counter> edgeLabelMultiset = new EnumMap<>(EdgeLabel.class);
+
+  private final EnumMap<NodeLabels, Counter> nodeLabelsMultiset = new EnumMap<>(NodeLabels.class);
 
   @Inject
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
@@ -64,14 +64,22 @@ public class CsvExporter {
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
     this.uniqueNodeChecker = checkNotNull(uniqueNodeChecker);
+    Stream.of(EdgeLabel.values())
+          .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
+    Stream.of(NodeLabels.values())
+          .forEach(v -> nodeLabelsMultiset.put(v, new Counter()));
   }
 
   public ImmutableMultiset<NodeLabels> getNodeLabelsMultiset() {
-    return ImmutableMultiset.copyOf(nodeLabelsMultiset);
+    ImmutableMultiset.Builder<NodeLabels> b = ImmutableMultiset.builder();
+    nodeLabelsMultiset.forEach((l, c) -> b.setCount(l, c.getValue()));
+    return b.build();
   }
 
   public ImmutableMultiset<EdgeLabel> getEdgeLabelMultiset() {
-    return ImmutableMultiset.copyOf(edgeLabelMultiset);
+    ImmutableMultiset.Builder<EdgeLabel> b = ImmutableMultiset.builder();
+    edgeLabelMultiset.forEach((l, c) -> b.setCount(l, c.getValue()));
+    return b.build();
   }
 
   public void write(@Nonnull OntologyDocumentId documentId,
@@ -117,14 +125,14 @@ public class CsvExporter {
   private void writeEdge(Edge edge) throws IOException {
     edgeCount++;
     relationshipsCsvWriter.write(edge);
-    edgeLabelMultiset.add(edge.getLabel());
+    edgeLabelMultiset.get(edge.getLabel()).increment();
   }
 
   private boolean writeNode(Node node, boolean unique) throws IOException {
     if (!unique || exportedNodes.add(node.getNodeId().getId())) {
       nodeCount++;
       nodesCsvWriter.write(node);
-      nodeLabelsMultiset.add(node.getLabels());
+      nodeLabelsMultiset.get(node.getLabels()).increment();
       return true;
     }
     return false;
@@ -136,5 +144,18 @@ public class CsvExporter {
 
   public long getEdgeCount() {
     return edgeCount;
+  }
+
+
+  private static class Counter {
+    private int value = 0;
+
+    public int getValue() {
+      return value;
+    }
+
+    public void increment() {
+      value++;
+    }
   }
 }
