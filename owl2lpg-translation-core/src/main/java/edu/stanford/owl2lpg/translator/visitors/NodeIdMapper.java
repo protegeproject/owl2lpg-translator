@@ -18,38 +18,38 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @TranslationSessionScope
 public class NodeIdMapper {
 
-  private Map<Object, NodeId> nodeIdMapper = Maps.newHashMapWithExpectedSize(1_000_000);
+    private Map<Object, NodeId> nodeIdMapper = Maps.newHashMapWithExpectedSize(1_000_000);
 
-  @Nonnull
-  private final NodeIdProvider idProvider;
+    @Nonnull
+    private final NodeIdProvider idProvider;
 
-  @Nonnull
-  private final TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
+    @Nonnull
+    private final TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
 
-  @Inject
-  public NodeIdMapper(@Nonnull NodeIdProvider idProvider,
-                      @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker) {
-    this.idProvider = checkNotNull(idProvider);
-    this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
-            translationSessionNodeObjectSingleEncounterChecker);
-  }
-
-  @Nonnull
-  public NodeId get(@Nonnull Object o) {
-    return getExistingOrCreate(o);
-  }
-
-  private NodeId getExistingOrCreate(@Nonnull Object o) {
-    if (!translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
-      NodeId nodeId = nodeIdMapper.get(o);
-      if (nodeId == null) {
-        nodeId = idProvider.getId();
-        nodeIdMapper.put(o, nodeId);
-      }
-      return nodeId;
+    @Inject
+    public NodeIdMapper(@Nonnull NodeIdProvider idProvider,
+                        @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker) {
+        this.idProvider = checkNotNull(idProvider);
+        this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
+                translationSessionNodeObjectSingleEncounterChecker);
     }
-    else {
-      return idProvider.getId();
+
+    @Nonnull
+    public NodeId get(@Nonnull Object o) {
+        return getExistingOrCreate(o);
     }
-  }
+
+    private NodeId getExistingOrCreate(@Nonnull Object o) {
+        if (translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
+            return idProvider.getId();
+        }
+        else {
+            NodeId nodeId = nodeIdMapper.get(o);
+            if (nodeId == null) {
+                nodeId = idProvider.getId();
+                nodeIdMapper.put(o, nodeId);
+            }
+            return nodeId;
+        }
+    }
 }
