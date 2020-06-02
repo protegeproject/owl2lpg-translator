@@ -4,13 +4,11 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.NumberIncrementIdProvider;
-import edu.stanford.owl2lpg.translator.UniqueNodeCheckerImpl;
+import edu.stanford.owl2lpg.translator.TranslationSessionUniqueNodeCheckerImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
@@ -27,7 +25,7 @@ public class NodeIdMapper_TestCase {
 
     @Before
     public void setUp() throws Exception {
-        nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider(), new UniqueNodeCheckerImpl());
+        nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider(), new TranslationSessionUniqueNodeCheckerImpl());
     }
 
     @Test

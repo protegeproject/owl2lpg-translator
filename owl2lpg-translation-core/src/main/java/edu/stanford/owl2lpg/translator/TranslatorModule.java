@@ -2,10 +2,7 @@ package edu.stanford.owl2lpg.translator;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.stanford.owl2lpg.translator.visitors.AxiomVisitor;
-import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
-import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -21,7 +18,7 @@ public class TranslatorModule {
   }
 
   @Provides
-  UniqueNodeChecker provideUniqueNodeChecker(UniqueNodeCheckerImpl impl) {
+  TranslationSessionUniqueNodeChecker provideUniqueNodeChecker(TranslationSessionUniqueNodeCheckerImpl impl) {
     return impl;
   }
 }

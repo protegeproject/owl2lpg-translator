@@ -2,13 +2,8 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
-import edu.stanford.owl2lpg.translator.UniqueNodeChecker;
-import org.semanticweb.owlapi.model.HasIRI;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLLiteral;
+import edu.stanford.owl2lpg.translator.TranslationSessionUniqueNodeChecker;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -29,13 +24,13 @@ public class NodeIdMapper {
   private final NodeIdProvider idProvider;
 
   @Nonnull
-  private final UniqueNodeChecker uniqueNodeChecker;
+  private final TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker;
 
   @Inject
   public NodeIdMapper(@Nonnull NodeIdProvider idProvider,
-                      @Nonnull UniqueNodeChecker uniqueNodeChecker) {
+                      @Nonnull TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker) {
     this.idProvider = checkNotNull(idProvider);
-    this.uniqueNodeChecker = checkNotNull(uniqueNodeChecker);
+    this.translationSessionUniqueNodeChecker = checkNotNull(translationSessionUniqueNodeChecker);
   }
 
   @Nonnull
@@ -44,7 +39,7 @@ public class NodeIdMapper {
   }
 
   private NodeId getExistingOrCreate(@Nonnull Object o) {
-    if (uniqueNodeChecker.isUniqueNode(o)) {
+    if (translationSessionUniqueNodeChecker.isTranslationSessionUniqueNode(o)) {
       NodeId nodeId = nodeIdMapper.get(o);
       if (nodeId == null) {
         nodeId = idProvider.getId();

@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
-import edu.stanford.owl2lpg.translator.UniqueNodeChecker;
+import edu.stanford.owl2lpg.translator.TranslationSessionUniqueNodeChecker;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -22,14 +22,14 @@ public class CsvExporterFactory {
     private final RelationshipsCsvWriterFactory relationshipsCsvWriterFactory;
 
     @Nonnull
-    private final UniqueNodeChecker uniqueNodeChecker;
+    private final TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker;
 
     @Inject
-    public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator, @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory, @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory, @Nonnull UniqueNodeChecker uniqueNodeChecker) {
+    public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator, @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory, @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory, @Nonnull TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker) {
         this.ontologyDocumentAxiomTranslator = checkNotNull(ontologyDocumentAxiomTranslator);
         this.nodesCsvWriterFactory = checkNotNull(nodesCsvWriterFactory);
         this.relationshipsCsvWriterFactory = checkNotNull(relationshipsCsvWriterFactory);
-        this.uniqueNodeChecker = checkNotNull(uniqueNodeChecker);
+        this.translationSessionUniqueNodeChecker = checkNotNull(translationSessionUniqueNodeChecker);
     }
 
     @Nonnull
@@ -38,6 +38,6 @@ public class CsvExporterFactory {
         return new CsvExporter(ontologyDocumentAxiomTranslator,
                                nodesCsvWriterFactory.create(nodesCsvWriter),
                                relationshipsCsvWriterFactory.create(relationshipsCsvWriter),
-                               uniqueNodeChecker);
+                               translationSessionUniqueNodeChecker);
     }
 }

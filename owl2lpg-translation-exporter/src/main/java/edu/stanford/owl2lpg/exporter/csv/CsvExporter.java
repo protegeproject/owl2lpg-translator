@@ -7,7 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
-import edu.stanford.owl2lpg.translator.UniqueNodeChecker;
+import edu.stanford.owl2lpg.translator.TranslationSessionUniqueNodeChecker;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -34,7 +34,7 @@ public class CsvExporter {
 
   @Nonnull
   private final CsvWriter<Edge> relationshipsCsvWriter;
-  private UniqueNodeChecker uniqueNodeChecker;
+  private TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker;
 
   @Nonnull
   private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
@@ -54,11 +54,11 @@ public class CsvExporter {
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
-                     @Nonnull UniqueNodeChecker uniqueNodeChecker) {
+                     @Nonnull TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
-    this.uniqueNodeChecker = checkNotNull(uniqueNodeChecker);
+    this.translationSessionUniqueNodeChecker = checkNotNull(translationSessionUniqueNodeChecker);
     Stream.of(EdgeLabel.values())
           .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
     Stream.of(NodeLabels.values())
@@ -89,7 +89,7 @@ public class CsvExporter {
   }
 
   private void writeTranslation(Translation translation) throws IOException {
-    writeNode(translation.getMainNode(), uniqueNodeChecker.isUniqueNode(translation.getTranslatedObject()));
+    writeNode(translation.getMainNode(), translationSessionUniqueNodeChecker.isTranslationSessionUniqueNode(translation.getTranslatedObject()));
     for(var edge : translation.getEdges()) {
       writeEdge(edge, isPotentialDuplicateEdge(translation));
     }
