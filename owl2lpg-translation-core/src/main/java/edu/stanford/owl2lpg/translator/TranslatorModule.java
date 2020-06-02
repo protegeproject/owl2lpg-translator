@@ -18,7 +18,7 @@ public class TranslatorModule {
   }
 
   @Provides
-  TranslationSessionUniqueNodeChecker provideUniqueNodeChecker(TranslationSessionUniqueNodeCheckerImpl impl) {
+  TranslationSessionUniqueEncounterNodeChecker provideUniqueNodeChecker(TranslationSessionUniqueEncounterNodeCheckerImpl impl) {
     return impl;
   }
 }

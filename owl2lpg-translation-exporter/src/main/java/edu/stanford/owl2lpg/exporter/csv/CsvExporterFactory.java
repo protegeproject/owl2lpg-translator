@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionUniqueNodeChecker;
+import edu.stanford.owl2lpg.translator.TranslationSessionUniqueEncounterNodeChecker;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -22,14 +22,14 @@ public class CsvExporterFactory {
     private final RelationshipsCsvWriterFactory relationshipsCsvWriterFactory;
 
     @Nonnull
-    private final TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker;
+    private final TranslationSessionUniqueEncounterNodeChecker translationSessionUniqueEncounterNodeChecker;
 
     @Inject
-    public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator, @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory, @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory, @Nonnull TranslationSessionUniqueNodeChecker translationSessionUniqueNodeChecker) {
+    public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator, @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory, @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory, @Nonnull TranslationSessionUniqueEncounterNodeChecker translationSessionUniqueEncounterNodeChecker) {
         this.ontologyDocumentAxiomTranslator = checkNotNull(ontologyDocumentAxiomTranslator);
         this.nodesCsvWriterFactory = checkNotNull(nodesCsvWriterFactory);
         this.relationshipsCsvWriterFactory = checkNotNull(relationshipsCsvWriterFactory);
-        this.translationSessionUniqueNodeChecker = checkNotNull(translationSessionUniqueNodeChecker);
+        this.translationSessionUniqueEncounterNodeChecker = checkNotNull(translationSessionUniqueEncounterNodeChecker);
     }
 
     @Nonnull
@@ -38,6 +38,6 @@ public class CsvExporterFactory {
         return new CsvExporter(ontologyDocumentAxiomTranslator,
                                nodesCsvWriterFactory.create(nodesCsvWriter),
                                relationshipsCsvWriterFactory.create(relationshipsCsvWriter),
-                               translationSessionUniqueNodeChecker);
+                               translationSessionUniqueEncounterNodeChecker);
     }
 }

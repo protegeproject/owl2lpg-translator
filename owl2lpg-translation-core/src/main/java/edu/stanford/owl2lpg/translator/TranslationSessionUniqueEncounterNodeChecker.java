@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
-public interface TranslationSessionUniqueNodeChecker {
+public interface TranslationSessionUniqueEncounterNodeChecker {
 
     /**
      * Determines whether the specified node will only be encountered once
@@ -9,5 +9,5 @@ public interface TranslationSessionUniqueNodeChecker {
      * @return true if the object will not be encountered more than once in a translation
      * session, otherwise false.
      */
-    boolean isTranslationSessionUniqueNode(Object o);
+    boolean isTranslationSessionUniqueEncounterNodeObject(Object o);
 }
