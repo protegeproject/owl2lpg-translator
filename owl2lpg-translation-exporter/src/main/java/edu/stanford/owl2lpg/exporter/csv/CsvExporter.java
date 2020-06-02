@@ -7,7 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionUniqueEncounterNodeChecker;
+import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -34,7 +34,7 @@ public class CsvExporter {
 
   @Nonnull
   private final CsvWriter<Edge> relationshipsCsvWriter;
-  private TranslationSessionUniqueEncounterNodeChecker translationSessionUniqueEncounterNodeChecker;
+  private TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
 
   @Nonnull
   private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
@@ -54,11 +54,12 @@ public class CsvExporter {
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
-                     @Nonnull TranslationSessionUniqueEncounterNodeChecker translationSessionUniqueEncounterNodeChecker) {
+                     @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
-    this.translationSessionUniqueEncounterNodeChecker = checkNotNull(translationSessionUniqueEncounterNodeChecker);
+    this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
+            translationSessionNodeObjectSingleEncounterChecker);
     Stream.of(EdgeLabel.values())
           .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
     Stream.of(NodeLabels.values())
@@ -89,7 +90,7 @@ public class CsvExporter {
   }
 
   private void writeTranslation(Translation translation) throws IOException {
-    writeNode(translation.getMainNode(), translationSessionUniqueEncounterNodeChecker.isTranslationSessionUniqueEncounterNodeObject(translation.getTranslatedObject()));
+    writeNode(translation.getMainNode(), translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(translation.getTranslatedObject()));
     for(var edge : translation.getEdges()) {
       writeEdge(edge, isPotentialDuplicateEdge(translation));
     }
