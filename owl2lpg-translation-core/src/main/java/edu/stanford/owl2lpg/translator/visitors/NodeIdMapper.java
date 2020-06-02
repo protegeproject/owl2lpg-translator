@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
-import edu.stanford.owl2lpg.translator.TranslationSessionUniqueEncounterNodeChecker;
+import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -24,13 +24,14 @@ public class NodeIdMapper {
   private final NodeIdProvider idProvider;
 
   @Nonnull
-  private final TranslationSessionUniqueEncounterNodeChecker translationSessionUniqueEncounterNodeChecker;
+  private final TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
 
   @Inject
   public NodeIdMapper(@Nonnull NodeIdProvider idProvider,
-                      @Nonnull TranslationSessionUniqueEncounterNodeChecker translationSessionUniqueEncounterNodeChecker) {
+                      @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker) {
     this.idProvider = checkNotNull(idProvider);
-    this.translationSessionUniqueEncounterNodeChecker = checkNotNull(translationSessionUniqueEncounterNodeChecker);
+    this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
+            translationSessionNodeObjectSingleEncounterChecker);
   }
 
   @Nonnull
@@ -39,7 +40,7 @@ public class NodeIdMapper {
   }
 
   private NodeId getExistingOrCreate(@Nonnull Object o) {
-    if (translationSessionUniqueEncounterNodeChecker.isTranslationSessionUniqueEncounterNodeObject(o)) {
+    if (!translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
       NodeId nodeId = nodeIdMapper.get(o);
       if (nodeId == null) {
         nodeId = idProvider.getId();

@@ -12,6 +12,6 @@ public class TranslationSessionNodeObjectSingleEncounterCheckerImpl implements T
 
     @Override
     public boolean isSingleEncounterNodeObject(Object o) {
-        return !(o instanceof OWLAxiom);
+        return o instanceof OWLAxiom;
     }
 }

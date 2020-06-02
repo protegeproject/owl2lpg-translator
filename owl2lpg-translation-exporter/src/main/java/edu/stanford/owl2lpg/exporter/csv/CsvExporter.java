@@ -127,8 +127,8 @@ public class CsvExporter {
     edgeLabelMultiset.get(edge.getLabel()).increment();
   }
 
-  private boolean writeNode(Node node, boolean unique) throws IOException {
-    if (!unique || exportedNodes.add(node.getNodeId().getId())) {
+  private boolean writeNode(Node node, boolean singleEncounter) throws IOException {
+    if (singleEncounter || exportedNodes.add(node.getNodeId().getId())) {
       nodeCount++;
       nodesCsvWriter.write(node);
       nodeLabelsMultiset.get(node.getLabels()).increment();
