@@ -1,11 +1,11 @@
 CALL {
    MATCH (document:OntologyDocument {ontologyDocumentId: $ontoDocId})-[:AXIOM]->(axiom:ClassAxiom)
-   MATCH (entity:AnnotationProperty { iri: $subjectIri })-[:IS_SUBJECT_OF]->(axiom)
+   MATCH (entity:AnnotationProperty { iri: $subjectIri })<-[:AXIOM_SUBJECT]-(axiom)
    OPTIONAL MATCH (entity)-[property:RELATED_TO]->(object)
    RETURN entity, property, object
    UNION
    MATCH (document:OntologyDocument {ontologyDocumentId: $ontoDocId})-[:AXIOM]->(annotation:AnnotationAssertion)
-   MATCH (entity:AnnotationProperty)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })-[:IS_SUBJECT_OF]->(annotation)
+   MATCH (entity:AnnotationProperty)-[:ENTITY_IRI]->(:IRI { iri: $subjectIri })<-[:AXIOM_SUBJECT]-(annotation)
    OPTIONAL MATCH (iri)-[property:RELATED_TO]->(object)
    RETURN entity, property, object
 }
