@@ -34,7 +34,9 @@ public class CsvExporter {
 
   @Nonnull
   private final CsvWriter<Edge> relationshipsCsvWriter;
-  private TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
+
+  @Nonnull
+  private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
 
   @Nonnull
   private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
@@ -54,12 +56,11 @@ public class CsvExporter {
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
-                     @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker) {
+                     @Nonnull TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
-    this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
-            translationSessionNodeObjectSingleEncounterChecker);
+    this.nodeEncounterChecker = checkNotNull(nodeEncounterChecker);
     Stream.of(EdgeLabel.values())
           .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
     Stream.of(NodeLabels.values())
@@ -90,11 +91,12 @@ public class CsvExporter {
   }
 
   private void writeTranslation(Translation translation) throws IOException {
-    writeNode(translation.getMainNode(), translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(translation.getTranslatedObject()));
-    for(var edge : translation.getEdges()) {
+    var translatedObject = translation.getTranslatedObject();
+    writeNode(translation.getMainNode(), nodeEncounterChecker.isSingleEncounterNodeObject(translatedObject));
+    for (var edge : translation.getEdges()) {
       writeEdge(edge, isPotentialDuplicateEdge(translation));
     }
-    for(var t : translation.getNestedTranslations()) {
+    for (var t : translation.getNestedTranslations()) {
       writeTranslation(t);
     }
   }
@@ -109,16 +111,15 @@ public class CsvExporter {
 
   private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
     if (potentialDuplicate) {
-      if(writtenNodeEdges.add(EdgeKey.get(edge.getStartId(),
-                                          edge.getEndId(),
-                                          edge.getLabel()))) {
+      if (writtenNodeEdges.add(EdgeKey.get(edge.getStartId(),
+                                           edge.getEndId(),
+                                           edge.getLabel()))) {
         writeEdge(edge);
       }
     }
     else {
       writeEdge(edge);
     }
-
   }
 
   private void writeEdge(Edge edge) throws IOException {
@@ -145,8 +146,9 @@ public class CsvExporter {
     return edgeCount;
   }
 
-
+  /* A static utility class to do the counting for each translation per node and edge labels */
   private static class Counter {
+
     private int value = 0;
 
     public int getValue() {

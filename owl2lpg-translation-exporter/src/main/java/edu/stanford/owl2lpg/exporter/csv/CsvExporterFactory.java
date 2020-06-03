@@ -5,7 +5,6 @@ import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncount
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-
 import java.io.Writer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,23 +21,25 @@ public class CsvExporterFactory {
     private final RelationshipsCsvWriterFactory relationshipsCsvWriterFactory;
 
     @Nonnull
-    private final TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
+    private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
 
     @Inject
-    public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator, @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory, @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory, @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker) {
+    public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator,
+                              @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory,
+                              @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory,
+                              @Nonnull TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker) {
         this.ontologyDocumentAxiomTranslator = checkNotNull(ontologyDocumentAxiomTranslator);
         this.nodesCsvWriterFactory = checkNotNull(nodesCsvWriterFactory);
         this.relationshipsCsvWriterFactory = checkNotNull(relationshipsCsvWriterFactory);
-        this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
-                translationSessionNodeObjectSingleEncounterChecker);
+        this.nodeEncounterChecker = checkNotNull(nodeEncounterChecker);
     }
 
     @Nonnull
     public CsvExporter create(@Nonnull Writer nodesCsvWriter,
                               @Nonnull Writer relationshipsCsvWriter) {
         return new CsvExporter(ontologyDocumentAxiomTranslator,
-                               nodesCsvWriterFactory.create(nodesCsvWriter),
-                               relationshipsCsvWriterFactory.create(relationshipsCsvWriter),
-                               translationSessionNodeObjectSingleEncounterChecker);
+            nodesCsvWriterFactory.create(nodesCsvWriter),
+            relationshipsCsvWriterFactory.create(relationshipsCsvWriter),
+            nodeEncounterChecker);
     }
 }
