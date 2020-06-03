@@ -79,9 +79,10 @@ public class NodeIdMapper_TestCase {
     @Test
     public void shouldMapToDifferentNodesForStructuallyEquivalentButDifferentClassExpressions() {
         var filler = new OWLClassImpl(IRI.create("A"));
+        var filler2 = new OWLClassImpl(IRI.create("B"));
         var property = new OWLObjectPropertyImpl(IRI.create("p"));
         var someValuesFrom = new OWLObjectSomeValuesFromImpl(property, filler);
-        var someValuesFrom2 = new OWLObjectSomeValuesFromImpl(property, filler);
+        var someValuesFrom2 = new OWLObjectSomeValuesFromImpl(property, filler2);
         var nodeA = nodeIdMapper.get(someValuesFrom);
         var nodeB = nodeIdMapper.get(someValuesFrom2);
         assertThat(nodeA, is(not(equalTo(nodeB))));
