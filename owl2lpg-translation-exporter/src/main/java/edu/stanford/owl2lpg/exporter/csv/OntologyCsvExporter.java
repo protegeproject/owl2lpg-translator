@@ -1,29 +1,15 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Comparators;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMultiset;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
-import edu.stanford.owl2lpg.translator.TranslatorComponent;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,27 +20,34 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OntologyCsvExporter {
 
     @Nonnull
-    private final OntologyDocumentId ontologyDocumentId;
-
-    @Nonnull
     private final ImmutableCollection<OWLAxiom> axioms;
 
     @Nonnull
-    private final PrintWriter console;
+    private final OntologyDocumentId ontologyDocumentId;
 
+    @Inject
     public OntologyCsvExporter(@Nonnull ImmutableCollection<OWLAxiom> axioms,
-                               @Nonnull OntologyDocumentId ontologyDocumentId,
-                               @Nonnull PrintWriter console) {
-        this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
+                               @Nonnull OntologyDocumentId ontologyDocumentId) {
         this.axioms = checkNotNull(axioms);
-        this.console = checkNotNull(console);
+        this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
     }
 
     /**
-     * Export the ontology to the specified nodes writer and relationships writer
+     * Export the ontology to the specified nodes writer and relationships writer.
+     * The processing messages will be display on the standard output stream.
      */
     public void export(@Nonnull Writer nodesCsvWriter,
                        @Nonnull Writer edgesCsvWriter) throws IOException {
+        export(nodesCsvWriter, edgesCsvWriter, new PrintWriter(System.out));
+    }
+
+    /**
+     * Export the ontology to the specified nodes writer and relationships writer,
+     * with a user-defined console stream to display the processing messages.
+     */
+    public void export(@Nonnull Writer nodesCsvWriter,
+                       @Nonnull Writer edgesCsvWriter,
+                       @Nonnull PrintWriter console) throws IOException {
 
         var exporterFactory = DaggerCsvExporterComponent.create().getCsvExporterFactory();
         var exporter = exporterFactory.create(nodesCsvWriter,
