@@ -1,8 +1,15 @@
 package edu.stanford.owl2lpg.cli;
 
+import edu.stanford.owl2lpg.exporter.csv.DaggerOntologyCsvExporterComponent;
+import edu.stanford.owl2lpg.exporter.csv.OntologyModule;
 import edu.stanford.owl2lpg.exporter.cypher.CypherTranslationExporter;
 
+import javax.annotation.Nonnull;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
@@ -30,9 +37,9 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
 
   @Option(
       names = {"-o", "--output"},
-      description = "Output file location",
+      description = "Output directory location",
       type = Path.class)
-  Path outputFileLocation;
+  Path outputDirectoryLocation;
 
   @Option(
       names = {"-h", "--help"},
@@ -58,22 +65,37 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     CypherTranslationExporter exporter = new CypherTranslationExporter();
     try {
-      exporter.export(ontologyFileLocation, outputFileLocation);
+      exporter.export(ontologyFileLocation, outputDirectoryLocation);
     } catch (IOException e) {
+      e.printStackTrace();
       exitCode = 1;
     }
     return exitCode;
   }
 
   private int translateOntologyToCsv() {
-//    int exitCode = 0;
-//    OntologyCsvExporter exporter = new OntologyCsvExporter();
-//    try {
-//      exporter.export(ontologyFile, new PrintWriter(System.out));
-//    } catch (IOException e) {
-//      exitCode = 1;
-//    }
-//    return exitCode;
-    return 0;
+    int exitCode = 0;
+    try {
+      Files.createDirectories(outputDirectoryLocation);
+      var nodesCsvPath = outputDirectoryLocation.resolve("nodes.csv");
+      var relationshipsCsvPath = outputDirectoryLocation.resolve("relationships.csv");
+      try (var nodesCsvWriter = createWriter(nodesCsvPath);
+           var relsCsvWriter = createWriter(relationshipsCsvPath)) {
+        var ontologyModule = new OntologyModule(ontologyFileLocation.toFile());
+        var exporter = DaggerOntologyCsvExporterComponent.builder()
+            .ontologyModule(ontologyModule)
+            .build()
+            .getOntologyCsvExporter();
+        exporter.export(nodesCsvWriter, relsCsvWriter);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      exitCode = 1;
+    }
+    return exitCode;
+  }
+
+  private static Writer createWriter(@Nonnull Path path) throws IOException {
+    return new BufferedWriter(new FileWriter(path.toFile()));
   }
 }
