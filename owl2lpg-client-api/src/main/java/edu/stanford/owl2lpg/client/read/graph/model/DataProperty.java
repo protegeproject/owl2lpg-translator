@@ -3,10 +3,11 @@ package edu.stanford.owl2lpg.client.read.graph.model;
 import com.google.common.base.MoreObjects;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -24,22 +25,26 @@ public class DataProperty extends DataPropertyExpression<OWLDataProperty>
   private DataProperty() {
   }
 
-  @Nonnull
+  @Nullable
   @Override
   public String getIri() {
     return iri;
   }
 
-  @Nonnull
+  @Nullable
   @Override
   public Iri getEntityIri() {
     return entityIri;
   }
 
   @Override
-  public OWLDataProperty toOwlObject(OWLDataFactory dataFactory) {
-    if (entityIri == null) throw new RuntimeException(this.toString());
-    return dataFactory.getOWLDataProperty(entityIri.toOwlObject(dataFactory));
+  public OWLDataProperty toOwlObject(OWLDataFactory dataFactory, Session session) {
+    try {
+      return dataFactory.getOWLDataProperty(entityIri.toOwlObject(dataFactory, session));
+    } catch (NullPointerException e) {
+      var object = session.load(getClass(), getId(), 1);
+      return object.toOwlObject(dataFactory, session);
+    }
   }
 
   @Override

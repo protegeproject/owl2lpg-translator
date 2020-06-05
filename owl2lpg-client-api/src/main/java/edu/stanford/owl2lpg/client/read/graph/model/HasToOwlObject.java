@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
+import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 
 /**
@@ -8,5 +9,5 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
  */
 public interface HasToOwlObject<O> {
 
-  O toOwlObject(OWLDataFactory dataFactory);
+  O toOwlObject(OWLDataFactory dataFactory, Session session);
 }

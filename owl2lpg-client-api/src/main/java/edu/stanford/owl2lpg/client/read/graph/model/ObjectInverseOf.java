@@ -2,10 +2,11 @@ package edu.stanford.owl2lpg.client.read.graph.model;
 
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -20,13 +21,18 @@ public class ObjectInverseOf extends ObjectPropertyExpression<OWLObjectInverseOf
   private ObjectInverseOf() {
   }
 
-  @Nonnull
+  @Nullable
   public ObjectPropertyExpression getProperty() {
     return property;
   }
 
   @Override
-  public OWLObjectInverseOf toOwlObject(OWLDataFactory dataFactory) {
-    return dataFactory.getOWLObjectInverseOf(property.toOwlObject(dataFactory));
+  public OWLObjectInverseOf toOwlObject(OWLDataFactory dataFactory, Session session) {
+    try {
+      return dataFactory.getOWLObjectInverseOf(property.toOwlObject(dataFactory, session));
+    } catch (NullPointerException e) {
+      var object = session.load(getClass(), getId(), 2);
+      return object.toOwlObject(dataFactory, session);
+    }
   }
 }

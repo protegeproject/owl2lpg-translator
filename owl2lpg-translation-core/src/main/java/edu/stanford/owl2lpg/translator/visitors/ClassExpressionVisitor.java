@@ -242,7 +242,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
       translations.add(translation);
       edges.add(edgeFactory.createEdge(mainNode,
           translation.getMainNode(),
-          CLASS_EXPRESSION, Properties.empty()));
+          CLASS_EXPRESSION));
     }
     return Translation.create(ce, mainNode,
         edges.build(),

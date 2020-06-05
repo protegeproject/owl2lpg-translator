@@ -3,33 +3,34 @@ package edu.stanford.owl2lpg.client.read.graph.model;
 import com.google.common.base.MoreObjects;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 @NodeEntity(label = "Class")
-public class Class extends ClassExpression<OWLClass> implements Entity {
+public class NamedClass extends ClassExpression<OWLClass> implements Entity {
 
   private String iri;
 
   @Relationship(type = "ENTITY_IRI")
   private Iri entityIri;
 
-  private Class() {
+  private NamedClass() {
   }
 
-  @Nonnull
+  @Nullable
   @Override
   public String getIri() {
     return iri;
   }
 
-  @Nonnull
+  @Nullable
   @Override
   public Iri getEntityIri() {
     return entityIri;
@@ -45,7 +46,12 @@ public class Class extends ClassExpression<OWLClass> implements Entity {
   }
 
   @Override
-  public OWLClass toOwlObject(OWLDataFactory dataFactory) {
-    return dataFactory.getOWLClass(entityIri.toOwlObject(dataFactory));
+  public OWLClass toOwlObject(OWLDataFactory dataFactory, Session session) {
+    try {
+      return dataFactory.getOWLClass(entityIri.toOwlObject(dataFactory, session));
+    } catch (NullPointerException e) {
+      var object = session.load(getClass(), getId(), 1);
+      return object.toOwlObject(dataFactory, session);
+    }
   }
 }
