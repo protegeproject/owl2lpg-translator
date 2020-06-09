@@ -1,7 +1,9 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Required;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -19,6 +21,8 @@ public class Literal extends GraphObject
     implements HasToOwlObject<OWLLiteral> {
 
   @Property
+  @Required
+  @Index
   private String lexicalForm;
 
   @Property

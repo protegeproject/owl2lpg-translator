@@ -1,9 +1,7 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
 import com.google.common.base.MoreObjects;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.*;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -19,6 +17,8 @@ public class NamedIndividual extends Individual<OWLNamedIndividual>
     implements Entity<OWLNamedIndividual> {
 
   @Property
+  @Required
+  @Index
   private String iri;
 
   @Relationship(type = "ENTITY_IRI")
