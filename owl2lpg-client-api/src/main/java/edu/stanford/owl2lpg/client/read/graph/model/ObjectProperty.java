@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 @NodeEntity(label = "ObjectProperty")
 public class ObjectProperty
     extends ObjectPropertyExpression<OWLObjectProperty>
-    implements Entity {
+    implements Entity<OWLObjectProperty> {
 
   @Property
   private String iri;

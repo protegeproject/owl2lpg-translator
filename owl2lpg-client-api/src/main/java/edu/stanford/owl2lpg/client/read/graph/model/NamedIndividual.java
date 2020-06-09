@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  */
 @NodeEntity(label = "NamedIndividual")
 public class NamedIndividual extends Individual<OWLNamedIndividual>
-    implements Entity {
+    implements Entity<OWLNamedIndividual> {
 
   @Property
   private String iri;

@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
-import com.google.common.base.MoreObjects;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -15,7 +14,8 @@ import javax.annotation.Nullable;
  * Stanford Center for Biomedical Informatics Research
  */
 @NodeEntity(label = "Class")
-public class NamedClass extends ClassExpression<OWLClass> implements Entity {
+public class NamedClass extends ClassExpression<OWLClass>
+    implements Entity<OWLClass> {
 
   @Property
   private String iri;
@@ -36,15 +36,6 @@ public class NamedClass extends ClassExpression<OWLClass> implements Entity {
   @Override
   public Iri getEntityIri() {
     return entityIri;
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("id", getId())
-        .add("iri", iri)
-        .add("entityIri", entityIri)
-        .toString();
   }
 
   @Override

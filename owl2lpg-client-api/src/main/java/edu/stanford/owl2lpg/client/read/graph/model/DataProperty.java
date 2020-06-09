@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
  */
 @NodeEntity(label = "DataProperty")
 public class DataProperty extends DataPropertyExpression<OWLDataProperty>
-    implements Entity {
+    implements Entity<OWLDataProperty> {
 
   @Property
   private String iri;
