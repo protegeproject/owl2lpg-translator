@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
+import com.google.common.base.MoreObjects;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -46,5 +47,14 @@ public class NamedIndividual extends Individual<OWLNamedIndividual>
       var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("id", getId())
+        .add("iri", iri)
+        .add("entityIri", entityIri)
+        .toString();
   }
 }
