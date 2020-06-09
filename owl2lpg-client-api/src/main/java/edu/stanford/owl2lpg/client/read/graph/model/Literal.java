@@ -75,7 +75,7 @@ public class Literal extends GraphObject
         return dataFactory.getOWLLiteral(lexicalForm, language);
       }
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

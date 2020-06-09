@@ -52,7 +52,7 @@ public class ObjectMinCardinality extends ClassExpression<OWLObjectMinCardinalit
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

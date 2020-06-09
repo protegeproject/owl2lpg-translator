@@ -50,7 +50,7 @@ public class SubClassOfAxiom extends ClassAxiom<OWLSubClassOfAxiom> {
           subClass.toOwlObject(dataFactory, session),
           superClass.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

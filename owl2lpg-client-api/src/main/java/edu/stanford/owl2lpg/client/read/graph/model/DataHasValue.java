@@ -50,7 +50,7 @@ public class DataHasValue extends ClassExpression<OWLDataHasValue> {
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 3);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

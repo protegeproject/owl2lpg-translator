@@ -54,7 +54,7 @@ public class ObjectProperty
     try {
       return dataFactory.getOWLObjectProperty(entityIri.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }
