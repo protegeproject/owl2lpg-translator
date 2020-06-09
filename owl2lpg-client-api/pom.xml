@@ -42,16 +42,19 @@
       <groupId>org.neo4j.driver</groupId>
       <artifactId>neo4j-java-driver</artifactId>
       <version>${neo4j-driver.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j-ogm-core</artifactId>
       <version>3.2.12</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j-ogm-bolt-driver</artifactId>
       <version>3.2.12</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.google.auto.value</groupId>
