@@ -6,7 +6,10 @@ import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -25,6 +28,11 @@ public class NamedClass extends ClassExpression<OWLClass>
   private Iri entityIri;
 
   private NamedClass() {
+  }
+
+  public NamedClass(@Nonnull String iri, @Nonnull Iri entityIri) {
+    this.iri = checkNotNull(iri);
+    this.entityIri = checkNotNull(entityIri);
   }
 
   @Nullable

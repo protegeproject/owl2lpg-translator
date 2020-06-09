@@ -9,8 +9,11 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -32,6 +35,14 @@ public class Literal extends GraphObject
   private String language;
 
   private Literal() {
+  }
+
+  public Literal(@Nonnull String lexicalForm,
+                 @Nonnull String datatype,
+                 @Nonnull String language) {
+    this.lexicalForm = checkNotNull(lexicalForm);
+    this.datatype = checkNotNull(datatype);
+    this.language = checkNotNull(language);
   }
 
   @Nullable

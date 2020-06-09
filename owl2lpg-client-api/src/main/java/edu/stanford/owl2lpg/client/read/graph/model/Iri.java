@@ -8,7 +8,10 @@ import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -23,6 +26,10 @@ public class Iri extends GraphObject implements HasToOwlObject<IRI> {
   private String iri;
 
   private Iri() {
+  }
+
+  public Iri(@Nonnull String iri) {
+    this.iri = checkNotNull(iri);
   }
 
   @Nullable
