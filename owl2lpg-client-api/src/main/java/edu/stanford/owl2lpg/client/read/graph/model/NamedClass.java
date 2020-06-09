@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.read.graph.model;
 
 import com.google.common.base.MoreObjects;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 @NodeEntity(label = "Class")
 public class NamedClass extends ClassExpression<OWLClass> implements Entity {
 
+  @Property
   private String iri;
 
   @Relationship(type = "ENTITY_IRI")

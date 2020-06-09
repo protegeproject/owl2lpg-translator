@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
 @NodeEntity(label = "SubClassOf")
 public class SubClassOfAxiom extends ClassAxiom<OWLSubClassOfAxiom> {
 
+  @Property
   private String iri;
 
   @Relationship(type = "SUB_CLASS_EXPRESSION")

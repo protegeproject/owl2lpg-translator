@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -14,6 +15,7 @@ import javax.annotation.Nullable;
 @NodeEntity(label = "IRI")
 public class Iri extends GraphObject implements HasToOwlObject<IRI> {
 
+  @Property
   private String iri;
 
   private Iri() {
