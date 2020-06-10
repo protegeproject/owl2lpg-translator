@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d %5p %40.40c:%4L - %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--
+    ~ Set the required log level for Neo4j-OGM components here.
+    ~ To just see Cypher statements set the level to "info"
+    ~ For finer-grained diagnostics, set the level to "debug".
+  -->
+  <!--  <logger name="org.neo4j.ogm" level="debug"/>-->
+  <logger name="org.neo4j.ogm.drivers.bolt.request" level="debug">
+    <appender-ref ref="console"/>
+  </logger>
+
+  <root level="info">
+    <appender-ref ref="console"/>
+  </root>
+</configuration>
