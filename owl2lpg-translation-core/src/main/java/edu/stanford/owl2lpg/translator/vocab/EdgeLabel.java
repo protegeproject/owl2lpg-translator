@@ -84,6 +84,10 @@ public enum EdgeLabel {
     return edgeType;
   }
 
+  public boolean isStructural() {
+    return edgeType.equals(STRUCTURAL_SPEC);
+  }
+
   /**
    * Gets the neo4j name for the edge label.  This is the camelCaseEdgeLabel
    * formatted to be UPPER_SNAKE_CASE
