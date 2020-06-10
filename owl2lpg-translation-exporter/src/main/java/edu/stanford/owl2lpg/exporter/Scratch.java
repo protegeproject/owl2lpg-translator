@@ -6,6 +6,10 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.base.Stopwatch;
 import com.google.common.io.CountingInputStream;
 import edu.stanford.bmir.protege.web.server.util.Counter;
+import edu.stanford.owl2lpg.exporter.csv.CsvExporter;
+import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
+import edu.stanford.owl2lpg.exporter.csv.NoOpWriter;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.obolibrary.obo2owl.OWLAPIObo2Owl;
@@ -14,12 +18,15 @@ import org.obolibrary.oboformat.model.FrameMergeException;
 import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatParser;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -32,9 +39,9 @@ public class Scratch {
     private static final Logger logger = LoggerFactory.getLogger("OboStreaming");
     public static void main(String[] args) throws IOException {
         File file = new File(args[0]);
-        for (int i = 0; i < 1000; i++) {
-            parse(file);
-        }
+//        for (int i = 0; i < 1000; i++) {
+        parse(file);
+//        }
     }
     private static void parse(File file1) throws IOException {
         var in = new CountingInputStream(new FileInputStream(file1));
@@ -43,7 +50,9 @@ public class Scratch {
         OBOFormatParser parser = new OBOFormatParser();
         replaceStringCacheWithNoOpCache(parser);
         parser.setReader(bufferedReader);
-        var translator = new MinimalObo2Owl(in);
+        CsvExporter csvExporter = DaggerCsvExporterComponent.create().getCsvExporterFactory()
+            .create(new NoOpWriter(), new NoOpWriter());
+        var translator = new MinimalObo2Owl(in, csvExporter);
         var obodoc = new MinimalOboDoc();
         // Rather ugly dep!
         obodoc.setTranslator(translator);
@@ -51,7 +60,23 @@ public class Scratch {
         parser.parseOBODoc(obodoc);
         System.out.println("Time: " + sw.elapsed().toMillis());
         System.out.println("Axioms: " + translator.getAxiomsCount());
+        dump(csvExporter, new PrintWriter(System.out));
         bufferedReader.close();
+    }
+    private static void dump(CsvExporter exporter, PrintWriter console) {
+        console.printf("\nNodes: %,d\n\n", exporter.getNodeCount());
+        var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
+        nodeLabelsMultiset
+            .forEachEntry((nodeLabels, count) -> {
+                console.printf("    Node   %-60s %,10d\n", nodeLabels.printLabels(), count);
+            });
+        console.printf("\nRelationships: %,d\n\n", exporter.getEdgeCount());
+        var edgeLabelMultiset = exporter.getEdgeLabelMultiset();
+        edgeLabelMultiset
+            .forEachEntry((edgeLabel, count) -> {
+                console.printf("    Rel    %-36s %,10d\n", edgeLabel.printLabel(), count);
+            });
+        console.flush();
     }
     private static void replaceStringCacheWithNoOpCache(OBOFormatParser parser) {
         try {
@@ -69,31 +94,48 @@ public class Scratch {
     private static class MinimalObo2Owl extends OWLAPIObo2Owl {
         private final Counter counter = new Counter();
         private final CountingInputStream countingInputStream;
-        public MinimalObo2Owl(CountingInputStream countingInputStream) {
+        private CsvExporter csvExporter;
+        private long ts = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
+        private OntologyDocumentId ontDocId = OntologyDocumentId.create();
+        public MinimalObo2Owl(CountingInputStream countingInputStream,
+                              CsvExporter csvExporter) {
             super(OWLManager.createOWLOntologyManager());
             this.countingInputStream = countingInputStream;
+            this.csvExporter = csvExporter;
         }
         @Override
         protected void add(@Nullable OWLAxiom axiom) {
             counter.increment();
             logParsed();
+            try {
+                csvExporter.write(ontDocId, axiom);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         @Override
         protected void add(@Nullable Set<OWLAxiom> axioms) {
-            for(int i = 0; i < axioms.size(); i++) {
-                counter.increment();
+            for(OWLAxiom ax : axioms) {
+                add(ax);
             }
-            logParsed();
         }
         private void logParsed() {
             var c = counter.getCounter();
             if(c % 1_000_000 == 0) {
                 long read = countingInputStream.getCount() / (1024 * 1024);
-                System.out.printf("Parsed %,d axioms (Read %,d Mb)\n", c, read);
+                long ts1 = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
+                long delta = (ts1 - ts) / 1000_000;
+                ts = ts1;
+                System.out.printf("Parsed %,d axioms (Read %,d Mb    Delta: %,d ms)\n", c, read, delta);
             }
         }
         public int getAxiomsCount() {
             return counter.getCounter();
+        }
+        @Nonnull
+        @Override
+        public IRI oboIdToIRI(@Nonnull String id) {
+            return oboIdToIRI_load(id);
         }
     }
     private static class MinimalOboDoc extends OBODoc {
