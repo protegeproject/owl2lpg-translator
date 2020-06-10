@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,18 +22,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class EquivalentClassesAxiom extends ClassAxiom<OWLEquivalentClassesAxiom> {
 
   @Relationship(type = "CLASS_EXPRESSION")
-  private ImmutableSet<ClassExpression> classExpressions;
+  private Set<ClassExpression> classExpressions;
 
   private EquivalentClassesAxiom() {
   }
 
-  public EquivalentClassesAxiom(@Nonnull ImmutableSet<ClassExpression> classExpressions) {
+  public EquivalentClassesAxiom(@Nonnull Set<ClassExpression> classExpressions) {
     this.classExpressions = checkNotNull(classExpressions);
   }
 
   @Nullable
   public ImmutableSet<ClassExpression> getEquivalentClasses() {
-    return classExpressions;
+    return ImmutableSet.copyOf(classExpressions);
   }
 
   public OWLEquivalentClassesAxiom toOwlObject(OWLDataFactory dataFactory, Session session) {
