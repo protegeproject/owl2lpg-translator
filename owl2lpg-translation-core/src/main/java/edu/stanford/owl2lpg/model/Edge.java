@@ -81,6 +81,6 @@ public abstract class Edge {
   @JsonAnyGetter
   @JsonUnwrapped
   public Map<String, Object> properties() {
-    return getProperties().getMap();
+    return getProperties().neoProperties();
   }
 }
