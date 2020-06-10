@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.Policy;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.base.Stopwatch;
+import com.google.common.io.CountingInputStream;
 import edu.stanford.bmir.protege.web.server.util.Counter;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -16,13 +17,9 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -31,21 +28,22 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class Scratch {
+
     private static final Logger logger = LoggerFactory.getLogger("OboStreaming");
-    public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException {
+    public static void main(String[] args) throws IOException {
         File file = new File(args[0]);
         for (int i = 0; i < 1000; i++) {
             parse(file);
         }
     }
-    private static void parse(File file1) throws IOException, IllegalAccessException {
-        var fileReader = new FileReader(file1);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+    private static void parse(File file1) throws IOException {
+        var in = new CountingInputStream(new FileInputStream(file1));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
         var sw = Stopwatch.createStarted();
         OBOFormatParser parser = new OBOFormatParser();
         replaceStringCacheWithNoOpCache(parser);
         parser.setReader(bufferedReader);
-        var translator = new MinimalObo2Owl();
+        var translator = new MinimalObo2Owl(in);
         var obodoc = new MinimalOboDoc();
         // Rather ugly dep!
         obodoc.setTranslator(translator);
@@ -65,22 +63,33 @@ public class Scratch {
             stringCache.setAccessible(true);
             stringCache.set(parser, new NoOpLoadingCache());
         } catch (IllegalAccessException e) {
-            logger.warn("Unabled to replace LoadingCache with No-op Cache: " + e.getMessage());
+            logger.warn("Unable to replace LoadingCache with No-op Cache.  This will cause the loading to be slower.");
         }
     }
     private static class MinimalObo2Owl extends OWLAPIObo2Owl {
         private final Counter counter = new Counter();
-        public MinimalObo2Owl() {
+        private final CountingInputStream countingInputStream;
+        public MinimalObo2Owl(CountingInputStream countingInputStream) {
             super(OWLManager.createOWLOntologyManager());
+            this.countingInputStream = countingInputStream;
         }
         @Override
         protected void add(@Nullable OWLAxiom axiom) {
             counter.increment();
+            logParsed();
         }
         @Override
         protected void add(@Nullable Set<OWLAxiom> axioms) {
             for(int i = 0; i < axioms.size(); i++) {
                 counter.increment();
+            }
+            logParsed();
+        }
+        private void logParsed() {
+            var c = counter.getCounter();
+            if(c % 1_000_000 == 0) {
+                long read = countingInputStream.getCount() / (1024 * 1024);
+                System.out.printf("Parsed %,d axioms (Read %,d Mb)\n", c, read);
             }
         }
         public int getAxiomsCount() {
