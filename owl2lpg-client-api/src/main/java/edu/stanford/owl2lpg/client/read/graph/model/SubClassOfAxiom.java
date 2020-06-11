@@ -6,7 +6,10 @@ import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -14,8 +17,6 @@ import javax.annotation.Nullable;
  */
 @NodeEntity(label = "SubClassOf")
 public class SubClassOfAxiom extends ClassAxiom<OWLSubClassOfAxiom> {
-
-  private String iri;
 
   @Relationship(type = "SUB_CLASS_EXPRESSION")
   private ClassExpression subClass;
@@ -26,9 +27,10 @@ public class SubClassOfAxiom extends ClassAxiom<OWLSubClassOfAxiom> {
   private SubClassOfAxiom() {
   }
 
-  @Nullable
-  public String getIri() {
-    return iri;
+  public SubClassOfAxiom(@Nonnull ClassExpression subClass,
+                         @Nonnull ClassExpression superClass) {
+    this.subClass = checkNotNull(subClass);
+    this.superClass = checkNotNull(superClass);
   }
 
   @Nullable
@@ -48,7 +50,7 @@ public class SubClassOfAxiom extends ClassAxiom<OWLSubClassOfAxiom> {
           subClass.toOwlObject(dataFactory, session),
           superClass.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

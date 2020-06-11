@@ -1,13 +1,19 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Required;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -17,13 +23,26 @@ import java.util.Objects;
 public class Literal extends GraphObject
     implements HasToOwlObject<OWLLiteral> {
 
+  @Property
+  @Required
+  @Index
   private String lexicalForm;
 
+  @Property
   private String datatype;
 
+  @Property
   private String language;
 
   private Literal() {
+  }
+
+  public Literal(@Nonnull String lexicalForm,
+                 @Nonnull String datatype,
+                 @Nonnull String language) {
+    this.lexicalForm = checkNotNull(lexicalForm);
+    this.datatype = checkNotNull(datatype);
+    this.language = checkNotNull(language);
   }
 
   @Nullable
@@ -56,7 +75,7 @@ public class Literal extends GraphObject
         return dataFactory.getOWLLiteral(lexicalForm, language);
       }
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

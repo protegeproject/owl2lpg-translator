@@ -7,10 +7,11 @@ import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -20,18 +21,18 @@ import java.util.stream.Collectors;
 public class EquivalentClassesAxiom extends ClassAxiom<OWLEquivalentClassesAxiom> {
 
   @Relationship(type = "CLASS_EXPRESSION")
-  private Set<ClassExpression> classExpressions;
+  private ImmutableSet<ClassExpression> classExpressions;
 
   private EquivalentClassesAxiom() {
   }
 
+  public EquivalentClassesAxiom(@Nonnull ImmutableSet<ClassExpression> classExpressions) {
+    this.classExpressions = checkNotNull(classExpressions);
+  }
+
   @Nullable
   public ImmutableSet<ClassExpression> getEquivalentClasses() {
-    if (Objects.isNull(classExpressions)) {
-      return null;
-    } else {
-      return ImmutableSet.copyOf(classExpressions);
-    }
+    return classExpressions;
   }
 
   public OWLEquivalentClassesAxiom toOwlObject(OWLDataFactory dataFactory, Session session) {
@@ -41,7 +42,7 @@ public class EquivalentClassesAxiom extends ClassAxiom<OWLEquivalentClassesAxiom
               .map(ce -> ce.toOwlObject(dataFactory, session))
               .collect(Collectors.toSet()));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

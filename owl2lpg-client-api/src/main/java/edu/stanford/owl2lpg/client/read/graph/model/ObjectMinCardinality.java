@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 @NodeEntity(label = "ObjectMinCardinality")
 public class ObjectMinCardinality extends ClassExpression<OWLObjectMinCardinality> {
 
+  @Property
   private Integer cardinality;
 
   @Relationship(type = "OBJECT_PROPERTY_EXPRESSION")
@@ -50,7 +52,7 @@ public class ObjectMinCardinality extends ClassExpression<OWLObjectMinCardinalit
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

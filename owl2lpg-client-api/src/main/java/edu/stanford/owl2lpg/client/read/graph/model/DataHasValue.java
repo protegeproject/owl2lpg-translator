@@ -6,7 +6,10 @@ import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataHasValue;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -22,6 +25,12 @@ public class DataHasValue extends ClassExpression<OWLDataHasValue> {
   private Literal filler;
 
   private DataHasValue() {
+  }
+
+  public DataHasValue(@Nonnull DataPropertyExpression property,
+                      @Nonnull Literal filler) {
+    this.property = checkNotNull(property);
+    this.filler = checkNotNull(filler);
   }
 
   @Nullable
@@ -41,7 +50,7 @@ public class DataHasValue extends ClassExpression<OWLDataHasValue> {
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 3);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }

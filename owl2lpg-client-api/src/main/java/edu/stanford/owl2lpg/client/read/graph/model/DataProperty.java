@@ -1,13 +1,15 @@
 package edu.stanford.owl2lpg.client.read.graph.model;
 
 import com.google.common.base.MoreObjects;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.*;
 import org.neo4j.ogm.session.Session;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -15,14 +17,23 @@ import javax.annotation.Nullable;
  */
 @NodeEntity(label = "DataProperty")
 public class DataProperty extends DataPropertyExpression<OWLDataProperty>
-    implements Entity {
+    implements Entity<OWLDataProperty> {
 
+  @Property
+  @Required
+  @Index
   private String iri;
 
   @Relationship(type = "ENTITY_IRI")
   private Iri entityIri;
 
   private DataProperty() {
+  }
+
+  public DataProperty(@Nonnull String iri,
+                      @Nonnull Iri entityIri) {
+    this.iri = checkNotNull(iri);
+    this.entityIri = checkNotNull(entityIri);
   }
 
   @Nullable

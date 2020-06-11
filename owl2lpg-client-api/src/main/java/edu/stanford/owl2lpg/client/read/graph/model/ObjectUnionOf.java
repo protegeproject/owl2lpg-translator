@@ -42,7 +42,7 @@ public class ObjectUnionOf extends ClassExpression<OWLObjectUnionOf> {
               .map(ope -> ope.toOwlObject(dataFactory, session))
               .collect(Collectors.toSet()));
     } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 2);
+      var object = session.load(getClass(), getId(), 1);
       return object.toOwlObject(dataFactory, session);
     }
   }
