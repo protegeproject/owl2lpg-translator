@@ -7,7 +7,6 @@ import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.*;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
@@ -20,7 +19,6 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATATYPE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.LANGUAGE_TAG;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
 
 /**
@@ -94,22 +92,9 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     edges.add(edgeFactory.createEdge(mainNode,
         datatypeTranslation.getMainNode(),
         DATATYPE));
-    if (lt.isRDFPlainLiteral() && lt.hasLang()) {
-      var languageTagTranslation = translateLanguageTag(lt.getLang());
-      translations.add(languageTagTranslation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          languageTagTranslation.getMainNode(),
-          EdgeLabel.LANGUAGE_TAG));
-    }
     return Translation.create(lt, mainNode,
         edges.build(),
         translations.build());
-  }
-
-  private Translation translateLanguageTag(String languageTag) {
-    var languageTagNode = nodeFactory.createNode(languageTag, LANGUAGE_TAG,
-        Properties.of(PropertyFields.LANGUAGE, languageTag));
-    return Translation.create(languageTag, languageTagNode);
   }
 
   @Nonnull
