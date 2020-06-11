@@ -12,6 +12,7 @@ import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -109,7 +110,8 @@ public class CsvExporter {
     var translatedObject = t.getTranslatedObject();
     return !(translatedObject instanceof OWLAxiom
             || translatedObject instanceof OntologyDocumentId
-            || translatedObject instanceof OWLAnnotation);
+            || translatedObject instanceof OWLAnnotation
+            || translatedObject instanceof OWLLiteral);
   }
 
   private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
