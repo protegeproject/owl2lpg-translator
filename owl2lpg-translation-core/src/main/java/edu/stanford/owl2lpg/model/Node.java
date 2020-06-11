@@ -79,6 +79,6 @@ public abstract class Node {
   @JsonAnyGetter
   @JsonUnwrapped
   public Map<String, Object> properties() {
-    return getProperties().getMap();
+    return getProperties().neoProperties();
   }
 }
