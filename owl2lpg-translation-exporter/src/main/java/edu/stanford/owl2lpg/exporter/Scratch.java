@@ -22,7 +22,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
@@ -35,7 +34,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class Scratch {
-
     private static final Logger logger = LoggerFactory.getLogger("OboStreaming");
     public static void main(String[] args) throws IOException {
         File file = new File(args[0]);
@@ -98,7 +96,7 @@ public class Scratch {
         private CsvExporter csvExporter;
         private long ts = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
         private OntologyDocumentId ontDocId = OntologyDocumentId.create();
-        private long startTime = System.currentTimeMillis();
+        private CsvExporter exporter;
         public MinimalObo2Owl(CountingInputStream countingInputStream,
                               long fileSize,
                               CsvExporter csvExporter) {
@@ -131,18 +129,13 @@ public class Scratch {
                 long delta = (ts1 - ts) / 1000_000;
                 ts = ts1;
                 double percentage = (countingInputStream.getCount() * 100.0) / fileSize;
-                long elapsedWallClockTime = System.currentTimeMillis() - startTime;
-                long timeRemaining = 0;
-                if(percentage != 0) {
-                    long millisPerPercent = (long) (elapsedWallClockTime / percentage);
-                    timeRemaining = (long) ((100 - percentage) * millisPerPercent) / 1_000;
-                }
                 int percent = (int) percentage;
                 var runtime = Runtime.getRuntime();
                 var totalMemory = runtime.totalMemory();
                 var freeMemory = runtime.freeMemory();
                 var consumedMemory = (totalMemory - freeMemory) / (1024 * 1024);
-                System.out.printf("%,9d axioms (Read %,4d Mb [%3d%%]  Delta: %,5d ms  Remaining: %,3ds) (RAM: %,d MB)\n", c, read, percent, delta, timeRemaining, consumedMemory);
+                var trackedEdgesPercent = (100.0 * csvExporter.getTrackedEdgeCount()) / csvExporter.getEdgeCount();
+                System.out.printf("%,9d axioms (Read %,4d Mb [%3d%%]  Delta: %,5d ms) (Used memory: %,8d MB)  Nodes: %,8d  Edges: %,8d  Tracked edges: %,8d (%,.2f%%)\n", c, read, percent, delta, consumedMemory, csvExporter.getNodeCount(), csvExporter.getEdgeCount(), csvExporter.getTrackedEdgeCount(), trackedEdgesPercent);
             }
         }
         public int getAxiomsCount() {
