@@ -43,8 +43,8 @@ public class Scratch {
         parse(file);
 //        }
     }
-    private static void parse(File file1) throws IOException {
-        var in = new CountingInputStream(new FileInputStream(file1));
+    private static void parse(File file) throws IOException {
+        var in = new CountingInputStream(new FileInputStream(file));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
         var sw = Stopwatch.createStarted();
         OBOFormatParser parser = new OBOFormatParser();
@@ -52,14 +52,14 @@ public class Scratch {
         parser.setReader(bufferedReader);
         CsvExporter csvExporter = DaggerCsvExporterComponent.create().getCsvExporterFactory()
             .create(new NoOpWriter(), new NoOpWriter());
-        var translator = new MinimalObo2Owl(in, csvExporter);
+        var translator = new MinimalObo2Owl(in, file.length(), csvExporter);
         var obodoc = new MinimalOboDoc();
         // Rather ugly dep!
         obodoc.setTranslator(translator);
         translator.setObodoc(obodoc);
         parser.parseOBODoc(obodoc);
-        System.out.println("Time: " + sw.elapsed().toMillis());
-        System.out.println("Axioms: " + translator.getAxiomsCount());
+        System.out.printf("Time: %,dms\n", sw.elapsed().toMillis());
+        System.out.printf("Axioms: %,d\n", + translator.getAxiomsCount());
         dump(csvExporter, new PrintWriter(System.out));
         bufferedReader.close();
     }
@@ -94,13 +94,17 @@ public class Scratch {
     private static class MinimalObo2Owl extends OWLAPIObo2Owl {
         private final Counter counter = new Counter();
         private final CountingInputStream countingInputStream;
+        private long fileSize;
         private CsvExporter csvExporter;
         private long ts = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
         private OntologyDocumentId ontDocId = OntologyDocumentId.create();
+        private long startTime = System.currentTimeMillis();
         public MinimalObo2Owl(CountingInputStream countingInputStream,
+                              long fileSize,
                               CsvExporter csvExporter) {
             super(OWLManager.createOWLOntologyManager());
             this.countingInputStream = countingInputStream;
+            this.fileSize = fileSize;
             this.csvExporter = csvExporter;
         }
         @Override
@@ -126,7 +130,19 @@ public class Scratch {
                 long ts1 = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
                 long delta = (ts1 - ts) / 1000_000;
                 ts = ts1;
-                System.out.printf("Parsed %,d axioms (Read %,d Mb    Delta: %,d ms)\n", c, read, delta);
+                double percentage = (countingInputStream.getCount() * 100.0) / fileSize;
+                long elapsedWallClockTime = System.currentTimeMillis() - startTime;
+                long timeRemaining = 0;
+                if(percentage != 0) {
+                    long millisPerPercent = (long) (elapsedWallClockTime / percentage);
+                    timeRemaining = (long) ((100 - percentage) * millisPerPercent) / 1_000;
+                }
+                int percent = (int) percentage;
+                var runtime = Runtime.getRuntime();
+                var totalMemory = runtime.totalMemory();
+                var freeMemory = runtime.freeMemory();
+                var consumedMemory = (totalMemory - freeMemory) / (1024 * 1024);
+                System.out.printf("%,9d axioms (Read %,4d Mb [%3d%%]  Delta: %,5d ms  Remaining: %,3ds) (RAM: %,d MB)\n", c, read, percent, delta, timeRemaining, consumedMemory);
             }
         }
         public int getAxiomsCount() {
