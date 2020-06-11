@@ -10,6 +10,7 @@ import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -105,8 +106,10 @@ public class CsvExporter {
     // We only visit axioms once in a session
     // Since we only visit axioms once, the edges from axioms will only be written once
     // and the edge from an ontology document node to the axiom will only be written once
-    return !((t.getTranslatedObject() instanceof OWLAxiom)
-            || t.getTranslatedObject() instanceof OntologyDocumentId);
+    var translatedObject = t.getTranslatedObject();
+    return !(translatedObject instanceof OWLAxiom
+            || translatedObject instanceof OntologyDocumentId
+            || translatedObject instanceof OWLAnnotation);
   }
 
   private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
