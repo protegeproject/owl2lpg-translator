@@ -43,7 +43,7 @@ public class CsvExporter {
   private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
 
   @Nonnull
-  private final Set<EdgeKey> writtenNodeEdges = new TreeSet<>();
+  private final Set<EdgeKey> writtenNodeEdges = new HashSet<>();
 
   private long nodeCount = 0;
 
