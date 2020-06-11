@@ -133,6 +133,10 @@ public class CsvExporter {
     edgeLabelMultiset.get(edge.getLabel()).increment();
   }
 
+  public int getTrackedEdgeCount() {
+    return writtenNodeEdges.size();
+  }
+
   private boolean writeNode(Node node, boolean singleEncounter) throws IOException {
     if (singleEncounter || exportedNodes.add(node.getNodeId().getId())) {
       nodeCount++;
