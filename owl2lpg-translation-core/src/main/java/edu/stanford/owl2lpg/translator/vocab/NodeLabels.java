@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.translator.vocab;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.ImmutableList;
 
@@ -75,7 +74,6 @@ public enum NodeLabels {
   FACET_RESTRICTION("DatatypeRestriction", DATA_RANGE),
 
   LITERAL("Literal"),
-  LANGUAGE_TAG("LanguageTag"),
 
   AXIOM("Axiom"),
   DECLARATION("Declaration", AXIOM),
