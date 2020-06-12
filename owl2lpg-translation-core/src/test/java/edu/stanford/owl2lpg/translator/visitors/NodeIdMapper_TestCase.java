@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
+import com.google.common.hash.Hashing;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -16,7 +17,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 
-import java.security.MessageDigest;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,7 +29,7 @@ public class NodeIdMapper_TestCase {
   @Before
   public void setUp() throws Exception {
     nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider(),
-        new DigestNodeIdProvider(MessageDigest.getInstance("SHA-256")),
+        new DigestNodeIdProvider(Hashing.sha256()),
         new TranslationSessionNodeObjectSingleEncounterCheckerImpl(),
         new TranslationSessionNodeObjectMultipleEncountersCheckerImpl());
   }
