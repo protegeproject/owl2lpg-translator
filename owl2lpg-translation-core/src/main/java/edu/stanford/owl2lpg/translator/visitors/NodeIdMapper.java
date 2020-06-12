@@ -58,12 +58,16 @@ public class NodeIdMapper {
     } else if (translationSessionNodeObjectMultipleEncountersChecker.isMultipleEncounterNodeObject(o)) {
       return digestIdProvider.getId(o);
     } else {
-      NodeId nodeId = nodeIdMapper.get(o);
-      if (nodeId == null) {
-        nodeId = idProvider.getId(o);
-        nodeIdMapper.put(o, nodeId);
-      }
-      return nodeId;
+      return getExistingNodeId(o);
     }
+  }
+
+  private NodeId getExistingNodeId(@Nonnull Object o) {
+    var nodeId = nodeIdMapper.get(o);
+    if (nodeId == null) {
+      nodeId = idProvider.getId(o);
+      nodeIdMapper.put(o, nodeId);
+    }
+    return nodeId;
   }
 }
