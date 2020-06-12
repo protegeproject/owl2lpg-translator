@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
+import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
 import org.semanticweb.owlapi.model.IRI;
@@ -7,7 +8,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
-import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,10 +19,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DigestNodeIdProvider implements NodeIdProvider {
 
   @Nonnull
-  private final MessageDigest messageDigest;
+  private final HashFunction hashFunction;
 
-  public DigestNodeIdProvider(@Nonnull MessageDigest messageDigest) {
-    this.messageDigest = checkNotNull(messageDigest);
+  public DigestNodeIdProvider(@Nonnull HashFunction hashFunction) {
+    this.hashFunction = checkNotNull(hashFunction);
   }
 
   @Override
@@ -42,17 +43,9 @@ public class DigestNodeIdProvider implements NodeIdProvider {
   }
 
   private NodeId createNodeIdFromObjectString(String objectString) {
-    var hash = messageDigest.digest(objectString.getBytes());
-    return NodeId.create(bytesToHex(hash));
-  }
-
-  private static String bytesToHex(byte[] hash) {
-    StringBuffer hexString = new StringBuffer();
-    for (int i = 0; i < hash.length; i++) {
-      String hex = Integer.toHexString(0xff & hash[i]);
-      if (hex.length() == 1) hexString.append('0');
-      hexString.append(hex);
-    }
-    return hexString.toString();
+    var hash = hashFunction
+        .hashString(objectString, StandardCharsets.UTF_8)
+        .toString();
+    return NodeId.create(hash);
   }
 }
