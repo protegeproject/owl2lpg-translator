@@ -29,14 +29,12 @@ public class TranslatorModule {
   }
 
   @Provides
-  TranslationSessionNodeObjectSingleEncounterChecker provideNodeObjectCheckerForSingleEncounter(
-      TranslationSessionNodeObjectSingleEncounterCheckerImpl impl) {
-    return impl;
+  TranslationSessionNodeObjectSingleEncounterChecker provideNodeObjectCheckerForSingleEncounter() {
+    return new TranslationSessionNodeObjectSingleEncounterCheckerImpl();
   }
 
   @Provides
-  TranslationSessionNodeObjectMultipleEncountersChecker provideNodeObjectCheckerForMultipleEncounters(
-      TranslationSessionNodeObjectMultipleEncountersCheckerImpl impl) {
-    return impl;
+  TranslationSessionNodeObjectMultipleEncountersChecker provideNodeObjectCheckerForMultipleEncounters() {
+    return new TranslationSessionNodeObjectMultipleEncountersCheckerImpl();
   }
 }
