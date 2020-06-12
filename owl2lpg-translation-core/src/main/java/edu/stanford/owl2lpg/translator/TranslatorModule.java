@@ -37,4 +37,9 @@ public class TranslatorModule {
   TranslationSessionNodeObjectMultipleEncountersChecker provideNodeObjectCheckerForMultipleEncounters() {
     return new TranslationSessionNodeObjectMultipleEncountersCheckerImpl();
   }
+
+  @Provides
+  AugmentedEdgeInclusionChecker provideAugmentedEdgeInclusionChecker() {
+    return new AugmentedEdgeInclusionCheckerImpl();
+  }
 }
