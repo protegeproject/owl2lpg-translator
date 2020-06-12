@@ -2,10 +2,10 @@ package edu.stanford.owl2lpg.translator;
 
 import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.translator.visitors.LiteralWrapper;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@SuppressWarnings("UnstableApiUsage")
 public class DigestNodeIdProvider implements NodeIdProvider {
 
   @Nonnull
@@ -34,9 +35,9 @@ public class DigestNodeIdProvider implements NodeIdProvider {
       var entity = (OWLEntity) o;
       var s = entity.getEntityType().getName() + entity.getIRI().toString();
       return createNodeIdFromObjectString(s);
-    } else if (o instanceof OWLLiteral) {
-      var literal = (OWLLiteral) o;
-      var s = literal.getLiteral() + literal.getDatatype().toStringID() + literal.getLang();
+    } else if (o instanceof LiteralWrapper) {
+      var literal = (LiteralWrapper) o;
+      var s = literal.getLiteral() + literal.getDatatype() + literal.getLanguage();
       return createNodeIdFromObjectString(s);
     }
     return createNodeIdFromObjectString(o.toString());
