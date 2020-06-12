@@ -60,7 +60,7 @@ public abstract class Edge {
   public abstract Node getFromNode();
 
   @JsonProperty(N4J_JSON_START_ID)
-  public long getStartId() {
+  public String getStartId() {
     return getFromNode().getNodeId().getId();
   }
 
@@ -68,7 +68,7 @@ public abstract class Edge {
   public abstract Node getToNode();
 
   @JsonProperty(N4J_JSON_END_ID)
-  public long getEndId() {
+  public String getEndId() {
     return getToNode().getNodeId().getId();
   }
 
