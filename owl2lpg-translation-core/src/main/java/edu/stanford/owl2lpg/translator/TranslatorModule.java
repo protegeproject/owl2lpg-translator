@@ -1,12 +1,11 @@
 package edu.stanford.owl2lpg.translator;
 
+import com.google.common.hash.Hashing;
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
 
 import javax.inject.Named;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -26,11 +25,7 @@ public class TranslatorModule {
   @Named("digest")
   @TranslationSessionScope
   NodeIdProvider provideDigestNodeIdProvider() {
-    try {
-      return new DigestNodeIdProvider(MessageDigest.getInstance("SHA-256"));
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
+    return new DigestNodeIdProvider(Hashing.sha256());
   }
 
   @Provides
