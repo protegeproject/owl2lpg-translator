@@ -10,15 +10,15 @@ import javax.annotation.Nonnull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class LiteralWrapper {
+public abstract class OWLLiteral2 {
 
-  public static LiteralWrapper create(@Nonnull String literal,
-                                      @Nonnull String datatype,
-                                      @Nonnull String language) {
-    return new AutoValue_LiteralWrapper(literal, datatype, language);
+  public static OWLLiteral2 create(@Nonnull String literal,
+                                   @Nonnull String datatype,
+                                   @Nonnull String language) {
+    return new AutoValue_OWLLiteral2(literal, datatype, language);
   }
 
-  public static LiteralWrapper create(@Nonnull OWLLiteral literal) {
+  public static OWLLiteral2 create(@Nonnull OWLLiteral literal) {
     return create(literal.getLiteral(),
         literal.getDatatype().toStringID(),
         literal.getLang());

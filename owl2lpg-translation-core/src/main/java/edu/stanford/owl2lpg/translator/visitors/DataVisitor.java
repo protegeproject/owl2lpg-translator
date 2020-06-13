@@ -78,7 +78,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     //  Literal("ABC", RDF_PLAIN_LITERAL) and
     //  Literal("ABC", XSD_STRING) are different objects.
     //  Currently, the OWLAPI asserts both are the same.
-    var literal = LiteralWrapper.create(lt);
+    var literal = OWLLiteral2.create(lt);
     var mainNode = nodeFactory.createNode(literal, NodeLabels.LITERAL,
         Properties.create(ImmutableMap.of(
                 PropertyFields.LEXICAL_FORM, literal.getLiteral(),
