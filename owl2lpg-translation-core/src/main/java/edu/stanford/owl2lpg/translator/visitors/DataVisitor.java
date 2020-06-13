@@ -20,6 +20,8 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
+import static org.semanticweb.owlapi.vocab.OWL2Datatype.RDF_PLAIN_LITERAL;
+import static org.semanticweb.owlapi.vocab.OWL2Datatype.XSD_STRING;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -77,24 +79,29 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     //  Literal("ABC", XSD_STRING) are different objects.
     //  Currently, the OWLAPI asserts both are the same.
     var literal = LiteralWrapper.create(lt);
-    var literalDatatype = lt.getDatatype();
-    var datatypeIriString = literalDatatype.isString() || literalDatatype.isRDFPlainLiteral() ? "" : literalDatatype.getIRI().toString();
     var mainNode = nodeFactory.createNode(literal, NodeLabels.LITERAL,
         Properties.create(ImmutableMap.of(
-                PropertyFields.LEXICAL_FORM, lt.getLiteral(),
-                PropertyFields.DATATYPE, datatypeIriString,
-                PropertyFields.LANGUAGE, lt.getLang()
+                PropertyFields.LEXICAL_FORM, literal.getLiteral(),
+                PropertyFields.DATATYPE, printEmptyForStringOrPlainLiteral(literal.getDatatype()),
+                PropertyFields.LANGUAGE, literal.getLanguage()
         )));
     var translations = new ImmutableList.Builder<Translation>();
     var edges = new ImmutableList.Builder<Edge>();
-    var datatypeTranslation = entityTranslator.translate(literalDatatype);
+    var datatypeTranslation = entityTranslator.translate(lt.getDatatype());
     translations.add(datatypeTranslation);
     edges.add(edgeFactory.createEdge(mainNode,
         datatypeTranslation.getMainNode(),
         DATATYPE));
-    return Translation.create(lt, mainNode,
+    return Translation.create(literal, mainNode,
         edges.build(),
         translations.build());
+  }
+
+  private static String printEmptyForStringOrPlainLiteral(String datatypeString) {
+    return !(datatypeString.equals(XSD_STRING.getIRI().toString())
+        || datatypeString.equals(RDF_PLAIN_LITERAL.getIRI().toString()))
+        ? datatypeString
+        : "";
   }
 
   @Nonnull
