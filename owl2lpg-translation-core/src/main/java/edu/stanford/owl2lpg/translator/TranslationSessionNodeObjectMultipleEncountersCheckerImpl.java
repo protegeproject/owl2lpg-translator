@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.inject.Inject;
 
@@ -21,6 +21,6 @@ public class TranslationSessionNodeObjectMultipleEncountersCheckerImpl
   public boolean isMultipleEncounterNodeObject(Object o) {
     return o instanceof IRI
         || o instanceof OWLEntity
-        || o instanceof OWLLiteral;
+        || o instanceof OWLLiteral2;
   }
 }
