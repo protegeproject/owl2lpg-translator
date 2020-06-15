@@ -8,5 +8,5 @@ import edu.stanford.owl2lpg.model.NodeId;
  */
 public interface NodeIdProvider {
 
-  NodeId getId();
+  NodeId getId(Object o);
 }

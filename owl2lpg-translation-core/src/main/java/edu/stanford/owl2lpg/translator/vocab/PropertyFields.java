@@ -20,6 +20,6 @@ public class PropertyFields {
   public static final String LEXICAL_FORM = "lexicalForm";
   public static final String DATATYPE = "datatype";
   public static final String LANGUAGE = "language";
-  public static final String PRIMARY = "primary";
+  public static final String STRUCTURAL_SPEC = "structuralSpec";
   public static final String TYPE = "type";
 }

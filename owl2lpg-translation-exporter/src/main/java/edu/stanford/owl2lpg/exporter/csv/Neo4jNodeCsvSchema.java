@@ -1,11 +1,12 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static edu.stanford.owl2lpg.model.Node.N4J_JSON_ID;
+import static edu.stanford.owl2lpg.model.Node.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.*;
 
 public class Neo4jNodeCsvSchema implements Neo4jCsvSchema {
@@ -28,8 +29,8 @@ public class Neo4jNodeCsvSchema implements Neo4jCsvSchema {
 
     private static CsvSchema.Builder getBuilder() {
         return CsvSchema.builder()
-                        .addColumn(":ID")
-                        .addColumn(":LABEL")
+                        .addColumn(N4J_JSON_ID)
+                        .addColumn(N4J_JSON_LABELS)
                         .addColumn(PROJECT_ID)
                         .addColumn(BRANCH_ID)
                         .addColumn(ONTOLOGY_DOCUMENT_ID)
@@ -38,6 +39,6 @@ public class Neo4jNodeCsvSchema implements Neo4jCsvSchema {
                         .addColumn(DATATYPE)
                         .addColumn(LANGUAGE)
                         .addColumn(NODE_ID)
-                        .addColumn(CARDINALITY);
+                        .addColumn(CARDINALITY + ":int");
     }
 }

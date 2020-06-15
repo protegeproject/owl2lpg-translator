@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -21,13 +20,9 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class Node {
 
-  private static final String N4J_JSON_ID = ":ID";
+  public static final String N4J_JSON_ID = ":ID";
 
-  private static final String N4J_JSON_LABELS = ":LABEL";
-
-  private static final String N4J_JSON_PROPERTIES = "properties";
-
-  static final String N4J_JSON_TYPE = "type";
+  public static final String N4J_JSON_LABELS = ":LABEL";
 
   @Nonnull
   public static Node create(@Nonnull NodeId nodeId,
@@ -84,6 +79,6 @@ public abstract class Node {
   @JsonAnyGetter
   @JsonUnwrapped
   public Map<String, Object> properties() {
-    return getProperties().getMap();
+    return getProperties().neoProperties();
   }
 }

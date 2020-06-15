@@ -6,8 +6,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static edu.stanford.owl2lpg.model.Edge.*;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IRI;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.TYPE;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.*;
 
 public class Neo4jRelationshipsCsvSchema implements Neo4jCsvSchema {
 
@@ -21,7 +20,8 @@ public class Neo4jRelationshipsCsvSchema implements Neo4jCsvSchema {
         .addColumn(N4J_JSON_START_ID)
         .addColumn(N4J_JSON_END_ID)
         .addColumn(TYPE)
-        .addColumn(IRI);
+        .addColumn(IRI)
+        .addColumn(STRUCTURAL_SPEC + ":boolean");
   }
 
   @Override

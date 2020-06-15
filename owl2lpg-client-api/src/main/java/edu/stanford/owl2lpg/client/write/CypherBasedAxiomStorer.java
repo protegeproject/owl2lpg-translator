@@ -76,8 +76,7 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
         node.isTypeOf(BRANCH) ||
         node.isTypeOf(ONTOLOGY_DOCUMENT) ||
         node.isTypeOf(LITERAL) ||
-        node.isTypeOf(IRI) ||
-        node.isTypeOf(LANGUAGE_TAG);
+        node.isTypeOf(IRI);
   }
 
   private static Object printNodeId(NodeId nodeId) {

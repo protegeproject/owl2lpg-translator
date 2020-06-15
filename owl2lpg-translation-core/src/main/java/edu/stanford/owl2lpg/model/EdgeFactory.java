@@ -1,12 +1,10 @@
 package edu.stanford.owl2lpg.model;
 
-import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Set;
 
 public class EdgeFactory {
 
@@ -24,14 +22,9 @@ public class EdgeFactory {
   public Edge createEdge(@Nonnull Node fromNode,
                          @Nonnull Node toNode,
                          @Nonnull EdgeLabel edgeLabel) {
-    return Edge.create(fromNode, toNode, edgeLabel);
-  }
-
-  public Collection<Edge> createEdges(@Nonnull Node fromNode,
-                                      @Nonnull Set<Node> toNodes,
-                                      @Nonnull EdgeLabel edgeLabel) {
-    return toNodes.stream()
-        .map(node -> createEdge(fromNode, node, edgeLabel))
-        .collect(ImmutableList.toImmutableList());
+    var properties = edgeLabel.isStructural() ?
+        Properties.of(PropertyFields.STRUCTURAL_SPEC, true) :
+        Properties.empty();
+    return createEdge(fromNode, toNode, edgeLabel, properties);
   }
 }

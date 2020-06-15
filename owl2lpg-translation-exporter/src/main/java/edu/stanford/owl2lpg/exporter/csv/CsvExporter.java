@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.carrotsearch.hppcrt.sets.LongHashSet;
 import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Sets;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -16,7 +16,9 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -40,10 +42,10 @@ public class CsvExporter {
   private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
 
   @Nonnull
-  private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
+  private final Set<String> exportedNodes = Sets.newHashSetWithExpectedSize(1_000_000);
 
   @Nonnull
-  private final Set<EdgeKey> writtenNodeEdges = new TreeSet<>();
+  private final Set<EdgeKey> writtenNodeEdges = new HashSet<>();
 
   private long nodeCount = 0;
 
@@ -63,9 +65,9 @@ public class CsvExporter {
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
     this.nodeEncounterChecker = checkNotNull(nodeEncounterChecker);
     Stream.of(EdgeLabel.values())
-          .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
+        .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
     Stream.of(NodeLabels.values())
-          .forEach(v -> nodeLabelsMultiset.put(v, new Counter()));
+        .forEach(v -> nodeLabelsMultiset.put(v, new Counter()));
   }
 
   public ImmutableMultiset<NodeLabels> getNodeLabelsMultiset() {
@@ -108,19 +110,18 @@ public class CsvExporter {
     // and the edge from an ontology document node to the axiom will only be written once
     var translatedObject = t.getTranslatedObject();
     return !(translatedObject instanceof OWLAxiom
-            || translatedObject instanceof OntologyDocumentId
-            || translatedObject instanceof OWLAnnotation);
+        || translatedObject instanceof OntologyDocumentId
+        || translatedObject instanceof OWLAnnotation);
   }
 
   private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
     if (potentialDuplicate) {
-      if (writtenNodeEdges.add(EdgeKey.get(edge.getStartId(),
-                                           edge.getEndId(),
-                                           edge.getLabel()))) {
+      if (writtenNodeEdges.add(EdgeKey.create(edge.getStartId(),
+          edge.getEndId(),
+          edge.getLabel()))) {
         writeEdge(edge);
       }
-    }
-    else {
+    } else {
       writeEdge(edge);
     }
   }
@@ -129,6 +130,10 @@ public class CsvExporter {
     edgeCount++;
     relationshipsCsvWriter.write(edge);
     edgeLabelMultiset.get(edge.getLabel()).increment();
+  }
+
+  public int getTrackedEdgeCount() {
+    return writtenNodeEdges.size();
   }
 
   private boolean writeNode(Node node, boolean singleEncounter) throws IOException {
