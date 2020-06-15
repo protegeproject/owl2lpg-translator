@@ -39,11 +39,15 @@ public class Iri extends GraphObject implements HasToOwlObject<IRI> {
 
   @Override
   public IRI toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (iri == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return IRI.create(iri);
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 0);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private Iri reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 0);
   }
 }

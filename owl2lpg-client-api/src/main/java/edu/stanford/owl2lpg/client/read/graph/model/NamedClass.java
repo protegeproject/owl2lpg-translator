@@ -49,12 +49,16 @@ public class NamedClass extends ClassExpression<OWLClass>
 
   @Override
   public OWLClass toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (entityIri == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLClass(entityIri.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private NamedClass reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 
   @Override

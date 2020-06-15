@@ -62,7 +62,12 @@ public class Literal extends GraphObject
 
   @Override
   public OWLLiteral toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    // we don't check language and datatype because we allow
+    // those properties to be null
+    if (lexicalForm == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       if (Objects.isNull(language)) {
         if (Objects.isNull(datatype)) {
           return dataFactory.getOWLLiteral(lexicalForm);
@@ -74,9 +79,10 @@ public class Literal extends GraphObject
       } else {
         return dataFactory.getOWLLiteral(lexicalForm, language);
       }
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private Literal reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

@@ -45,13 +45,17 @@ public class DataHasValue extends ClassExpression<OWLDataHasValue> {
 
   @Override
   public OWLDataHasValue toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (property == null || filler == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLDataHasValue(
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private DataHasValue reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

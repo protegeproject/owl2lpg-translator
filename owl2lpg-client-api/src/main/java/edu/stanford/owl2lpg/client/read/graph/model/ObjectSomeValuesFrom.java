@@ -37,14 +37,18 @@ public class ObjectSomeValuesFrom extends ClassExpression<OWLObjectSomeValuesFro
 
   @Override
   public OWLObjectSomeValuesFrom toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (property == null || filler == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLObjectSomeValuesFrom(
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private ObjectSomeValuesFrom reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 
   @Override

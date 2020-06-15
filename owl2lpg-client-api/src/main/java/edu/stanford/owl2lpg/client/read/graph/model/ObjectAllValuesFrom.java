@@ -36,13 +36,17 @@ public class ObjectAllValuesFrom extends ClassExpression<OWLObjectAllValuesFrom>
 
   @Override
   public OWLObjectAllValuesFrom toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (property == null || filler == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLObjectAllValuesFrom(
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private ObjectAllValuesFrom reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

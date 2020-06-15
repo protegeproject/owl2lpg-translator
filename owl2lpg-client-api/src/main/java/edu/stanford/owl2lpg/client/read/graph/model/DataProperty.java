@@ -50,12 +50,16 @@ public class DataProperty extends DataPropertyExpression<OWLDataProperty>
 
   @Override
   public OWLDataProperty toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (entityIri == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLDataProperty(entityIri.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private DataProperty reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 
   @Override

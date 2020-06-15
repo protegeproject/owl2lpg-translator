@@ -45,13 +45,17 @@ public class SubClassOfAxiom extends ClassAxiom<OWLSubClassOfAxiom> {
 
   @Override
   public OWLSubClassOfAxiom toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (subClass == null || superClass == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLSubClassOfAxiom(
           subClass.toOwlObject(dataFactory, session),
           superClass.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private SubClassOfAxiom reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

@@ -36,14 +36,18 @@ public class ObjectIntersectionOf extends ClassExpression<OWLObjectIntersectionO
 
   @Override
   public OWLObjectIntersectionOf toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (classExpressions == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLObjectIntersectionOf(
           classExpressions.stream()
               .map(ce -> ce.toOwlObject(dataFactory, session))
               .collect(Collectors.toSet()));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private ObjectIntersectionOf reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

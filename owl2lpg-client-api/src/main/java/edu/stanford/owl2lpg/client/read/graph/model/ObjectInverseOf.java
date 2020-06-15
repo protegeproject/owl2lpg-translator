@@ -28,11 +28,15 @@ public class ObjectInverseOf extends ObjectPropertyExpression<OWLObjectInverseOf
 
   @Override
   public OWLObjectInverseOf toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (property == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLObjectInverseOf(property.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private ObjectInverseOf reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

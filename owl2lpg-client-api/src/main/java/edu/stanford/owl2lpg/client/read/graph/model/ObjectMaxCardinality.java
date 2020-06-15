@@ -47,14 +47,18 @@ public class ObjectMaxCardinality extends ClassExpression<OWLObjectMaxCardinalit
 
   @Override
   public OWLObjectMaxCardinality toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (property == null || filler == null || cardinality == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLObjectMaxCardinality(
           getCardinality(),
           property.toOwlObject(dataFactory, session),
           filler.toOwlObject(dataFactory, session));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private ObjectMaxCardinality reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

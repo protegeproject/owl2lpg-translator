@@ -8,7 +8,6 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,23 +26,23 @@ public class ObjectUnionOf extends ClassExpression<OWLObjectUnionOf> {
 
   @Nullable
   public ImmutableSet<ClassExpression> getClassExpressions() {
-    if (Objects.isNull(unionClasses)) {
-      return null;
-    } else {
-      return ImmutableSet.copyOf(unionClasses);
-    }
+    return unionClasses == null ? ImmutableSet.copyOf(unionClasses) : null;
   }
 
   @Override
   public OWLObjectUnionOf toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (unionClasses == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLObjectUnionOf(
           unionClasses.stream()
               .map(ope -> ope.toOwlObject(dataFactory, session))
               .collect(Collectors.toSet()));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private ObjectUnionOf reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }

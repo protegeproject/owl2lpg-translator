@@ -37,14 +37,18 @@ public class EquivalentClassesAxiom extends ClassAxiom<OWLEquivalentClassesAxiom
   }
 
   public OWLEquivalentClassesAxiom toOwlObject(OWLDataFactory dataFactory, Session session) {
-    try {
+    if (classExpressions == null) {
+      var nodeEntity = reloadThisNodeEntity(session);
+      return nodeEntity.toOwlObject(dataFactory, session);
+    } else {
       return dataFactory.getOWLEquivalentClassesAxiom(
           classExpressions.stream()
               .map(ce -> ce.toOwlObject(dataFactory, session))
               .collect(Collectors.toSet()));
-    } catch (NullPointerException e) {
-      var object = session.load(getClass(), getId(), 1);
-      return object.toOwlObject(dataFactory, session);
     }
+  }
+
+  private EquivalentClassesAxiom reloadThisNodeEntity(Session session) {
+    return session.load(getClass(), getId(), 1);
   }
 }
