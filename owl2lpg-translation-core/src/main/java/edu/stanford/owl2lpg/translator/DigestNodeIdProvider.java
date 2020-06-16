@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.translator;
 
 import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
+import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -17,6 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @SuppressWarnings("UnstableApiUsage")
+@Deprecated
 public class DigestNodeIdProvider implements NodeIdProvider {
 
   @Nonnull
@@ -46,7 +47,7 @@ public class DigestNodeIdProvider implements NodeIdProvider {
   private NodeId createNodeIdFromObjectString(String objectString) {
     var hash = hashFunction
         .hashString(objectString, StandardCharsets.UTF_8)
-        .toString();
+        .asLong(); // WARNING: truncated hash
     return NodeId.create(hash);
   }
 }

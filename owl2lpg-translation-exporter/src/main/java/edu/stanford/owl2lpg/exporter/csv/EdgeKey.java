@@ -4,26 +4,34 @@ import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
 
 @AutoValue
 public abstract class EdgeKey implements Comparable<EdgeKey> {
 
-  public static EdgeKey create(String startId, String endId, EdgeLabel edgeLabel) {
+  public static EdgeKey create(long startId, long endId, EdgeLabel edgeLabel) {
     return new AutoValue_EdgeKey(startId, endId, edgeLabel);
   }
 
-  public abstract String getStartId();
+  public abstract long getStartId();
 
-  public abstract String getEndId();
+  public abstract long getEndId();
 
   public abstract EdgeLabel getEdgeLabel();
 
   @Override
   public int compareTo(@Nonnull EdgeKey o) {
-    return Comparator.comparing(EdgeKey::getStartId)
-        .thenComparing(EdgeKey::getEndId)
-        .thenComparing(EdgeKey::getEdgeLabel)
-        .compare(this, o);
+    long startDiff = o.getStartId() - this.getStartId();
+    if (startDiff < 0) {
+      return -1;
+    } else if (startDiff > 0) {
+      return 1;
+    }
+    long endDiff = o.getEndId() - this.getEndId();
+    if (endDiff < 0) {
+      return -1;
+    } else if (endDiff > 0) {
+      return 1;
+    }
+    return o.getEdgeLabel().compareTo(this.getEdgeLabel());
   }
 }

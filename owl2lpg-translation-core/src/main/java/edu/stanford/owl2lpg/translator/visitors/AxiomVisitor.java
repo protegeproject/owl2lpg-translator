@@ -741,7 +741,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Override
   public Translation visit(@Nonnull SWRLRule rule) {
     return Translation.create(rule,
-        Node.create(NodeId.create("0"), SWRL_RULE),
+        Node.create(NodeId.create(0), SWRL_RULE),
         ImmutableList.of(),
         ImmutableList.of());
   }

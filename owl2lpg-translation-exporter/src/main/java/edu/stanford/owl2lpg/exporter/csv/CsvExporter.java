@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import com.carrotsearch.hppcrt.sets.LongHashSet;
 import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.Sets;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -42,7 +42,7 @@ public class CsvExporter {
   private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
 
   @Nonnull
-  private final Set<String> exportedNodes = Sets.newHashSetWithExpectedSize(1_000_000);
+  private final LongHashSet exportedNodes = new LongHashSet(1_000_000);
 
   @Nonnull
   private final Set<EdgeKey> writtenNodeEdges = new HashSet<>();

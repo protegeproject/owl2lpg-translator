@@ -55,8 +55,6 @@ public class NodeIdMapper {
   private NodeId getExistingOrCreate(@Nonnull Object o) {
     if (translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
       return idProvider.getId(o);
-    } else if (translationSessionNodeObjectMultipleEncountersChecker.isMultipleEncounterNodeObject(o)) {
-      return digestIdProvider.getId(o);
     } else {
       return getExistingNodeId(o);
     }
