@@ -12,12 +12,12 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class NodeId {
 
-  public static NodeId create(long idNumber) {
-    return new AutoValue_NodeId(idNumber);
+  public static NodeId create(String identifierObject) {
+    return new AutoValue_NodeId(identifierObject);
   }
 
   @JsonValue
-  public abstract long getId();
+  public abstract String getId();
 
   @Override
   public String toString() {

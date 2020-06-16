@@ -14,6 +14,6 @@ public class NumberIncrementIdProvider implements NodeIdProvider {
   @Override
   public NodeId getId(Object o) {
     counter++;
-    return NodeId.create(counter);
+    return NodeId.create(counter + "");
   }
 }
