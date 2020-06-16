@@ -24,19 +24,19 @@ public class CsvExporterFactory {
   private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
 
   @Nonnull
-  private final CsvExportChecker csvExportChecker;
+  private final CsvExportChecker exportChecker;
 
   @Inject
   public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator,
                             @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory,
                             @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory,
                             @Nonnull TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker,
-                            @Nonnull CsvExportChecker csvExportChecker) {
+                            @Nonnull CsvExportChecker exportChecker) {
     this.ontologyDocumentAxiomTranslator = checkNotNull(ontologyDocumentAxiomTranslator);
     this.nodesCsvWriterFactory = checkNotNull(nodesCsvWriterFactory);
     this.relationshipsCsvWriterFactory = checkNotNull(relationshipsCsvWriterFactory);
     this.nodeEncounterChecker = checkNotNull(nodeEncounterChecker);
-    this.csvExportChecker = checkNotNull(csvExportChecker);
+    this.exportChecker = checkNotNull(exportChecker);
   }
 
   @Nonnull
@@ -45,7 +45,7 @@ public class CsvExporterFactory {
     return new CsvExporter(ontologyDocumentAxiomTranslator,
         nodesCsvWriterFactory.create(nodesCsvWriter),
         relationshipsCsvWriterFactory.create(relationshipsCsvWriter),
-        nodeEncounterChecker,
-        csvExportChecker);
+        exportChecker,
+        nodeEncounterChecker);
   }
 }
