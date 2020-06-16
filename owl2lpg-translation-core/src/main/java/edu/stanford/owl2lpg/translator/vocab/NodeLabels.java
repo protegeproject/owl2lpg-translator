@@ -138,7 +138,7 @@ public enum NodeLabels {
   private final String printLabel;
 
   @Nonnull
-  private final ImmutableList<String> labelList;
+  private final ImmutableList<String> allLabels;
 
   NodeLabels(@Nonnull String mainLabel) {
     this(mainLabel, Optional.empty());
@@ -153,12 +153,17 @@ public enum NodeLabels {
              @Nonnull Optional<NodeLabels> parentLabels) {
     this.mainLabel = checkNotNull(mainLabel);
     this.parentLabels = checkNotNull(parentLabels);
-    this.labelList = getLabelList();
+    this.allLabels = getAllLabels();
     this.printLabel = getPrintLabel();
   }
 
   @Nonnull
-  private ImmutableList<String> getLabelList() {
+  public String getMainLabel() {
+    return mainLabel;
+  }
+
+  @Nonnull
+  public ImmutableList<String> getAllLabels() {
     return labels().collect(ImmutableList.toImmutableList());
   }
 
@@ -184,7 +189,7 @@ public enum NodeLabels {
 
   @JsonValue
   public ImmutableList<String> asList() {
-    return labelList;
+    return allLabels;
   }
 
   public boolean isa(NodeLabels nodeLabels) {

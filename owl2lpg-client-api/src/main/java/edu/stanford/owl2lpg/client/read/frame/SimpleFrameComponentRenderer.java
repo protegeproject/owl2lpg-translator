@@ -111,6 +111,7 @@ public class SimpleFrameComponentRenderer implements FrameComponentRenderer {
         .stream()
         .collect(ImmutableMap.toImmutableMap(
             ShortForm::getDictionaryLanguage,
-            ShortForm::getShortForm));
+            ShortForm::getShortForm,
+            (dictLang1, dictLang2) -> dictLang1));
   }
 }

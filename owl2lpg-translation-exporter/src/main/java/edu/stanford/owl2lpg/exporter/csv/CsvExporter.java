@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.google.common.collect.ImmutableMultiset;
-import com.google.common.collect.Sets;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -17,8 +16,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -39,13 +36,10 @@ public class CsvExporter {
   private final CsvWriter<Edge> relationshipsCsvWriter;
 
   @Nonnull
+  private final CsvExportChecker exportChecker;
+
+  @Nonnull
   private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
-
-  @Nonnull
-  private final Set<String> exportedNodes = Sets.newHashSetWithExpectedSize(1_000_000);
-
-  @Nonnull
-  private final Set<EdgeKey> writtenNodeEdges = new HashSet<>();
 
   private long nodeCount = 0;
 
@@ -59,10 +53,12 @@ public class CsvExporter {
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
+                     @Nonnull CsvExportChecker exportChecker,
                      @Nonnull TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
+    this.exportChecker = checkNotNull(exportChecker);
     this.nodeEncounterChecker = checkNotNull(nodeEncounterChecker);
     Stream.of(EdgeLabel.values())
         .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
@@ -116,9 +112,7 @@ public class CsvExporter {
 
   private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
     if (potentialDuplicate) {
-      if (writtenNodeEdges.add(EdgeKey.create(edge.getStartId(),
-          edge.getEndId(),
-          edge.getLabel()))) {
+      if (!exportChecker.isExported(edge)) {
         writeEdge(edge);
       }
     } else {
@@ -132,18 +126,12 @@ public class CsvExporter {
     edgeLabelMultiset.get(edge.getLabel()).increment();
   }
 
-  public int getTrackedEdgeCount() {
-    return writtenNodeEdges.size();
-  }
-
-  private boolean writeNode(Node node, boolean singleEncounter) throws IOException {
-    if (singleEncounter || exportedNodes.add(node.getNodeId().getId())) {
+  private void writeNode(Node node, boolean singleEncounter) throws IOException {
+    if (singleEncounter || !exportChecker.isExported(node)) {
       nodeCount++;
       nodesCsvWriter.write(node);
       nodeLabelsMultiset.get(node.getLabels()).increment();
-      return true;
     }
-    return false;
   }
 
   public long getNodeCount() {

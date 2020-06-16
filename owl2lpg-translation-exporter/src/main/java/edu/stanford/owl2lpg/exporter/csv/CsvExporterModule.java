@@ -5,14 +5,18 @@ import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 
-import javax.annotation.Nonnull;
-
 @Module
 public class CsvExporterModule {
 
-    @Provides
-    @TranslationSessionScope
-    CsvMapper provideCsvMapper() {
-        return new CsvMapper();
-    }
+  @Provides
+  @TranslationSessionScope
+  CsvMapper provideCsvMapper() {
+    return new CsvMapper();
+  }
+
+  @Provides
+  @TranslationSessionScope
+  public CsvExportChecker provideExportChecker() {
+    return new CacheBasedCsvExportChecker();
+  }
 }
