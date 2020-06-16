@@ -11,6 +11,7 @@ import javax.inject.Named;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@SuppressWarnings("UnstableApiUsage")
 @Module
 public class TranslatorModule {
 
@@ -25,7 +26,7 @@ public class TranslatorModule {
   @Named("digest")
   @TranslationSessionScope
   NodeIdProvider provideDigestNodeIdProvider() {
-    return new DigestNodeIdProvider(Hashing.sha256());
+    return new DigestNodeIdProvider(Hashing.md5());
   }
 
   @Provides
