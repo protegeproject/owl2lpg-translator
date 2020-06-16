@@ -17,6 +17,6 @@ public class CsvExporterModule {
   @Provides
   @TranslationSessionScope
   public CsvExportChecker provideExportChecker() {
-    return new SetBasedCsvExportChecker();
+    return new CacheBasedCsvExportChecker();
   }
 }
