@@ -5,8 +5,8 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.DigestNodeIdProvider;
+import edu.stanford.owl2lpg.translator.IdFormatCheckerImpl;
 import edu.stanford.owl2lpg.translator.NumberIncrementIdProvider;
-import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectMultipleEncountersCheckerImpl;
 import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterCheckerImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class NodeIdMapper_TestCase {
     nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider(),
         new DigestNodeIdProvider(Hashing.sha256()),
         new TranslationSessionNodeObjectSingleEncounterCheckerImpl(),
-        new TranslationSessionNodeObjectMultipleEncountersCheckerImpl());
+        new IdFormatCheckerImpl());
   }
 
   @Test

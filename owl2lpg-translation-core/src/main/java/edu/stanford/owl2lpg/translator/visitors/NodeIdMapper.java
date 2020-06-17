@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectMultipleEncountersChecker;
+import edu.stanford.owl2lpg.translator.IdFormatChecker;
 import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 
@@ -29,7 +29,7 @@ public class NodeIdMapper {
   private final NodeIdProvider digestIdProvider;
 
   @Nonnull
-  private final TranslationSessionNodeObjectMultipleEncountersChecker translationSessionNodeObjectMultipleEncountersChecker;
+  private final IdFormatChecker idFormatChecker;
 
   @Nonnull
   private final TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
@@ -38,13 +38,13 @@ public class NodeIdMapper {
   public NodeIdMapper(@Nonnull @Named("counter") NodeIdProvider idProvider,
                       @Nonnull @Named("digest") NodeIdProvider digestIdProvider,
                       @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker,
-                      @Nonnull TranslationSessionNodeObjectMultipleEncountersChecker translationSessionNodeObjectMultipleEncountersChecker) {
+                      @Nonnull IdFormatChecker idFormatChecker) {
     this.idProvider = checkNotNull(idProvider);
     this.digestIdProvider = checkNotNull(digestIdProvider);
     this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
         translationSessionNodeObjectSingleEncounterChecker);
-    this.translationSessionNodeObjectMultipleEncountersChecker = checkNotNull(
-        translationSessionNodeObjectMultipleEncountersChecker);
+    this.idFormatChecker = checkNotNull(
+        idFormatChecker);
   }
 
   @Nonnull
@@ -53,12 +53,14 @@ public class NodeIdMapper {
   }
 
   private NodeId getExistingOrCreate(@Nonnull Object o) {
-    if (translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
-      return idProvider.getId(o);
-    } else if (translationSessionNodeObjectMultipleEncountersChecker.isMultipleEncounterNodeObject(o)) {
+    if (idFormatChecker.useDigestId(o)) {
       return digestIdProvider.getId(o);
     } else {
-      return getExistingNodeId(o);
+      if (translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
+        return idProvider.getId(o);
+      } else {
+        return getExistingNodeId(o);
+      }
     }
   }
 

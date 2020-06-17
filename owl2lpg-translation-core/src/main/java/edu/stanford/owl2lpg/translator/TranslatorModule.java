@@ -35,8 +35,8 @@ public class TranslatorModule {
   }
 
   @Provides
-  TranslationSessionNodeObjectMultipleEncountersChecker provideNodeObjectCheckerForMultipleEncounters() {
-    return new TranslationSessionNodeObjectMultipleEncountersCheckerImpl();
+  IdFormatChecker provideNodeObjectCheckerForMultipleEncounters() {
+    return new IdFormatCheckerImpl();
   }
 
   @Provides
