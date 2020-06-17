@@ -90,26 +90,36 @@ public class CsvExporter {
 
   private void writeTranslation(Translation translation) {
     var mainNode = translation.getMainNode();
-    writeNode(mainNode, isPotentialDuplicate(translation));
+    writeNode(mainNode, canPotentallyCreateDuplicateNodes(translation));
     for (var edge : translation.getEdges()) {
-      writeEdge(edge, isPotentialDuplicate(translation));
+      writeEdge(edge, canPotentiallyCreateDuplicateEdges(translation));
     }
     for (var nestedTranslation : translation.getNestedTranslations()) {
       writeTranslation(nestedTranslation);
     }
   }
 
-  private static boolean isPotentialDuplicate(Translation translation) {
+  private static boolean canPotentallyCreateDuplicateNodes(Translation translation) {
     var translatedObject = translation.getTranslatedObject();
     return translatedObject instanceof IRI
         || translatedObject instanceof OWLEntity
-        || translatedObject instanceof OWLLiteral2
         || translatedObject instanceof OWLClassExpression
         || translatedObject instanceof OWLObjectPropertyExpression
         || translatedObject instanceof OWLDataPropertyExpression
         || translatedObject instanceof OWLDataRange
         || translatedObject instanceof OWLFacetRestriction
+        || translatedObject instanceof OWLLiteral2
         || translatedObject instanceof OntologyDocumentId;
+  }
+
+  private static boolean canPotentiallyCreateDuplicateEdges(Translation translation) {
+    var translatedObject = translation.getTranslatedObject();
+    return translatedObject instanceof OWLEntity
+        || translatedObject instanceof OWLClassExpression
+        || translatedObject instanceof OWLObjectPropertyExpression
+        || translatedObject instanceof OWLDataPropertyExpression
+        || translatedObject instanceof OWLDataRange
+        || translatedObject instanceof OWLFacetRestriction;
   }
 
   private void writeNode(Node node, boolean potentialDuplicate) {
