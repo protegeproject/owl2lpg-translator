@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.IdFormatChecker;
-import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
+import edu.stanford.owl2lpg.translator.SingleEncounterNodeChecker;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 
 import javax.annotation.Nonnull;
@@ -20,8 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @TranslationSessionScope
 public class NodeIdMapper {
 
-  private Map<Object, NodeId> nodeIdMapper = Maps.newHashMapWithExpectedSize(1_000_000);
-
   @Nonnull
   private final NodeIdProvider idProvider;
 
@@ -32,19 +30,19 @@ public class NodeIdMapper {
   private final IdFormatChecker idFormatChecker;
 
   @Nonnull
-  private final TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker;
+  private final SingleEncounterNodeChecker singleEncounterNodeChecker;
+
+  private final Map<Object, NodeId> nodeIdMapper = Maps.newHashMapWithExpectedSize(1_000_000);
 
   @Inject
   public NodeIdMapper(@Nonnull @Named("counter") NodeIdProvider idProvider,
                       @Nonnull @Named("digest") NodeIdProvider digestIdProvider,
-                      @Nonnull TranslationSessionNodeObjectSingleEncounterChecker translationSessionNodeObjectSingleEncounterChecker,
-                      @Nonnull IdFormatChecker idFormatChecker) {
+                      @Nonnull IdFormatChecker idFormatChecker,
+                      @Nonnull SingleEncounterNodeChecker singleEncounterNodeChecker) {
     this.idProvider = checkNotNull(idProvider);
     this.digestIdProvider = checkNotNull(digestIdProvider);
-    this.translationSessionNodeObjectSingleEncounterChecker = checkNotNull(
-        translationSessionNodeObjectSingleEncounterChecker);
-    this.idFormatChecker = checkNotNull(
-        idFormatChecker);
+    this.idFormatChecker = checkNotNull(idFormatChecker);
+    this.singleEncounterNodeChecker = checkNotNull(singleEncounterNodeChecker);
   }
 
   @Nonnull
@@ -56,7 +54,7 @@ public class NodeIdMapper {
     if (idFormatChecker.useDigestId(o)) {
       return digestIdProvider.getId(o);
     } else {
-      if (translationSessionNodeObjectSingleEncounterChecker.isSingleEncounterNodeObject(o)) {
+      if (singleEncounterNodeChecker.isSingleEncounterNodeObject(o)) {
         return idProvider.getId(o);
       } else {
         return getExistingNodeId(o);
