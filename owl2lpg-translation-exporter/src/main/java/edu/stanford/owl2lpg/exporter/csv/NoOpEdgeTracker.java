@@ -11,12 +11,13 @@ import java.util.function.Consumer;
 public class NoOpEdgeTracker implements ExportTracker<Edge> {
 
   @Override
-  public boolean contains(Edge obj) {
+  public boolean contains(Edge edge) {
     return false;
   }
 
   @Override
-  public void add(Edge obj, Consumer<Edge> callback) {
+  public void add(Edge edge, Consumer<Edge> callback) {
+    callback.accept(edge);
   }
 
   @Override
