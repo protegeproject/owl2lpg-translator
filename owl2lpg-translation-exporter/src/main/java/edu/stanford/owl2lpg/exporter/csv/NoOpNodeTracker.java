@@ -11,12 +11,13 @@ import java.util.function.Consumer;
 public class NoOpNodeTracker implements ExportTracker<Node> {
 
   @Override
-  public boolean contains(Node obj) {
+  public boolean contains(Node node) {
     return false;
   }
 
   @Override
-  public void add(Node obj, Consumer<Node> callback) {
+  public void add(Node node, Consumer<Node> callback) {
+    callback.accept(node);
   }
 
   @Override
