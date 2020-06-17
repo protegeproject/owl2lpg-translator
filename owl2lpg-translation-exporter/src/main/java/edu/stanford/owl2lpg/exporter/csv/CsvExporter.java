@@ -6,11 +6,13 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.TranslationSessionNodeObjectSingleEncounterChecker;
+import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -36,10 +38,10 @@ public class CsvExporter {
   private final CsvWriter<Edge> relationshipsCsvWriter;
 
   @Nonnull
-  private final CsvExportChecker exportChecker;
+  private final ExportTracker<Node> nodeTracker;
 
   @Nonnull
-  private final TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker;
+  private final ExportTracker<Edge> edgeTracker;
 
   private long nodeCount = 0;
 
@@ -53,13 +55,13 @@ public class CsvExporter {
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
-                     @Nonnull CsvExportChecker exportChecker,
-                     @Nonnull TranslationSessionNodeObjectSingleEncounterChecker nodeEncounterChecker) {
+                     @Nonnull ExportTracker<Node> nodeTracker,
+                     @Nonnull ExportTracker<Edge> edgeTracker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
-    this.exportChecker = checkNotNull(exportChecker);
-    this.nodeEncounterChecker = checkNotNull(nodeEncounterChecker);
+    this.nodeTracker = checkNotNull(nodeTracker);
+    this.edgeTracker = checkNotNull(edgeTracker);
     Stream.of(EdgeLabel.values())
         .forEach(v -> edgeLabelMultiset.put(v, new Counter()));
     Stream.of(NodeLabels.values())
@@ -79,7 +81,7 @@ public class CsvExporter {
   }
 
   public void write(@Nonnull OntologyDocumentId documentId,
-                    @Nonnull OWLAxiom axiom) throws IOException {
+                    @Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(documentId, axiom);
     writeTranslation(translation);
   }
@@ -89,48 +91,59 @@ public class CsvExporter {
     relationshipsCsvWriter.flush();
   }
 
-  private void writeTranslation(Translation translation) throws IOException {
-    var translatedObject = translation.getTranslatedObject();
-    writeNode(translation.getMainNode(), nodeEncounterChecker.isSingleEncounterNodeObject(translatedObject));
+  private void writeTranslation(Translation translation) {
+    var mainNode = translation.getMainNode();
+    writeNode(mainNode, isPotentialDuplicate(translation));
     for (var edge : translation.getEdges()) {
-      writeEdge(edge, isPotentialDuplicateEdge(translation));
+      writeEdge(edge, isPotentialDuplicate(translation));
     }
-    for (var t : translation.getNestedTranslations()) {
-      writeTranslation(t);
+    for (var nestedTranslation : translation.getNestedTranslations()) {
+      writeTranslation(nestedTranslation);
     }
   }
 
-  private static boolean isPotentialDuplicateEdge(Translation t) {
-    // We only visit axioms once in a session
-    // Since we only visit axioms once, the edges from axioms will only be written once
-    // and the edge from an ontology document node to the axiom will only be written once
-    var translatedObject = t.getTranslatedObject();
-    return !(translatedObject instanceof OWLAxiom
-        || translatedObject instanceof OntologyDocumentId
-        || translatedObject instanceof OWLAnnotation);
+  private static boolean isPotentialDuplicate(Translation translation) {
+    var translatedObject = translation.getTranslatedObject();
+    return translatedObject instanceof IRI
+        || translatedObject instanceof OWLEntity
+        || translatedObject instanceof OWLLiteral2
+        || translatedObject instanceof OWLClassExpression
+        || translatedObject instanceof OntologyDocumentId;
   }
 
-  private void writeEdge(Edge edge, boolean potentialDuplicate) throws IOException {
+  private void writeNode(Node node, boolean potentialDuplicate) {
     if (potentialDuplicate) {
-      if (!exportChecker.isExported(edge)) {
-        writeEdge(edge);
-      }
+      nodeTracker.add(node, this::writeNode);
+    } else {
+      writeNode(node);
+    }
+  }
+
+  private void writeNode(Node node) {
+    try {
+      nodeCount++;
+      nodesCsvWriter.write(node);
+      nodeLabelsMultiset.get(node.getLabels()).increment();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void writeEdge(Edge edge, boolean potentialDuplicate) {
+    if (potentialDuplicate) {
+      edgeTracker.add(edge, this::writeEdge);
     } else {
       writeEdge(edge);
     }
   }
 
-  private void writeEdge(Edge edge) throws IOException {
-    edgeCount++;
-    relationshipsCsvWriter.write(edge);
-    edgeLabelMultiset.get(edge.getLabel()).increment();
-  }
-
-  private void writeNode(Node node, boolean singleEncounter) throws IOException {
-    if (singleEncounter || !exportChecker.isExported(node)) {
-      nodeCount++;
-      nodesCsvWriter.write(node);
-      nodeLabelsMultiset.get(node.getLabels()).increment();
+  private void writeEdge(Edge edge) {
+    try {
+      edgeCount++;
+      relationshipsCsvWriter.write(edge);
+      edgeLabelMultiset.get(edge.getLabel()).increment();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -138,8 +151,16 @@ public class CsvExporter {
     return nodeCount;
   }
 
+  public long getTrackedNodeCount() {
+    return nodeTracker.size();
+  }
+
   public long getEdgeCount() {
     return edgeCount;
+  }
+
+  public long getTrackedEdgeCount() {
+    return edgeTracker.size();
   }
 
   /* A static utility class to do the counting for each translation per node and edge labels */
