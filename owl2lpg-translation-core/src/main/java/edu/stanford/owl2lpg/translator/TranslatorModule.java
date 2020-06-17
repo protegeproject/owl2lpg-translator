@@ -30,16 +30,19 @@ public class TranslatorModule {
   }
 
   @Provides
-  TranslationSessionNodeObjectSingleEncounterChecker provideNodeObjectCheckerForSingleEncounter() {
-    return new TranslationSessionNodeObjectSingleEncounterCheckerImpl();
+  @TranslationSessionScope
+  IdFormatChecker provideNodeObjectCheckerForMultipleEncounters() {
+    return new IdFormatCheckerImpl();
   }
 
   @Provides
-  TranslationSessionNodeObjectMultipleEncountersChecker provideNodeObjectCheckerForMultipleEncounters() {
-    return new TranslationSessionNodeObjectMultipleEncountersCheckerImpl();
+  @TranslationSessionScope
+  SingleEncounterNodeChecker provideNodeObjectCheckerForSingleEncounter() {
+    return new SingleEncounterNodeCheckerImpl();
   }
 
   @Provides
+  @TranslationSessionScope
   AugmentedEdgeInclusionChecker provideAugmentedEdgeInclusionChecker() {
     return new AugmentedEdgeInclusionCheckerImpl();
   }

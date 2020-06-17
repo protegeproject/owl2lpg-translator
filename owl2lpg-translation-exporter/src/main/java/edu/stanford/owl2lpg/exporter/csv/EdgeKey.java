@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.google.auto.value.AutoValue;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
@@ -9,7 +8,7 @@ import java.util.Comparator;
 @AutoValue
 public abstract class EdgeKey implements Comparable<EdgeKey> {
 
-  public static EdgeKey create(String startId, String endId, EdgeLabel edgeLabel) {
+  public static EdgeKey create(String startId, String endId, String edgeLabel) {
     return new AutoValue_EdgeKey(startId, endId, edgeLabel);
   }
 
@@ -17,7 +16,7 @@ public abstract class EdgeKey implements Comparable<EdgeKey> {
 
   public abstract String getEndId();
 
-  public abstract EdgeLabel getEdgeLabel();
+  public abstract String getEdgeLabel();
 
   @Override
   public int compareTo(@Nonnull EdgeKey o) {
