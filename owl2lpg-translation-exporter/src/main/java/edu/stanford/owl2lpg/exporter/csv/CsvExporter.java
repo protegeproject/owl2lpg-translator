@@ -9,10 +9,7 @@ import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -108,6 +105,10 @@ public class CsvExporter {
         || translatedObject instanceof OWLEntity
         || translatedObject instanceof OWLLiteral2
         || translatedObject instanceof OWLClassExpression
+        || translatedObject instanceof OWLObjectPropertyExpression
+        || translatedObject instanceof OWLDataPropertyExpression
+        || translatedObject instanceof OWLDataRange
+        || translatedObject instanceof OWLFacetRestriction
         || translatedObject instanceof OntologyDocumentId;
   }
 
