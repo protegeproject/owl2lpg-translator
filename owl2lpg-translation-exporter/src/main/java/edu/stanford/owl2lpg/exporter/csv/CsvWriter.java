@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 import javax.annotation.Nonnull;
@@ -47,6 +47,7 @@ public class CsvWriter<T> {
     private void writeFirstRow(@Nonnull T rowObject) throws IOException {
         csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
         csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
+        csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
         objectWriter = csvMapper.writer(schema.getCsvSchemaWithHeader()).writeValues(output);
         objectWriter.write(rowObject);
         objectWriter.flush();
