@@ -8,7 +8,6 @@ import com.google.common.io.CountingInputStream;
 import edu.stanford.bmir.protege.web.server.util.Counter;
 import edu.stanford.owl2lpg.exporter.csv.CsvExporter;
 import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
-import edu.stanford.owl2lpg.exporter.csv.NoOpWriter;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -28,6 +27,8 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -51,8 +52,14 @@ public class Scratch {
     OBOFormatParser parser = new OBOFormatParser();
     replaceStringCacheWithNoOpCache(parser);
     parser.setReader(bufferedReader);
+
+    var outputDirectory = Path.of("/tmp/out");
+    Files.createDirectories(outputDirectory);
+    var nodesCsvWriter = createWriter(outputDirectory.resolve("nodes.csv"));
+    var relsCsvWriter = createWriter(outputDirectory.resolve("relationships.csv"));
     CsvExporter csvExporter = DaggerCsvExporterComponent.create().getCsvExporterFactory()
-        .create(new NoOpWriter(), new NoOpWriter());
+        .create(nodesCsvWriter, relsCsvWriter);
+
     var translator = new MinimalObo2Owl(in, file.length(), csvExporter);
     var obodoc = new MinimalOboDoc();
     // Rather ugly dep!
@@ -63,6 +70,10 @@ public class Scratch {
     System.out.printf("Axioms: %,d\n", +translator.getAxiomsCount());
     dump(csvExporter, new PrintWriter(System.out));
     bufferedReader.close();
+  }
+
+  private static Writer createWriter(@Nonnull Path path) throws IOException {
+    return new BufferedWriter(new FileWriter(path.toFile()));
   }
 
   private static void dump(CsvExporter exporter, PrintWriter console) {
