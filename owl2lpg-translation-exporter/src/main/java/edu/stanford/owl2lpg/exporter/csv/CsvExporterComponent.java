@@ -5,7 +5,7 @@ import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.TranslatorModule;
 
 @Component(modules = {
-    NoOpCsvExporterModule.class, TranslatorModule.class
+    CsvExporterModule.class, TranslatorModule.class
 })
 @TranslationSessionScope
 public interface CsvExporterComponent {

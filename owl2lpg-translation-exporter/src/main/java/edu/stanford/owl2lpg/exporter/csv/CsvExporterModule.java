@@ -19,12 +19,12 @@ public class CsvExporterModule {
   @Provides
   @TranslationSessionScope
   public ExportTracker<Node> provideNodeTracker() {
-    return new CacheBasedNodeTracker();
+    return new SetBasedNodeTracker();
   }
 
   @Provides
   @TranslationSessionScope
   public ExportTracker<Edge> provideEdgeTracker() {
-    return new CacheBasedEdgeTracker();
+    return new SetBasedEdgeTracker();
   }
 }
