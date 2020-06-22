@@ -133,8 +133,13 @@ public class Scratch {
 
     @Override
     protected void add(@Nullable Set<OWLAxiom> axioms) {
-      for (OWLAxiom ax : axioms) {
-        add(ax);
+      try {
+        for (OWLAxiom ax : axioms) {
+          add(ax);
+        }
+        csvExporter.flush();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
     }
 
