@@ -14,12 +14,22 @@ public abstract class NodeHandlerModule {
   @Binds
   @IntoSet
   public abstract NodeHandler<?>
+  provideOwlAnnotationNodeHandler(OwlAnnotationNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
   provideOwlEntityDeclarationNodeHandler(OwlEntityDeclarationNodeHandler handler);
 
   @Binds
   @IntoSet
   public abstract NodeHandler<?>
   provideOwlSubClassOfNodeHandler(OwlSubClassOfNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlAnnotationAssertionNodeHandler(OwlAnnotationAssertionNodeHandler handler);
 
   @Binds
   @IntoSet
@@ -50,4 +60,14 @@ public abstract class NodeHandlerModule {
   @IntoSet
   public abstract NodeHandler<?>
   provideOwlDatatypeNodeHandler(OwlDatatypeNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlLiteralNodeHandler(OwlLiteralNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideIriNodeHandler(IriNodeHandler handler);
 }

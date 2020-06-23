@@ -55,6 +55,16 @@ public class NodeToOwlMapper {
     return nodeMapper.toObject(propertyNode, nodeIndex, OWLAnnotationProperty.class);
   }
 
+  public OWLAnnotationSubject toAnnotationSubject(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
+    var subjectNode = nodeIndex.getEndNode(mainNode, ANNOTATION_SUBJECT.name());
+    return nodeMapper.toObject(subjectNode, nodeIndex, OWLAnnotationSubject.class);
+  }
+
+  public OWLAnnotationValue toAnnotationValue(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
+    var valueNode = nodeIndex.getEndNode(mainNode, ANNOTATION_VALUE.name());
+    return nodeMapper.toObject(valueNode, nodeIndex, OWLAnnotationValue.class);
+  }
+
   public OWLDatatype toDatatype(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var datatypeNode = nodeIndex.getEndNode(mainNode, DATATYPE.name());
     return nodeMapper.toObject(datatypeNode, nodeIndex, OWLDatatype.class);
@@ -72,6 +82,11 @@ public class NodeToOwlMapper {
 
   public Set<OWLAnnotation> toAxiomAnnotations(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var annotationNodes = nodeIndex.getEndNodes(mainNode, AXIOM_ANNOTATION.name());
+    return nodeMapper.toObjects(annotationNodes, nodeIndex, OWLAnnotation.class);
+  }
+
+  public Set<OWLAnnotation> toAnnotationAnnotations(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
+    var annotationNodes = nodeIndex.getEndNodes(mainNode, ANNOTATION_ANNOTATION.name());
     return nodeMapper.toObjects(annotationNodes, nodeIndex, OWLAnnotation.class);
   }
 }
