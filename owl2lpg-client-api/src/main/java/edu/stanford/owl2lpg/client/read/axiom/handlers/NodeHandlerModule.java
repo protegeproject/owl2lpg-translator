@@ -22,4 +22,24 @@ public abstract class NodeHandlerModule {
   @Binds
   @IntoSet
   public abstract NodeHandler<?> provideOwlClassHandler(ClassHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?> provideOwlObjectPropertyHandler(ObjectPropertyHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?> provideOwlDataPropertyHandler(DataPropertyHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?> provideOwlAnnotationPropertyHandler(AnnotationPropertyHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?> provideOwlNamedIndividualHandler(NamedIndividualHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?> provideOwlDatatypeHandler(DatatypeHandler handler);
 }
