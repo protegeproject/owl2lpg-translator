@@ -70,7 +70,13 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
   }
 
   private final String QUERY_STRING =
-      "MATCH (n:Axiom)-[:AXIOM_SUBJECT]->(c:Class {iri: $subjectIri})\n" +
+      "CALL {\n" +
+          "  MATCH (n:Axiom)-[:AXIOM_SUBJECT]->(:Class {iri:$subjectIri})\n" +
+          "  RETURN n\n" +
+          "  UNION\n" +
+          "  MATCH (n:Axiom)-[:AXIOM_SUBJECT]->(:IRI {iri:$subjectIri})\n" +
+          "  RETURN n\n" +
+          "}\n" +
           "MATCH p=(n)-[* {structuralSpec:true}]->()\n" +
           "RETURN n, p";
 }
