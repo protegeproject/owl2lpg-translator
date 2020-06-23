@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.frame2;
+package edu.stanford.owl2lpg.client.read.axiom;
 
 import com.google.common.collect.Sets;
 import edu.stanford.owl2lpg.client.read.frame.Parameters;
