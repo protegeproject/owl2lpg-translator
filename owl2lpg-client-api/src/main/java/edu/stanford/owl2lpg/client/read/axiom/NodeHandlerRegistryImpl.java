@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
 import com.google.common.collect.ImmutableMap;
+import edu.stanford.owl2lpg.client.read.axiom.handlers.NodeHandler;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

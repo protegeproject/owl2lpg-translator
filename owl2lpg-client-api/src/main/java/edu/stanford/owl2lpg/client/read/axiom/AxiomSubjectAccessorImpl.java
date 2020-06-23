@@ -44,7 +44,7 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
         .collect(Collectors.toSet());
   }
 
-  private NodeIndex getNodeIndex(AxiomContext context, OWLClass subject) {
+  private NodeIndexImpl getNodeIndex(AxiomContext context, OWLClass subject) {
     var args = Parameters.forSubject(context, subject);
     var nodeIndex = session.readTransaction(tx -> {
       var result = tx.run(QUERY_STRING, args);
@@ -62,7 +62,7 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
           }
         }
       }
-      var builder = new NodeIndex.Builder(startNodes);
+      var builder = new NodeIndexImpl.Builder(startNodes);
       segments.forEach(builder::add);
       return builder.build();
     });

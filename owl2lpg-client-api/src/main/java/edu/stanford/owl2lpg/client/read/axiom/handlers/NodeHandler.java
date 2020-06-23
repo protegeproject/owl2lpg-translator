@@ -1,5 +1,7 @@
-package edu.stanford.owl2lpg.client.read.axiom;
+package edu.stanford.owl2lpg.client.read.axiom.handlers;
 
+import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
+import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.types.Node;
 
 public interface NodeHandler<T> {

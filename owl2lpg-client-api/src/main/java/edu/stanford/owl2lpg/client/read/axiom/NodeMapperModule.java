@@ -3,8 +3,7 @@ package edu.stanford.owl2lpg.client.read.axiom;
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import edu.stanford.owl2lpg.client.read.axiom.handlers.NodeHandlerModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -12,12 +11,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
  */
 @Module(includes = NodeHandlerModule.class)
 public class NodeMapperModule {
-
-  @Provides
-  @DatabaseSessionScope
-  public OWLDataFactory provideOwlDataFactory() {
-    return new OWLDataFactoryImpl();
-  }
 
   @Provides
   @DatabaseSessionScope
