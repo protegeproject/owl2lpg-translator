@@ -7,6 +7,7 @@ import org.neo4j.driver.types.Node;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.StreamSupport;
@@ -47,6 +48,6 @@ public class NodeMapperImpl implements NodeMapper {
         .map(registry::getHandler)
         .filter(Objects::nonNull)
         .findFirst()
-        .orElseThrow();
+        .orElseThrow(() -> new NoSuchElementException("No handler for " + it + " present."));
   }
 }
