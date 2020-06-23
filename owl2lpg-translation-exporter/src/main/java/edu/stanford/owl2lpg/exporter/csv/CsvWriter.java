@@ -61,5 +61,6 @@ public class CsvWriter<T> {
 
     public void flush() throws IOException {
         objectWriter.flush();
+        output.flush();
     }
 }
