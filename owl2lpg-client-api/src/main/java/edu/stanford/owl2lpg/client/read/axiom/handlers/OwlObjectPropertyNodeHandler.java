@@ -6,36 +6,36 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class DataPropertyHandler implements NodeHandler<OWLDataProperty> {
+public class OwlObjectPropertyNodeHandler implements NodeHandler<OWLObjectProperty> {
 
   @Nonnull
   private final OWLDataFactory dataFactory;
 
   @Inject
-  public DataPropertyHandler(@Nonnull OWLDataFactory dataFactory) {
+  public OwlObjectPropertyNodeHandler(@Nonnull OWLDataFactory dataFactory) {
     this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Override
   public String getLabel() {
-    return DATA_PROPERTY.getMainLabel();
+    return OBJECT_PROPERTY.getMainLabel();
   }
 
   @Override
-  public OWLDataProperty handle(Node node, NodeIndex nodeIndex, NodeMapper nodeMapper) {
+  public OWLObjectProperty handle(Node node, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var iri = IRI.create(node.get(PropertyFields.IRI).asString());
-    return dataFactory.getOWLDataProperty(iri);
+    return dataFactory.getOWLObjectProperty(iri);
   }
 }

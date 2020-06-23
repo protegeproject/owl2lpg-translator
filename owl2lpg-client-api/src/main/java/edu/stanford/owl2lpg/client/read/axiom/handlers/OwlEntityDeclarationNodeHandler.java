@@ -16,7 +16,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DECLARATION;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class EntityDeclarationHandler implements NodeHandler<OWLDeclarationAxiom> {
+public class OwlEntityDeclarationNodeHandler implements NodeHandler<OWLDeclarationAxiom> {
 
   @Nonnull
   private final OWLDataFactory dataFactory;
@@ -25,8 +25,8 @@ public class EntityDeclarationHandler implements NodeHandler<OWLDeclarationAxiom
   private final NodeToOwlMapper nodeToOwlMapper;
 
   @Inject
-  public EntityDeclarationHandler(@Nonnull OWLDataFactory dataFactory,
-                                  @Nonnull NodeToOwlMapper nodeToOwlMapper) {
+  public OwlEntityDeclarationNodeHandler(@Nonnull OWLDataFactory dataFactory,
+                                         @Nonnull NodeToOwlMapper nodeToOwlMapper) {
     this.dataFactory = checkNotNull(dataFactory);
     this.nodeToOwlMapper = checkNotNull(nodeToOwlMapper);
   }

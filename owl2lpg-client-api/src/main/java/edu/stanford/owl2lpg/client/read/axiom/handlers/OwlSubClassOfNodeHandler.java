@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SUB_CLASS_OF;
 
-public class SubClassOfHandler implements NodeHandler<OWLSubClassOfAxiom> {
+public class OwlSubClassOfNodeHandler implements NodeHandler<OWLSubClassOfAxiom> {
 
   @Nonnull
   private final OWLDataFactory dataFactory;
@@ -22,8 +22,8 @@ public class SubClassOfHandler implements NodeHandler<OWLSubClassOfAxiom> {
 
   @Inject
 
-  public SubClassOfHandler(@Nonnull OWLDataFactory dataFactory,
-                           @Nonnull NodeToOwlMapper nodeToOwlMapper) {
+  public OwlSubClassOfNodeHandler(@Nonnull OWLDataFactory dataFactory,
+                                  @Nonnull NodeToOwlMapper nodeToOwlMapper) {
     this.dataFactory = checkNotNull(dataFactory);
     this.nodeToOwlMapper = checkNotNull(nodeToOwlMapper);
   }

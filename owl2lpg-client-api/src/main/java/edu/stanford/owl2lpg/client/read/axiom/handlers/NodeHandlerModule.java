@@ -13,33 +13,33 @@ public abstract class NodeHandlerModule {
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideEntityDeclarationHandler(EntityDeclarationHandler handler);
+  public abstract NodeHandler<?> provideOwlEntityDeclarationNodeHandler(OwlEntityDeclarationNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideSubClassOfHandler(SubClassOfHandler handler);
+  public abstract NodeHandler<?> provideOwlSubClassOfNodeHandler(OwlSubClassOfNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideOwlClassHandler(ClassHandler handler);
+  public abstract NodeHandler<?> provideOwlClassNodeHandler(OwlClassNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideOwlObjectPropertyHandler(ObjectPropertyHandler handler);
+  public abstract NodeHandler<?> provideOwlObjectPropertyNodeHandler(OwlObjectPropertyNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideOwlDataPropertyHandler(DataPropertyHandler handler);
+  public abstract NodeHandler<?> provideOwlDataPropertyNodeHandler(OwlDataPropertyNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideOwlAnnotationPropertyHandler(AnnotationPropertyHandler handler);
+  public abstract NodeHandler<?> provideOwlAnnotationPropertyNodeHandler(OwlAnnotationPropertyNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideOwlNamedIndividualHandler(NamedIndividualHandler handler);
+  public abstract NodeHandler<?> provideOwlNamedIndividualNodeHandler(OwlNamedIndividualNodeHandler handler);
 
   @Binds
   @IntoSet
-  public abstract NodeHandler<?> provideOwlDatatypeHandler(DatatypeHandler handler);
+  public abstract NodeHandler<?> provideOwlDatatypeNodeHandler(OwlDatatypeNodeHandler handler);
 }
