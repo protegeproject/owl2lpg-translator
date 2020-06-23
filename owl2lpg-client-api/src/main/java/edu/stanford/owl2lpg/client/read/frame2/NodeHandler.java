@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.read.frame2;
 
-import edu.stanford.owl2lpg.model.Node;
+import org.neo4j.driver.types.Node;
 
 public interface NodeHandler<T> {
 
@@ -11,5 +11,5 @@ public interface NodeHandler<T> {
    */
   String getLabel();
 
-  T handle(Node node, NodeIndex nodeIndex);
+  T handle(Node node, NodeIndex nodeIndex, NodeMapper nodeMapper);
 }
