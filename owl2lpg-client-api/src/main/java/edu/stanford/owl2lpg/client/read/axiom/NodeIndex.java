@@ -10,8 +10,8 @@ import java.util.Collection;
  */
 public interface NodeIndex {
 
-  Collection<Node> getStartNodes();
-
+  Collection<Node> getNodes(String label);
+  
   Node getEndNode(Node startNode, String relLabel);
 
   Collection<Node> getEndNodes(Node startNode, String relLabel);

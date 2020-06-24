@@ -8,26 +8,26 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NodeIndexImpl implements NodeIndex {
 
   @Nonnull
-  private final ImmutableSet<Node> startNodes;
+  private final ImmutableSetMultimap<String, Node> nodeMap;
 
   @Nonnull
-  private final ImmutableMap<Node, Multimap<String, Node>> indexMap;
+  private final ImmutableMap<Node, Multimap<String, Node>> segmentMap;
 
-  public NodeIndexImpl(@Nonnull ImmutableSet<Node> startNodes,
-                       @Nonnull ImmutableMap<Node, Multimap<String, Node>> indexMap) {
-    this.startNodes = checkNotNull(startNodes);
-    this.indexMap = checkNotNull(indexMap);
+  public NodeIndexImpl(@Nonnull ImmutableSetMultimap<String, Node> nodeMap,
+                       @Nonnull ImmutableMap<Node, Multimap<String, Node>> segmentMap) {
+    this.nodeMap = checkNotNull(nodeMap);
+    this.segmentMap = checkNotNull(segmentMap);
   }
 
-  public Collection<Node> getStartNodes() {
-    return startNodes;
+  @Override
+  public Collection<Node> getNodes(String label) {
+    return nodeMap.get(label);
   }
 
   @Nullable
@@ -41,7 +41,7 @@ public class NodeIndexImpl implements NodeIndex {
 
   @Nullable
   public Collection<Node> getEndNodes(Node startNode, String relLabel) {
-    var nestedMap = indexMap.get(startNode);
+    var nestedMap = segmentMap.get(startNode);
     if (nestedMap == null) {
       return null;
     }
@@ -50,34 +50,41 @@ public class NodeIndexImpl implements NodeIndex {
 
   public static class Builder {
 
-    @Nonnull
-    private final Set<Node> startNodes;
+    private final Multimap<String, Node> nodeMap = HashMultimap.create();
 
-    private final Map<Node, SetMultimap<String, Node>> indexMap = Maps.newHashMap();
+    private final Map<Node, SetMultimap<String, Node>> segmentMap = Maps.newHashMap();
 
-    public Builder(@Nonnull Set<Node> startNodes) {
-      this.startNodes = checkNotNull(startNodes);
+    public Builder() {
     }
 
     public Builder add(Path.Segment segment) {
       var startNode = segment.start();
-      var relLabel = segment.relationship().type();
+      var edgeLabel = segment.relationship().type();
       var endNode = segment.end();
 
-      var innerMap = indexMap.get(startNode);
-      if (innerMap == null) {
-        innerMap = HashMultimap.create();
-        indexMap.put(startNode, innerMap);
-      }
-      innerMap.put(relLabel, endNode);
+      buildNodeMap(startNode);
+      buildSegmentMap(startNode, edgeLabel, endNode);
 
       return this;
     }
 
+    private void buildNodeMap(Node node) {
+      node.labels().forEach(label -> nodeMap.put(label, node));
+    }
+
+    private void buildSegmentMap(Node startNode, String relLabel, Node endNode) {
+      var innerMap = segmentMap.get(startNode);
+      if (innerMap == null) {
+        innerMap = HashMultimap.create();
+        segmentMap.put(startNode, innerMap);
+      }
+      innerMap.put(relLabel, endNode);
+    }
+
     public NodeIndexImpl build() {
       return new NodeIndexImpl(
-          ImmutableSet.copyOf(startNodes),
-          ImmutableMap.copyOf(indexMap));
+          ImmutableSetMultimap.copyOf(nodeMap),
+          ImmutableMap.copyOf(segmentMap));
     }
   }
 }
