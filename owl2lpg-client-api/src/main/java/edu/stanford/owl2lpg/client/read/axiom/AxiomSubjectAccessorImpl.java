@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.client.read.axiom.AxiomQueries.AXIOM_SUBJECT_QUERY;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -47,7 +48,7 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
   private NodeIndexImpl getNodeIndex(AxiomContext context, OWLClass subject) {
     var args = Parameters.forSubject(context, subject);
     var nodeIndex = session.readTransaction(tx -> {
-      var result = tx.run(QUERY_STRING, args);
+      var result = tx.run(AXIOM_SUBJECT_QUERY, args);
       var startNodes = Sets.<Node>newHashSet();
       var segments = Sets.<Path.Segment>newHashSet();
       while (result.hasNext()) {
@@ -68,15 +69,4 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
     });
     return nodeIndex;
   }
-
-  private final String QUERY_STRING =
-      "CALL {\n" +
-          "  MATCH (n:Axiom)-[:AXIOM_SUBJECT]->(:Class {iri:$subjectIri})\n" +
-          "  RETURN n\n" +
-          "  UNION\n" +
-          "  MATCH (n:Axiom)-[:AXIOM_SUBJECT]->(:IRI {iri:$subjectIri})\n" +
-          "  RETURN n\n" +
-          "}\n" +
-          "MATCH p=(n)-[* {structuralSpec:true}]->()\n" +
-          "RETURN n, p";
 }
