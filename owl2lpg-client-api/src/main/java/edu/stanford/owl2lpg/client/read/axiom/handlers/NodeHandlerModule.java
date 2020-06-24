@@ -49,6 +49,36 @@ public abstract class NodeHandlerModule {
   @Binds
   @IntoSet
   public abstract NodeHandler<?>
+  provideOwlObjectMaxCardinalityNodeHandler(OwlObjectMaxCardinalityNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlObjectMinCardinalityNodeHandler(OwlObjectMinCardinalityNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlObjectExactCardinalityNodeHandler(OwlObjectExactCardinalityNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlDataMaxCardinalityNodeHandler(OwlDataMaxCardinalityNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlDataMinCardinalityNodeHandler(OwlDataMinCardinalityNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlDataExactCardinalityNodeHandler(OwlDataExactCardinalityNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
   provideOwlDataAllValuesFromNodeHandler(OwlDataAllValuesFromNodeHandler handler);
 
   @Binds
