@@ -34,6 +34,26 @@ public abstract class NodeHandlerModule {
   @Binds
   @IntoSet
   public abstract NodeHandler<?>
+  provideOwlObjectSomeValuesFromNodeHandler(OwlObjectSomeValuesFromNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlObjectAllValuesFromNodeHandler(OwlObjectAllValuesFromNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlDataSomeValuesFromNodeHandler(OwlDataSomeValuesFromNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
+  provideOwlDataAllValuesFromNodeHandler(OwlDataAllValuesFromNodeHandler handler);
+
+  @Binds
+  @IntoSet
+  public abstract NodeHandler<?>
   provideOwlClassNodeHandler(OwlClassNodeHandler handler);
 
   @Binds
