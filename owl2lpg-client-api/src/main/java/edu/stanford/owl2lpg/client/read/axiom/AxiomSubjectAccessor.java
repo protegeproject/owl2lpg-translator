@@ -1,7 +1,10 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
 import edu.stanford.owl2lpg.model.AxiomContext;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
+
+import java.util.Set;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -9,5 +12,5 @@ import org.semanticweb.owlapi.model.OWLClass;
  */
 public interface AxiomSubjectAccessor {
 
-  AxiomSubject getAxiomSubject(AxiomContext context, OWLClass subject);
+  Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLClass subject);
 }
