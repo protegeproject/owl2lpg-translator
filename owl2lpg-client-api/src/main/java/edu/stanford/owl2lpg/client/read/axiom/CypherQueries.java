@@ -9,7 +9,7 @@ import java.io.IOException;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomQueries {
+public class CypherQueries {
 
   private static final String AXIOM_SUBJECT_QUERY_FILE = "axioms/axiom-subject.cpy";
 
