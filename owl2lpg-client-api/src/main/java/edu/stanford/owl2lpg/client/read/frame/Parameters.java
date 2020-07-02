@@ -18,6 +18,14 @@ import java.util.Map;
  */
 public class Parameters {
 
+  public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
+    return new MapValue(Map.of(
+        "entityIri", new StringValue(entityIri.toString()),
+        "projectId", new StringValue(context.getProjectId().toString()),
+        "branchId", new StringValue(context.getBranchId().toString()),
+        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
+  }
+
   public static Value forSubject(@Nonnull AxiomContext context, @Nonnull OWLEntity subject) {
     return new MapValue(Map.of(
         "subjectIri", new StringValue(subject.getIRI().toString()),

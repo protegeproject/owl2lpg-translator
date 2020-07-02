@@ -30,6 +30,9 @@ public class CypherMultiLingualDictionary implements MultiLingualDictionary {
   @Nonnull
   private final ShortFormAccessor shortFormAccessor;
 
+  @Nonnull
+//  private final DictionaryNameAccessor dictionaryNameAccessor;
+
   public CypherMultiLingualDictionary(@Nonnull AxiomContext axiomContext,
                                       @Nonnull ShortFormAccessor shortFormAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
@@ -37,39 +40,50 @@ public class CypherMultiLingualDictionary implements MultiLingualDictionary {
   }
 
   @Override
-  public void loadLanguages(@Nonnull List<DictionaryLanguage> list) {
+  public void loadLanguages(@Nonnull List<DictionaryLanguage> dictLangList) {
   }
 
   @Nonnull
   @Override
-  public String getShortForm(@Nonnull OWLEntity owlEntity, @Nonnull List<DictionaryLanguage> list, @Nonnull String defaultShortForm) {
+  public String getShortForm(@Nonnull OWLEntity owlEntity,
+                             @Nonnull List<DictionaryLanguage> priorityList,
+                             @Nonnull String defaultShortForm) {
     return shortFormAccessor.getShortFormIndex(axiomContext, owlEntity.getIRI())
-        .orderBy(list)
+        .orderBy(priorityList)
         .getFirst()
         .orElse(defaultShortForm);
   }
 
   @Nonnull
   @Override
-  public Stream<ShortFormMatch> getShortFormsContaining(@Nonnull List<SearchString> list, @Nonnull Set<EntityType<?>> set, @Nonnull List<DictionaryLanguage> list1) {
+  public Stream<ShortFormMatch> getShortFormsContaining(@Nonnull List<SearchString> searchStringList,
+                                                        @Nonnull Set<EntityType<?>> entityTypeSet,
+                                                        @Nonnull List<DictionaryLanguage> priorityList) {
     return null;
   }
 
   @Nonnull
   @Override
-  public Stream<OWLEntity> getEntities(@Nonnull String entityName, @Nonnull List<DictionaryLanguage> list) {
+  public Stream<OWLEntity> getEntities(@Nonnull String entityName,
+                                       @Nonnull List<DictionaryLanguage> priorityList) {
     return null;
+//    return dictionaryNameAccessor.getDictionaryNameIndex(axiomContext, entityName)
+//        .orderBy(priorityList)
+//        .getEntities(entityName)
+//        .stream();
   }
 
   @Override
-  public void update(@Nonnull Collection<OWLEntity> collection, @Nonnull List<DictionaryLanguage> list) {
+  public void update(@Nonnull Collection<OWLEntity> collection,
+                     @Nonnull List<DictionaryLanguage> priorityList) {
   }
 
   @Nonnull
   @Override
-  public ImmutableMap<DictionaryLanguage, String> getShortForms(OWLEntity owlEntity, List<DictionaryLanguage> list) {
+  public ImmutableMap<DictionaryLanguage, String> getShortForms(OWLEntity owlEntity,
+                                                                List<DictionaryLanguage> priorityList) {
     return shortFormAccessor.getShortFormIndex(axiomContext, owlEntity.getIRI())
-        .orderBy(list)
+        .orderBy(priorityList)
         .asImmutableMap();
   }
 }

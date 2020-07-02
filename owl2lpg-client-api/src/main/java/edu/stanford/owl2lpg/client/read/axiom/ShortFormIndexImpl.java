@@ -74,7 +74,7 @@ public class ShortFormIndexImpl implements ShortFormIndex {
 
     private final List<ShortForm> mutableShortFormList = Lists.newArrayList();
 
-    private void add(Node annotationPropertyNode, Node literalNode) {
+    public void add(Node annotationPropertyNode, Node literalNode) {
       var propertyIri = IRI.create(annotationPropertyNode.get(PropertyFields.IRI).asString());
       var language = literalNode.hasLabel(PropertyFields.LANGUAGE)
           ? literalNode.get(PropertyFields.LANGUAGE).asString()

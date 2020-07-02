@@ -10,6 +10,4 @@ import org.semanticweb.owlapi.model.IRI;
 public interface ShortFormAccessor {
 
   ShortFormIndex getShortFormIndex(AxiomContext context, IRI entityIri);
-
-  DictionaryNameIndex getDictionaryNameIndex(AxiomContext context, String entityName);
 }
