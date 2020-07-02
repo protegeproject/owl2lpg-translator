@@ -13,14 +13,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.client.read.axiom.AxiomQueries.AXIOM_SUBJECT_QUERY;
+import static edu.stanford.owl2lpg.client.read.axiom.CypherQueries.AXIOM_SUBJECT_QUERY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
+public class FrameAxiomAccessorImpl implements FrameAxiomAccessor {
 
   @Nonnull
   private final Session session;
@@ -29,14 +29,14 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomSubjectAccessorImpl(@Nonnull Session session,
-                                  @Nonnull NodeMapper nodeMapper) {
+  public FrameAxiomAccessorImpl(@Nonnull Session session,
+                                @Nonnull NodeMapper nodeMapper) {
     this.session = checkNotNull(session);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
   @Override
-  public Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLClass subject) {
+  public Set<OWLAxiom> getFrameAxioms(AxiomContext context, OWLClass subject) {
     var nodeIndex = getNodeIndex(context, subject);
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()

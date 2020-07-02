@@ -11,9 +11,9 @@ import edu.stanford.owl2lpg.client.DatabaseModule;
 @Module(includes = {
     DatabaseModule.class,
     NodeMapperModule.class})
-public abstract class AxiomSubjectAccessorModule {
+public abstract class FrameAxiomAccessorModule {
 
   @Binds
-  public abstract AxiomSubjectAccessor
-  provideAxiomSubjectAccessor(AxiomSubjectAccessorImpl accessor);
+  public abstract FrameAxiomAccessor
+  provideFrameAxiomAccessor(FrameAxiomAccessorImpl accessor);
 }

@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class CypherQueries {
 
-  private static final String AXIOM_SUBJECT_QUERY_FILE = "axioms/axiom-subject.cpy";
+  private static final String AXIOM_SUBJECT_QUERY_FILE = "axioms/frame-axioms.cpy";
 
   public static final String AXIOM_SUBJECT_QUERY = readResource(AXIOM_SUBJECT_QUERY_FILE);
 
