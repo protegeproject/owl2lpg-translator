@@ -29,6 +29,15 @@ public class Parameters {
         "entityIri", new StringValue(entityIri.toString())));
   }
 
+  public static Value forShortFormsIndex(@Nonnull ProjectId projectId,
+                                         @Nonnull BranchId branchId,
+                                         @Nonnull String entityName) {
+    return new MapValue(Map.of(
+        "projectId", new StringValue(projectId.toString()),
+        "branchId", new StringValue(branchId.toString()),
+        "entityName", new StringValue(entityName)));
+  }
+
   public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
     return new MapValue(Map.of(
         "entityIri", new StringValue(entityIri.toString()),
