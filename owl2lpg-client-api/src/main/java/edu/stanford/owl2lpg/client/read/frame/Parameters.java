@@ -2,6 +2,8 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.ListValue;
 import org.neo4j.driver.internal.value.MapValue;
@@ -17,6 +19,15 @@ import java.util.Map;
  * Stanford Center for Biomedical Informatics Research
  */
 public class Parameters {
+
+  public static Value forShortFormsDictionary(@Nonnull ProjectId projectId,
+                                              @Nonnull BranchId branchId,
+                                              @Nonnull IRI entityIri) {
+    return new MapValue(Map.of(
+        "projectId", new StringValue(projectId.toString()),
+        "branchId", new StringValue(branchId.toString()),
+        "entityIri", new StringValue(entityIri.toString())));
+  }
 
   public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
     return new MapValue(Map.of(
