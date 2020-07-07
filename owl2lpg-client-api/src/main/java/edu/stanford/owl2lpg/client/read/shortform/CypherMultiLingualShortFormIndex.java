@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.frame2;
+package edu.stanford.owl2lpg.client.read.shortform;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -34,7 +34,7 @@ import static org.semanticweb.owlapi.model.EntityType.*;
  */
 public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIndex {
 
-  private static final String SHORT_FORMS_INDEX_QUERY_FILE = "frames2/short-forms-index.cpy";
+  private static final String SHORT_FORMS_INDEX_QUERY_FILE = "shortforms/short-forms-index.cpy";
   private static final String SHORT_FORMS_INDEX_QUERY = read(SHORT_FORMS_INDEX_QUERY_FILE);
 
   @Nonnull

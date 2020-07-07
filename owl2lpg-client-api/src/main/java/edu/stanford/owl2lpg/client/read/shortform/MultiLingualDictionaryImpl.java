@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.frame2;
+package edu.stanford.owl2lpg.client.read.shortform;
 
 import com.google.common.collect.ImmutableMap;
 import edu.stanford.bmir.protege.web.server.shortform.*;

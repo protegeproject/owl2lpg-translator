@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.frame2;
+package edu.stanford.owl2lpg.client.read.shortform;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -27,7 +27,7 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class CypherMultiLingualShortFormDictionary implements MultiLingualShortFormDictionary {
 
-  private static final String SHORT_FORMS_DICTIONARY_QUERY_FILE = "frames2/short-forms-dictionary.cpy";
+  private static final String SHORT_FORMS_DICTIONARY_QUERY_FILE = "shortforms/short-forms-dictionary.cpy";
   private static final String SHORT_FORMS_DICTIONARY_QUERY = read(SHORT_FORMS_DICTIONARY_QUERY_FILE);
 
   @Nonnull

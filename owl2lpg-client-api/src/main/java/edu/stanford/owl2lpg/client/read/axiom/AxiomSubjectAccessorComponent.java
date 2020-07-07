@@ -9,7 +9,7 @@ import edu.stanford.owl2lpg.client.DatabaseSessionScope;
  */
 @Component(modules = AxiomSubjectAccessorModule.class)
 @DatabaseSessionScope
-public interface FrameAccessorComponent {
+public interface AxiomSubjectAccessorComponent {
 
   AxiomSubjectAccessor getAxiomSubjectAccessor();
 }
