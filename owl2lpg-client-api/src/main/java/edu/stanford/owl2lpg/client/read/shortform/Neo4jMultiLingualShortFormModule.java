@@ -11,17 +11,17 @@ import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShor
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public abstract class CypherMultiLingualShortFormModule {
+public abstract class Neo4jMultiLingualShortFormModule {
 
   @Binds
   public abstract MultiLingualShortFormIndex
-  provideMultiLingualShortFromIndex(CypherMultiLingualShortFormIndex impl);
+  provideMultiLingualShortFromIndex(Neo4jMultiLingualShortFormIndex impl);
 
   @Binds
   public abstract MultiLingualShortFormDictionary
-  provideMultiLingualShortFormDictionary(CypherMultiLingualShortFormDictionary impl);
+  provideMultiLingualShortFormDictionary(Neo4jMultiLingualShortFormDictionary impl);
 
   @Binds
   public abstract SearchableMultiLingualShortFormDictionary
-  provideSearchableMultiLingualShortFormDictionary(CypherSearchableMultiLingualShortFormDictionary impl);
+  provideSearchableMultiLingualShortFormDictionary(Neo4jSearchableMultiLingualShortFormDictionary impl);
 }

@@ -32,7 +32,7 @@ import static org.semanticweb.owlapi.model.EntityType.*;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIndex {
+public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormIndex {
 
   private static final String SHORT_FORMS_INDEX_QUERY_FILE = "shortforms/short-forms-index.cpy";
   private static final String SHORT_FORMS_INDEX_QUERY = read(SHORT_FORMS_INDEX_QUERY_FILE);
@@ -49,9 +49,9 @@ public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIn
   private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
 
   @Inject
-  public CypherMultiLingualShortFormIndex(@Nonnull ProjectId projectId,
-                                          @Nonnull BranchId branchId,
-                                          @Nonnull Session session) {
+  public Neo4jMultiLingualShortFormIndex(@Nonnull ProjectId projectId,
+                                         @Nonnull BranchId branchId,
+                                         @Nonnull Session session) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.session = checkNotNull(session);

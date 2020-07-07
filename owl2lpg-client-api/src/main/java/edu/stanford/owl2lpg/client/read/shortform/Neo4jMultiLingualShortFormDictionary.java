@@ -25,7 +25,7 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class CypherMultiLingualShortFormDictionary implements MultiLingualShortFormDictionary {
+public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFormDictionary {
 
   private static final String SHORT_FORMS_DICTIONARY_QUERY_FILE = "shortforms/short-forms-dictionary.cpy";
   private static final String SHORT_FORMS_DICTIONARY_QUERY = read(SHORT_FORMS_DICTIONARY_QUERY_FILE);
@@ -40,9 +40,9 @@ public class CypherMultiLingualShortFormDictionary implements MultiLingualShortF
   private final Session session;
 
   @Inject
-  public CypherMultiLingualShortFormDictionary(@Nonnull ProjectId projectId,
-                                               @Nonnull BranchId branchId,
-                                               @Nonnull Session session) {
+  public Neo4jMultiLingualShortFormDictionary(@Nonnull ProjectId projectId,
+                                              @Nonnull BranchId branchId,
+                                              @Nonnull Session session) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.session = checkNotNull(session);

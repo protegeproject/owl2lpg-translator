@@ -11,7 +11,7 @@ import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 @Component(modules = {
     DatabaseModule.class,
     MultiLingualDictionaryContextModule.class,
-    CypherMultiLingualShortFormModule.class
+    Neo4jMultiLingualShortFormModule.class
 })
 @DatabaseSessionScope
 public interface MultiLingualDictionaryComponent {
