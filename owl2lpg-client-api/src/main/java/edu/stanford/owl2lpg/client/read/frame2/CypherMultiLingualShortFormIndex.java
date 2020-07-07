@@ -18,6 +18,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,6 +45,7 @@ public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIn
 
   private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
 
+  @Inject
   public CypherMultiLingualShortFormIndex(@Nonnull ProjectId projectId,
                                           @Nonnull BranchId branchId,
                                           @Nonnull Session session) {
