@@ -19,14 +19,16 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.client.read.axiom.CypherQueries.SHORT_FORMS_DICTIONARY_QUERY;
+import static edu.stanford.owl2lpg.client.util.Resources.read;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class CypherMultiLingualShortFormDictionary
-    implements MultiLingualShortFormDictionary {
+public class CypherMultiLingualShortFormDictionary implements MultiLingualShortFormDictionary {
+
+  private static final String SHORT_FORMS_DICTIONARY_QUERY_FILE = "frames2/short-forms-dictionary.cpy";
+  private static final String SHORT_FORMS_DICTIONARY_QUERY = read(SHORT_FORMS_DICTIONARY_QUERY_FILE);
 
   @Nonnull
   private final ProjectId projectId;

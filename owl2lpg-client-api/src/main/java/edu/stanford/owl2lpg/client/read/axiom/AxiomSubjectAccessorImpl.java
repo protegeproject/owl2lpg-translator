@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.client.read.axiom.CypherQueries.AXIOM_SUBJECT_QUERY;
+import static edu.stanford.owl2lpg.client.util.Resources.read;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
 
 /**
@@ -21,6 +21,9 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
  * Stanford Center for Biomedical Informatics Research
  */
 public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
+
+  private static final String AXIOM_SUBJECT_QUERY_FILE = "axioms/frame-axioms.cpy";
+  private static final String AXIOM_SUBJECT_QUERY = read(AXIOM_SUBJECT_QUERY_FILE);
 
   @Nonnull
   private final Session session;

@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.client.read.axiom.CypherQueries.SHORT_FORMS_INDEX_QUERY;
+import static edu.stanford.owl2lpg.client.util.Resources.read;
 import static org.semanticweb.owlapi.model.EntityType.*;
 
 /**
@@ -33,6 +33,9 @@ import static org.semanticweb.owlapi.model.EntityType.*;
  * Stanford Center for Biomedical Informatics Research
  */
 public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIndex {
+
+  private static final String SHORT_FORMS_INDEX_QUERY_FILE = "frames2/short-forms-index.cpy";
+  private static final String SHORT_FORMS_INDEX_QUERY = read(SHORT_FORMS_INDEX_QUERY_FILE);
 
   @Nonnull
   private final ProjectId projectId;
