@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.shortform;
+package edu.stanford.owl2lpg.client.read.frame2;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex;
@@ -19,7 +19,7 @@ import static edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex.A
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class CypherClassFrameAxiomsIndex implements ClassFrameAxiomsIndex {
+public class Neo4jClassFrameAxiomsIndex implements ClassFrameAxiomsIndex {
 
   @Nonnull
   private final AxiomContext axiomContext;
@@ -28,8 +28,8 @@ public class CypherClassFrameAxiomsIndex implements ClassFrameAxiomsIndex {
   private final AxiomSubjectAccessor axiomSubjectAccessor;
 
   @Inject
-  public CypherClassFrameAxiomsIndex(@Nonnull AxiomContext axiomContext,
-                                     @Nonnull AxiomSubjectAccessor axiomSubjectAccessor) {
+  public Neo4jClassFrameAxiomsIndex(@Nonnull AxiomContext axiomContext,
+                                    @Nonnull AxiomSubjectAccessor axiomSubjectAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
     this.axiomSubjectAccessor = checkNotNull(axiomSubjectAccessor);
   }
