@@ -24,8 +24,8 @@ public class Parameters {
                                               @Nonnull BranchId branchId,
                                               @Nonnull IRI entityIri) {
     return new MapValue(Map.of(
-        "projectId", new StringValue(projectId.toString()),
-        "branchId", new StringValue(branchId.toString()),
+        "projectId", new StringValue(projectId.getIdentifier()),
+        "branchId", new StringValue(branchId.getIdentifier()),
         "entityIri", new StringValue(entityIri.toString())));
   }
 
@@ -33,24 +33,24 @@ public class Parameters {
                                          @Nonnull BranchId branchId,
                                          @Nonnull String entityName) {
     return new MapValue(Map.of(
-        "projectId", new StringValue(projectId.toString()),
-        "branchId", new StringValue(branchId.toString()),
+        "projectId", new StringValue(projectId.getIdentifier()),
+        "branchId", new StringValue(branchId.getIdentifier()),
         "entityName", new StringValue(entityName)));
   }
 
   public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
     return new MapValue(Map.of(
         "entityIri", new StringValue(entityIri.toString()),
-        "projectId", new StringValue(context.getProjectId().toString()),
-        "branchId", new StringValue(context.getBranchId().toString()),
+        "projectId", new StringValue(context.getProjectId().getIdentifier()),
+        "branchId", new StringValue(context.getBranchId().getIdentifier()),
         "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
   }
 
   public static Value forSubject(@Nonnull AxiomContext context, @Nonnull OWLEntity subject) {
     return new MapValue(Map.of(
         "subjectIri", new StringValue(subject.getIRI().toString()),
-        "projectId", new StringValue(context.getProjectId().toString()),
-        "branchId", new StringValue(context.getBranchId().toString()),
+        "projectId", new StringValue(context.getProjectId().getIdentifier()),
+        "branchId", new StringValue(context.getBranchId().getIdentifier()),
         "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
   }
 
