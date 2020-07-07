@@ -77,9 +77,7 @@ public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIn
         var propertyNode = (Node) row.get("annotationProperty");
         var literalNode = (Node) row.get("value");
         var entity = getOwlEntity(entityNode);
-        var propertyIri = getPropertyIri(propertyNode);
-        var language = getLanguage(literalNode);
-        var dictionaryLanguage = DictionaryLanguage.create(propertyIri, language);
+        var dictionaryLanguage = getDictionaryLanguage(propertyNode, literalNode);
         mutableDictionaryMap.put(dictionaryLanguage, entity);
       }
       return ImmutableMap.copyOf(mutableDictionaryMap);
@@ -94,7 +92,14 @@ public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIn
   }
 
   @Nonnull
-  private IRI getPropertyIri(Node propertyNode) {
+  private DictionaryLanguage getDictionaryLanguage(Node propertyNode, Node literalNode) {
+    var propertyIri = getAnnotationPropertyIri(propertyNode);
+    var language = getLanguage(literalNode);
+    return DictionaryLanguage.create(propertyIri, language);
+  }
+
+  @Nonnull
+  private IRI getAnnotationPropertyIri(Node propertyNode) {
     return IRI.create(propertyNode.get(PropertyFields.IRI).asString());
   }
 

@@ -72,13 +72,35 @@ public class CypherMultiLingualShortFormDictionary
         var row = result.next().asMap();
         var propertyNode = (Node) row.get("annotationProperty");
         var literalNode = (Node) row.get("value");
-        var propertyIri = IRI.create(propertyNode.get(PropertyFields.IRI).asString());
-        var language = literalNode.get(PropertyFields.LANGUAGE).asString();
-        var shortForm = literalNode.get(PropertyFields.LEXICAL_FORM).asString();
-        var dictionaryLanguage = DictionaryLanguage.create(propertyIri, language);
+        var dictionaryLanguage = getDictionaryLanguage(propertyNode, literalNode);
+        var shortForm = getShortForm(literalNode);
         mutableDictionaryMap.put(dictionaryLanguage, shortForm);
       }
       return ImmutableMap.copyOf(mutableDictionaryMap);
     });
+  }
+
+  @Nonnull
+  private DictionaryLanguage getDictionaryLanguage(Node propertyNode, Node literalNode) {
+    var propertyIri = getAnnotationPropertyIri(propertyNode);
+    var language = getLanguage(literalNode);
+    return DictionaryLanguage.create(propertyIri, language);
+  }
+
+  @Nonnull
+  private IRI getAnnotationPropertyIri(Node propertyNode) {
+    return IRI.create(propertyNode.get(PropertyFields.IRI).asString());
+  }
+
+  @Nonnull
+  private String getLanguage(Node literalNode) {
+    return literalNode.hasLabel(PropertyFields.LANGUAGE)
+        ? literalNode.get(PropertyFields.LANGUAGE).asString()
+        : "";
+  }
+
+  @Nonnull
+  private String getShortForm(Node literalNode) {
+    return literalNode.get(PropertyFields.LEXICAL_FORM).asString();
   }
 }
