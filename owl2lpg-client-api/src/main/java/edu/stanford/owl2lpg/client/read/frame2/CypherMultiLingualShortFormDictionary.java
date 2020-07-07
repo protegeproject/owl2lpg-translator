@@ -51,7 +51,7 @@ public class CypherMultiLingualShortFormDictionary
   public String getShortForm(@Nonnull OWLEntity owlEntity,
                              @Nonnull List<DictionaryLanguage> languages,
                              @Nonnull String defaultShortForm) {
-    var dictionaryMap = getShortForms(owlEntity, languages);
+    var dictionaryMap = getShortForms(owlEntity);
     return languages
         .stream()
         .map(language -> dictionaryMap.getOrDefault(language, null))
@@ -64,6 +64,15 @@ public class CypherMultiLingualShortFormDictionary
   @Override
   public ImmutableMap<DictionaryLanguage, String> getShortForms(@Nonnull OWLEntity owlEntity,
                                                                 @Nonnull List<DictionaryLanguage> languages) {
+    var dictionaryMap = getShortForms(owlEntity);
+    return languages
+        .stream()
+        .collect(ImmutableMap.toImmutableMap(
+            language -> language,
+            dictionaryMap::get));
+  }
+
+  private ImmutableMap<DictionaryLanguage, String> getShortForms(@Nonnull OWLEntity owlEntity) {
     var args = Parameters.forShortFormsDictionary(projectId, branchId, owlEntity.getIRI());
     return session.readTransaction(tx -> {
       var mutableDictionaryMap = Maps.<DictionaryLanguage, String>newHashMap();
