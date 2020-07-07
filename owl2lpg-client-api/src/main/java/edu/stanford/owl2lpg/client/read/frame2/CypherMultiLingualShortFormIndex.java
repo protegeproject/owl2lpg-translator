@@ -62,7 +62,8 @@ public class CypherMultiLingualShortFormIndex implements MultiLingualShortFormIn
     return languages
         .stream()
         .map(language -> entityMap.getOrDefault(language, null))
-        .filter(Objects::nonNull);
+        .filter(Objects::nonNull)
+        .distinct();
   }
 
   @Nonnull
