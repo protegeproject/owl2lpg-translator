@@ -20,7 +20,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class FrameAxiomAccessorImpl implements FrameAxiomAccessor {
+public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
 
   @Nonnull
   private final Session session;
@@ -29,14 +29,14 @@ public class FrameAxiomAccessorImpl implements FrameAxiomAccessor {
   private final NodeMapper nodeMapper;
 
   @Inject
-  public FrameAxiomAccessorImpl(@Nonnull Session session,
-                                @Nonnull NodeMapper nodeMapper) {
+  public AxiomSubjectAccessorImpl(@Nonnull Session session,
+                                  @Nonnull NodeMapper nodeMapper) {
     this.session = checkNotNull(session);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
   @Override
-  public Set<OWLAxiom> getFrameAxioms(AxiomContext context, OWLClass subject) {
+  public Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLClass subject) {
     var nodeIndex = getNodeIndex(context, subject);
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()

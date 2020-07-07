@@ -7,9 +7,9 @@ import edu.stanford.owl2lpg.client.DatabaseSessionScope;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Component(modules = FrameAxiomAccessorModule.class)
+@Component(modules = AxiomSubjectAccessorModule.class)
 @DatabaseSessionScope
-public interface DataAccessorComponent {
+public interface FrameAccessorComponent {
 
-  FrameAxiomAccessor getFrameAxiomAccessor();
+  AxiomSubjectAccessor getAxiomSubjectAccessor();
 }
