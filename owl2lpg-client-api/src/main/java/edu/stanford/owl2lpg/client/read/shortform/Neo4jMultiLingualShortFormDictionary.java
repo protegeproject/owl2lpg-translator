@@ -69,6 +69,7 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
     var dictionaryMap = getShortForms(owlEntity);
     return languages
         .stream()
+        .filter(dictionaryMap::containsKey)
         .collect(ImmutableMap.toImmutableMap(
             language -> language,
             dictionaryMap::get));
