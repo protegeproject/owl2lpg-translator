@@ -1,11 +1,8 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.google.common.collect.ImmutableMultiset;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.model.*;
+import edu.stanford.owl2lpg.translator.*;
 import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -29,6 +26,9 @@ public class CsvExporter {
   private final OntologyDocumentAxiomTranslator axiomTranslator;
 
   @Nonnull
+  private final ProjectBranchTranslator projectBranchTranslator;
+
+  @Nonnull
   private final CsvWriter<Node> nodesCsvWriter;
 
   @Nonnull
@@ -50,11 +50,13 @@ public class CsvExporter {
 
   @Inject
   public CsvExporter(@Nonnull OntologyDocumentAxiomTranslator axiomTranslator,
+                     @Nonnull ProjectBranchTranslator projectBranchTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
                      @Nonnull ExportTracker<Node> nodeTracker,
                      @Nonnull ExportTracker<Edge> edgeTracker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.projectBranchTranslator = checkNotNull(projectBranchTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
     this.relationshipsCsvWriter = checkNotNull(relationshipsCsvWriter);
     this.nodeTracker = checkNotNull(nodeTracker);
@@ -80,6 +82,13 @@ public class CsvExporter {
   public void write(@Nonnull OntologyDocumentId documentId,
                     @Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(documentId, axiom);
+    writeTranslation(translation);
+  }
+
+  public void write(@Nonnull ProjectId projectId,
+                    @Nonnull BranchId branchId,
+                    @Nonnull OntologyDocumentId documentId) {
+    var translation = projectBranchTranslator.translate(projectId, branchId, documentId);
     writeTranslation(translation);
   }
 
