@@ -44,7 +44,7 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
   private final Session session;
 
   @Nonnull
-  private final FullTextIndexName annotationValueFullTextIndexName;
+  private final Neo4jFullTextIndexName annotationValueFullTextIndexName;
 
   @Nonnull
   private final Neo4jNodeTranslator nodeTranslator;
@@ -53,7 +53,7 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
   public Neo4jSearchableMultiLingualShortFormDictionary(@Nonnull ProjectId projectId,
                                                         @Nonnull BranchId branchId,
                                                         @Nonnull Session session,
-                                                        @Nonnull FullTextIndexName annotationValueFullTextIndexName,
+                                                        @Nonnull Neo4jFullTextIndexName annotationValueFullTextIndexName,
                                                         @Nonnull Neo4jNodeTranslator nodeTranslator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);

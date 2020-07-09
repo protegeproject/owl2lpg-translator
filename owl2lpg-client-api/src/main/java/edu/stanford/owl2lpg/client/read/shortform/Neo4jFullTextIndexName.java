@@ -7,10 +7,10 @@ import com.google.auto.value.AutoValue;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class FullTextIndexName {
+public abstract class Neo4jFullTextIndexName {
 
-  public static FullTextIndexName create(String name) {
-    return new AutoValue_FullTextIndexName(name);
+  public static Neo4jFullTextIndexName create(String name) {
+    return new AutoValue_Neo4J_FullTextIndexName(name);
   }
 
   public abstract String getName();

@@ -23,11 +23,11 @@ public class MultiLingualDictionaryContextModule {
   private final BranchId branchId;
 
   @Nonnull
-  private final FullTextIndexName annotationValueFullTextIndexName;
+  private final Neo4jFullTextIndexName annotationValueFullTextIndexName;
 
   public MultiLingualDictionaryContextModule(@Nonnull ProjectId projectId,
                                              @Nonnull BranchId branchId,
-                                             @Nonnull FullTextIndexName annotationValueFullTextIndexName) {
+                                             @Nonnull Neo4jFullTextIndexName annotationValueFullTextIndexName) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.annotationValueFullTextIndexName = checkNotNull(annotationValueFullTextIndexName);
@@ -44,7 +44,7 @@ public class MultiLingualDictionaryContextModule {
   }
 
   @Provides
-  public FullTextIndexName provideAnnotationValueFullTextIndexName() {
+  public Neo4jFullTextIndexName provideAnnotationValueFullTextIndexName() {
     return annotationValueFullTextIndexName;
   }
 }

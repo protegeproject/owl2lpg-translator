@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.frame;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.owl2lpg.client.read.shortform.FullTextIndexName;
+import edu.stanford.owl2lpg.client.read.shortform.Neo4jFullTextIndexName;
 import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -45,7 +45,7 @@ public class Parameters {
 
   public static Value forShortFormsContaining(ProjectId projectId,
                                               BranchId branchId,
-                                              FullTextIndexName annotationValueFullTextIndexName,
+                                              Neo4jFullTextIndexName annotationValueFullTextIndexName,
                                               List<SearchString> searchStrings) {
     return new MapValue(Map.of(
         "projectId", new StringValue(projectId.getIdentifier()),
