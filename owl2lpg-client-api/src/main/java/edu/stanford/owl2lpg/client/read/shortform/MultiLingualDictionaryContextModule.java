@@ -33,6 +33,11 @@ public class MultiLingualDictionaryContextModule {
     this.annotationValueFullTextIndexName = checkNotNull(annotationValueFullTextIndexName);
   }
 
+  public MultiLingualDictionaryContextModule(@Nonnull ProjectId projectId,
+                                             @Nonnull BranchId branchId) {
+    this(projectId, branchId, Neo4jFullTextIndexName.create("annotation_value_index"));
+  }
+
   @Provides
   public ProjectId provideProjectId() {
     return projectId;
