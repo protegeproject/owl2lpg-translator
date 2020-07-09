@@ -5,13 +5,12 @@ import dagger.Module;
 import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormDictionary;
 import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormIndex;
 import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShortFormDictionary;
-import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = OwlDataFactoryModule.class)
+@Module(includes = Neo4jNodeTranslatorModule.class)
 public abstract class Neo4jMultiLingualShortFormModule {
 
   @Binds
