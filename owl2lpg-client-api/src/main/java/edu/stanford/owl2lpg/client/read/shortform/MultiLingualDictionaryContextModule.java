@@ -22,10 +22,15 @@ public class MultiLingualDictionaryContextModule {
   @Nonnull
   private final BranchId branchId;
 
+  @Nonnull
+  private final FullTextIndexName annotationValueFullTextIndexName;
+
   public MultiLingualDictionaryContextModule(@Nonnull ProjectId projectId,
-                                             @Nonnull BranchId branchId) {
+                                             @Nonnull BranchId branchId,
+                                             @Nonnull FullTextIndexName annotationValueFullTextIndexName) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
+    this.annotationValueFullTextIndexName = checkNotNull(annotationValueFullTextIndexName);
   }
 
   @Provides
@@ -36,5 +41,10 @@ public class MultiLingualDictionaryContextModule {
   @Provides
   public BranchId provideBranchId() {
     return branchId;
+  }
+
+  @Provides
+  public FullTextIndexName provideAnnotationValueFullTextIndexName() {
+    return annotationValueFullTextIndexName;
   }
 }

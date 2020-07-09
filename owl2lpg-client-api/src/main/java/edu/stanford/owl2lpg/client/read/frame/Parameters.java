@@ -1,6 +1,8 @@
 package edu.stanford.owl2lpg.client.read.frame;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.bmir.protege.web.server.shortform.SearchString;
+import edu.stanford.owl2lpg.client.read.shortform.FullTextIndexName;
 import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -12,7 +14,10 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -36,6 +41,19 @@ public class Parameters {
         "projectId", new StringValue(projectId.getIdentifier()),
         "branchId", new StringValue(branchId.getIdentifier()),
         "entityName", new StringValue(entityName)));
+  }
+
+  public static Value forShortFormsContaining(ProjectId projectId,
+                                              BranchId branchId,
+                                              FullTextIndexName annotationValueFullTextIndexName,
+                                              List<SearchString> searchStrings) {
+    return new MapValue(Map.of(
+        "projectId", new StringValue(projectId.getIdentifier()),
+        "branchId", new StringValue(branchId.getIdentifier()),
+        "annotationValueFullTextIndexName", new StringValue(annotationValueFullTextIndexName.getName()),
+        "searchString", new StringValue(searchStrings.stream()
+            .map(SearchString::getSearchString)
+            .collect(joining(" AND ")))));
   }
 
   public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
