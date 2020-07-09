@@ -15,7 +15,6 @@ import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -46,15 +45,18 @@ public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormInd
   @Nonnull
   private final Session session;
 
-  private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
+  @Nonnull
+  private final OWLDataFactory dataFactory;
 
   @Inject
   public Neo4jMultiLingualShortFormIndex(@Nonnull ProjectId projectId,
                                          @Nonnull BranchId branchId,
-                                         @Nonnull Session session) {
+                                         @Nonnull Session session,
+                                         @Nonnull OWLDataFactory dataFactory) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.session = checkNotNull(session);
+    this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Nonnull
