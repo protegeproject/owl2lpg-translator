@@ -25,6 +25,11 @@ public class NodeToOwlMapper {
     return nodeMapper.toObject(endNode, nodeIndex, OWLClassExpression.class);
   }
 
+  public Set<OWLClassExpression> toClassExprs(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
+    var endNode = nodeIndex.getEndNodes(mainNode, CLASS_EXPRESSION.name());
+    return nodeMapper.toObjects(endNode, nodeIndex, OWLClassExpression.class);
+  }
+
   public OWLClassExpression toSubClassExpr(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var endNode = nodeIndex.getEndNode(mainNode, SUB_CLASS_EXPRESSION.name());
     return nodeMapper.toObject(endNode, nodeIndex, OWLClassExpression.class);
