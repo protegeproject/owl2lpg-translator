@@ -10,6 +10,7 @@ import edu.stanford.owl2lpg.client.DatabaseSessionScope;
  */
 @Component(modules = {
     DatabaseModule.class,
+    AnnotationValueFullTextIndexNameModule.class,
     MultiLingualDictionaryContextModule.class,
     Neo4jMultiLingualShortFormModule.class
 })
