@@ -626,7 +626,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         OBJECT_PROPERTY_EXPRESSION, axiom.getFirstProperty(),
         translations, edges);
     var ope2Node = addPropertyExprTranslationAndEdge(axiomNode,
-        OBJECT_PROPERTY_EXPRESSION, axiom.getSecondProperty(),
+        INVERSE_OBJECT_PROPERTY_EXPRESSION, axiom.getSecondProperty(),
         translations, edges);
     addInverseOfRelation(ope1Node, ope2Node, edges);
     addInverseOfRelation(ope2Node, ope1Node, edges);
