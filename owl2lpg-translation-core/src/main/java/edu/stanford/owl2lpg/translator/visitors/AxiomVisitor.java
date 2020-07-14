@@ -972,14 +972,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   }
 
   private void addDomainRelation(Node propertyNode, Node domainNode, Builder<Edge> edges) {
-    if (augmentedEdgeInclusionChecker.allows(DOMAIN)) {
-      addAugmentedEdge(propertyNode, domainNode, DOMAIN, edges);
+    if (augmentedEdgeInclusionChecker.allows(HAS_DOMAIN)) {
+      addAugmentedEdge(propertyNode, domainNode, HAS_DOMAIN, edges);
     }
   }
 
   private void addRangeRelation(Node propertyNode, Node rangeNode, Builder<Edge> edges) {
-    if (augmentedEdgeInclusionChecker.allows(RANGE)) {
-      addAugmentedEdge(propertyNode, rangeNode, RANGE, edges);
+    if (augmentedEdgeInclusionChecker.allows(HAS_RANGE)) {
+      addAugmentedEdge(propertyNode, rangeNode, HAS_RANGE, edges);
     }
   }
 
