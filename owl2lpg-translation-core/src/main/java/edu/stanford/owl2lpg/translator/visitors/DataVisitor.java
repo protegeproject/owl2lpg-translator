@@ -164,7 +164,10 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     var mainNode = nodeFactory.createNode(facet, FACET_RESTRICTION);
     var translations = new ImmutableList.Builder<Translation>();
     var edges = new ImmutableList.Builder<Edge>();
-    var constrainingFacetTranslation = annotationValueTranslator.translate(facet.getFacet().getIRI());
+    var facetIri = facet.getFacet().getIRI();
+    var facetNode = nodeFactory.createNode(facetIri, FACET,
+        Properties.of(PropertyFields.IRI, String.valueOf(facetIri)));
+    var constrainingFacetTranslation = Translation.create(facetIri, facetNode);
     translations.add(constrainingFacetTranslation);
     edges.add(edgeFactory.createEdge(mainNode,
         constrainingFacetTranslation.getMainNode(),
