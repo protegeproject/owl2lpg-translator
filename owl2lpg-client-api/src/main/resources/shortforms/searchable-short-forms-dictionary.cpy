@@ -4,4 +4,5 @@ MATCH (o)-[:AXIOM]->(n:AnnotationAssertion)-[:ANNOTATION_SUBJECT]->(:IRI)<-[:ENT
 MATCH (n)-[:ANNOTATION_PROPERTY]->(annotationProperty:AnnotationProperty)
 MATCH (n)-[:ANNOTATION_VALUE]->(value:Literal)
 RETURN entity, annotationProperty, value
-LIMIT 1000
+SKIP $offset
+LIMIT $limit

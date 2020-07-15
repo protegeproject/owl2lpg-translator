@@ -1,12 +1,9 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.primitives.ImmutableIntArray;
-import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShortFormDictionary;
-import edu.stanford.bmir.protege.web.server.shortform.ShortFormMatch;
+import com.google.common.collect.*;
+import edu.stanford.bmir.protege.web.server.shortform.*;
+import edu.stanford.bmir.protege.web.shared.pagination.Page;
+import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.frame.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -19,8 +16,8 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -64,23 +61,30 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
 
   @Nonnull
   @Override
-  public Stream<ShortFormMatch> getShortFormsContaining(@Nonnull List<SearchString> searchStrings,
-                                                        @Nonnull Set<EntityType<?>> entityTypes,
-                                                        @Nonnull List<DictionaryLanguage> languages) {
-    var shortFormMatchMultiMap = getShortFormsContaining(searchStrings, entityTypes);
-    return languages
+  public Page<EntityShortFormMatches> getShortFormsContaining(@Nonnull List<SearchString> searchStrings,
+                                                              @Nonnull Set<EntityType<?>> entityTypes,
+                                                              @Nonnull List<DictionaryLanguage> languages,
+                                                              @Nonnull PageRequest pageRequest) {
+    var shortFormMatchMultiMap = getShortFormsContaining(searchStrings, entityTypes, pageRequest);
+    var result = languages
         .stream()
         .flatMap(language -> shortFormMatchMultiMap.get(language).stream())
-        .distinct();
+        .distinct()
+        .collect(ImmutableList.toImmutableList());
+    return new Page<>(pageRequest.getPageNumber(),
+        pageRequest.getPageSize(),
+        result,
+        result.size());
   }
 
   @Nonnull
-  public Multimap<DictionaryLanguage, ShortFormMatch> getShortFormsContaining(List<SearchString> searchStrings,
-                                                                              Set<EntityType<?>> entityTypes) {
+  public Multimap<DictionaryLanguage, EntityShortFormMatches> getShortFormsContaining(List<SearchString> searchStrings,
+                                                                                      Set<EntityType<?>> entityTypes,
+                                                                                      PageRequest pageRequest) {
     var args = Parameters.forShortFormsContaining(
-        projectId, branchId, annotationValueFullTextIndexName, searchStrings);
-    return session.readTransaction(tx -> {
-      var mutableDictionaryMap = HashMultimap.<DictionaryLanguage, ShortFormMatch>create();
+        projectId, branchId, annotationValueFullTextIndexName, searchStrings, pageRequest);
+    var output = session.readTransaction(tx -> {
+      var entityShortFormMatchMap = Maps.<DictionaryLanguage, Multimap<OWLEntity, ShortFormMatch>>newHashMap();
       var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);
       while (result.hasNext()) {
         var row = result.next().asMap();
@@ -90,30 +94,46 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
         var entity = nodeTranslator.getOwlEntity(entityNode);
         if (entityTypes.contains(entity.getEntityType())) {
           var shortForm = nodeTranslator.getShortForm(literalNode);
-          var dictionaryLanguage = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
-          ShortFormMatch shortFormMatch = getShortFormMatch(entity, shortForm, searchStrings, dictionaryLanguage);
-          mutableDictionaryMap.put(dictionaryLanguage, shortFormMatch);
+          var language = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
+          var shortFormMatch = getShortFormMatch(entity, shortForm, searchStrings, language);
+          var shortFormMultimap = entityShortFormMatchMap.get(language);
+          if (shortFormMultimap == null) {
+            shortFormMultimap = HashMultimap.create();
+            entityShortFormMatchMap.put(language, shortFormMultimap);
+          }
+          shortFormMultimap.put(entity, shortFormMatch);
         }
       }
-      return ImmutableMultimap.copyOf(mutableDictionaryMap);
+      return entityShortFormMatchMap;
     });
+    return toMultimap(output);
+  }
+
+  @Nonnull
+  private static Multimap<DictionaryLanguage, EntityShortFormMatches>
+  toMultimap(Map<DictionaryLanguage, Multimap<OWLEntity, ShortFormMatch>> output) {
+    var entityShortFormMatchesMultimap = HashMultimap.<DictionaryLanguage, EntityShortFormMatches>create();
+    for (var language : output.keySet()) {
+      var shortFormMatchMultimap = output.get(language);
+      for (var entity : shortFormMatchMultimap.keySet()) {
+        var shortFormMatches = shortFormMatchMultimap.get(entity);
+        var entityShortFormMatches = EntityShortFormMatches.get(entity, ImmutableList.copyOf(shortFormMatches));
+        entityShortFormMatchesMultimap.put(language, entityShortFormMatches);
+      }
+    }
+    return entityShortFormMatchesMultimap;
   }
 
   @Nonnull
   private ShortFormMatch getShortFormMatch(OWLEntity entity, String shortForm,
                                            List<SearchString> searchStrings,
-                                           DictionaryLanguage dictionaryLanguage) {
-    var matchPositions = new int[searchStrings.size()];
-    var matchCount = 0;
-    for (var i = 0; i < searchStrings.size(); i++) {
-      var searchString = searchStrings.get(i).getSearchString();
+                                           DictionaryLanguage languange) {
+    var matchPositions = Lists.<ShortFormMatchPosition>newArrayList();
+    for (var ss : searchStrings) {
+      var searchString = ss.getSearchString();
       var matchIndex = shortForm.toLowerCase().indexOf(searchString);
-      matchPositions[i] = matchIndex;
-      if (matchIndex != -1) {
-        matchCount++;
-      }
+      matchPositions.add(ShortFormMatchPosition.get(matchIndex, matchIndex + searchString.length() - 1));
     }
-    return ShortFormMatch.get(entity, shortForm, dictionaryLanguage, matchCount,
-        ImmutableIntArray.copyOf(matchPositions));
+    return ShortFormMatch.get(entity, shortForm, languange, ImmutableList.copyOf(matchPositions));
   }
 }
