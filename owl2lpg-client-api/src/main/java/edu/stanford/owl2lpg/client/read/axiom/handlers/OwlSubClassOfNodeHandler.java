@@ -21,7 +21,6 @@ public class OwlSubClassOfNodeHandler implements NodeHandler<OWLSubClassOfAxiom>
   private final NodeToOwlMapper nodeToOwlMapper;
 
   @Inject
-
   public OwlSubClassOfNodeHandler(@Nonnull OWLDataFactory dataFactory,
                                   @Nonnull NodeToOwlMapper nodeToOwlMapper) {
     this.dataFactory = checkNotNull(dataFactory);
