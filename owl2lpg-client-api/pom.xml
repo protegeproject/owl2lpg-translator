@@ -18,8 +18,8 @@
 
   <properties>
     <neo4j-driver.version>4.0.1</neo4j-driver.version>
-    <webprotege-shared.version>4.0.0</webprotege-shared.version>
-    <webprotege-server-api.version>4.0.0</webprotege-server-api.version>
+    <webprotege-shared.version>5.0.0-SNAPSHOT</webprotege-shared.version>
+    <webprotege-server-api.version>5.0.0-SNAPSHOT</webprotege-server-api.version>
   </properties>
 
   <dependencies>
