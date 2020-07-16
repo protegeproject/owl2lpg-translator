@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.read.axiom.handlers;
 
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
+import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataUnionOf;
@@ -32,7 +33,7 @@ public class OwlDataUnionOfNodeHandler implements NodeHandler<OWLDataUnionOf> {
 
   @Override
   public String getLabel() {
-    return null;
+    return NodeLabels.DATA_UNION_OF.getMainLabel();
   }
 
   @Override
