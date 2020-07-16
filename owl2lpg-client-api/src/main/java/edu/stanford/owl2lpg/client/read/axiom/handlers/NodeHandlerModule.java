@@ -8,7 +8,7 @@ import dagger.multibindings.IntoSet;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = OwlDataFactoryModule.class)
+@Module
 public abstract class NodeHandlerModule {
 
   @Binds

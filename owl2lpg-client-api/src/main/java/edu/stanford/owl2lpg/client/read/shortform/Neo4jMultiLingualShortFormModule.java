@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.read.shortform;
 
 import dagger.Binds;
 import dagger.Module;
+import edu.stanford.bmir.protege.web.server.shortform.MultiLingualDictionary;
 import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormDictionary;
 import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormIndex;
 import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShortFormDictionary;
@@ -12,6 +13,10 @@ import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShor
  */
 @Module(includes = Neo4jNodeTranslatorModule.class)
 public abstract class Neo4jMultiLingualShortFormModule {
+  
+  @Binds
+  public abstract MultiLingualDictionary
+  provideMultiLingualDictionary(MultiLingualDictionaryImpl impl);
 
   @Binds
   public abstract MultiLingualShortFormIndex
