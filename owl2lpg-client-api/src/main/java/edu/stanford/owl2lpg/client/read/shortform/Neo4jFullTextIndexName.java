@@ -10,7 +10,7 @@ import com.google.auto.value.AutoValue;
 public abstract class Neo4jFullTextIndexName {
 
   public static Neo4jFullTextIndexName create(String name) {
-    return new AutoValue_Neo4J_FullTextIndexName(name);
+    return new AutoValue_Neo4jFullTextIndexName(name);
   }
 
   public abstract String getName();
