@@ -129,13 +129,13 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
   @Nonnull
   private ShortFormMatch getShortFormMatch(OWLEntity entity, String shortForm,
                                            List<SearchString> searchStrings,
-                                           DictionaryLanguage languange) {
+                                           DictionaryLanguage language) {
     var matchPositions = Lists.<ShortFormMatchPosition>newArrayList();
     for (var ss : searchStrings) {
       var searchString = ss.getSearchString();
       var matchIndex = shortForm.toLowerCase().indexOf(searchString);
       matchPositions.add(ShortFormMatchPosition.get(matchIndex, matchIndex + searchString.length() - 1));
     }
-    return ShortFormMatch.get(entity, shortForm, languange, ImmutableList.copyOf(matchPositions));
+    return ShortFormMatch.get(entity, shortForm, language, ImmutableList.copyOf(matchPositions));
   }
 }
