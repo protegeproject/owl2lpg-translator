@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.axiom;
 
 import edu.stanford.owl2lpg.client.read.frame.Parameters;
 import edu.stanford.owl2lpg.model.AxiomContext;
-import org.neo4j.driver.Session;
+import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -31,15 +31,15 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
   private static final String NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY = read(NAMED_INDIVIDUAL_AXIOM_SUBJECT_QUERY_FILE);
 
   @Nonnull
-  private final Session session;
+  private final Driver driver;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomSubjectAccessorImpl(@Nonnull Session session,
+  public AxiomSubjectAccessorImpl(@Nonnull Driver driver,
                                   @Nonnull NodeMapper nodeMapper) {
-    this.session = checkNotNull(session);
+    this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -59,23 +59,25 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
   }
 
   private NodeIndex getNodeIndex(AxiomContext context, OWLEntity subject, String queryString) {
-    var args = Parameters.forSubject(context, subject);
-    return session.readTransaction(tx -> {
-      var result = tx.run(queryString, args);
-      var nodeIndexBuilder = new NodeIndexImpl.Builder();
-      while (result.hasNext()) {
-        var row = result.next().asMap();
-        for (var column : row.entrySet()) {
-          if (column.getKey().equals("p")) {
-            var path = (Path) column.getValue();
-            if (path != null) {
-              path.spliterator().forEachRemaining(nodeIndexBuilder::add);
+    try (var session = driver.session()) {
+      var args = Parameters.forSubject(context, subject);
+      return session.readTransaction(tx -> {
+        var result = tx.run(queryString, args);
+        var nodeIndexBuilder = new NodeIndexImpl.Builder();
+        while (result.hasNext()) {
+          var row = result.next().asMap();
+          for (var column : row.entrySet()) {
+            if (column.getKey().equals("p")) {
+              var path = (Path) column.getValue();
+              if (path != null) {
+                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
+              }
             }
           }
         }
-      }
-      return nodeIndexBuilder.build();
-    });
+        return nodeIndexBuilder.build();
+      });
+    }
   }
 
   @Nonnull

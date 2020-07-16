@@ -7,7 +7,7 @@ import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.frame.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Session;
+import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -35,7 +35,7 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
   private final BranchId branchId;
 
   @Nonnull
-  private final Session session;
+  private final Driver driver;
 
   @Nonnull
   private final Neo4jNodeTranslator nodeTranslator;
@@ -43,11 +43,11 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
   @Inject
   public Neo4jMultiLingualShortFormDictionary(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull Session session,
+                                              @Nonnull Driver driver,
                                               @Nonnull Neo4jNodeTranslator nodeTranslator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.session = checkNotNull(session);
+    this.driver = checkNotNull(driver);
     this.nodeTranslator = checkNotNull(nodeTranslator);
   }
 
@@ -79,19 +79,21 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
   }
 
   private ImmutableMap<DictionaryLanguage, String> getShortForms(@Nonnull OWLEntity owlEntity) {
-    var args = Parameters.forShortFormsDictionary(projectId, branchId, owlEntity.getIRI());
-    return session.readTransaction(tx -> {
-      var mutableDictionaryMap = Maps.<DictionaryLanguage, String>newHashMap();
-      var result = tx.run(SHORT_FORMS_DICTIONARY_QUERY, args);
-      while (result.hasNext()) {
-        var row = result.next().asMap();
-        var propertyNode = (Node) row.get("annotationProperty");
-        var literalNode = (Node) row.get("value");
-        var dictionaryLanguage = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
-        var shortForm = nodeTranslator.getShortForm(literalNode);
-        mutableDictionaryMap.put(dictionaryLanguage, shortForm);
-      }
-      return ImmutableMap.copyOf(mutableDictionaryMap);
-    });
+    try (var session = driver.session()) {
+      var args = Parameters.forShortFormsDictionary(projectId, branchId, owlEntity.getIRI());
+      return session.readTransaction(tx -> {
+        var mutableDictionaryMap = Maps.<DictionaryLanguage, String>newHashMap();
+        var result = tx.run(SHORT_FORMS_DICTIONARY_QUERY, args);
+        while (result.hasNext()) {
+          var row = result.next().asMap();
+          var propertyNode = (Node) row.get("annotationProperty");
+          var literalNode = (Node) row.get("value");
+          var dictionaryLanguage = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
+          var shortForm = nodeTranslator.getShortForm(literalNode);
+          mutableDictionaryMap.put(dictionaryLanguage, shortForm);
+        }
+        return ImmutableMap.copyOf(mutableDictionaryMap);
+      });
+    }
   }
 }
