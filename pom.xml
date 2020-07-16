@@ -17,6 +17,7 @@
     <module>owl2lpg-translation-exporter</module>
     <module>owl2lpg-translation-cli</module>
     <module>owl2lpg-client-api</module>
+    <module>neo4j-plugin-text-analyzer</module>
   </modules>
 
   <scm>
