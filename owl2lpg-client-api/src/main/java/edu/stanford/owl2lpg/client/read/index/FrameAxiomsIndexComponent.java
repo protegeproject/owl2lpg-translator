@@ -1,9 +1,10 @@
-package edu.stanford.owl2lpg.client.read.frame2;
+package edu.stanford.owl2lpg.client.read.index;
 
 import dagger.Component;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomSubjectAccessorModule;
 import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
+import edu.stanford.owl2lpg.client.read.frame2.FrameAxiomsContextModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
