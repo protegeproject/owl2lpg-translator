@@ -60,7 +60,7 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
 
   private NodeIndex getNodeIndex(AxiomContext context, OWLEntity subject, String queryString) {
     try (var session = driver.session()) {
-      var args = Parameters.forSubject(context, subject);
+      var args = Parameters.forEntity(context, subject);
       return session.readTransaction(tx -> {
         var result = tx.run(queryString, args);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();

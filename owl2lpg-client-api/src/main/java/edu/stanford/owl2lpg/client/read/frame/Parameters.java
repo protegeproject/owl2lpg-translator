@@ -69,12 +69,8 @@ public class Parameters {
         "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
   }
 
-  public static Value forSubject(@Nonnull AxiomContext context, @Nonnull OWLEntity subject) {
-    return new MapValue(Map.of(
-        "subjectIri", new StringValue(subject.getIRI().toString()),
-        "projectId", new StringValue(context.getProjectId().getIdentifier()),
-        "branchId", new StringValue(context.getBranchId().getIdentifier()),
-        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
+  public static Value forEntity(@Nonnull AxiomContext context, @Nonnull OWLEntity entity) {
+    return forEntityIri(context, entity.getIRI());
   }
 
   public static MapValue forShortForm(@Nonnull ImmutableList<IRI> entities,
