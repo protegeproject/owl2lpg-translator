@@ -5,7 +5,7 @@ import edu.stanford.bmir.protege.web.server.shortform.*;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
-import edu.stanford.owl2lpg.client.read.frame.Parameters;
+import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;

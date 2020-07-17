@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.frame;
+package edu.stanford.owl2lpg.client.read;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
