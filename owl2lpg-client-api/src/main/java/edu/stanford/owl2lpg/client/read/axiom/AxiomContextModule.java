@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.frame2;
+package edu.stanford.owl2lpg.client.read.axiom;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public class FrameAxiomsContextModule {
+public class AxiomContextModule {
 
   @Nonnull
   private final ProjectId projectId;
@@ -27,9 +27,9 @@ public class FrameAxiomsContextModule {
   @Nonnull
   private final OntologyDocumentId ontologyDocumentId;
 
-  public FrameAxiomsContextModule(@Nonnull ProjectId projectId,
-                                  @Nonnull BranchId branchId,
-                                  @Nonnull OntologyDocumentId ontologyDocumentId) {
+  public AxiomContextModule(@Nonnull ProjectId projectId,
+                            @Nonnull BranchId branchId,
+                            @Nonnull OntologyDocumentId ontologyDocumentId) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
