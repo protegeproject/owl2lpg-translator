@@ -10,10 +10,13 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
  */
 @Component(modules = {
     AxiomSubjectAccessorModule.class,
+    AxiomByEntityAccessorModule.class,
     OwlDataFactoryModule.class
 })
 @DatabaseSessionScope
 public interface AxiomAccessorComponent {
 
   AxiomSubjectAccessor getAxiomSubjectAccessor();
+
+  AxiomByEntityAccessor getAxiomByEntityAccessor();
 }
