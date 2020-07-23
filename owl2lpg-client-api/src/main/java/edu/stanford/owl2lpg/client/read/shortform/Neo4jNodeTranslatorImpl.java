@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
@@ -12,13 +13,10 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.semanticweb.owlapi.model.EntityType.*;
-import static org.semanticweb.owlapi.model.EntityType.DATATYPE;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -38,7 +36,7 @@ public class Neo4jNodeTranslatorImpl implements Neo4jNodeTranslator {
   @Override
   public OWLEntity getOwlEntity(Node entityNode) {
     var entityIri = IRI.create(entityNode.get(PropertyFields.IRI).asString());
-    var entityType = entityTypeMap.get(entityNode.labels());
+    var entityType = getEntityTypeFromNodeLabels(entityNode.labels());
     return dataFactory.getOWLEntity(entityType, entityIri);
   }
 
@@ -68,13 +66,25 @@ public class Neo4jNodeTranslatorImpl implements Neo4jNodeTranslator {
         : "";
   }
 
-  private static final Map<List<String>, EntityType<?>> entityTypeMap =
-      new ImmutableMap.Builder<List<String>, EntityType<?>>()
-          .put(NodeLabels.CLASS.asList(), CLASS)
-          .put(NodeLabels.OBJECT_PROPERTY.asList(), OBJECT_PROPERTY)
-          .put(NodeLabels.DATA_PROPERTY.asList(), DATA_PROPERTY)
-          .put(NodeLabels.ANNOTATION_PROPERTY.asList(), ANNOTATION_PROPERTY)
-          .put(NodeLabels.NAMED_INDIVIDUAL.asList(), NAMED_INDIVIDUAL)
-          .put(NodeLabels.DATATYPE.asList(), DATATYPE)
-          .build();
+  private static EntityType<?> getEntityTypeFromNodeLabels(Iterable<String> nodeLabels) {
+    var labelList = Lists.newArrayList(nodeLabels);
+    if (isEqual(labelList, NodeLabels.CLASS.asList())) {
+      return CLASS;
+    } else if (isEqual(labelList, NodeLabels.OBJECT_PROPERTY.asList())) {
+      return OBJECT_PROPERTY;
+    } else if (isEqual(labelList, NodeLabels.DATA_PROPERTY.asList())) {
+      return DATA_PROPERTY;
+    } else if (isEqual(labelList, NodeLabels.ANNOTATION_PROPERTY.asList())) {
+      return ANNOTATION_PROPERTY;
+    } else if (isEqual(labelList, NodeLabels.NAMED_INDIVIDUAL.asList())) {
+      return NAMED_INDIVIDUAL;
+    } else if (isEqual(labelList, NodeLabels.DATATYPE.asList())) {
+      return DATATYPE;
+    }
+    throw new NullPointerException("Cannot find an entity type for labels: " + labelList);
+  }
+
+  private static boolean isEqual(List<String> list1, List<String> list2) {
+    return Sets.newHashSet(list1).equals(Sets.newHashSet(list2));
+  }
 }
