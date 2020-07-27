@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.client.read.shortform;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
@@ -31,7 +30,6 @@ public class LocalNameFullTextIndexNameModule {
 
   @Provides
   @Named("localNameFullTextIndexName")
-  @DatabaseSessionScope
   public Neo4jFullTextIndexName getLocalNameFullTextIndexName() {
     return Neo4jFullTextIndexName.create(localNameFullTextIndexName);
   }
