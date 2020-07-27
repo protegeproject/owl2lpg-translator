@@ -5,6 +5,7 @@ import dagger.Provides;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 
 import javax.annotation.Nonnull;
+import javax.inject.Named;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,10 +19,10 @@ public class AnnotationValueFullTextIndexNameModule {
   private static final String DEFAULT_INDEX_NAME = "annotation_value_index";
 
   @Nonnull
-  private final String annotationValueFullIndexName;
+  private final String annotationValueFullTextIndexName;
 
-  public AnnotationValueFullTextIndexNameModule(@Nonnull String annotationValueFullIndexName) {
-    this.annotationValueFullIndexName = checkNotNull(annotationValueFullIndexName);
+  public AnnotationValueFullTextIndexNameModule(@Nonnull String annotationValueFullTextIndexName) {
+    this.annotationValueFullTextIndexName = checkNotNull(annotationValueFullTextIndexName);
   }
 
   public AnnotationValueFullTextIndexNameModule() {
@@ -29,8 +30,9 @@ public class AnnotationValueFullTextIndexNameModule {
   }
 
   @Provides
+  @Named("annotationValueFullTextIndexName")
   @DatabaseSessionScope
   public Neo4jFullTextIndexName getAnnotationValueFullTextIndexName() {
-    return Neo4jFullTextIndexName.create(annotationValueFullIndexName);
+    return Neo4jFullTextIndexName.create(annotationValueFullTextIndexName);
   }
 }

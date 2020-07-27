@@ -47,13 +47,13 @@ public class Parameters {
 
   public static Value forShortFormsContaining(ProjectId projectId,
                                               BranchId branchId,
-                                              Neo4jFullTextIndexName annotationValueFullTextIndexName,
+                                              Neo4jFullTextIndexName fullTextIndexName,
                                               List<SearchString> searchStrings,
                                               PageRequest pageRequest) {
     return new MapValue(Map.of(
         "projectId", new StringValue(projectId.getIdentifier()),
         "branchId", new StringValue(branchId.getIdentifier()),
-        "annotationValueFullTextIndexName", new StringValue(annotationValueFullTextIndexName.getName()),
+        "fullTextIndexName", new StringValue(fullTextIndexName.getName()),
         "searchString", new StringValue(searchStrings.stream()
             .map(SearchString::getSearchString)
             .collect(joining(" AND "))),

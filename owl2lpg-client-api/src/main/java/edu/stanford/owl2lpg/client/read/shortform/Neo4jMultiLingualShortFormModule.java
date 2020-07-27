@@ -11,9 +11,11 @@ import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShor
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = Neo4jNodeTranslatorModule.class)
+@Module(includes = {
+    Neo4jNodeTranslatorModule.class,
+    Neo4jSearchableMultiLingualShortFormModule.class})
 public abstract class Neo4jMultiLingualShortFormModule {
-  
+
   @Binds
   public abstract MultiLingualDictionary
   provideMultiLingualDictionary(MultiLingualDictionaryImpl impl);
