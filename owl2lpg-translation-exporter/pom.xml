@@ -20,7 +20,7 @@
 
   <properties>
     <jackson.version>2.9.10</jackson.version>
-    <webprotege-server-core.version>4.0.0-beta-3-SNAPSHOT</webprotege-server-core.version>
+    <webprotege-server-core.version>5.0.0-SNAPSHOT</webprotege-server-core.version>
   </properties>
 
   <dependencies>
