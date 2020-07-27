@@ -17,6 +17,7 @@
     <module>owl2lpg-translation-exporter</module>
     <module>owl2lpg-translation-cli</module>
     <module>owl2lpg-client-api</module>
+    <module>neo4j-plugin-text-analyzer</module>
   </modules>
 
   <scm>
@@ -133,13 +134,6 @@
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.scm</groupId>
-              <artifactId>maven-scm-provider-gitexe</artifactId>
-              <version>1.9</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <tagNameFormat>v@{project.version}</tagNameFormat>

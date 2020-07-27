@@ -71,7 +71,8 @@ public enum NodeLabels {
   DATA_UNION_OF("DataUnionOf", DATA_RANGE),
   DATA_ONE_OF("DataOneOf", DATA_RANGE),
   DATATYPE_RESTRICTION("DatatypeRestriction", DATA_RANGE),
-  FACET_RESTRICTION("DatatypeRestriction", DATA_RANGE),
+  FACET_RESTRICTION("FacetRestriction", DATA_RANGE),
+  FACET("Facet"),
 
   LITERAL("Literal"),
 

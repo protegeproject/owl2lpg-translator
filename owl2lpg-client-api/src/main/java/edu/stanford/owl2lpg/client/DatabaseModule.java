@@ -25,6 +25,12 @@ public class DatabaseModule {
 
   @Provides
   @DatabaseSessionScope
+  public Driver provideDriver() {
+    return driver;
+  }
+
+  @Provides
+  @DatabaseSessionScope
   public Session provideSession() {
     return driver.session();
   }

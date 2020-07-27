@@ -17,9 +17,9 @@
   </description>
 
   <properties>
-    <neo4j-driver.version>4.0.1</neo4j-driver.version>
-    <webprotege-shared.version>4.0.0-beta-3-SNAPSHOT</webprotege-shared.version>
-    <webprotege-server-core.version>4.0.0-beta-3-SNAPSHOT</webprotege-server-core.version>
+    <neo4j-driver.version>4.1.0</neo4j-driver.version>
+    <webprotege-shared.version>5.0.0-SNAPSHOT</webprotege-shared.version>
+    <webprotege-server-api.version>5.0.0-SNAPSHOT</webprotege-server-api.version>
   </properties>
 
   <dependencies>
@@ -35,8 +35,8 @@
     </dependency>
     <dependency>
       <groupId>edu.stanford.protege</groupId>
-      <artifactId>webprotege-server-core</artifactId>
-      <version>${webprotege-server-core.version}</version>
+      <artifactId>webprotege-server-api</artifactId>
+      <version>${webprotege-server-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.neo4j.driver</groupId>

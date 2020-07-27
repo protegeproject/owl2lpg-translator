@@ -18,8 +18,8 @@ public class AugmentedEdgeInclusionCheckerImpl implements AugmentedEdgeInclusion
         || SUB_OBJECT_PROPERTY_OF.equals(edgeLabel)
         || SUB_DATA_PROPERTY_OF.equals(edgeLabel)
         || SUB_ANNOTATION_PROPERTY_OF.equals(edgeLabel)
-        || DOMAIN.equals(edgeLabel)
-        || RANGE.equals(edgeLabel)
+        || HAS_DOMAIN.equals(edgeLabel)
+        || HAS_RANGE.equals(edgeLabel)
         || TYPE.equals(edgeLabel)
         || SAME_INDIVIDUAL.equals(edgeLabel)
         || INVERSE_OF.equals(edgeLabel);
