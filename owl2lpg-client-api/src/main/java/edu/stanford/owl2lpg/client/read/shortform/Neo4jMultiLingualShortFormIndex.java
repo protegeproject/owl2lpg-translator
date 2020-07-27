@@ -77,7 +77,9 @@ public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormInd
           var propertyNode = (Node) row.get("annotationProperty");
           var literalNode = (Node) row.get("value");
           var entity = nodeTranslator.getOwlEntity(entityNode);
-          var dictionaryLanguage = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
+          var dictionaryLanguage = (propertyNode != null && literalNode != null)
+              ? nodeTranslator.getDictionaryLanguage(propertyNode, literalNode)
+              : DictionaryLanguage.localName();
           mutableDictionaryMap.put(dictionaryLanguage, entity);
         }
         return mutableDictionaryMap;

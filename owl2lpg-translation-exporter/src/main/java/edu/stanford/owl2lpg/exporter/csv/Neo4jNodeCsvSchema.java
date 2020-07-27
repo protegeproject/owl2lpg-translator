@@ -35,6 +35,7 @@ public class Neo4jNodeCsvSchema implements Neo4jCsvSchema {
                         .addColumn(BRANCH_ID)
                         .addColumn(ONTOLOGY_DOCUMENT_ID)
                         .addColumn(IRI)
+                        .addColumn(IRI_SUFFIX)
                         .addColumn(LEXICAL_FORM)
                         .addColumn(DATATYPE)
                         .addColumn(LANGUAGE)
