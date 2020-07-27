@@ -2,13 +2,11 @@ package edu.stanford.owl2lpg.client.read;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.owl2lpg.client.read.shortform.Neo4jFullTextIndexName;
 import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.internal.value.IntegerValue;
 import org.neo4j.driver.internal.value.ListValue;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
@@ -48,17 +46,14 @@ public class Parameters {
   public static Value forShortFormsContaining(ProjectId projectId,
                                               BranchId branchId,
                                               Neo4jFullTextIndexName fullTextIndexName,
-                                              List<SearchString> searchStrings,
-                                              PageRequest pageRequest) {
+                                              List<SearchString> searchStrings) {
     return new MapValue(Map.of(
         "projectId", new StringValue(projectId.getIdentifier()),
         "branchId", new StringValue(branchId.getIdentifier()),
         "fullTextIndexName", new StringValue(fullTextIndexName.getName()),
         "searchString", new StringValue(searchStrings.stream()
             .map(SearchString::getSearchString)
-            .collect(joining(" AND "))),
-        "offset", new IntegerValue(pageRequest.getSkip()),
-        "limit", new IntegerValue(pageRequest.getPageSize())));
+            .collect(joining(" AND ")))));
   }
 
   public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {

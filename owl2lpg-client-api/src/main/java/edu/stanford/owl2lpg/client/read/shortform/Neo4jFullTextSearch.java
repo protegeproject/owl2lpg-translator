@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -13,5 +12,5 @@ import java.util.List;
 public interface Neo4jFullTextSearch {
 
   @Nonnull
-  EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings, PageRequest pageRequest);
+  EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings);
 }

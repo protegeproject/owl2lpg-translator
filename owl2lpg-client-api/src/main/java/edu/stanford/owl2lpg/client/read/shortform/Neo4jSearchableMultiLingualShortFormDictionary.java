@@ -43,8 +43,8 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
                                                               @Nonnull Set<EntityType<?>> entityTypes,
                                                               @Nonnull List<DictionaryLanguage> languages,
                                                               @Nonnull PageRequest pageRequest) {
-    var entityMatchesByAnnotationValue = searchEntityByAnnotationValue.getShortFormsContaining(searchStrings, pageRequest);
-    var entityMatchesByLocalName = searchEntityByLocalName.getShortFormsContaining(searchStrings, pageRequest);
+    var entityMatchesByAnnotationValue = searchEntityByAnnotationValue.getShortFormsContaining(searchStrings);
+    var entityMatchesByLocalName = searchEntityByLocalName.getShortFormsContaining(searchStrings);
     return Streams.concat(
         languages
             .stream()

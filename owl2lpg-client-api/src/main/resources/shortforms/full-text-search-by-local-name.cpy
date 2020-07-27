@@ -2,5 +2,4 @@ CALL db.index.fulltext.queryNodes($fullTextIndexName, $searchString) YIELD node 
 MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
 MATCH (o)-[:AXIOM]->(:Declaration)-[:ENTITY]->(entity:Entity)
 RETURN entity
-SKIP $offset
-LIMIT $limit
+LIMIT 100
