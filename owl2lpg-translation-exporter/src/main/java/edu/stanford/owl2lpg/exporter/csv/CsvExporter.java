@@ -128,7 +128,8 @@ public class CsvExporter {
         || translatedObject instanceof OWLObjectPropertyExpression
         || translatedObject instanceof OWLDataPropertyExpression
         || translatedObject instanceof OWLDataRange
-        || translatedObject instanceof OWLFacetRestriction;
+        || translatedObject instanceof OWLFacetRestriction
+        || translatedObject instanceof OntologyDocumentId;
   }
 
   private void writeNode(Node node, boolean potentialDuplicate) {
