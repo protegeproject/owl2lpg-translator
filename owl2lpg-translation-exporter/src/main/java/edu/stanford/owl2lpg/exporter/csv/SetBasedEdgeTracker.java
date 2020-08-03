@@ -11,6 +11,7 @@ import java.util.function.Consumer;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@Deprecated
 public class SetBasedEdgeTracker implements ExportTracker<Edge> {
 
   private static final int DEFAULT_INITIAL_CAPACITY = 1_000_000;

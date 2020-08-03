@@ -14,6 +14,7 @@ import java.util.function.Consumer;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@Deprecated
 public class CacheBasedNodeTracker implements ExportTracker<Node> {
 
   private static final int DEFAULT_CAPACITY = 1_000_000;
