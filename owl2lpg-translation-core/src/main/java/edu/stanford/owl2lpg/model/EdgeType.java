@@ -6,6 +6,6 @@ package edu.stanford.owl2lpg.model;
  */
 public enum EdgeType {
 
-    STRUCTURAL_SPEC,
-    AUGMENTING
+  STRUCTURAL,
+  AUGMENTING
 }
