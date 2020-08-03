@@ -89,7 +89,7 @@ public class OntologyCsvExporter {
     var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
     nodeLabelsMultiset
         .forEachEntry((nodeLabels, count) -> {
-          console.printf("    Node   %-60s %,10d\n", nodeLabels.printLabels(), count);
+          console.printf("    Node   %-60s %,10d\n", nodeLabels.getNeo4jName(), count);
         });
 
 
@@ -98,7 +98,7 @@ public class OntologyCsvExporter {
     var edgeLabelMultiset = exporter.getEdgeLabelMultiset();
     edgeLabelMultiset
         .forEachEntry((edgeLabel, count) -> {
-          console.printf("    Rel    %-36s %,10d\n", edgeLabel.printLabel(), count);
+          console.printf("    Rel    %-36s %,10d\n", edgeLabel.getNeo4jName(), count);
         });
 
     console.printf("\nExport complete in %,d ms\n", stopwatch.elapsed().toMillis());
