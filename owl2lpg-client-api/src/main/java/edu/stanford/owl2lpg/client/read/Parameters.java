@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.read;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.shortform.Neo4jFullTextIndexName;
-import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;

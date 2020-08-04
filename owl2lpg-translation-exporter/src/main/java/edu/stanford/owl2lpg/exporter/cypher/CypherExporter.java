@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.exporter.cypher;
 
 import com.google.common.base.Charsets;
-import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -22,10 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CypherExporter {
 
   @Nonnull
-  private final OntologyDocumentAxiomTranslator ontologyTranslator;
-
-  @Nonnull
-  private final AxiomContext axiomContext;
+  private final OntologyDocumentId ontologyDocumentId;
 
   @Nonnull
   private final OWLOntology ontology;
@@ -33,14 +30,17 @@ public class CypherExporter {
   @Nonnull
   private final Path outputFilePath;
 
-  CypherExporter(@Nonnull OntologyDocumentAxiomTranslator ontologyTranslator,
-                 @Nonnull AxiomContext axiomContext,
-                 @Nonnull OWLOntology ontology,
-                 @Nonnull Path outputFilePath) {
+  @Nonnull
+  private final OntologyDocumentAxiomTranslator ontologyTranslator;
+
+  public CypherExporter(@Nonnull OntologyDocumentId ontologyDocumentId,
+                        @Nonnull OWLOntology ontology,
+                        @Nonnull Path outputFilePath,
+                        @Nonnull OntologyDocumentAxiomTranslator ontologyTranslator) {
     this.ontologyTranslator = checkNotNull(ontologyTranslator);
-    this.axiomContext = axiomContext;
+    this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
     this.ontology = checkNotNull(ontology);
-    this.outputFilePath = outputFilePath;
+    this.outputFilePath = checkNotNull(outputFilePath);
   }
 
   public void write() {
@@ -51,7 +51,7 @@ public class CypherExporter {
   }
 
   private Translation translateAxiom(OWLAxiom axiom) {
-    return ontologyTranslator.translate(axiomContext.getOntologyDocumentId(), axiom);
+    return ontologyTranslator.translate(ontologyDocumentId, axiom);
   }
 
   private void writeTranslation(Translation translation) {

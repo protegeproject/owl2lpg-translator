@@ -1,8 +1,19 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.*;
-import edu.stanford.owl2lpg.translator.*;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.EdgeFactory;
+import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.translator.ClassExpressionTranslator;
+import edu.stanford.owl2lpg.translator.DataRangeTranslator;
+import edu.stanford.owl2lpg.translator.EntityTranslator;
+import edu.stanford.owl2lpg.translator.IndividualTranslator;
+import edu.stanford.owl2lpg.translator.LiteralTranslator;
+import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
@@ -12,12 +23,24 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_ALL_VALUES_FROM;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_EXACT_CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_MAX_CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_MIN_CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_SOME_VALUES_FROM;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_ALL_VALUES_FROM;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_EXACT_CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_HAS_VALUE;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_INTERSECTION_OF;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MAX_CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MIN_CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_SOME_VALUES_FROM;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_UNION_OF;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.

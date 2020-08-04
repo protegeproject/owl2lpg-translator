@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.index;
 
 import edu.stanford.bmir.protege.web.server.index.SubClassOfAxiomsBySubClassIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomByEntityAccessor;
-import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;

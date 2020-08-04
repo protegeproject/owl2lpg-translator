@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.write;
 
-import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
@@ -13,7 +13,12 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.IRI;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.LITERAL;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

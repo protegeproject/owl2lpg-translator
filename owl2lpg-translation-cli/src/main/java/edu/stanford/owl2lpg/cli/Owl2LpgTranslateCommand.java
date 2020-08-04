@@ -3,6 +3,9 @@ package edu.stanford.owl2lpg.cli;
 import edu.stanford.owl2lpg.exporter.csv.DaggerOntologyCsvExporterComponent;
 import edu.stanford.owl2lpg.exporter.csv.OntologyModule;
 import edu.stanford.owl2lpg.exporter.cypher.CypherTranslationExporter;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
@@ -65,7 +68,10 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     CypherTranslationExporter exporter = new CypherTranslationExporter();
     try {
-      exporter.export(ontologyFileLocation, outputDirectoryLocation);
+      exporter.export(ProjectId.create(),
+          BranchId.create(),
+          OntologyDocumentId.create(),
+          ontologyFileLocation, outputDirectoryLocation);
     } catch (IOException e) {
       e.printStackTrace();
       exitCode = 1;
