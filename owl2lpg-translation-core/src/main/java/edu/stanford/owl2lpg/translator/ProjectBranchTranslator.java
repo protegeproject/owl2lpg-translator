@@ -1,10 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.model.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -28,13 +25,18 @@ public class ProjectBranchTranslator {
   @Nonnull
   private final OntologyDocumentIdNodeFactory ontologyDocumentIdNodeFactory;
 
+  @Nonnull
+  private final EdgeFactory edgeFactory;
+
   @Inject
   public ProjectBranchTranslator(@Nonnull ProjectIdNodeFactory projectIdNodeFactory,
                                  @Nonnull BranchIdNodeFactory branchIdNodeFactory,
-                                 @Nonnull OntologyDocumentIdNodeFactory ontologyDocumentIdNodeFactory) {
+                                 @Nonnull OntologyDocumentIdNodeFactory ontologyDocumentIdNodeFactory,
+                                 @Nonnull EdgeFactory edgeFactory) {
     this.projectIdNodeFactory = checkNotNull(projectIdNodeFactory);
     this.branchIdNodeFactory = checkNotNull(branchIdNodeFactory);
     this.ontologyDocumentIdNodeFactory = checkNotNull(ontologyDocumentIdNodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
   }
 
   @Nonnull
@@ -46,10 +48,10 @@ public class ProjectBranchTranslator {
     var ontologyDocumentNode = ontologyDocumentIdNodeFactory.createOntologyDocumentNode(ontologyDocumentId);
     return Translation.create(projectId,
         projectNode,
-        ImmutableList.of(Edge.create(projectNode, branchNode, BRANCH)),
+        ImmutableList.of(edgeFactory.createEdge(projectNode, branchNode, BRANCH)),
         ImmutableList.of(Translation.create(branchId,
             branchNode,
-            ImmutableList.of(Edge.create(branchNode, ontologyDocumentNode, ONTOLOGY_DOCUMENT)),
+            ImmutableList.of(edgeFactory.createEdge(branchNode, ontologyDocumentNode, ONTOLOGY_DOCUMENT)),
             ImmutableList.of())));
   }
 }

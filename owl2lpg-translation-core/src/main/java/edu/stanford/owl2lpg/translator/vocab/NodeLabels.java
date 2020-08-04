@@ -179,7 +179,7 @@ public enum NodeLabels {
   private String getPrintLabel() {
     var printLabel = ":" + mainLabel;
     if (parentLabels.isPresent()) {
-      printLabel += parentLabels.get().printLabels();
+      printLabel += parentLabels.get().getNeo4jName();
     }
     return printLabel;
   }
@@ -206,7 +206,7 @@ public enum NodeLabels {
   }
 
   @Nonnull
-  public String printLabels() {
+  public String getNeo4jName() {
     return printLabel;
   }
 }

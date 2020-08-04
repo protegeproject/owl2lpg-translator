@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 
 import javax.annotation.Nonnull;
@@ -10,22 +11,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @TranslationSessionScope
 public class SpecificOntologyDocumentAxiomTranslatorFactory {
 
-    @Nonnull
-    private final AxiomTranslator axiomTranslator;
+  @Nonnull
+  private final AxiomTranslator axiomTranslator;
 
-    @Nonnull
-    private final OntologyDocumentIdNodeFactory ontologyDocumentNodeFactory;
+  @Nonnull
+  private final OntologyDocumentIdNodeFactory ontologyDocumentNodeFactory;
 
-    @Inject
-    public SpecificOntologyDocumentAxiomTranslatorFactory(@Nonnull AxiomTranslator axiomTranslator, @Nonnull OntologyDocumentIdNodeFactory ontologyDocumentNodeFactory) {
-        this.axiomTranslator = checkNotNull(axiomTranslator);
-        this.ontologyDocumentNodeFactory = checkNotNull(ontologyDocumentNodeFactory);
-    }
+  @Nonnull
+  private final EdgeFactory edgeFactory;
 
-    @Nonnull
-    public SpecificOntologyDocumentAxiomTranslator createTranslator(@Nonnull OntologyDocumentId ontologyDocumentId) {
-        return new SpecificOntologyDocumentAxiomTranslator(axiomTranslator,
-                                                           ontologyDocumentNodeFactory,
-                                                           ontologyDocumentId);
-    }
+  @Inject
+  public SpecificOntologyDocumentAxiomTranslatorFactory(@Nonnull AxiomTranslator axiomTranslator,
+                                                        @Nonnull OntologyDocumentIdNodeFactory ontologyDocumentNodeFactory,
+                                                        @Nonnull EdgeFactory edgeFactory) {
+    this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.ontologyDocumentNodeFactory = checkNotNull(ontologyDocumentNodeFactory);
+    this.edgeFactory = checkNotNull(edgeFactory);
+  }
+
+  @Nonnull
+  public SpecificOntologyDocumentAxiomTranslator createTranslator(@Nonnull OntologyDocumentId ontologyDocumentId) {
+    return new SpecificOntologyDocumentAxiomTranslator(ontologyDocumentId,
+        axiomTranslator,
+        ontologyDocumentNodeFactory,
+        edgeFactory);
+  }
 }

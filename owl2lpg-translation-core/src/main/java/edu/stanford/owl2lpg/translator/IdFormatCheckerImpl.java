@@ -10,17 +10,18 @@ import javax.inject.Inject;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class IdFormatCheckerImpl
-    implements IdFormatChecker {
+public class IdFormatCheckerImpl implements IdFormatChecker {
 
   @Inject
   public IdFormatCheckerImpl() {
   }
 
   @Override
-  public boolean useDigestId(Object o) {
-    return o instanceof IRI
-        || o instanceof OWLEntity
-        || o instanceof OWLLiteral2;
+  public IdFormat getIdFormatFor(Object o) {
+    if (o instanceof IRI || o instanceof OWLEntity || o instanceof OWLLiteral2) {
+      return IdFormat.DIGEST;
+    } else {
+      return IdFormat.NUMBER;
+    }
   }
 }

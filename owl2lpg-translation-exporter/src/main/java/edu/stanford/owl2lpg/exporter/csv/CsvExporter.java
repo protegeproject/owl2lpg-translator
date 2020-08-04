@@ -35,10 +35,10 @@ public class CsvExporter {
   private final CsvWriter<Edge> relationshipsCsvWriter;
 
   @Nonnull
-  private final ExportTracker<Node> nodeTracker;
+  private final NodeTracker nodeTracker;
 
   @Nonnull
-  private final ExportTracker<Edge> edgeTracker;
+  private final EdgeTracker edgeTracker;
 
   private long nodeCount = 0;
 
@@ -53,8 +53,8 @@ public class CsvExporter {
                      @Nonnull ProjectBranchTranslator projectBranchTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
-                     @Nonnull ExportTracker<Node> nodeTracker,
-                     @Nonnull ExportTracker<Edge> edgeTracker) {
+                     @Nonnull NodeTracker nodeTracker,
+                     @Nonnull EdgeTracker edgeTracker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.projectBranchTranslator = checkNotNull(projectBranchTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
@@ -128,7 +128,8 @@ public class CsvExporter {
         || translatedObject instanceof OWLObjectPropertyExpression
         || translatedObject instanceof OWLDataPropertyExpression
         || translatedObject instanceof OWLDataRange
-        || translatedObject instanceof OWLFacetRestriction;
+        || translatedObject instanceof OWLFacetRestriction
+        || translatedObject instanceof OntologyDocumentId;
   }
 
   private void writeNode(Node node, boolean potentialDuplicate) {

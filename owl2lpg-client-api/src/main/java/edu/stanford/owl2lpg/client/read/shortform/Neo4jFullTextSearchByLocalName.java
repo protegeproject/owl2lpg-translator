@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
 import edu.stanford.bmir.protege.web.server.shortform.ShortFormMatch;
 import edu.stanford.bmir.protege.web.server.shortform.ShortFormMatchPosition;
-import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -62,9 +61,9 @@ public class Neo4jFullTextSearchByLocalName implements Neo4jFullTextSearch {
 
   @Nonnull
   @Override
-  public EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings, PageRequest pageRequest) {
+  public EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings) {
     try (var session = driver.session()) {
-      var args = Parameters.forShortFormsContaining(projectId, branchId, fullTextIndexName, searchStrings, pageRequest);
+      var args = Parameters.forShortFormsContaining(projectId, branchId, fullTextIndexName, searchStrings);
       return session.readTransaction(tx -> {
         var dictionaryBuilder = new EntityShortFormMatchesDictionary.Builder();
         var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);

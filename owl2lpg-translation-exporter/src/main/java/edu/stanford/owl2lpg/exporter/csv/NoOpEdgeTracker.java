@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class NoOpEdgeTracker implements ExportTracker<Edge> {
+public class NoOpEdgeTracker implements EdgeTracker {
 
   @Override
   public boolean contains(Edge edge) {

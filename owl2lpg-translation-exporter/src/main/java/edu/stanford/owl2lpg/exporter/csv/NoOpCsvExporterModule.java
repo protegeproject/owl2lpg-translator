@@ -4,8 +4,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 
 /**
@@ -23,13 +21,13 @@ public class NoOpCsvExporterModule {
 
   @Provides
   @TranslationSessionScope
-  public ExportTracker<Node> provideNodeTracker() {
+  public NodeTracker provideNodeTracker() {
     return new NoOpNodeTracker();
   }
 
   @Provides
   @TranslationSessionScope
-  public ExportTracker<Edge> provideEdgeTracker() {
+  public EdgeTracker provideEdgeTracker() {
     return new NoOpEdgeTracker();
   }
 }

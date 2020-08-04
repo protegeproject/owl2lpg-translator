@@ -16,7 +16,7 @@ import javax.inject.Named;
 public class TranslatorModule {
 
   @Provides
-  @Named("counter")
+  @Named("number")
   @TranslationSessionScope
   NodeIdProvider provideNodeIdProvider() {
     return new NumberIncrementIdProvider();
@@ -26,7 +26,13 @@ public class TranslatorModule {
   @Named("digest")
   @TranslationSessionScope
   NodeIdProvider provideDigestNodeIdProvider() {
-    return new DigestNodeIdProvider(Hashing.md5());
+    return new DigestNodeIdProvider(Hashing.sha256());
+  }
+
+  @Provides
+  @TranslationSessionScope
+  EdgeIdProvider provideEdgeIdProvider() {
+    return new DigestEdgeIdProvider(Hashing.sha256());
   }
 
   @Provides
