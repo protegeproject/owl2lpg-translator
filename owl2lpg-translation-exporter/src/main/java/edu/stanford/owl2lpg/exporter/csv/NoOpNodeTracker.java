@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class NoOpNodeTracker implements ExportTracker<Node> {
+public class NoOpNodeTracker implements NodeTracker {
 
   @Override
   public boolean contains(Node node) {

@@ -26,18 +26,18 @@ public class CsvExporterFactory {
   private final RelationshipsCsvWriterFactory relationshipsCsvWriterFactory;
 
   @Nonnull
-  private final ExportTracker<Node> nodeTracker;
+  private final NodeTracker nodeTracker;
 
   @Nonnull
-  final ExportTracker<Edge> edgeTracker;
+  final EdgeTracker edgeTracker;
 
   @Inject
   public CsvExporterFactory(@Nonnull OntologyDocumentAxiomTranslator ontologyDocumentAxiomTranslator,
                             @Nonnull ProjectBranchTranslator projectBranchTranslator,
                             @Nonnull NodesCsvWriterFactory nodesCsvWriterFactory,
                             @Nonnull RelationshipsCsvWriterFactory relationshipsCsvWriterFactory,
-                            @Nonnull ExportTracker<Node> nodeTracker,
-                            @Nonnull ExportTracker<Edge> edgeTracker) {
+                            @Nonnull NodeTracker nodeTracker,
+                            @Nonnull EdgeTracker edgeTracker) {
     this.ontologyDocumentAxiomTranslator = checkNotNull(ontologyDocumentAxiomTranslator);
     this.projectBranchTranslator = checkNotNull(projectBranchTranslator);
     this.nodesCsvWriterFactory = checkNotNull(nodesCsvWriterFactory);

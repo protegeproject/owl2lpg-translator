@@ -12,19 +12,18 @@ import java.util.function.Consumer;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Deprecated
-public class SetBasedNodeTracker implements ExportTracker<Node> {
+public class HashSetNodeTracker implements NodeTracker {
 
   private static final int DEFAULT_INITIAL_CAPACITY = 1_000_000;
 
   @Nonnull
   private final Set<NodeId> trackedNodes;
 
-  public SetBasedNodeTracker() {
+  public HashSetNodeTracker() {
     this(DEFAULT_INITIAL_CAPACITY);
   }
 
-  public SetBasedNodeTracker(int initialCapacity) {
+  public HashSetNodeTracker(int initialCapacity) {
     this.trackedNodes = Sets.newHashSetWithExpectedSize(initialCapacity);
   }
 
@@ -34,12 +33,12 @@ public class SetBasedNodeTracker implements ExportTracker<Node> {
   }
 
   /**
-   * Performs the callback function when the cache doesn't contain
-   * the given nodeId.
+   * Performs the callback function when the tracker doesn't contain
+   * the given node.
    *
-   * @param node     The NodeId to check
+   * @param node     The node to check
    * @param callback A callback function when the cache doesn't contain
-   *                 the given NodeId.
+   *                 the given node.
    */
   @Override
   public void add(Node node, Consumer<Node> callback) {
