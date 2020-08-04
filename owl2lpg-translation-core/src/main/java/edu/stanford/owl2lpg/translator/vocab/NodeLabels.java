@@ -65,6 +65,7 @@ public enum NodeLabels {
   OBJECT_PROPERTY_EXPRESSION("ObjectPropertyExpression"),
   OBJECT_INVERSE_OF("ObjectInverseOf", OBJECT_PROPERTY_EXPRESSION),
 
+  DATA_PROPERTY_EXPRESSION("DataPropertyExpression"),
   DATA_RANGE("DataRange"),
   DATA_COMPLEMENT_OF("DataComplementOf", DATA_RANGE),
   DATA_INTERSECTION_OF("DataIntersectionOf", DATA_RANGE),
@@ -179,7 +180,7 @@ public enum NodeLabels {
   private String getPrintLabel() {
     var printLabel = ":" + mainLabel;
     if (parentLabels.isPresent()) {
-      printLabel += parentLabels.get().printLabels();
+      printLabel += parentLabels.get().getNeo4jName();
     }
     return printLabel;
   }
@@ -206,7 +207,7 @@ public enum NodeLabels {
   }
 
   @Nonnull
-  public String printLabels() {
+  public String getNeo4jName() {
     return printLabel;
   }
 }

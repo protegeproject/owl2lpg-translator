@@ -1,7 +1,6 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.model;
 
 import com.google.common.collect.Maps;
-import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.IdFormatChecker;
 import edu.stanford.owl2lpg.translator.SingleEncounterNodeChecker;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
@@ -21,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class NodeIdMapper {
 
   @Nonnull
-  private final NodeIdProvider idProvider;
+  private final NodeIdProvider numberIdProvider;
 
   @Nonnull
   private final NodeIdProvider digestIdProvider;
@@ -35,11 +34,11 @@ public class NodeIdMapper {
   private final Map<Object, NodeId> nodeIdMapper = Maps.newHashMapWithExpectedSize(1_000_000);
 
   @Inject
-  public NodeIdMapper(@Nonnull @Named("counter") NodeIdProvider idProvider,
+  public NodeIdMapper(@Nonnull @Named("number") NodeIdProvider numberIdProvider,
                       @Nonnull @Named("digest") NodeIdProvider digestIdProvider,
                       @Nonnull IdFormatChecker idFormatChecker,
                       @Nonnull SingleEncounterNodeChecker singleEncounterNodeChecker) {
-    this.idProvider = checkNotNull(idProvider);
+    this.numberIdProvider = checkNotNull(numberIdProvider);
     this.digestIdProvider = checkNotNull(digestIdProvider);
     this.idFormatChecker = checkNotNull(idFormatChecker);
     this.singleEncounterNodeChecker = checkNotNull(singleEncounterNodeChecker);
@@ -51,21 +50,25 @@ public class NodeIdMapper {
   }
 
   private NodeId getExistingOrCreate(@Nonnull Object o) {
-    if (idFormatChecker.useDigestId(o)) {
-      return digestIdProvider.getId(o);
-    } else {
-      if (singleEncounterNodeChecker.isSingleEncounterNodeObject(o)) {
-        return idProvider.getId(o);
-      } else {
-        return getExistingNodeId(o);
-      }
+    var idFormat = idFormatChecker.getIdFormatFor(o);
+    switch (idFormat) {
+      case DIGEST:
+        return digestIdProvider.getId(o);
+      case NUMBER:
+        if (singleEncounterNodeChecker.isSingleEncounterNodeObject(o)) {
+          return numberIdProvider.getId(o);
+        } else {
+          return getExistingNodeId(o);
+        }
+      default:
+        throw new RuntimeException("Failed to get or create the node id for object: " + o);
     }
   }
 
   private NodeId getExistingNodeId(@Nonnull Object o) {
     var nodeId = nodeIdMapper.get(o);
     if (nodeId == null) {
-      nodeId = idProvider.getId(o);
+      nodeId = numberIdProvider.getId(o);
       nodeIdMapper.put(o, nodeId);
     }
     return nodeId;

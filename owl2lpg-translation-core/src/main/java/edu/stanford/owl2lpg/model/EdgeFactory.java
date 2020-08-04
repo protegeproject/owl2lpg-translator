@@ -6,25 +6,35 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class EdgeFactory {
 
+  @Nonnull
+  private final EdgeIdProvider edgeIdProvider;
+
   @Inject
-  public EdgeFactory() {
+  public EdgeFactory(@Nonnull EdgeIdProvider edgeIdProvider) {
+    this.edgeIdProvider = checkNotNull(edgeIdProvider);
   }
 
-  public Edge createEdge(@Nonnull Node fromNode,
-                         @Nonnull Node toNode,
+  public Edge createEdge(@Nonnull Node startNode,
+                         @Nonnull Node endNode,
                          @Nonnull EdgeLabel edgeLabel,
                          @Nonnull Properties properties) {
-    return Edge.create(fromNode, toNode, edgeLabel, properties);
+    var edgeId = edgeIdProvider.get(startNode, endNode, edgeLabel);
+    return Edge.create(edgeId, startNode, endNode, edgeLabel, properties);
   }
 
-  public Edge createEdge(@Nonnull Node fromNode,
-                         @Nonnull Node toNode,
+  public Edge createEdge(@Nonnull Node startNode,
+                         @Nonnull Node endNode,
                          @Nonnull EdgeLabel edgeLabel) {
-    var properties = edgeLabel.isStructural() ?
-        Properties.of(PropertyFields.STRUCTURAL_SPEC, true) :
-        Properties.empty();
-    return createEdge(fromNode, toNode, edgeLabel, properties);
+    var edgeType = edgeLabel.getEdgeType();
+    if (edgeType == EdgeType.STRUCTURAL) {
+      return createEdge(startNode, endNode, edgeLabel,
+          Properties.of(PropertyFields.STRUCTURAL_SPEC, true));
+    } else {
+      return createEdge(startNode, endNode, edgeLabel, Properties.empty());
+    }
   }
 }

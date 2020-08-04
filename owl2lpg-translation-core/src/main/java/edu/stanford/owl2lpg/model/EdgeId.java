@@ -1,45 +1,36 @@
 package edu.stanford.owl2lpg.model;
 
 import at.favre.lib.bytes.Bytes;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
 
-import javax.annotation.Nonnull;
-
 /**
- * Represents a construction of a node identifier.
- *
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class NodeId {
+public abstract class EdgeId {
 
   private String cachedString;
 
   @SuppressWarnings("mutable")
-  public static NodeId create(byte[] bytes) {
-    return new AutoValue_NodeId(bytes);
+  public static EdgeId create(byte[] bytes) {
+    return new AutoValue_EdgeId(bytes);
   }
 
-  public static NodeId create(long numberId) {
+  public static EdgeId create(long numberId) {
     return create(Bytes.empty()
         .append(numberId)
         .array());
   }
 
-  public static NodeId create(String stringId) {
+  public static EdgeId create(String stringId) {
     return create(Bytes.empty()
         .append(stringId)
         .array());
   }
 
-  @JsonIgnore
-  @Nonnull
   public abstract byte[] getBytes();
 
-  @JsonValue
   public String asString() {
     if (cachedString == null) {
       cachedString = Bytes.wrap(getBytes()).encodeHex();
@@ -49,6 +40,6 @@ public abstract class NodeId {
 
   @Override
   public String toString() {
-    return "NodeId_" + asString();
+    return "EdgeId_" + asString();
   }
 }

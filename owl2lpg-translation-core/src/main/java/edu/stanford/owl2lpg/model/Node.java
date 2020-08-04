@@ -51,10 +51,6 @@ public abstract class Node {
     return getNodeId().toString();
   }
 
-  public String printLabels() {
-    return getLabels().printLabels();
-  }
-
   public String printProperties() {
     return getProperties().printProperties();
   }
@@ -66,6 +62,12 @@ public abstract class Node {
   @JsonIgnore
   @Nonnull
   public abstract NodeLabels getLabels();
+
+  @JsonIgnore
+  @Nonnull
+  public String getNeo4jName() {
+    return getLabels().getNeo4jName();
+  }
 
   @JsonProperty(N4J_JSON_LABELS)
   public ImmutableList<String> getLabelsList() {

@@ -23,6 +23,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_PROPERT
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATATYPE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;

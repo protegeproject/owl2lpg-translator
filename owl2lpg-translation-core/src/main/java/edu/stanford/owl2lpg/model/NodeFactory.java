@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.model;
 
-import edu.stanford.owl2lpg.translator.visitors.NodeIdMapper;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
 import javax.annotation.Nonnull;

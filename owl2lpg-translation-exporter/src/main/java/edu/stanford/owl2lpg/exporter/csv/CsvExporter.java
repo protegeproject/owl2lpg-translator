@@ -1,12 +1,17 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
 import com.google.common.collect.ImmutableMultiset;
-import edu.stanford.owl2lpg.model.*;
-import edu.stanford.owl2lpg.translator.*;
-import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
+import edu.stanford.owl2lpg.translator.ProjectBranchTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -35,10 +40,10 @@ public class CsvExporter {
   private final CsvWriter<Edge> relationshipsCsvWriter;
 
   @Nonnull
-  private final ExportTracker<Node> nodeTracker;
+  private final NodeTracker nodeTracker;
 
   @Nonnull
-  private final ExportTracker<Edge> edgeTracker;
+  private final EdgeTracker edgeTracker;
 
   private long nodeCount = 0;
 
@@ -53,8 +58,8 @@ public class CsvExporter {
                      @Nonnull ProjectBranchTranslator projectBranchTranslator,
                      @Nonnull CsvWriter<Node> nodesCsvWriter,
                      @Nonnull CsvWriter<Edge> relationshipsCsvWriter,
-                     @Nonnull ExportTracker<Node> nodeTracker,
-                     @Nonnull ExportTracker<Edge> edgeTracker) {
+                     @Nonnull NodeTracker nodeTracker,
+                     @Nonnull EdgeTracker edgeTracker) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.projectBranchTranslator = checkNotNull(projectBranchTranslator);
     this.nodesCsvWriter = checkNotNull(nodesCsvWriter);
@@ -98,38 +103,44 @@ public class CsvExporter {
   }
 
   private void writeTranslation(Translation translation) {
-    var mainNode = translation.getMainNode();
-    writeNode(mainNode, canPotentallyCreateDuplicateNodes(translation));
+    var node = translation.getMainNode();
+    writeNode(node, canPotentiallyHaveDuplicates(node));
     for (var edge : translation.getEdges()) {
-      writeEdge(edge, canPotentiallyCreateDuplicateEdges(translation));
+      writeEdge(edge, canPotentiallyHaveDuplicates(edge));
     }
     for (var nestedTranslation : translation.getNestedTranslations()) {
       writeTranslation(nestedTranslation);
     }
   }
 
-  private static boolean canPotentallyCreateDuplicateNodes(Translation translation) {
-    var translatedObject = translation.getTranslatedObject();
-    return translatedObject instanceof IRI
-        || translatedObject instanceof OWLEntity
-        || translatedObject instanceof OWLClassExpression
-        || translatedObject instanceof OWLObjectPropertyExpression
-        || translatedObject instanceof OWLDataPropertyExpression
-        || translatedObject instanceof OWLDataRange
-        || translatedObject instanceof OWLFacetRestriction
-        || translatedObject instanceof OWLLiteral2
-        || translatedObject instanceof OntologyDocumentId;
+  private static boolean canPotentiallyHaveDuplicates(Node node) {
+    var nodeLabels = node.getLabels();
+    return Stream.of(NodeLabels.IRI,
+        NodeLabels.ENTITY,
+        NodeLabels.CLASS_EXPRESSION,
+        NodeLabels.OBJECT_PROPERTY_EXPRESSION,
+        NodeLabels.DATA_PROPERTY_EXPRESSION,
+        NodeLabels.DATA_RANGE,
+        NodeLabels.FACET_RESTRICTION,
+        NodeLabels.LITERAL,
+        NodeLabels.ONTOLOGY_DOCUMENT).anyMatch(nodeLabels::isa);
   }
 
-  private static boolean canPotentiallyCreateDuplicateEdges(Translation translation) {
-    var translatedObject = translation.getTranslatedObject();
-    return translatedObject instanceof OWLEntity
-        || translatedObject instanceof OWLClassExpression
-        || translatedObject instanceof OWLObjectPropertyExpression
-        || translatedObject instanceof OWLDataPropertyExpression
-        || translatedObject instanceof OWLDataRange
-        || translatedObject instanceof OWLFacetRestriction
-        || translatedObject instanceof OntologyDocumentId;
+  private static boolean canPotentiallyHaveDuplicates(Edge edge) {
+    var edgeLabel = edge.getLabel();
+    return Stream.of(EdgeLabel.ENTITY_IRI,
+        EdgeLabel.ENTITY_SIGNATURE,
+        EdgeLabel.CLASS_EXPRESSION,
+        EdgeLabel.OBJECT_PROPERTY_EXPRESSION,
+        EdgeLabel.DATA_PROPERTY_EXPRESSION,
+        EdgeLabel.OBJECT_PROPERTY,
+        EdgeLabel.DATATYPE,
+        EdgeLabel.DATA_RANGE,
+        EdgeLabel.CONSTRAINING_FACET,
+        EdgeLabel.RESTRICTION_VALUE,
+        EdgeLabel.RESTRICTION,
+        EdgeLabel.INDIVIDUAL,
+        EdgeLabel.LITERAL).anyMatch(edgeLabel::isa);
   }
 
   private void writeNode(Node node, boolean potentialDuplicate) {

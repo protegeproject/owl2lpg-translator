@@ -61,8 +61,8 @@ public class CypherExporter {
 
   void writeNodes(Stream<Node> nodeStream) {
     nodeStream.forEach(node -> {
-      var nodeId = node.getNodeId();
-      var nodeLabel = node.getLabels().printLabels();
+      var nodeId = node.getNodeId().asString();
+      var nodeLabel = node.getLabels().getNeo4jName();
       var nodeProperties = node.getProperties().printProperties();
       var s = "MERGE (" +
           nodeId +
@@ -76,9 +76,9 @@ public class CypherExporter {
 
   void writeEdges(Stream<Edge> edgeStream) {
     edgeStream.forEach(edge -> {
-      var fromNodeId = edge.getFromNode().getNodeId();
-      var toNodeId = edge.getToNode().getNodeId();
-      var edgeLabel = edge.getLabel().printLabel();
+      var fromNodeId = edge.getFromNode().getNodeId().asString();
+      var toNodeId = edge.getToNode().getNodeId().asString();
+      var edgeLabel = edge.getLabel().getNeo4jName();
       var edgeProperties = edge.getProperties().printProperties();
       var s = "MERGE (" +
           fromNodeId +

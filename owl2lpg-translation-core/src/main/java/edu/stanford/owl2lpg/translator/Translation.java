@@ -4,10 +4,8 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -37,28 +35,6 @@ public abstract class Translation {
   public static Translation create(@Nonnull Object translatedObject,
                                    @Nonnull Node mainNode) {
     return Translation.create(translatedObject, mainNode, ImmutableList.of(), ImmutableList.of());
-  }
-
-  public static TranslationBuilder builder(Object forObject) {
-    return new TranslationBuilder(forObject);
-  }
-
-  public Translation connectWith(@Nonnull Translation otherTranslation,
-                                 @Nonnull EdgeLabel edgeLabel,
-                                 @Nonnull Properties edgeProperties) {
-    var fromNode = Node.create(getMainNode().getNodeId(),
-        getMainNode().getLabels(),
-        getMainNode().getProperties());
-    var toNode = otherTranslation.getMainNode();
-    var connectingEdge = Edge.create(fromNode, toNode, edgeLabel, edgeProperties);
-    return create(getTranslatedObject(),
-                  getMainNode(),
-        ImmutableList.<Edge>builder()
-            .addAll(getEdges())
-            .add(connectingEdge).build(),
-        ImmutableList.<Translation>builder()
-            .addAll(getNestedTranslations())
-            .add(otherTranslation).build());
   }
 
   public abstract Object getTranslatedObject();

@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.model;
 
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -16,6 +16,9 @@ public class EdgeTest {
   private Edge edge;
 
   @Mock
+  private EdgeId edgeId;
+
+  @Mock
   private Node fromNode, toNode;
 
   @Mock
@@ -23,7 +26,7 @@ public class EdgeTest {
 
   @Before
   public void setUp() {
-    edge = Edge.create(fromNode, toNode, EdgeLabel.AXIOM, properties);
+    edge = Edge.create(edgeId, fromNode, toNode, AXIOM, properties);
   }
 
   @Test
@@ -32,23 +35,28 @@ public class EdgeTest {
   }
 
   @Test(expected = NullPointerException.class)
+  public void shouldThrowNPEWhenEdgeIdNull() {
+    Edge.create(null, fromNode, toNode, AXIOM, properties);
+  }
+
+  @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenFromNodeNull() {
-    Edge.create(null, toNode, EdgeLabel.AXIOM, properties);
+    Edge.create(edgeId, null, toNode, AXIOM, properties);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenToNodeNull() {
-    Edge.create(fromNode, null, EdgeLabel.AXIOM, properties);
+    Edge.create(edgeId, fromNode, null, AXIOM, properties);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenLabelNull() {
-    Edge.create(fromNode, toNode, null, properties);
+    Edge.create(edgeId, fromNode, toNode, null, properties);
   }
 
   @Test(expected = NullPointerException.class)
   public void shouldThrowNPEWhenPropertiesNull() {
-    Edge.create(fromNode, toNode, EdgeLabel.AXIOM, null);
+    Edge.create(edgeId, fromNode, toNode, AXIOM, null);
   }
 
   @Test
@@ -66,7 +74,7 @@ public class EdgeTest {
   @Test
   public void shouldGetLabel() {
     var actualLabel = edge.getLabel();
-    assertThat(actualLabel, equalTo(EdgeLabel.AXIOM));
+    assertThat(actualLabel, equalTo(AXIOM));
   }
 
   @Test

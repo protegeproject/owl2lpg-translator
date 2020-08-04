@@ -6,5 +6,9 @@ package edu.stanford.owl2lpg.translator;
  */
 public interface IdFormatChecker {
 
-  boolean useDigestId(Object o);
+  enum IdFormat {
+    DIGEST, NUMBER, STRING
+  }
+
+  IdFormat getIdFormatFor(Object o);
 }

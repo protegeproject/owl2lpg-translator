@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator;
 import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
-import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
+import edu.stanford.owl2lpg.model.NodeIdProvider;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -44,9 +44,9 @@ public class DigestNodeIdProvider implements NodeIdProvider {
   }
 
   private NodeId createNodeIdFromObjectString(String objectString) {
-    var hash = hashFunction
+    var hashBytes = hashFunction
         .hashString(objectString, StandardCharsets.UTF_8)
-        .toString();
-    return NodeId.create(hash);
+        .asBytes();
+    return NodeId.create(hashBytes);
   }
 }
