@@ -26,26 +26,28 @@ public abstract class Edge {
 
   public static final String N4J_JSON_END_ID = ":END_ID";
 
-  public static Edge create(@Nonnull Node fromNode,
+  public static Edge create(@Nonnull EdgeId edgeId,
+                            @Nonnull Node fromNode,
                             @Nonnull Node toNode,
                             @Nonnull EdgeLabel label,
                             @Nonnull Properties properties) {
-    return new AutoValue_Edge(fromNode, toNode, label, properties);
+    return new AutoValue_Edge(edgeId, fromNode, toNode, label, properties);
   }
 
-  public static Edge create(@Nonnull Node fromNode,
+  public static Edge create(@Nonnull EdgeId edgeId,
+                            @Nonnull Node fromNode,
                             @Nonnull Node toNode,
                             @Nonnull EdgeLabel label) {
-    return create(fromNode, toNode, label, Properties.empty());
+    return create(edgeId, fromNode, toNode, label, Properties.empty());
   }
+
+  @JsonIgnore
+  @Nonnull
+  public abstract EdgeId getEdgeId();
 
   @Nullable
   public <E> E getProperty(String key) {
     return getProperties().get(key);
-  }
-
-  public String printLabel() {
-    return getLabel().printLabel();
   }
 
   public String printProperties() {
@@ -61,7 +63,7 @@ public abstract class Edge {
 
   @JsonProperty(N4J_JSON_START_ID)
   public String getStartId() {
-    return getFromNode().getNodeId().getId();
+    return getFromNode().getNodeId().asString();
   }
 
   @JsonIgnore
@@ -69,11 +71,16 @@ public abstract class Edge {
 
   @JsonProperty(N4J_JSON_END_ID)
   public String getEndId() {
-    return getToNode().getNodeId().getId();
+    return getToNode().getNodeId().asString();
   }
 
   @JsonProperty(N4J_JSON_LABELS)
   public abstract EdgeLabel getLabel();
+
+  @JsonIgnore
+  public String getNeo4jName() {
+    return getLabel().getNeo4jName();
+  }
 
   @JsonIgnore
   public abstract Properties getProperties();

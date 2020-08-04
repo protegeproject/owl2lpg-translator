@@ -44,9 +44,9 @@ public class DigestNodeIdProvider implements NodeIdProvider {
   }
 
   private NodeId createNodeIdFromObjectString(String objectString) {
-    var hash = hashFunction
+    var hashBytes = hashFunction
         .hashString(objectString, StandardCharsets.UTF_8)
-        .toString();
-    return NodeId.create(hash);
+        .asBytes();
+    return NodeId.create(hashBytes);
   }
 }
