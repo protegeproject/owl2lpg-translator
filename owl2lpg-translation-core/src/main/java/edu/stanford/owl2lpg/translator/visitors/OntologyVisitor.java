@@ -61,7 +61,7 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
     translations.add(ontologyIdTranslation);
     edges.add(edgeFactory.createEdge(mainNode,
         ontologyIdTranslation.getMainNode(),
-        ONTOLOGY_ID));
+        ONTOLOGY_IRI));
     var annotations = ontology.getAnnotations();
     for (var ann : annotations) {
       var translation = annotationTranslator.translate(ann);
