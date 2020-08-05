@@ -81,7 +81,7 @@ public class Neo4jCsvWriter {
   private static boolean canPotentiallyHaveDuplicates(Edge edge) {
     var edgeLabel = edge.getLabel();
     return Stream.of(EdgeLabel.ENTITY_IRI,
-        EdgeLabel.ENTITY_SIGNATURE,
+        EdgeLabel.ENTITY_SIGNATURE_OF,
         EdgeLabel.CLASS_EXPRESSION,
         EdgeLabel.OBJECT_PROPERTY_EXPRESSION,
         EdgeLabel.DATA_PROPERTY_EXPRESSION,
