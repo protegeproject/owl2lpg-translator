@@ -1,17 +1,12 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableCollection;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import edu.stanford.owl2lpg.translator.OntologyProjectTranslator;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -22,86 +17,37 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OntologyCsvExporter {
 
   @Nonnull
-  private final ImmutableCollection<OWLAxiom> axioms;
+  private final OntologyProjectTranslator ontologyProjectTranslator;
 
   @Nonnull
-  private final ProjectId projectId;
-
-  @Nonnull
-  private final BranchId branchId;
-
-  @Nonnull
-  private final OntologyDocumentId ontologyDocumentId;
+  private final Neo4jCsvWriter csvWriter;
 
   @Inject
-  public OntologyCsvExporter(@Nonnull ImmutableCollection<OWLAxiom> axioms,
-                             @Nonnull ProjectId projectId,
-                             @Nonnull BranchId branchId,
-                             @Nonnull OntologyDocumentId ontologyDocumentId) {
-    this.axioms = checkNotNull(axioms);
-    this.projectId = checkNotNull(projectId);
-    this.branchId = checkNotNull(branchId);
-    this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
+  public OntologyCsvExporter(@Nonnull OntologyProjectTranslator ontologyProjectTranslator,
+                             @Nonnull Neo4jCsvWriter csvWriter) {
+    this.ontologyProjectTranslator = checkNotNull(ontologyProjectTranslator);
+    this.csvWriter = checkNotNull(csvWriter);
   }
 
-  /**
-   * Export the ontology to the specified nodes writer and relationships writer.
-   * The processing messages will be display on the standard output stream.
-   */
-  public void export(@Nonnull Writer nodesCsvWriter,
-                     @Nonnull Writer edgesCsvWriter) throws IOException {
-    export(nodesCsvWriter, edgesCsvWriter, new PrintWriter(System.out));
-  }
+  public void export(@Nonnull OWLOntology ontology) throws IOException {
+    var translation = ontologyProjectTranslator.translate(ontology);
+    csvWriter.writeTranslation(translation);
+    csvWriter.flush();
 
-  /**
-   * Export the ontology to the specified nodes writer and relationships writer,
-   * with a user-defined console stream to display the processing messages.
-   */
-  public void export(@Nonnull Writer nodesCsvWriter,
-                     @Nonnull Writer edgesCsvWriter,
-                     @Nonnull PrintWriter console) throws IOException {
+    var console = new PrintWriter(System.out);
 
-    var exporterFactory = DaggerCsvExporterComponent.create().getCsvExporterFactory();
-    var exporter = exporterFactory.create(nodesCsvWriter, edgesCsvWriter);
+    console.printf("\nNodes: %,d\n\n", csvWriter.getNodeCount());
+    csvWriter.getNodeLabelsMultiset()
+        .forEachEntry((nodeLabels, count) ->
+            console.printf("    Node   %-60s %,10d\n", nodeLabels.getNeo4jName(), count));
 
-    console.printf("Axioms: %,d\n", axioms.size());
+    console.printf("\nRelationships: %,d\n\n", csvWriter.getEdgeCount());
+    csvWriter.getEdgeLabelMultiset()
+        .forEachEntry((edgeLabel, count) ->
+            console.printf("    Rel    %-36s %,10d\n", edgeLabel.getNeo4jName(), count));
 
-    var stopwatch = Stopwatch.createStarted();
-    int percentageComplete = 0;
-    int axiomCounter = 0;
-    for (var ax : axioms) {
-      axiomCounter++;
-      var percent = (axiomCounter * 100) / axioms.size();
-      if (percent != percentageComplete) {
-        percentageComplete = percent;
-        console.printf("%3d%% [%,d nodes, %,d edges]\n", percentageComplete,
-            exporter.getNodeCount(),
-            exporter.getEdgeCount());
-        console.flush();
-      }
-      exporter.write(ontologyDocumentId, ax);
-    }
-    exporter.write(projectId, branchId, ontologyDocumentId);
-    exporter.flush();
-
-    console.printf("\nNodes: %,d\n\n", exporter.getNodeCount());
-
-    var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
-    nodeLabelsMultiset
-        .forEachEntry((nodeLabels, count) -> {
-          console.printf("    Node   %-60s %,10d\n", nodeLabels.getNeo4jName(), count);
-        });
-
-
-    console.printf("\nRelationships: %,d\n\n", exporter.getEdgeCount());
-
-    var edgeLabelMultiset = exporter.getEdgeLabelMultiset();
-    edgeLabelMultiset
-        .forEachEntry((edgeLabel, count) -> {
-          console.printf("    Rel    %-36s %,10d\n", edgeLabel.getNeo4jName(), count);
-        });
-
-    console.printf("\nExport complete in %,d ms\n", stopwatch.elapsed().toMillis());
     console.flush();
   }
+
+
 }
