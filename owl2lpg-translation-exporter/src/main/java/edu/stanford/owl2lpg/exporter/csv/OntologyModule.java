@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
+@Deprecated
 public class OntologyModule {
 
   @Nonnull
