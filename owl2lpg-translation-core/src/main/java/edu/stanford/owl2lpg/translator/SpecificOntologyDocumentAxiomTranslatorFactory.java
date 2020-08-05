@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Deprecated
 @TranslationSessionScope
 public class SpecificOntologyDocumentAxiomTranslatorFactory {
 

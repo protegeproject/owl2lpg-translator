@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM;
 
+@Deprecated
 public class SpecificOntologyDocumentAxiomTranslator {
 
   @Nonnull
