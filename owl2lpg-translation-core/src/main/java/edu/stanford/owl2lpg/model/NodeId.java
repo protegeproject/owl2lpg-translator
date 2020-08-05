@@ -16,8 +16,6 @@ import javax.annotation.Nonnull;
 @AutoValue
 public abstract class NodeId {
 
-  private String cachedString;
-
   @SuppressWarnings("mutable")
   public static NodeId create(byte[] bytes) {
     return new AutoValue_NodeId(bytes);
@@ -41,10 +39,7 @@ public abstract class NodeId {
 
   @JsonValue
   public String asString() {
-    if (cachedString == null) {
-      cachedString = Bytes.wrap(getBytes()).encodeHex();
-    }
-    return cachedString;
+    return Bytes.wrap(getBytes()).encodeHex();
   }
 
   @Override

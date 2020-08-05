@@ -10,8 +10,6 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class EdgeId {
 
-  private String cachedString;
-
   @SuppressWarnings("mutable")
   public static EdgeId create(byte[] bytes) {
     return new AutoValue_EdgeId(bytes);
@@ -32,10 +30,7 @@ public abstract class EdgeId {
   public abstract byte[] getBytes();
 
   public String asString() {
-    if (cachedString == null) {
-      cachedString = Bytes.wrap(getBytes()).encodeHex();
-    }
-    return cachedString;
+    return Bytes.wrap(getBytes()).encodeHex();
   }
 
   @Override
