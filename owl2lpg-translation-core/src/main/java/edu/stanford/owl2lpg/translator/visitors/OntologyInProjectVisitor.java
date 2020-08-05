@@ -12,7 +12,7 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import edu.stanford.owl2lpg.translator.EntityTranslator;
+import edu.stanford.owl2lpg.translator.EntityInProjectTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.semanticweb.owlapi.model.IRI;
@@ -59,7 +59,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private final EdgeFactory edgeFactory;
 
   @Nonnull
-  private final EntityTranslator entityTranslator;
+  private final EntityInProjectTranslator entityTranslator;
 
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
@@ -76,7 +76,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
                                   @Nonnull OntologyDocumentId ontoDocId,
                                   @Nonnull ProjectContextNodeFactory projectContextNodeFactory,
                                   @Nonnull EdgeFactory edgeFactory,
-                                  @Nonnull EntityTranslator entityTranslator,
+                                  @Nonnull EntityInProjectTranslator entityTranslator,
                                   @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                   @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
                                   @Nonnull AxiomTranslator axiomTranslator) {
