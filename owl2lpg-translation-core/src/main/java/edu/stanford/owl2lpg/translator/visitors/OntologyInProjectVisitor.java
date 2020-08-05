@@ -41,7 +41,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.VERSION_IRI;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologyProjectVisitor implements OWLNamedObjectVisitorEx<Translation> {
+public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Nonnull
   private final ProjectId projectId;
@@ -71,15 +71,15 @@ public class OntologyProjectVisitor implements OWLNamedObjectVisitorEx<Translati
   private final AxiomTranslator axiomTranslator;
 
   @Inject
-  public OntologyProjectVisitor(@Nonnull ProjectId projectId,
-                                @Nonnull BranchId branchId,
-                                @Nonnull OntologyDocumentId ontoDocId,
-                                @Nonnull ProjectContextNodeFactory projectContextNodeFactory,
-                                @Nonnull EdgeFactory edgeFactory,
-                                @Nonnull EntityTranslator entityTranslator,
-                                @Nonnull AnnotationValueTranslator annotationValueTranslator,
-                                @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
-                                @Nonnull AxiomTranslator axiomTranslator) {
+  public OntologyInProjectVisitor(@Nonnull ProjectId projectId,
+                                  @Nonnull BranchId branchId,
+                                  @Nonnull OntologyDocumentId ontoDocId,
+                                  @Nonnull ProjectContextNodeFactory projectContextNodeFactory,
+                                  @Nonnull EdgeFactory edgeFactory,
+                                  @Nonnull EntityTranslator entityTranslator,
+                                  @Nonnull AnnotationValueTranslator annotationValueTranslator,
+                                  @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
+                                  @Nonnull AxiomTranslator axiomTranslator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
