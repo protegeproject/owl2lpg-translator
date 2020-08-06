@@ -12,7 +12,8 @@ public class AugmentedEdgeInclusionCheckerImpl implements AugmentedEdgeInclusion
 
   @Override
   public boolean allows(EdgeLabel edgeLabel) {
-    return AXIOM_SUBJECT.equals(edgeLabel)
+    return ENTITY_SIGNATURE_OF.equals(edgeLabel)
+        || AXIOM_SUBJECT.equals(edgeLabel)
         || RELATED_TO.equals(edgeLabel)
         || SUB_CLASS_OF.equals(edgeLabel)
         || SUB_OBJECT_PROPERTY_OF.equals(edgeLabel)
