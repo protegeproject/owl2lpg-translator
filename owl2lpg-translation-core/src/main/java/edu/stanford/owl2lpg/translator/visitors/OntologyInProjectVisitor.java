@@ -10,12 +10,13 @@ import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.AxiomInProjectTranslator;
 import edu.stanford.owl2lpg.translator.EntityInProjectTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDatatype;
@@ -61,7 +62,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private final AnnotationObjectTranslator annotationObjectTranslator;
 
   @Nonnull
-  private final AxiomTranslator axiomTranslator;
+  private final AxiomInProjectTranslator axiomTranslator;
 
   @Inject
   public OntologyInProjectVisitor(@Nonnull ProjectId projectId,
@@ -72,7 +73,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
                                   @Nonnull EntityInProjectTranslator entityTranslator,
                                   @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                   @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
-                                  @Nonnull AxiomTranslator axiomTranslator) {
+                                  @Nonnull AxiomInProjectTranslator axiomTranslator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
@@ -96,6 +97,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
     translateOntologyIri(ontology.getOntologyID().getOntologyIRI(), ontoDocNode, translations, edges);
     translateVersionIri(ontology.getOntologyID().getVersionIRI(), ontoDocNode, translations, edges);
     translateOntologyAnnotations(ontology.getAnnotations(), ontoDocNode, translations, edges);
+    translateOntologyAxioms(ontology.getAxioms(), ontoDocNode, translations, edges);
 
     return Translation.create(projectId,
         projectNode,
@@ -138,6 +140,19 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
         .collect(ImmutableList.toImmutableList());
     translations.addAll(ontologyAnnotationTranslations);
     edges.addAll(ontologyAnnotationEdges);
+  }
+
+  private void translateOntologyAxioms(Set<OWLAxiom> ontologyAxioms, Node ontoDocNode, Builder<Translation> translations, Builder<Edge> edges) {
+    var ontologyAxiomTranslations = ontologyAxioms
+        .stream()
+        .map(axiomTranslator::translate)
+        .collect(ImmutableList.toImmutableList());
+    var ontologyAxiomEdges = ontologyAxiomTranslations
+        .stream()
+        .map(translation -> structuralEdgeFactory.getAxiomEdge(ontoDocNode, translation.getMainNode()))
+        .collect(ImmutableList.toImmutableList());
+    translations.addAll(ontologyAxiomTranslations);
+    edges.addAll(ontologyAxiomEdges);
   }
 
   @Nonnull
