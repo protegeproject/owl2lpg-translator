@@ -80,6 +80,7 @@ public class AugmentedEdgeFactory {
     this.augmentedEdgeInclusionChecker = checkNotNull(augmentedEdgeInclusionChecker);
   }
 
+  @Nonnull
   public Optional<Edge> getEntitySignatureOfAugmentedEdge(@Nonnull Node entityNode,
                                                           @Nonnull Node ontoDocNode) {
     return (augmentedEdgeInclusionChecker.allows(ENTITY_SIGNATURE_OF))
@@ -87,6 +88,7 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getAxiomSubjectAugmentedEdge(@Nonnull Node axiomNode,
                                                      @Nonnull Node subjectNode) {
     return (augmentedEdgeInclusionChecker.allows(AXIOM_SUBJECT))
@@ -94,6 +96,7 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<List<Edge>> getAxiomSubjectAugmentedEdges(@Nonnull Node axiomNode,
                                                             @Nonnull Stream<Node> subjectNodes) {
     var edges = subjectNodes
@@ -104,6 +107,7 @@ public class AugmentedEdgeFactory {
     return Optional.of(edges);
   }
 
+  @Nonnull
   public Optional<Edge> getSubClassOfAugmentedEdge(@Nonnull Node subClassNode,
                                                    @Nonnull Node superClassNode) {
     return (augmentedEdgeInclusionChecker.allows(EdgeLabel.SUB_CLASS_OF))
@@ -111,12 +115,14 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<List<Edge>> getSymmetricalSubClassOfAugmentedEdges(@Nonnull Stream<Node> classNodes) {
     return (augmentedEdgeInclusionChecker.allows(EdgeLabel.SUB_CLASS_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(classNodes, EdgeLabel.SUB_CLASS_OF))
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getSubObjectPropertyOfAugmentedEdge(@Nonnull Node subPropertyNode,
                                                             @Nonnull Node superPropertyOf) {
     return (augmentedEdgeInclusionChecker.allows(SUB_OBJECT_PROPERTY_OF))
@@ -124,12 +130,14 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<List<Edge>> getSymmetricalSubObjectPropertyOfAugmentedEdges(@Nonnull Stream<Node> objectPropertyNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_OBJECT_PROPERTY_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(objectPropertyNodes, SUB_OBJECT_PROPERTY_OF))
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getSubDataPropertyOfAugmentedEdge(@Nonnull Node subPropertyNode,
                                                           @Nonnull Node superPropertyOf) {
     return (augmentedEdgeInclusionChecker.allows(SUB_DATA_PROPERTY_OF))
@@ -137,12 +145,14 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<List<Edge>> getSymmetricalSubDataPropertyOfAugmentedEdges(@Nonnull Stream<Node> dataPropertyNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_DATA_PROPERTY_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(dataPropertyNodes, SUB_DATA_PROPERTY_OF))
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getSubAnnotationPropertyOfAugmentedEdge(@Nonnull Node subPropertyNode,
                                                                 @Nonnull Node superPropertyNode) {
     return (augmentedEdgeInclusionChecker.allows(SUB_ANNOTATION_PROPERTY_OF))
@@ -150,6 +160,7 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getDomainAugmentedEdge(@Nonnull Node propertyNode,
                                                @Nonnull Node domainNode) {
     return (augmentedEdgeInclusionChecker.allows(HAS_DOMAIN))
@@ -157,6 +168,7 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getRangeAugmentedEdge(@Nonnull Node propertyNode,
                                               @Nonnull Node rangeNode) {
     return (augmentedEdgeInclusionChecker.allows(HAS_RANGE))
@@ -164,6 +176,7 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getInverseOfAugmentedEdge(@Nonnull Node node1,
                                                   @Nonnull Node node2) {
     return (augmentedEdgeInclusionChecker.allows(INVERSE_OF))
@@ -171,12 +184,14 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<List<Edge>> getSameIndividualAugmentedEdges(@Nonnull Stream<Node> individualNodes) {
     return (augmentedEdgeInclusionChecker.allows(SAME_INDIVIDUAL))
         ? Optional.of(getSymmetricalAugmentedEdges(individualNodes, SAME_INDIVIDUAL))
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<List<Edge>> getRelatedToAugmentedEdges(@Nonnull Node subClassNode,
                                                          @Nonnull OWLClassExpression superClassExpresion) {
     if (augmentedEdgeInclusionChecker.allows(RELATED_TO)) {
@@ -295,6 +310,7 @@ public class AugmentedEdgeFactory {
 
   }
 
+  @Nonnull
   public Optional<Edge> getRelatedToAugmentedEdge(@Nonnull Node subjectNode,
                                                   @Nonnull Node fillerNode,
                                                   @Nonnull OWLPropertyExpression propertyExpr) {
@@ -303,6 +319,7 @@ public class AugmentedEdgeFactory {
         : Optional.empty();
   }
 
+  @Nonnull
   public Optional<Edge> getTypeAugmentedEdge(Node subjectNode, Node fillerNode) {
     return (augmentedEdgeInclusionChecker.allows(TYPE))
         ? Optional.of(getAugmentedEdge(subjectNode, fillerNode, TYPE))
