@@ -18,6 +18,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_SUBJECT
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_VALUE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_ANNOTATION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DOMAIN;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_VALUE;
 
@@ -36,10 +37,9 @@ public class StructuralEdgeFactory {
   }
 
   @Nonnull
-  public Stream<Edge> getEntityStructuralEdges(@Nonnull Node axiomNode,
-                                               @Nonnull Stream<Node> entityNodes,
-                                               @Nonnull EdgeLabel edgeLabel) {
-    return entityNodes.map(entityNode -> getEntityStructuralEdge(axiomNode, entityNode, edgeLabel));
+  public Edge getEntityIriStructuralEdge(@Nonnull Node entityNode,
+                                         @Nonnull Node iriNode) {
+    return getStructuralEdge(entityNode, iriNode, ENTITY_IRI);
   }
 
   @Nonnull

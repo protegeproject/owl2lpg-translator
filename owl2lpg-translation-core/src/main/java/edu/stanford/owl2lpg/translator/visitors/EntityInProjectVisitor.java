@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -13,7 +12,6 @@ import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.jetbrains.annotations.NotNull;
@@ -53,10 +51,13 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
+  private final ProjectContextNodeFactory projectContextNodeFactory;
 
   @Nonnull
-  private final ProjectContextNodeFactory projectContextNodeFactory;
+  private final StructuralEdgeFactory structuralEdgeFactory;
+
+  @Nonnull
+  private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
@@ -64,13 +65,15 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
   @Inject
   public EntityInProjectVisitor(@Nonnull OntologyDocumentId ontoDocId,
                                 @Nonnull NodeFactory nodeFactory,
-                                @Nonnull EdgeFactory edgeFactory,
                                 @Nonnull ProjectContextNodeFactory projectContextNodeFactory,
+                                @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                                @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
                                 @Nonnull AnnotationValueTranslator annotationValueTranslator) {
     this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.projectContextNodeFactory = checkNotNull(projectContextNodeFactory);
+    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
   }
 
@@ -133,9 +136,7 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
   private void translateEntityIri(IRI entityIri, Node entityNode,
                                   Builder<Translation> translations, Builder<Edge> edges) {
     var iriTranslation = annotationValueTranslator.translate(entityIri);
-    var entityIriEdge = edgeFactory.createEdge(entityNode,
-        iriTranslation.getMainNode(),
-        EdgeLabel.ENTITY_IRI);
+    var entityIriEdge = structuralEdgeFactory.getEntityIriStructuralEdge(entityNode, iriTranslation.getMainNode());
     translations.add(iriTranslation);
     edges.add(entityIriEdge);
   }
@@ -146,11 +147,9 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
         projectContextNodeFactory.createOntologyDocumentNode(ontoDocId),
         ImmutableList.of(),
         ImmutableList.of());
-    var entitySignatureOfEdge = edgeFactory.createEdge(entityNode,
-        ontologyDocumentTranslation.getMainNode(),
-        EdgeLabel.ENTITY_SIGNATURE_OF);
+    var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfAugmentedEdge(entityNode, ontologyDocumentTranslation.getMainNode());
     translations.add(ontologyDocumentTranslation);
-    edges.add(entitySignatureOfEdge);
+    entitySignatureOfEdge.ifPresent(edges::add);
   }
 
   private static String getLocalName(@Nonnull IRI iri) {

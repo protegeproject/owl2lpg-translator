@@ -42,6 +42,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_DOMAIN;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
@@ -77,6 +78,13 @@ public class AugmentedEdgeFactory {
     this.edgeFactory = checkNotNull(edgeFactory);
     this.classExprTranslator = checkNotNull(classExprTranslator);
     this.augmentedEdgeInclusionChecker = checkNotNull(augmentedEdgeInclusionChecker);
+  }
+
+  public Optional<Edge> getEntitySignatureOfAugmentedEdge(@Nonnull Node entityNode,
+                                                          @Nonnull Node ontoDocNode) {
+    return (augmentedEdgeInclusionChecker.allows(ENTITY_SIGNATURE_OF))
+        ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, ENTITY_SIGNATURE_OF))
+        : Optional.empty();
   }
 
   public Optional<Edge> getAxiomSubjectAugmentedEdge(@Nonnull Node axiomNode,
