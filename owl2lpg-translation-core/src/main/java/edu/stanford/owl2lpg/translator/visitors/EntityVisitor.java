@@ -101,7 +101,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
             PropertyFields.IRI, getIriString(entity.getIRI()),
             PropertyFields.IRI_SUFFIX, getLocalName(entity.getIRI()))));
     var iriTranslation = translator.translate(entity.getIRI());
-    var entityIriEdge = structuralEdgeFactory.getEntityIriStructuralEdge(mainNode, iriTranslation.getMainNode());
+    var entityIriEdge = structuralEdgeFactory.getEntityIriEdge(mainNode, iriTranslation.getMainNode());
     return Translation.create(entity,
         mainNode,
         ImmutableList.of(entityIriEdge),

@@ -73,18 +73,18 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
     var edges = new ImmutableList.Builder<Edge>();
     var ontologyIdTranslation = createOntologyIdTranslation(ontology.getOntologyID());
     translations.add(ontologyIdTranslation);
-    edges.add(structuralEdgeFactory.getOntologyIriStructuralEdge(mainNode, ontologyIdTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getOntologyIriEdge(mainNode, ontologyIdTranslation.getMainNode()));
     var annotations = ontology.getAnnotations();
     for (var ann : annotations) {
       var translation = annotationTranslator.translate(ann);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getOntologyAnnotationStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getOntologyAnnotationEdge(mainNode, translation.getMainNode()));
     }
     var axioms = ontology.getAxioms();
     for (var ax : axioms) {
       var translation = axiomTranslator.translate(ax);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getAxiomStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getAxiomEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(ontology, mainNode,
         edges.build(),

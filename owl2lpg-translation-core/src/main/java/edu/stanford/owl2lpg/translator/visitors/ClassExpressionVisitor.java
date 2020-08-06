@@ -110,7 +110,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   public Translation visit(@Nonnull OWLObjectComplementOf ce) {
     var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_COMPLEMENT_OF);
     var classExprTranslation = classExprTranslator.translate(ce.getOperand());
-    var classExprEdge = structuralEdgeFactory.getClassExpressionStructuralEdge(mainNode, classExprTranslation.getMainNode());
+    var classExprEdge = structuralEdgeFactory.getClassExpressionEdge(mainNode, classExprTranslation.getMainNode());
     return Translation.create(ce, mainNode,
         ImmutableList.of(classExprEdge),
         ImmutableList.of(classExprTranslation));
@@ -135,8 +135,8 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var propertyTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = individualTranslator.translate(ce.getFiller());
     var edges = ImmutableList.<Edge>builder();
-    edges.add(structuralEdgeFactory.getObjectPropertyExpressionStructuralEdge(mainNode, propertyTranslation.getMainNode()));
-    edges.add(structuralEdgeFactory.getIndividualStructuralEdge(mainNode, fillerTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getObjectPropertyExpressionEdge(mainNode, propertyTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getIndividualEdge(mainNode, fillerTranslation.getMainNode()));
     return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyTranslation, fillerTranslation));
@@ -166,7 +166,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   public Translation visit(@Nonnull OWLObjectHasSelf ce) {
     var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_HAS_SELF);
     var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
-    var propertyExprEdge = structuralEdgeFactory.getObjectPropertyExpressionStructuralEdge(mainNode, propertyExprTranslation.getMainNode());
+    var propertyExprEdge = structuralEdgeFactory.getObjectPropertyExpressionEdge(mainNode, propertyExprTranslation.getMainNode());
     return Translation.create(ce, mainNode,
         ImmutableList.of(propertyExprEdge),
         ImmutableList.of(propertyExprTranslation));
@@ -182,7 +182,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     for (var ind : individuals) {
       var translation = individualTranslator.translate(ind);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getIndividualStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getIndividualEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(ce, mainNode,
         edges.build(),
@@ -208,8 +208,8 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = literalTranslator.translate(ce.getFiller());
     var edges = ImmutableList.<Edge>builder();
-    edges.add(structuralEdgeFactory.getDataPropertyExpressionStructuralEdge(mainNode, propertyExprTranslation.getMainNode()));
-    edges.add(structuralEdgeFactory.getLiteralStructuralEdge(mainNode, fillerTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getDataPropertyExpressionEdge(mainNode, propertyExprTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getLiteralEdge(mainNode, fillerTranslation.getMainNode()));
     return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyExprTranslation, fillerTranslation));
@@ -242,7 +242,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     for (var op : operands) {
       var translation = classExprTranslator.translate(op);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getClassExpressionStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getClassExpressionEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(ce, mainNode,
         edges.build(),
@@ -255,8 +255,8 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var propertyTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = classExprTranslator.translate(ce.getFiller());
     var edges = ImmutableList.<Edge>builder();
-    edges.add(structuralEdgeFactory.getObjectPropertyExpressionStructuralEdge(mainNode, propertyTranslation.getMainNode()));
-    edges.add(structuralEdgeFactory.getClassExpressionStructuralEdge(mainNode, fillerTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getObjectPropertyExpressionEdge(mainNode, propertyTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getClassExpressionEdge(mainNode, fillerTranslation.getMainNode()));
     return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyTranslation, fillerTranslation));
@@ -268,8 +268,8 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = dataRangeTranslator.translate(ce.getFiller());
     var edges = ImmutableList.<Edge>builder();
-    edges.add(structuralEdgeFactory.getDataPropertyExpressionStructuralEdge(mainNode, propertyExprTranslation.getMainNode()));
-    edges.add(structuralEdgeFactory.getDataRangeStructuralEdge(mainNode, fillerTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getDataPropertyExpressionEdge(mainNode, propertyExprTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getDataRangeEdge(mainNode, fillerTranslation.getMainNode()));
     return Translation.create(ce, mainNode,
         edges.build(),
         ImmutableList.of(propertyExprTranslation, fillerTranslation));

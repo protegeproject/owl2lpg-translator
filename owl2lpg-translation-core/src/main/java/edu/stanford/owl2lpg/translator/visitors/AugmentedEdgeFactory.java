@@ -83,34 +83,34 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<Edge> getEntitySignatureOfAugmentedEdge(@Nonnull Node entityNode,
-                                                          @Nonnull Node ontoDocNode) {
+  public Optional<Edge> getEntitySignatureOfEdge(@Nonnull Node entityNode,
+                                                 @Nonnull Node ontoDocNode) {
     return (augmentedEdgeInclusionChecker.allows(ENTITY_SIGNATURE_OF))
         ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, ENTITY_SIGNATURE_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getAxiomOfAugmentedEdge(@Nonnull Node entityNode,
-                                                @Nonnull Node ontoDocNode) {
+  public Optional<Edge> getAxiomOfEdge(@Nonnull Node entityNode,
+                                       @Nonnull Node ontoDocNode) {
     return (augmentedEdgeInclusionChecker.allows(AXIOM_OF))
         ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, AXIOM_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getAxiomSubjectAugmentedEdge(@Nonnull Node axiomNode,
-                                                     @Nonnull Node subjectNode) {
+  public Optional<Edge> getAxiomSubjectEdge(@Nonnull Node axiomNode,
+                                            @Nonnull Node subjectNode) {
     return (augmentedEdgeInclusionChecker.allows(AXIOM_SUBJECT))
         ? Optional.of(getAugmentedEdge(axiomNode, subjectNode, AXIOM_SUBJECT))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<List<Edge>> getAxiomSubjectAugmentedEdges(@Nonnull Node axiomNode,
-                                                            @Nonnull Stream<Node> subjectNodes) {
+  public Optional<List<Edge>> getAxiomSubjectEdges(@Nonnull Node axiomNode,
+                                                   @Nonnull Stream<Node> subjectNodes) {
     var edges = subjectNodes
-        .map(subjectNode -> getAxiomSubjectAugmentedEdge(axiomNode, subjectNode))
+        .map(subjectNode -> getAxiomSubjectEdge(axiomNode, subjectNode))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(ImmutableList.toImmutableList());
@@ -118,92 +118,92 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<Edge> getSubClassOfAugmentedEdge(@Nonnull Node subClassNode,
-                                                   @Nonnull Node superClassNode) {
+  public Optional<Edge> getSubClassOfEdge(@Nonnull Node subClassNode,
+                                          @Nonnull Node superClassNode) {
     return (augmentedEdgeInclusionChecker.allows(SUB_CLASS_OF))
         ? Optional.of(getAugmentedEdge(subClassNode, superClassNode, SUB_CLASS_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSymmetricalSubClassOfAugmentedEdges(@Nonnull Stream<Node> classNodes) {
+  public Optional<List<Edge>> getSymmetricalSubClassOfEdges(@Nonnull Stream<Node> classNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_CLASS_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(classNodes, SUB_CLASS_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getSubObjectPropertyOfAugmentedEdge(@Nonnull Node subPropertyNode,
-                                                            @Nonnull Node superPropertyOf) {
+  public Optional<Edge> getSubObjectPropertyOfEdge(@Nonnull Node subPropertyNode,
+                                                   @Nonnull Node superPropertyOf) {
     return (augmentedEdgeInclusionChecker.allows(SUB_OBJECT_PROPERTY_OF))
         ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyOf, SUB_OBJECT_PROPERTY_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSymmetricalSubObjectPropertyOfAugmentedEdges(@Nonnull Stream<Node> objectPropertyNodes) {
+  public Optional<List<Edge>> getSymmetricalSubObjectPropertyOfEdges(@Nonnull Stream<Node> objectPropertyNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_OBJECT_PROPERTY_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(objectPropertyNodes, SUB_OBJECT_PROPERTY_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getSubDataPropertyOfAugmentedEdge(@Nonnull Node subPropertyNode,
-                                                          @Nonnull Node superPropertyOf) {
+  public Optional<Edge> getSubDataPropertyOfEdge(@Nonnull Node subPropertyNode,
+                                                 @Nonnull Node superPropertyOf) {
     return (augmentedEdgeInclusionChecker.allows(SUB_DATA_PROPERTY_OF))
         ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyOf, SUB_DATA_PROPERTY_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSymmetricalSubDataPropertyOfAugmentedEdges(@Nonnull Stream<Node> dataPropertyNodes) {
+  public Optional<List<Edge>> getSymmetricalSubDataPropertyOfEdges(@Nonnull Stream<Node> dataPropertyNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_DATA_PROPERTY_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(dataPropertyNodes, SUB_DATA_PROPERTY_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getSubAnnotationPropertyOfAugmentedEdge(@Nonnull Node subPropertyNode,
-                                                                @Nonnull Node superPropertyNode) {
+  public Optional<Edge> getSubAnnotationPropertyOfEdge(@Nonnull Node subPropertyNode,
+                                                       @Nonnull Node superPropertyNode) {
     return (augmentedEdgeInclusionChecker.allows(SUB_ANNOTATION_PROPERTY_OF))
         ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyNode, SUB_ANNOTATION_PROPERTY_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getDomainAugmentedEdge(@Nonnull Node propertyNode,
-                                               @Nonnull Node domainNode) {
+  public Optional<Edge> getHasDomainEdge(@Nonnull Node propertyNode,
+                                         @Nonnull Node domainNode) {
     return (augmentedEdgeInclusionChecker.allows(HAS_DOMAIN))
         ? Optional.of(getAugmentedEdge(propertyNode, domainNode, HAS_DOMAIN))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getRangeAugmentedEdge(@Nonnull Node propertyNode,
-                                              @Nonnull Node rangeNode) {
+  public Optional<Edge> getHasRangeEdge(@Nonnull Node propertyNode,
+                                        @Nonnull Node rangeNode) {
     return (augmentedEdgeInclusionChecker.allows(HAS_RANGE))
         ? Optional.of(getAugmentedEdge(propertyNode, rangeNode, HAS_RANGE))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getInverseOfAugmentedEdge(@Nonnull Node node1,
-                                                  @Nonnull Node node2) {
+  public Optional<Edge> getInverseOfEdge(@Nonnull Node node1,
+                                         @Nonnull Node node2) {
     return (augmentedEdgeInclusionChecker.allows(INVERSE_OF))
         ? Optional.of(getAugmentedEdge(node1, node2, INVERSE_OF))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSameIndividualAugmentedEdges(@Nonnull Stream<Node> individualNodes) {
+  public Optional<List<Edge>> getSameIndividualEdges(@Nonnull Stream<Node> individualNodes) {
     return (augmentedEdgeInclusionChecker.allows(SAME_INDIVIDUAL))
         ? Optional.of(getSymmetricalAugmentedEdges(individualNodes, SAME_INDIVIDUAL))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<List<Edge>> getRelatedToAugmentedEdges(@Nonnull Node subClassNode,
-                                                         @Nonnull OWLClassExpression superClassExpresion) {
+  public Optional<List<Edge>> getRelatedToEdges(@Nonnull Node subClassNode,
+                                                @Nonnull OWLClassExpression superClassExpresion) {
     if (augmentedEdgeInclusionChecker.allows(RELATED_TO)) {
       /* Add extra augmented edges when the superclass is an expression */
       var edgeList = superClassExpresion.accept(new OWLClassExpressionVisitorExAdapter<List<Edge>>(ImmutableList.of()) {
@@ -303,7 +303,7 @@ public class AugmentedEdgeFactory {
             var propertyNode = translation.findFirstDirectNodeFrom(propertyEdgeLabel);
             var fillerNode = translation.findFirstDirectNodeFrom(fillerEdgeLabel);
             if (propertyNode.isPresent() && fillerNode.isPresent()) {
-              return Optional.of(getRelatedToAugmentedEdge(subjectNode,
+              return Optional.of(getRelatedToEdge(subjectNode,
                   fillerNode.get(),
                   Properties.create(ImmutableMap.of(
                       PropertyFields.IRI, propertyNode.get().getProperty(PropertyFields.IRI),
@@ -321,24 +321,24 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<Edge> getRelatedToAugmentedEdge(@Nonnull Node subjectNode,
-                                                  @Nonnull Node fillerNode,
-                                                  @Nonnull OWLPropertyExpression propertyExpr) {
+  public Optional<Edge> getRelatedToEdge(@Nonnull Node subjectNode,
+                                         @Nonnull Node fillerNode,
+                                         @Nonnull OWLPropertyExpression propertyExpr) {
     return (propertyExpr.isNamed() && augmentedEdgeInclusionChecker.allows(RELATED_TO))
-        ? Optional.of(getRelatedToAugmentedEdge(subjectNode, fillerNode, (OWLEntity) propertyExpr))
+        ? Optional.of(getRelatedToEdge(subjectNode, fillerNode, (OWLEntity) propertyExpr))
         : Optional.empty();
   }
 
   @Nonnull
-  public Optional<Edge> getTypeAugmentedEdge(Node subjectNode, Node fillerNode) {
+  public Optional<Edge> getTypeEdge(Node subjectNode, Node fillerNode) {
     return (augmentedEdgeInclusionChecker.allows(TYPE))
         ? Optional.of(getAugmentedEdge(subjectNode, fillerNode, TYPE))
         : Optional.empty();
   }
 
   @Nonnull
-  private Edge getRelatedToAugmentedEdge(Node subjectNode, Node fillerNode, OWLEntity entity) {
-    return getRelatedToAugmentedEdge(subjectNode,
+  private Edge getRelatedToEdge(Node subjectNode, Node fillerNode, OWLEntity entity) {
+    return getRelatedToEdge(subjectNode,
         fillerNode,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, String.valueOf(entity.getIRI()),
@@ -346,7 +346,7 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  private Edge getRelatedToAugmentedEdge(Node fromNode, Node toNode, Properties properties) {
+  private Edge getRelatedToEdge(Node fromNode, Node toNode, Properties properties) {
     return getAugmentedEdge(fromNode, toNode, RELATED_TO, properties);
   }
 

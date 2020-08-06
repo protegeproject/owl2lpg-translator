@@ -75,14 +75,14 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
     var edges = new ImmutableList.Builder<Edge>();
     var annotationPropertyTranslation = propertyExprTranslator.translate(annotation.getProperty());
     translations.add(annotationPropertyTranslation);
-    edges.add(structuralEdgeFactory.getAnnotationPropertyStructuralEdge(mainNode, annotationPropertyTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getAnnotationPropertyEdge(mainNode, annotationPropertyTranslation.getMainNode()));
     var annotationValueTranslation = annotationValueTranslator.translate(annotation.getValue());
     translations.add(annotationValueTranslation);
-    edges.add(structuralEdgeFactory.getAnnotationValueStructuralEdge(mainNode, annotationValueTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getAnnotationValueEdge(mainNode, annotationValueTranslation.getMainNode()));
     for (var ann : annotation.getAnnotations()) {
       var translation = annotationObjectTranslator.translate(ann);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getAnnotationAnnotationStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getAnnotationAnnotationEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(annotation, mainNode,
         edges.build(),

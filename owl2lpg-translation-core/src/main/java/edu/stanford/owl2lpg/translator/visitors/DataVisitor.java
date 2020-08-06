@@ -104,7 +104,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   public Translation visit(@Nonnull OWLDataComplementOf dr) {
     var mainNode = nodeFactory.createNode(dr, DATA_COMPLEMENT_OF);
     var dataRangeTranslation = dataRangeTranslator.translate(dr.getDataRange());
-    var dataRangeEdge = structuralEdgeFactory.getDataRangeStructuralEdge(mainNode, dataRangeTranslation.getMainNode());
+    var dataRangeEdge = structuralEdgeFactory.getDataRangeEdge(mainNode, dataRangeTranslation.getMainNode());
     return Translation.create(dr, mainNode,
         ImmutableList.of(dataRangeEdge),
         ImmutableList.of(dataRangeTranslation));
@@ -120,7 +120,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     for (var value : values) {
       var translation = literalTranslator.translate(value);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getLiteralStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getLiteralEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(dr, mainNode,
         edges.build(),
@@ -147,12 +147,12 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     var edges = new ImmutableList.Builder<Edge>();
     var datatypeTranslation = entityTranslator.translate(dr.getDatatype());
     translations.add(datatypeTranslation);
-    edges.add(structuralEdgeFactory.getDataTypeStructuralEdge(mainNode, datatypeTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getDataTypeEdge(mainNode, datatypeTranslation.getMainNode()));
     var facetRestrictions = dr.getFacetRestrictions();
     for (var facet : facetRestrictions) {
       var translation = visit(facet);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getRestrictionStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getRestrictionEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(dr, mainNode,
         edges.build(),
@@ -170,10 +170,10 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
         Properties.of(PropertyFields.IRI, String.valueOf(facetIri)));
     var constrainingFacetTranslation = Translation.create(facetIri, facetNode);
     translations.add(constrainingFacetTranslation);
-    edges.add(structuralEdgeFactory.getConstrainingFacetStructuralEdge(mainNode, constrainingFacetTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getConstrainingFacetEdge(mainNode, constrainingFacetTranslation.getMainNode()));
     var restrictionValueTranslation = literalTranslator.translate(facet.getFacetValue());
     translations.add(restrictionValueTranslation);
-    edges.add(structuralEdgeFactory.getRestrictionValueStructuralEdge(mainNode, restrictionValueTranslation.getMainNode()));
+    edges.add(structuralEdgeFactory.getRestrictionValueEdge(mainNode, restrictionValueTranslation.getMainNode()));
     return Translation.create(facet, mainNode,
         edges.build(),
         translations.build());
@@ -188,7 +188,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     for (var op : operands) {
       var translation = dataRangeTranslator.translate(op);
       translations.add(translation);
-      edges.add(structuralEdgeFactory.getDataRangeStructuralEdge(mainNode, translation.getMainNode()));
+      edges.add(structuralEdgeFactory.getDataRangeEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(dr, mainNode,
         edges.build(),

@@ -814,7 +814,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var classTranslation = entityTranslator.translate(cls);
     translations.add(classTranslation);
     var classNode = classTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getClassStructuralEdge(axiomNode, classNode);
+    var edge = structuralEdgeFactory.getClassEdge(axiomNode, classNode);
     edges.add(edge);
   }
 
@@ -825,7 +825,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var entityTranslation = entityTranslator.translate(entity);
     translations.add(entityTranslation);
     var entityNode = entityTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getEntityStructuralEdge(axiomNode, entityNode);
+    var edge = structuralEdgeFactory.getEntityEdge(axiomNode, entityNode);
     edges.add(edge);
     return entityNode;
   }
@@ -846,7 +846,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var individualTranslation = individualTranslator.translate(individual);
     translations.add(individualTranslation);
     var individualNode = individualTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getIndividualStructuralEdge(axiomNode, individualNode);
+    var edge = structuralEdgeFactory.getIndividualEdge(axiomNode, individualNode);
     edges.add(edge);
     return individualNode;
   }
@@ -858,7 +858,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var individualTranslation = individualTranslator.translate(individual);
     translations.add(individualTranslation);
     var individualNode = individualTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSourceIndividualStructuralEdge(axiomNode, individualNode);
+    var edge = structuralEdgeFactory.getSourceIndividualEdge(axiomNode, individualNode);
     edges.add(edge);
     return individualNode;
   }
@@ -870,7 +870,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var individualTranslation = individualTranslator.translate(individual);
     translations.add(individualTranslation);
     var individualNode = individualTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getTargetIndividualStructuralEdge(axiomNode, individualNode);
+    var edge = structuralEdgeFactory.getTargetIndividualEdge(axiomNode, individualNode);
     edges.add(edge);
     return individualNode;
   }
@@ -882,7 +882,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var dataRangeTranslation = dataRangeTranslator.translate(dataRange);
     translations.add(dataRangeTranslation);
     var dataRangeNode = dataRangeTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getDataRangeStructuralEdge(axiomNode, dataRangeNode);
+    var edge = structuralEdgeFactory.getDataRangeEdge(axiomNode, dataRangeNode);
     edges.add(edge);
   }
 
@@ -893,7 +893,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var dataTypeTranslation = dataRangeTranslator.translate(datatype);
     translations.add(dataTypeTranslation);
     var dataTypeNode = dataTypeTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getDataTypeStructuralEdge(axiomNode, dataTypeNode);
+    var edge = structuralEdgeFactory.getDataTypeEdge(axiomNode, dataTypeNode);
     edges.add(edge);
     return dataTypeNode;
   }
@@ -905,7 +905,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var literalTranslation = literalTranslator.translate(literal);
     translations.add(literalTranslation);
     var literalNode = literalTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getTargetValueStructuralEdge(axiomNode, literalNode);
+    var edge = structuralEdgeFactory.getTargetValueEdge(axiomNode, literalNode);
     edges.add(edge);
     return literalNode;
   }
@@ -926,7 +926,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var classExprTranslation = classExprTranslator.translate(classExpr);
     translations.add(classExprTranslation);
     var classExprNode = classExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getClassExpressionStructuralEdge(axiomNode, classExprNode);
+    var edge = structuralEdgeFactory.getClassExpressionEdge(axiomNode, classExprNode);
     edges.add(edge);
     return classExprNode;
   }
@@ -938,7 +938,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var classExprTranslation = classExprTranslator.translate(classExpr);
     translations.add(classExprTranslation);
     var classExprNode = classExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSubClassExpressionStructuralEdge(axiomNode, classExprNode);
+    var edge = structuralEdgeFactory.getSubClassExpressionEdge(axiomNode, classExprNode);
     edges.add(edge);
     return classExprNode;
   }
@@ -950,7 +950,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var classExprTranslation = classExprTranslator.translate(classExpr);
     translations.add(classExprTranslation);
     var classExprNode = classExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSuperClassExpressionStructuralEdge(axiomNode, classExprNode);
+    var edge = structuralEdgeFactory.getSuperClassExpressionEdge(axiomNode, classExprNode);
     edges.add(edge);
     return classExprNode;
   }
@@ -962,7 +962,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSubDataPropertyExpressionStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getSubDataPropertyExpressionEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -974,7 +974,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSuperDataPropertyExpressionStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getSuperDataPropertyExpressionEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -986,7 +986,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSubObjectPropertyExpressionStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getSubObjectPropertyExpressionEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -998,7 +998,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSuperObjectPropertyExpressionStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getSuperObjectPropertyExpressionEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -1010,7 +1010,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSubAnnotationPropertyStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getSubAnnotationPropertyEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -1022,7 +1022,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getSuperAnnotationPropertyStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getSuperAnnotationPropertyEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -1043,7 +1043,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var classExprTranslation = classExprTranslator.translate(classExpr);
     translations.add(classExprTranslation);
     var classExprNode = classExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getDisjointClassExpressionStructuralEdge(axiomNode, classExprNode);
+    var edge = structuralEdgeFactory.getDisjointClassExpressionEdge(axiomNode, classExprNode);
     edges.add(edge);
     return classExprNode;
   }
@@ -1064,7 +1064,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getObjectPropertyExpressionStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getObjectPropertyExpressionEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -1085,7 +1085,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getDataPropertyExpressionStructuralEdge(axiomNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getDataPropertyExpressionEdge(axiomNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -1097,7 +1097,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getInverseObjectPropertyExpressionStructuralEdge(mainNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getInverseObjectPropertyExpressionEdge(mainNode, propertyExprNode);
     edges.add(edge);
 
     return propertyExprNode;
@@ -1110,7 +1110,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var propertyExprTranslation = propertyExprTranslator.translate(propertyExpr);
     translations.add(propertyExprTranslation);
     var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getNextStructuralEdge(mainNode, propertyExprNode);
+    var edge = structuralEdgeFactory.getNextEdge(mainNode, propertyExprNode);
     edges.add(edge);
     return propertyExprNode;
   }
@@ -1138,7 +1138,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
                                                      @Nonnull Builder<Translation> translations,
                                                      @Nonnull Builder<Edge> edges) {
     var domainNode = translation.getMainNode();
-    var edge = structuralEdgeFactory.getDomainStructuralEdge(axiomNode, domainNode);
+    var edge = structuralEdgeFactory.getDomainEdge(axiomNode, domainNode);
     translations.add(translation);
     edges.add(edge);
   }
@@ -1175,7 +1175,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
                                                     @Nonnull Builder<Translation> translations,
                                                     @Nonnull Builder<Edge> edges) {
     var rangeNode = translation.getMainNode();
-    var edge = structuralEdgeFactory.getRangeStructuralEdge(axiomNode, rangeNode);
+    var edge = structuralEdgeFactory.getRangeEdge(axiomNode, rangeNode);
     translations.add(translation);
     edges.add(edge);
   }
@@ -1187,7 +1187,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var annotationSubjectTranslation = annotationSubjectTranslator.translate(subject);
     translations.add(annotationSubjectTranslation);
     var annotationSubjectNode = annotationSubjectTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getAnnotationSubjectStructuralEdge(axiomNode, annotationSubjectNode);
+    var edge = structuralEdgeFactory.getAnnotationSubjectEdge(axiomNode, annotationSubjectNode);
     edges.add(edge);
     return annotationSubjectNode;
   }
@@ -1199,7 +1199,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var annotationPropertyTranslation = propertyExprTranslator.translate(property);
     translations.add(annotationPropertyTranslation);
     var annotationPropertyNode = annotationPropertyTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getAnnotationPropertyStructuralEdge(axiomNode, annotationPropertyNode);
+    var edge = structuralEdgeFactory.getAnnotationPropertyEdge(axiomNode, annotationPropertyNode);
     edges.add(edge);
     return annotationPropertyNode;
   }
@@ -1211,7 +1211,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var annotationValueTranslation = annotationValueTranslator.translate(value);
     translations.add(annotationValueTranslation);
     var annotationValueNode = annotationValueTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getAnnotationValueStructuralEdge(axiomNode, annotationValueNode);
+    var edge = structuralEdgeFactory.getAnnotationValueEdge(axiomNode, annotationValueNode);
     edges.add(edge);
     return annotationValueNode;
   }
@@ -1231,7 +1231,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomAnnotationTranslation = annotationTranslator.translate(annotation);
     translations.add(axiomAnnotationTranslation);
     Node axiomAnnotationNode = axiomAnnotationTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getAxiomAnnotationStructuralEdge(axiomNode, axiomAnnotationNode);
+    var edge = structuralEdgeFactory.getAxiomAnnotationEdge(axiomNode, axiomAnnotationNode);
     edges.add(edge);
   }
 
@@ -1240,70 +1240,70 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
    */
 
   private void addAxiomOfAugmentedEdge(Node axiomNode, Node ontologyDocumentNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getAxiomOfAugmentedEdge(axiomNode, ontologyDocumentNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getAxiomOfEdge(axiomNode, ontologyDocumentNode).ifPresent(edges::add);
   }
 
   private void addAxiomSubjectAugmentedEdge(Node axiomNode, Node subjectNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getAxiomSubjectAugmentedEdge(axiomNode, subjectNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getAxiomSubjectEdge(axiomNode, subjectNode).ifPresent(edges::add);
   }
 
   private void addAxiomSubjectAugmentedEdges(Node axiomNode, Stream<Node> subjectNodes, Builder<Edge> edges) {
-    augmentedEdgeFactory.getAxiomSubjectAugmentedEdges(axiomNode, subjectNodes).ifPresent(edges::addAll);
+    augmentedEdgeFactory.getAxiomSubjectEdges(axiomNode, subjectNodes).ifPresent(edges::addAll);
   }
 
   private void addSubClassOfAugmentedEdge(Node subClassNode, Node superClassNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSubClassOfAugmentedEdge(subClassNode, superClassNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getSubClassOfEdge(subClassNode, superClassNode).ifPresent(edges::add);
   }
 
   private void addSymmetricalSubClassOfAugmentedEdges(Stream<Node> classNodes, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSymmetricalSubClassOfAugmentedEdges(classNodes).ifPresent(edges::addAll);
+    augmentedEdgeFactory.getSymmetricalSubClassOfEdges(classNodes).ifPresent(edges::addAll);
   }
 
   private void addSubObjectPropertyOfAugmentedEdge(Node subPropertyNode, Node superPropertyOf, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSubObjectPropertyOfAugmentedEdge(subPropertyNode, superPropertyOf).ifPresent(edges::add);
+    augmentedEdgeFactory.getSubObjectPropertyOfEdge(subPropertyNode, superPropertyOf).ifPresent(edges::add);
   }
 
   private void addSymmetricalSubObjectPropertyOfAugmentedEdges(Stream<Node> objectPropertyNodes, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSymmetricalSubObjectPropertyOfAugmentedEdges(objectPropertyNodes).ifPresent(edges::addAll);
+    augmentedEdgeFactory.getSymmetricalSubObjectPropertyOfEdges(objectPropertyNodes).ifPresent(edges::addAll);
   }
 
   private void addSubDataPropertyOfAugmentedEdge(Node subPropertyNode, Node superPropertyOf, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSubDataPropertyOfAugmentedEdge(subPropertyNode, superPropertyOf).ifPresent(edges::add);
+    augmentedEdgeFactory.getSubDataPropertyOfEdge(subPropertyNode, superPropertyOf).ifPresent(edges::add);
   }
 
   private void addSymmetricalSubDataPropertyOfAugmentedEdges(Stream<Node> dataPropertyNodes, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSymmetricalSubDataPropertyOfAugmentedEdges(dataPropertyNodes).ifPresent(edges::addAll);
+    augmentedEdgeFactory.getSymmetricalSubDataPropertyOfEdges(dataPropertyNodes).ifPresent(edges::addAll);
   }
 
   private void addSubAnnotationPropertyOfAugmentedEdge(Node subPropertyNode, Node superPropertyNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSubAnnotationPropertyOfAugmentedEdge(subPropertyNode, superPropertyNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getSubAnnotationPropertyOfEdge(subPropertyNode, superPropertyNode).ifPresent(edges::add);
   }
 
   private void addDomainAugmentedEdge(Node propertyNode, Node domainNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getDomainAugmentedEdge(propertyNode, domainNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getHasDomainEdge(propertyNode, domainNode).ifPresent(edges::add);
   }
 
   private void addRangeAugmentedEdge(Node propertyNode, Node rangeNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getRangeAugmentedEdge(propertyNode, rangeNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getHasRangeEdge(propertyNode, rangeNode).ifPresent(edges::add);
   }
 
   private void addInverseOfAugmentedEdge(Node node1, Node node2, Builder<Edge> edges) {
-    augmentedEdgeFactory.getInverseOfAugmentedEdge(node1, node2).ifPresent(edges::add);
+    augmentedEdgeFactory.getInverseOfEdge(node1, node2).ifPresent(edges::add);
   }
 
   private void addSameIndividualAugmentedEdges(Stream<Node> individualNodes, Builder<Edge> edges) {
-    augmentedEdgeFactory.getSameIndividualAugmentedEdges(individualNodes).ifPresent(edges::addAll);
+    augmentedEdgeFactory.getSameIndividualEdges(individualNodes).ifPresent(edges::addAll);
   }
 
   private void addRelatedToAugmentedEdges(Node subClassNode, OWLClassExpression superClassExpresion, Builder<Edge> edges) {
-    augmentedEdgeFactory.getRelatedToAugmentedEdges(subClassNode, superClassExpresion).ifPresent(edges::addAll);
+    augmentedEdgeFactory.getRelatedToEdges(subClassNode, superClassExpresion).ifPresent(edges::addAll);
   }
 
   private void addRelatedToAugmentedEdge(Node subjectNode, Node fillerNode, OWLPropertyExpression propertyExpr, Builder<Edge> edges) {
-    augmentedEdgeFactory.getRelatedToAugmentedEdge(subjectNode, fillerNode, propertyExpr).ifPresent(edges::add);
+    augmentedEdgeFactory.getRelatedToEdge(subjectNode, fillerNode, propertyExpr).ifPresent(edges::add);
   }
 
   private void addTypeAugmentedEdge(Node subjectNode, Node fillerNode, Builder<Edge> edges) {
-    augmentedEdgeFactory.getTypeAugmentedEdge(subjectNode, fillerNode).ifPresent(edges::add);
+    augmentedEdgeFactory.getTypeEdge(subjectNode, fillerNode).ifPresent(edges::add);
   }
 }

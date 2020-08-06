@@ -99,10 +99,10 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
 
     return Translation.create(projectId,
         projectNode,
-        ImmutableList.of(structuralEdgeFactory.getBranchStructuralEdge(projectNode, branchNode)),
+        ImmutableList.of(structuralEdgeFactory.getBranchEdge(projectNode, branchNode)),
         ImmutableList.of(Translation.create(branchId,
             branchNode,
-            ImmutableList.of(structuralEdgeFactory.getOntologyDocumentStructuralEdge(branchNode, ontoDocNode)),
+            ImmutableList.of(structuralEdgeFactory.getOntologyDocumentEdge(branchNode, ontoDocNode)),
             ImmutableList.of(Translation.create(ontoDocId,
                 ontoDocNode,
                 edges.build(),
@@ -112,7 +112,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private void translateOntologyIri(Optional<IRI> ontologyIri, Node ontoDocNode, Builder<Translation> translations, Builder<Edge> edges) {
     if (ontologyIri.isPresent()) {
       var ontologyIriTranslation = annotationValueTranslator.translate(ontologyIri.get());
-      var ontologyIriEdge = structuralEdgeFactory.getOntologyIriStructuralEdge(ontoDocNode, ontologyIriTranslation.getMainNode());
+      var ontologyIriEdge = structuralEdgeFactory.getOntologyIriEdge(ontoDocNode, ontologyIriTranslation.getMainNode());
       translations.add(ontologyIriTranslation);
       edges.add(ontologyIriEdge);
     }
@@ -121,7 +121,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private void translateVersionIri(Optional<IRI> versionIri, Node ontoDocNode, Builder<Translation> translations, Builder<Edge> edges) {
     if (versionIri.isPresent()) {
       var versionIriTranslation = annotationValueTranslator.translate(versionIri.get());
-      var versionIriEdge = structuralEdgeFactory.getVersionIriStructuralEdge(ontoDocNode, versionIriTranslation.getMainNode());
+      var versionIriEdge = structuralEdgeFactory.getVersionIriEdge(ontoDocNode, versionIriTranslation.getMainNode());
       translations.add(versionIriTranslation);
       edges.add(versionIriEdge);
     }
@@ -134,7 +134,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
         .collect(ImmutableList.toImmutableList());
     var ontologyAnnotationEdges = ontologyAnnotationTranslations
         .stream()
-        .map(translation -> structuralEdgeFactory.getOntologyAnnotationStructuralEdge(ontoDocNode, translation.getMainNode()))
+        .map(translation -> structuralEdgeFactory.getOntologyAnnotationEdge(ontoDocNode, translation.getMainNode()))
         .collect(ImmutableList.toImmutableList());
     translations.addAll(ontologyAnnotationTranslations);
     edges.addAll(ontologyAnnotationEdges);

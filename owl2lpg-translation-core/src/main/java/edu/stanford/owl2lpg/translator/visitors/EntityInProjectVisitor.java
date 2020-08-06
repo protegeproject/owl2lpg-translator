@@ -136,7 +136,7 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
   private void translateEntityIri(IRI entityIri, Node entityNode,
                                   Builder<Translation> translations, Builder<Edge> edges) {
     var iriTranslation = annotationValueTranslator.translate(entityIri);
-    var entityIriEdge = structuralEdgeFactory.getEntityIriStructuralEdge(entityNode, iriTranslation.getMainNode());
+    var entityIriEdge = structuralEdgeFactory.getEntityIriEdge(entityNode, iriTranslation.getMainNode());
     translations.add(iriTranslation);
     edges.add(entityIriEdge);
   }
@@ -147,7 +147,7 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
         projectContextNodeFactory.createOntologyDocumentNode(ontoDocId),
         ImmutableList.of(),
         ImmutableList.of());
-    var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfAugmentedEdge(entityNode, ontologyDocumentTranslation.getMainNode());
+    var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfEdge(entityNode, ontologyDocumentTranslation.getMainNode());
     translations.add(ontologyDocumentTranslation);
     entitySignatureOfEdge.ifPresent(edges::add);
   }

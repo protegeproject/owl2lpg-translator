@@ -73,7 +73,7 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
   public Translation visit(@Nonnull OWLObjectInverseOf ope) {
     var mainNode = nodeFactory.createNode(ope, OBJECT_INVERSE_OF);
     var inversePropertyTranslation = propertyExprTranslator.translate(ope.getInverseProperty());
-    var objectPropertyEdge = structuralEdgeFactory.getObjectPropertyStructuralEdge(mainNode, inversePropertyTranslation.getMainNode());
+    var objectPropertyEdge = structuralEdgeFactory.getObjectPropertyEdge(mainNode, inversePropertyTranslation.getMainNode());
     return Translation.create(ope, mainNode,
         ImmutableList.of(objectPropertyEdge),
         ImmutableList.of(inversePropertyTranslation));
