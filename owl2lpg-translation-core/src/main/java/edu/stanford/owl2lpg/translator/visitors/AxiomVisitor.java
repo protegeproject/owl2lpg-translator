@@ -52,7 +52,6 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_CLASS_EXPRES
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_DATA_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_INDIVIDUAL;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_VALUE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_ASSERTION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_PROPERTY_DOMAIN;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_PROPERTY_RANGE;
@@ -317,8 +316,8 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var edges = newEdgesBuilder();
     var propertyExprNode = addPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
         axiomNode, propertyEdgeLabel, translations, edges);
-    var domainNode = addClassExprTranslationAndStructuralEdge(axiom.getDomain(),
-        axiomNode, DOMAIN, translations, edges);
+    var domainNode = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
+        axiomNode, translations, edges);
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addDomainAugmentedEdge(propertyExprNode, domainNode, edges);
@@ -409,8 +408,8 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var edges = newEdgesBuilder();
     var propertyExprNode = addPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
         axiomNode, OBJECT_PROPERTY_EXPRESSION, translations, edges);
-    var rangeNode = addClassExprTranslationAndStructuralEdge(axiom.getRange(),
-        axiomNode, RANGE, translations, edges);
+    var rangeNode = addRangeTranslationAndStructuralEdge(axiom.getRange(),
+        axiomNode, translations, edges);
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addRangeAugmentedEdge(propertyExprNode, rangeNode, edges);
@@ -855,7 +854,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var literalTranslation = literalTranslator.translate(literal);
     translations.add(literalTranslation);
     var literalNode = literalTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getStructuralEdge(axiomNode, literalNode, TARGET_VALUE);
+    var edge = structuralEdgeFactory.getTargetValueStructuralEdge(axiomNode, literalNode);
     edges.add(edge);
     return literalNode;
   }
@@ -905,6 +904,31 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     edges.add(edge);
     return propertyExprNode;
   }
+
+  private Node addDomainTranslationAndStructuralEdge(@Nonnull OWLClassExpression domain,
+                                                     @Nonnull Node axiomNode,
+                                                     @Nonnull Builder<Translation> translations,
+                                                     @Nonnull Builder<Edge> edges) {
+    var domainTranslation = classExprTranslator.translate(domain);
+    translations.add(domainTranslation);
+    var domainNode = domainTranslation.getMainNode();
+    var edge = structuralEdgeFactory.getDomainStructuralEdge(axiomNode, domainNode);
+    edges.add(edge);
+    return domainNode;
+  }
+
+  private Node addRangeTranslationAndStructuralEdge(@Nonnull OWLClassExpression range,
+                                                    @Nonnull Node axiomNode,
+                                                    @Nonnull Builder<Translation> translations,
+                                                    @Nonnull Builder<Edge> edges) {
+    var rangeTranslation = classExprTranslator.translate(range);
+    translations.add(rangeTranslation);
+    var rangeNode = rangeTranslation.getMainNode();
+    var edge = structuralEdgeFactory.getRangeStructuralEdge(axiomNode, rangeNode);
+    edges.add(edge);
+    return rangeNode;
+  }
+
 
   private Node addAnnotationSubjectTranslationAndStructuralEdge(@Nonnull OWLAnnotationSubject subject,
                                                                 @Nonnull Node axiomNode,
