@@ -2,17 +2,31 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import edu.stanford.owl2lpg.model.*;
-import edu.stanford.owl2lpg.translator.*;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
+import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.EntityTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLNamedObjectVisitorEx;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY;
 
 /**
@@ -28,7 +42,7 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
+  private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
   private final AxiomTranslator axiomTranslator;
@@ -41,12 +55,12 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Inject
   public OntologyVisitor(@Nonnull NodeFactory nodeFactory,
-                         @Nonnull EdgeFactory edgeFactory,
+                         @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                          @Nonnull AxiomTranslator axiomTranslator,
                          @Nonnull EntityTranslator entityTranslator,
                          @Nonnull AnnotationObjectTranslator annotationTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.annotationTranslator = checkNotNull(annotationTranslator);
@@ -59,24 +73,18 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
     var edges = new ImmutableList.Builder<Edge>();
     var ontologyIdTranslation = createOntologyIdTranslation(ontology.getOntologyID());
     translations.add(ontologyIdTranslation);
-    edges.add(edgeFactory.createEdge(mainNode,
-        ontologyIdTranslation.getMainNode(),
-        ONTOLOGY_IRI));
+    edges.add(structuralEdgeFactory.getOntologyIriStructuralEdge(mainNode, ontologyIdTranslation.getMainNode()));
     var annotations = ontology.getAnnotations();
     for (var ann : annotations) {
       var translation = annotationTranslator.translate(ann);
       translations.add(translation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          translation.getMainNode(),
-          ONTOLOGY_ANNOTATION));
+      edges.add(structuralEdgeFactory.getOntologyAnnotationStructuralEdge(mainNode, translation.getMainNode()));
     }
     var axioms = ontology.getAxioms();
     for (var ax : axioms) {
       var translation = axiomTranslator.translate(ax);
       translations.add(translation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          translation.getMainNode(),
-          AXIOM));
+      edges.add(structuralEdgeFactory.getAxiomStructuralEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(ontology, mainNode,
         edges.build(),

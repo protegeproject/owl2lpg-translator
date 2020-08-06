@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -14,7 +13,6 @@ import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.EntityInProjectTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -32,10 +30,6 @@ import javax.inject.Inject;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_ANNOTATION;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_IRI;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.VERSION_IRI;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -56,7 +50,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private final ProjectContextNodeFactory projectContextNodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
+  private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
   private final EntityInProjectTranslator entityTranslator;
@@ -75,7 +69,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
                                   @Nonnull BranchId branchId,
                                   @Nonnull OntologyDocumentId ontoDocId,
                                   @Nonnull ProjectContextNodeFactory projectContextNodeFactory,
-                                  @Nonnull EdgeFactory edgeFactory,
+                                  @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                                   @Nonnull EntityInProjectTranslator entityTranslator,
                                   @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                   @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
@@ -84,7 +78,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
     this.projectContextNodeFactory = checkNotNull(projectContextNodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
@@ -107,10 +101,10 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
 
     return Translation.create(projectId,
         projectNode,
-        ImmutableList.of(edgeFactory.createEdge(projectNode, branchNode, EdgeLabel.BRANCH)),
+        ImmutableList.of(structuralEdgeFactory.getBranchStructuralEdge(projectNode, branchNode)),
         ImmutableList.of(Translation.create(branchId,
             branchNode,
-            ImmutableList.of(edgeFactory.createEdge(branchNode, ontoDocNode, EdgeLabel.ONTOLOGY_DOCUMENT)),
+            ImmutableList.of(structuralEdgeFactory.getOntologyDocumentStructuralEdge(branchNode, ontoDocNode)),
             ImmutableList.of(Translation.create(ontoDocId,
                 ontoDocNode,
                 edges.build(),
@@ -120,7 +114,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private void translateOntologyIri(Optional<IRI> ontologyIri, Node ontoDocNode, Builder<Translation> translations, Builder<Edge> edges) {
     if (ontologyIri.isPresent()) {
       var ontologyIriTranslation = annotationValueTranslator.translate(ontologyIri.get());
-      var ontologyIriEdge = edgeFactory.createEdge(ontoDocNode, ontologyIriTranslation.getMainNode(), ONTOLOGY_IRI);
+      var ontologyIriEdge = structuralEdgeFactory.getOntologyIriStructuralEdge(ontoDocNode, ontologyIriTranslation.getMainNode());
       translations.add(ontologyIriTranslation);
       edges.add(ontologyIriEdge);
     }
@@ -129,7 +123,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private void translateVersionIri(Optional<IRI> versionIri, Node ontoDocNode, Builder<Translation> translations, Builder<Edge> edges) {
     if (versionIri.isPresent()) {
       var versionIriTranslation = annotationValueTranslator.translate(versionIri.get());
-      var versionIriEdge = edgeFactory.createEdge(ontoDocNode, versionIriTranslation.getMainNode(), VERSION_IRI);
+      var versionIriEdge = structuralEdgeFactory.getVersionIriStructuralEdge(ontoDocNode, versionIriTranslation.getMainNode());
       translations.add(versionIriTranslation);
       edges.add(versionIriEdge);
     }
@@ -142,7 +136,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
         .collect(ImmutableList.toImmutableList());
     var ontologyAnnotationEdges = ontologyAnnotationTranslations
         .stream()
-        .map(translation -> edgeFactory.createEdge(ontoDocNode, translation.getMainNode(), ONTOLOGY_ANNOTATION))
+        .map(translation -> structuralEdgeFactory.getOntologyAnnotationStructuralEdge(ontoDocNode, translation.getMainNode()))
         .collect(ImmutableList.toImmutableList());
     translations.addAll(ontologyAnnotationTranslations);
     edges.addAll(ontologyAnnotationEdges);
@@ -155,7 +149,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
         .collect(ImmutableList.toImmutableList());
     var ontologyAxiomEdges = ontologyAxiomTranslations
         .stream()
-        .map(translation -> edgeFactory.createEdge(ontoDocNode, translation.getMainNode(), AXIOM))
+        .map(translation -> structuralEdgeFactory.getAxiomStructuralEdge(ontoDocNode, translation.getMainNode()))
         .collect(ImmutableList.toImmutableList());
     translations.addAll(ontologyAxiomTranslations);
     edges.addAll(ontologyAxiomEdges);

@@ -3,23 +3,37 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.Properties;
-import edu.stanford.owl2lpg.translator.*;
+import edu.stanford.owl2lpg.translator.DataRangeTranslator;
+import edu.stanford.owl2lpg.translator.EntityTranslator;
+import edu.stanford.owl2lpg.translator.LiteralTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLDataComplementOf;
+import org.semanticweb.owlapi.model.OWLDataIntersectionOf;
+import org.semanticweb.owlapi.model.OWLDataOneOf;
+import org.semanticweb.owlapi.model.OWLDataUnionOf;
+import org.semanticweb.owlapi.model.OWLDataVisitorEx;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
+import org.semanticweb.owlapi.model.OWLFacetRestriction;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNaryDataRange;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATATYPE;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATATYPE_RESTRICTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_COMPLEMENT_OF;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_INTERSECTION_OF;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_ONE_OF;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_UNION_OF;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FACET;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FACET_RESTRICTION;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -34,7 +48,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
+  private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
   private final EntityTranslator entityTranslator;
@@ -45,22 +59,17 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   @Nonnull
   private final LiteralTranslator literalTranslator;
 
-  @Nonnull
-  private final AnnotationValueTranslator annotationValueTranslator;
-
   @Inject
   public DataVisitor(@Nonnull NodeFactory nodeFactory,
-                     @Nonnull EdgeFactory edgeFactory,
+                     @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                      @Nonnull EntityTranslator entityTranslator,
                      @Nonnull DataRangeTranslator dataRangeTranslator,
-                     @Nonnull LiteralTranslator literalTranslator,
-                     @Nonnull AnnotationValueTranslator annotationValueTranslator) {
+                     @Nonnull LiteralTranslator literalTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.dataRangeTranslator = checkNotNull(dataRangeTranslator);
     this.literalTranslator = checkNotNull(literalTranslator);
-    this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
   }
 
   @Nonnull
@@ -95,9 +104,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   public Translation visit(@Nonnull OWLDataComplementOf dr) {
     var mainNode = nodeFactory.createNode(dr, DATA_COMPLEMENT_OF);
     var dataRangeTranslation = dataRangeTranslator.translate(dr.getDataRange());
-    var dataRangeEdge = edgeFactory.createEdge(mainNode,
-        dataRangeTranslation.getMainNode(),
-        DATA_RANGE);
+    var dataRangeEdge = structuralEdgeFactory.getDataRangeStructuralEdge(mainNode, dataRangeTranslation.getMainNode());
     return Translation.create(dr, mainNode,
         ImmutableList.of(dataRangeEdge),
         ImmutableList.of(dataRangeTranslation));
@@ -113,9 +120,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     for (var value : values) {
       var translation = literalTranslator.translate(value);
       translations.add(translation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          translation.getMainNode(),
-          LITERAL));
+      edges.add(structuralEdgeFactory.getLiteralStructuralEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(dr, mainNode,
         edges.build(),
@@ -142,16 +147,12 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     var edges = new ImmutableList.Builder<Edge>();
     var datatypeTranslation = entityTranslator.translate(dr.getDatatype());
     translations.add(datatypeTranslation);
-    edges.add(edgeFactory.createEdge(mainNode,
-        datatypeTranslation.getMainNode(),
-        DATATYPE));
+    edges.add(structuralEdgeFactory.getDataTypeStructuralEdge(mainNode, datatypeTranslation.getMainNode()));
     var facetRestrictions = dr.getFacetRestrictions();
     for (var facet : facetRestrictions) {
       var translation = visit(facet);
       translations.add(translation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          translation.getMainNode(),
-          RESTRICTION));
+      edges.add(structuralEdgeFactory.getRestrictionStructuralEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(dr, mainNode,
         edges.build(),
@@ -169,14 +170,10 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
         Properties.of(PropertyFields.IRI, String.valueOf(facetIri)));
     var constrainingFacetTranslation = Translation.create(facetIri, facetNode);
     translations.add(constrainingFacetTranslation);
-    edges.add(edgeFactory.createEdge(mainNode,
-        constrainingFacetTranslation.getMainNode(),
-        CONSTRAINING_FACET));
+    edges.add(structuralEdgeFactory.getConstrainingFacetStructuralEdge(mainNode, constrainingFacetTranslation.getMainNode()));
     var restrictionValueTranslation = literalTranslator.translate(facet.getFacetValue());
     translations.add(restrictionValueTranslation);
-    edges.add(edgeFactory.createEdge(mainNode,
-        restrictionValueTranslation.getMainNode(),
-        RESTRICTION_VALUE));
+    edges.add(structuralEdgeFactory.getRestrictionValueStructuralEdge(mainNode, restrictionValueTranslation.getMainNode()));
     return Translation.create(facet, mainNode,
         edges.build(),
         translations.build());
@@ -191,9 +188,7 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
     for (var op : operands) {
       var translation = dataRangeTranslator.translate(op);
       translations.add(translation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          translation.getMainNode(),
-          DATA_RANGE));
+      edges.add(structuralEdgeFactory.getDataRangeStructuralEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(dr, mainNode,
         edges.build(),
