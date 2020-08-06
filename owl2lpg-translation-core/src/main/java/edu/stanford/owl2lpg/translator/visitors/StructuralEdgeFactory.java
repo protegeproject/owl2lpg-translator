@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
-import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.Node;
@@ -10,8 +9,6 @@ import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_SUBJECT;
@@ -50,15 +47,6 @@ public class StructuralEdgeFactory {
   }
 
   @Nonnull
-  public List<Edge> getIndividualStructuralEdges(@Nonnull Node axiomNode,
-                                                 @Nonnull Stream<Node> individualNodes,
-                                                 @Nonnull EdgeLabel edgeLabel) {
-    return individualNodes
-        .map(individualNode -> getIndividualStructuralEdge(axiomNode, individualNode, edgeLabel))
-        .collect(ImmutableList.toImmutableList());
-  }
-
-  @Nonnull
   public Edge getIndividualStructuralEdge(@Nonnull Node axiomNode,
                                           @Nonnull Node individualNode,
                                           @Nonnull EdgeLabel edgeLabel) {
@@ -66,28 +54,10 @@ public class StructuralEdgeFactory {
   }
 
   @Nonnull
-  public List<Edge> getClassExprStructuralEdges(@Nonnull Node axiomNode,
-                                                @Nonnull Stream<Node> classExprNodes,
-                                                @Nonnull EdgeLabel edgeLabel) {
-    return classExprNodes
-        .map(classExprNode -> getClassExprStructuralEdge(axiomNode, classExprNode, edgeLabel))
-        .collect(ImmutableList.toImmutableList());
-  }
-
-  @Nonnull
   public Edge getClassExprStructuralEdge(@Nonnull Node axiomNode,
                                          @Nonnull Node classExprNode,
                                          @Nonnull EdgeLabel edgeLabel) {
     return getStructuralEdge(axiomNode, classExprNode, edgeLabel);
-  }
-
-  @Nonnull
-  public List<Edge> getPropertyExprStructuralEdges(@Nonnull Node axiomNode,
-                                                   @Nonnull Stream<Node> propertyExprNodes,
-                                                   @Nonnull EdgeLabel edgeLabel) {
-    return propertyExprNodes
-        .map(propertyExprNode -> getPropertyExprStructuralEdge(axiomNode, propertyExprNode, edgeLabel))
-        .collect(ImmutableList.toImmutableList());
   }
 
   @Nonnull
@@ -101,21 +71,6 @@ public class StructuralEdgeFactory {
   public Edge getTargetValueStructuralEdge(@Nonnull Node axiomNode,
                                            @Nonnull Node literalNode) {
     return getStructuralEdge(axiomNode, literalNode, TARGET_VALUE);
-  }
-
-  @Nonnull
-  public Edge getDataRangeStructuralEdge(@Nonnull Node axiomNode,
-                                         @Nonnull Node dataRangeNode,
-                                         @Nonnull EdgeLabel edgeLabel) {
-    return getStructuralEdge(axiomNode, dataRangeNode, edgeLabel);
-  }
-
-  @Nonnull
-  public List<Edge> getAxiomAnnotationStructuralEdges(@Nonnull Node axiomNode,
-                                                      @Nonnull Stream<Node> axiomAnnotationNodes) {
-    return axiomAnnotationNodes
-        .map(axiomAnnotationNode -> getAxiomAnnotationStructuralEdge(axiomNode, axiomAnnotationNode))
-        .collect(ImmutableList.toImmutableList());
   }
 
   @Nonnull
