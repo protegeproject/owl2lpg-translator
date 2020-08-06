@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
@@ -52,6 +53,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EX
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RELATED_TO;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SAME_INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_ANNOTATION_PROPERTY_OF;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_CLASS_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_DATA_PROPERTY_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_OBJECT_PROPERTY_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TYPE;
@@ -89,6 +91,14 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
+  public Optional<Edge> getAxiomOfAugmentedEdge(@Nonnull Node entityNode,
+                                                @Nonnull Node ontoDocNode) {
+    return (augmentedEdgeInclusionChecker.allows(AXIOM_OF))
+        ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, AXIOM_OF))
+        : Optional.empty();
+  }
+
+  @Nonnull
   public Optional<Edge> getAxiomSubjectAugmentedEdge(@Nonnull Node axiomNode,
                                                      @Nonnull Node subjectNode) {
     return (augmentedEdgeInclusionChecker.allows(AXIOM_SUBJECT))
@@ -110,15 +120,15 @@ public class AugmentedEdgeFactory {
   @Nonnull
   public Optional<Edge> getSubClassOfAugmentedEdge(@Nonnull Node subClassNode,
                                                    @Nonnull Node superClassNode) {
-    return (augmentedEdgeInclusionChecker.allows(EdgeLabel.SUB_CLASS_OF))
-        ? Optional.of(getAugmentedEdge(subClassNode, superClassNode, EdgeLabel.SUB_CLASS_OF))
+    return (augmentedEdgeInclusionChecker.allows(SUB_CLASS_OF))
+        ? Optional.of(getAugmentedEdge(subClassNode, superClassNode, SUB_CLASS_OF))
         : Optional.empty();
   }
 
   @Nonnull
   public Optional<List<Edge>> getSymmetricalSubClassOfAugmentedEdges(@Nonnull Stream<Node> classNodes) {
-    return (augmentedEdgeInclusionChecker.allows(EdgeLabel.SUB_CLASS_OF))
-        ? Optional.of(getSymmetricalAugmentedEdges(classNodes, EdgeLabel.SUB_CLASS_OF))
+    return (augmentedEdgeInclusionChecker.allows(SUB_CLASS_OF))
+        ? Optional.of(getSymmetricalAugmentedEdges(classNodes, SUB_CLASS_OF))
         : Optional.empty();
   }
 
@@ -202,7 +212,7 @@ public class AugmentedEdgeFactory {
           var translation = classExprTranslator.translate(ce);
           return translation.getDirectNodes()
               .stream()
-              .map(ceNode -> getAugmentedEdge(subClassNode, ceNode, EdgeLabel.SUB_CLASS_OF))
+              .map(ceNode -> getAugmentedEdge(subClassNode, ceNode, SUB_CLASS_OF))
               .collect(ImmutableList.toImmutableList());
         }
 
