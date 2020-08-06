@@ -34,8 +34,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;
@@ -108,8 +106,9 @@ public class AugmentedEdgeFactory {
 
   @Nonnull
   public Optional<List<Edge>> getAxiomSubjectEdges(@Nonnull Node axiomNode,
-                                                   @Nonnull Stream<Node> subjectNodes) {
+                                                   @Nonnull List<Node> subjectNodes) {
     var edges = subjectNodes
+        .stream()
         .map(subjectNode -> getAxiomSubjectEdge(axiomNode, subjectNode))
         .filter(Optional::isPresent)
         .map(Optional::get)
@@ -126,7 +125,7 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSymmetricalSubClassOfEdges(@Nonnull Stream<Node> classNodes) {
+  public Optional<List<Edge>> getSymmetricalSubClassOfEdges(@Nonnull List<Node> classNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_CLASS_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(classNodes, SUB_CLASS_OF))
         : Optional.empty();
@@ -141,7 +140,7 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSymmetricalSubObjectPropertyOfEdges(@Nonnull Stream<Node> objectPropertyNodes) {
+  public Optional<List<Edge>> getSymmetricalSubObjectPropertyOfEdges(@Nonnull List<Node> objectPropertyNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_OBJECT_PROPERTY_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(objectPropertyNodes, SUB_OBJECT_PROPERTY_OF))
         : Optional.empty();
@@ -156,7 +155,7 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSymmetricalSubDataPropertyOfEdges(@Nonnull Stream<Node> dataPropertyNodes) {
+  public Optional<List<Edge>> getSymmetricalSubDataPropertyOfEdges(@Nonnull List<Node> dataPropertyNodes) {
     return (augmentedEdgeInclusionChecker.allows(SUB_DATA_PROPERTY_OF))
         ? Optional.of(getSymmetricalAugmentedEdges(dataPropertyNodes, SUB_DATA_PROPERTY_OF))
         : Optional.empty();
@@ -195,7 +194,7 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<List<Edge>> getSameIndividualEdges(@Nonnull Stream<Node> individualNodes) {
+  public Optional<List<Edge>> getSameIndividualEdges(@Nonnull List<Node> individualNodes) {
     return (augmentedEdgeInclusionChecker.allows(SAME_INDIVIDUAL))
         ? Optional.of(getSymmetricalAugmentedEdges(individualNodes, SAME_INDIVIDUAL))
         : Optional.empty();
@@ -351,13 +350,12 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  private List<Edge> getSymmetricalAugmentedEdges(Stream<Node> nodes, EdgeLabel edgeLabel) {
-    var nodeList = nodes.collect(Collectors.toList());
+  private List<Edge> getSymmetricalAugmentedEdges(List<Node> nodes, EdgeLabel edgeLabel) {
     var edgeList = Lists.<Edge>newArrayList();
-    for (int i = 0; i < nodeList.size(); i++) {
-      for (int j = 0; j < nodeList.size(); j++) {
+    for (int i = 0; i < nodes.size(); i++) {
+      for (int j = 0; j < nodes.size(); j++) {
         if (i != j) {
-          var edge = getAugmentedEdge(nodeList.get(i), nodeList.get(j), edgeLabel);
+          var edge = getAugmentedEdge(nodes.get(i), nodes.get(j), edgeLabel);
           edgeList.add(edge);
         }
       }

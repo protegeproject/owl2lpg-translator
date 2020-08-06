@@ -24,10 +24,42 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.*;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_ASSERTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_PROPERTY_DOMAIN;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_PROPERTY_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ASYMMETRIC_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATATYPE_DEFINITION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_ASSERTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_DOMAIN;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DECLARATION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DIFFERENT_INDIVIDUALS;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DISJOINT_CLASSES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DISJOINT_DATA_PROPERTIES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DISJOINT_OBJECT_PROPERTIES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DISJOINT_UNION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.EQUIVALENT_CLASSES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.EQUIVALENT_DATA_PROPERTIES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.EQUIVALENT_OBJECT_PROPERTIES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FUNCTIONAL_DATA_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FUNCTIONAL_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.HAS_KEY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.INVERSE_FUNCTIONAL_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.INVERSE_OBJECT_PROPERTIES;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.IRREFLEXIVE_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.NEGATIVE_DATA_PROPERTY_ASSERTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.NEGATIVE_OBJECT_PROPERTY_ASSERTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_ASSERTION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_DOMAIN;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.REFLEXIVE_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SUB_CLASS_OF;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SWRL_RULE;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SYMMETRIC_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.TRANSITIVE_OBJECT_PROPERTY;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 axioms.
@@ -751,13 +783,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     return entityNode;
   }
 
-  private Stream<Node> addIndividualTranslationsAndStructuralEdges(@Nonnull Set<OWLIndividual> individuals,
-                                                                   @Nonnull Node axiomNode,
-                                                                   @Nonnull Builder<Translation> translations,
-                                                                   @Nonnull Builder<Edge> edges) {
+  private List<Node> addIndividualTranslationsAndStructuralEdges(@Nonnull Set<OWLIndividual> individuals,
+                                                                 @Nonnull Node axiomNode,
+                                                                 @Nonnull Builder<Translation> translations,
+                                                                 @Nonnull Builder<Edge> edges) {
     return individuals.stream()
         .map(individual ->
-            addIndividualTranslationAndStructuralEdge(individual, axiomNode, translations, edges));
+            addIndividualTranslationAndStructuralEdge(individual, axiomNode, translations, edges))
+        .collect(ImmutableList.toImmutableList());
   }
 
   private Node addIndividualTranslationAndStructuralEdge(@Nonnull OWLIndividual individual,
@@ -831,13 +864,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     return literalNode;
   }
 
-  private Stream<Node> addClassExprTranslationsAndStructuralEdges(@Nonnull Set<OWLClassExpression> classExprs,
-                                                                  @Nonnull Node axiomNode,
-                                                                  @Nonnull Builder<Translation> translations,
-                                                                  @Nonnull Builder<Edge> edges) {
+  private List<Node> addClassExprTranslationsAndStructuralEdges(@Nonnull Set<OWLClassExpression> classExprs,
+                                                                @Nonnull Node axiomNode,
+                                                                @Nonnull Builder<Translation> translations,
+                                                                @Nonnull Builder<Edge> edges) {
     return classExprs.stream()
         .map(classExpr ->
-            addClassExprTranslationAndStructuralEdge(classExpr, axiomNode, translations, edges));
+            addClassExprTranslationAndStructuralEdge(classExpr, axiomNode, translations, edges))
+        .collect(ImmutableList.toImmutableList());
   }
 
   private Node addClassExprTranslationAndStructuralEdge(@Nonnull OWLClassExpression classExpr,
@@ -948,13 +982,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     return propertyExprNode;
   }
 
-  private Stream<Node> addDisjointClassExprTranslationsAndStructuralEdges(@Nonnull Set<OWLClassExpression> classExprs,
-                                                                          @Nonnull Node axiomNode,
-                                                                          @Nonnull Builder<Translation> translations,
-                                                                          @Nonnull Builder<Edge> edges) {
+  private List<Node> addDisjointClassExprTranslationsAndStructuralEdges(@Nonnull Set<OWLClassExpression> classExprs,
+                                                                        @Nonnull Node axiomNode,
+                                                                        @Nonnull Builder<Translation> translations,
+                                                                        @Nonnull Builder<Edge> edges) {
     return classExprs.stream()
         .map(classExpr ->
-            addDisjointClassExprTranslationAndStructuralEdge(classExpr, axiomNode, translations, edges));
+            addDisjointClassExprTranslationAndStructuralEdge(classExpr, axiomNode, translations, edges))
+        .collect(ImmutableList.toImmutableList());
   }
 
   private Node addDisjointClassExprTranslationAndStructuralEdge(@Nonnull OWLClassExpression classExpr,
@@ -969,13 +1004,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     return classExprNode;
   }
 
-  private Stream<Node> addObjectPropertyExprTranslationsAndStructuralEdges(@Nonnull Set<OWLObjectPropertyExpression> propertyExprs,
-                                                                           @Nonnull Node axiomNode,
-                                                                           @Nonnull Builder<Translation> translations,
-                                                                           @Nonnull Builder<Edge> edges) {
+  private List<Node> addObjectPropertyExprTranslationsAndStructuralEdges(@Nonnull Set<OWLObjectPropertyExpression> propertyExprs,
+                                                                         @Nonnull Node axiomNode,
+                                                                         @Nonnull Builder<Translation> translations,
+                                                                         @Nonnull Builder<Edge> edges) {
     return propertyExprs.stream()
         .map(propertyExpr ->
-            addObjectPropertyExprTranslationAndStructuralEdge(propertyExpr, axiomNode, translations, edges));
+            addObjectPropertyExprTranslationAndStructuralEdge(propertyExpr, axiomNode, translations, edges))
+        .collect(ImmutableList.toImmutableList());
   }
 
   private Node addObjectPropertyExprTranslationAndStructuralEdge(@Nonnull OWLObjectPropertyExpression propertyExpr,
@@ -990,13 +1026,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     return propertyExprNode;
   }
 
-  private Stream<Node> addDataPropertyExprTranslationsAndStructuralEdges(@Nonnull Set<OWLDataPropertyExpression> propertyExprs,
-                                                                         @Nonnull Node axiomNode,
-                                                                         @Nonnull Builder<Translation> translations,
-                                                                         @Nonnull Builder<Edge> edges) {
+  private List<Node> addDataPropertyExprTranslationsAndStructuralEdges(@Nonnull Set<OWLDataPropertyExpression> propertyExprs,
+                                                                       @Nonnull Node axiomNode,
+                                                                       @Nonnull Builder<Translation> translations,
+                                                                       @Nonnull Builder<Edge> edges) {
     return propertyExprs.stream()
         .map(propertyExpr ->
-            addDataPropertyExprTranslationAndStructuralEdge(propertyExpr, axiomNode, translations, edges));
+            addDataPropertyExprTranslationAndStructuralEdge(propertyExpr, axiomNode, translations, edges))
+        .collect(ImmutableList.toImmutableList());
   }
 
   private Node addDataPropertyExprTranslationAndStructuralEdge(@Nonnull OWLDataPropertyExpression propertyExpr,
@@ -1164,7 +1201,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     augmentedEdgeFactory.getAxiomSubjectEdge(axiomNode, subjectNode).ifPresent(edges::add);
   }
 
-  private void addAxiomSubjectAugmentedEdges(Node axiomNode, Stream<Node> subjectNodes, Builder<Edge> edges) {
+  private void addAxiomSubjectAugmentedEdges(Node axiomNode, List<Node> subjectNodes, Builder<Edge> edges) {
     augmentedEdgeFactory.getAxiomSubjectEdges(axiomNode, subjectNodes).ifPresent(edges::addAll);
   }
 
@@ -1172,7 +1209,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     augmentedEdgeFactory.getSubClassOfEdge(subClassNode, superClassNode).ifPresent(edges::add);
   }
 
-  private void addSymmetricalSubClassOfAugmentedEdges(Stream<Node> classNodes, Builder<Edge> edges) {
+  private void addSymmetricalSubClassOfAugmentedEdges(List<Node> classNodes, Builder<Edge> edges) {
     augmentedEdgeFactory.getSymmetricalSubClassOfEdges(classNodes).ifPresent(edges::addAll);
   }
 
@@ -1180,7 +1217,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     augmentedEdgeFactory.getSubObjectPropertyOfEdge(subPropertyNode, superPropertyOf).ifPresent(edges::add);
   }
 
-  private void addSymmetricalSubObjectPropertyOfAugmentedEdges(Stream<Node> objectPropertyNodes, Builder<Edge> edges) {
+  private void addSymmetricalSubObjectPropertyOfAugmentedEdges(List<Node> objectPropertyNodes, Builder<Edge> edges) {
     augmentedEdgeFactory.getSymmetricalSubObjectPropertyOfEdges(objectPropertyNodes).ifPresent(edges::addAll);
   }
 
@@ -1188,7 +1225,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     augmentedEdgeFactory.getSubDataPropertyOfEdge(subPropertyNode, superPropertyOf).ifPresent(edges::add);
   }
 
-  private void addSymmetricalSubDataPropertyOfAugmentedEdges(Stream<Node> dataPropertyNodes, Builder<Edge> edges) {
+  private void addSymmetricalSubDataPropertyOfAugmentedEdges(List<Node> dataPropertyNodes, Builder<Edge> edges) {
     augmentedEdgeFactory.getSymmetricalSubDataPropertyOfEdges(dataPropertyNodes).ifPresent(edges::addAll);
   }
 
@@ -1208,7 +1245,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     augmentedEdgeFactory.getInverseOfEdge(node1, node2).ifPresent(edges::add);
   }
 
-  private void addSameIndividualAugmentedEdges(Stream<Node> individualNodes, Builder<Edge> edges) {
+  private void addSameIndividualAugmentedEdges(List<Node> individualNodes, Builder<Edge> edges) {
     augmentedEdgeFactory.getSameIndividualEdges(individualNodes).ifPresent(edges::addAll);
   }
 
