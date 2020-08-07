@@ -109,7 +109,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
   private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
-  private final ProjectContextNodeFactory projectContextNodeFactory;
+  private final VersioningContextNodeFactory versioningContextNodeFactory;
 
   @Inject
   public AxiomInProjectVisitor(@Nonnull OntologyDocumentId ontologyDocumentId,
@@ -125,7 +125,7 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
                                @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                                @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
-                               @Nonnull ProjectContextNodeFactory projectContextNodeFactory) {
+                               @Nonnull VersioningContextNodeFactory versioningContextNodeFactory) {
     this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
@@ -139,12 +139,12 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
-    this.projectContextNodeFactory = checkNotNull(projectContextNodeFactory);
+    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
   }
 
   @Nonnull
   private Node createOntologyDocumentNode() {
-    return projectContextNodeFactory.createOntologyDocumentNode(ontologyDocumentId);
+    return versioningContextNodeFactory.createOntologyDocumentNode(ontologyDocumentId);
   }
 
   @Nonnull

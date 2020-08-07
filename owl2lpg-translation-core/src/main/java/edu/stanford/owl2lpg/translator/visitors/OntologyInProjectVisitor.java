@@ -47,7 +47,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final ProjectContextNodeFactory projectContextNodeFactory;
+  private final VersioningContextNodeFactory versioningContextNodeFactory;
 
   @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
@@ -68,7 +68,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   public OntologyInProjectVisitor(@Nonnull ProjectId projectId,
                                   @Nonnull BranchId branchId,
                                   @Nonnull OntologyDocumentId ontoDocId,
-                                  @Nonnull ProjectContextNodeFactory projectContextNodeFactory,
+                                  @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
                                   @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                                   @Nonnull EntityInProjectTranslator entityTranslator,
                                   @Nonnull AnnotationValueTranslator annotationValueTranslator,
@@ -77,7 +77,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.projectContextNodeFactory = checkNotNull(projectContextNodeFactory);
+    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
@@ -88,9 +88,9 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   @Nonnull
   @Override
   public Translation visit(OWLOntology ontology) {
-    var projectNode = projectContextNodeFactory.createProjectNode(projectId);
-    var branchNode = projectContextNodeFactory.createBranchNode(branchId);
-    var ontoDocNode = projectContextNodeFactory.createOntologyDocumentNode(ontoDocId);
+    var projectNode = versioningContextNodeFactory.createProjectNode(projectId);
+    var branchNode = versioningContextNodeFactory.createBranchNode(branchId);
+    var ontoDocNode = versioningContextNodeFactory.createOntologyDocumentNode(ontoDocId);
 
     var translations = new Builder<Translation>();
     var edges = new Builder<Edge>();
