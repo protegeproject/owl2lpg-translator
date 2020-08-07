@@ -1,7 +1,5 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.model;
 
-import edu.stanford.owl2lpg.model.EdgeId;
-import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 /**

@@ -18,7 +18,8 @@ import static edu.stanford.owl2lpg.model.EdgeType.STRUCTURAL;
  */
 public enum EdgeLabel {
 
-  ONTOLOGY_ID(STRUCTURAL),
+  ONTOLOGY_IRI(STRUCTURAL),
+  VERSION_IRI(STRUCTURAL),
   ONTOLOGY_DOCUMENT(STRUCTURAL),
   BRANCH(STRUCTURAL),
   ONTOLOGY_ANNOTATION(STRUCTURAL),
@@ -60,7 +61,8 @@ public enum EdgeLabel {
   NEXT(STRUCTURAL),
   HAS_DOMAIN(AUGMENTING),
   HAS_RANGE(AUGMENTING),
-  ENTITY_SIGNATURE(AUGMENTING),
+  AXIOM_OF(AUGMENTING),
+  ENTITY_SIGNATURE_OF(AUGMENTING),
   SUB_CLASS_OF(AUGMENTING),
   SUB_OBJECT_PROPERTY_OF(AUGMENTING),
   SUB_DATA_PROPERTY_OF(AUGMENTING),
@@ -87,10 +89,16 @@ public enum EdgeLabel {
     return edgeType;
   }
 
+  @Nonnull
+  public boolean isa(EdgeLabel label) {
+    return this.equals(label);
+  }
+
   /**
    * The plain name without the prefixed colon
    */
   @JsonValue
+
   public String getName() {
     return name();
   }

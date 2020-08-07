@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
-import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import java.util.Collection;

@@ -1,6 +1,9 @@
-package edu.stanford.owl2lpg.model;
+package edu.stanford.owl2lpg.client.read.axiom;
 
 import com.google.auto.value.AutoValue;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 
 import javax.annotation.Nonnull;
 

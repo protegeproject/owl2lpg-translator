@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.read.index;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomSubjectAccessor;
-import edu.stanford.owl2lpg.model.AxiomContext;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;

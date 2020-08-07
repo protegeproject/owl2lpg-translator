@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.model;
 
-import edu.stanford.owl2lpg.translator.EdgeIdProvider;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 

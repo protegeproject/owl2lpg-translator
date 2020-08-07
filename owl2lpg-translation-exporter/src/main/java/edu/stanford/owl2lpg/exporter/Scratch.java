@@ -6,9 +6,12 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.base.Stopwatch;
 import com.google.common.io.CountingInputStream;
 import edu.stanford.bmir.protege.web.server.util.Counter;
-import edu.stanford.owl2lpg.exporter.csv.CsvExporter;
 import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
+import edu.stanford.owl2lpg.exporter.csv.PerAxiomCsvExporter;
+import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.VersioningContextModule;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.obolibrary.obo2owl.OWLAPIObo2Owl;
@@ -57,8 +60,15 @@ public class Scratch {
     Files.createDirectories(outputDirectory);
     var nodesCsvWriter = createWriter(outputDirectory.resolve("nodes.csv"));
     var relsCsvWriter = createWriter(outputDirectory.resolve("relationships.csv"));
-    CsvExporter csvExporter = DaggerCsvExporterComponent.create().getCsvExporterFactory()
-        .create(nodesCsvWriter, relsCsvWriter);
+    var versioningContextModule = new VersioningContextModule(
+        ProjectId.create("8e62c425-8d8f-4e6a-a188-2d4b4b586468"),
+        BranchId.create("49b40337-06ff-4d94-a043-7d81733f10d3"),
+        OntologyDocumentId.create("f7b5f0b4-fc40-40c0-a9ef-050fce37e0e4"));
+    PerAxiomCsvExporter csvExporter = DaggerCsvExporterComponent
+        .builder()
+        .versioningContextModule(versioningContextModule)
+        .build()
+        .getPerAxiomCsvExporter();
 
     var translator = new MinimalObo2Owl(in, file.length(), csvExporter);
     var obodoc = new MinimalOboDoc();
@@ -76,18 +86,18 @@ public class Scratch {
     return new BufferedWriter(new FileWriter(path.toFile()));
   }
 
-  private static void dump(CsvExporter exporter, PrintWriter console) {
+  private static void dump(PerAxiomCsvExporter exporter, PrintWriter console) {
     console.printf("\nNodes: %,d\n\n", exporter.getNodeCount());
     var nodeLabelsMultiset = exporter.getNodeLabelsMultiset();
     nodeLabelsMultiset
         .forEachEntry((nodeLabels, count) -> {
-          console.printf("    Node   %-60s %,10d\n", nodeLabels.printLabels(), count);
+          console.printf("    Node   %-60s %,10d\n", nodeLabels.getNeo4jName(), count);
         });
     console.printf("\nRelationships: %,d\n\n", exporter.getEdgeCount());
     var edgeLabelMultiset = exporter.getEdgeLabelMultiset();
     edgeLabelMultiset
         .forEachEntry((edgeLabel, count) -> {
-          console.printf("    Rel    %-36s %,10d\n", edgeLabel.printLabel(), count);
+          console.printf("    Rel    %-36s %,10d\n", edgeLabel.getNeo4jName(), count);
         });
     console.flush();
   }
@@ -110,14 +120,12 @@ public class Scratch {
     private final Counter counter = new Counter();
     private final CountingInputStream countingInputStream;
     private long fileSize;
-    private CsvExporter csvExporter;
+    private PerAxiomCsvExporter csvExporter;
     private long ts = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
-    private OntologyDocumentId ontDocId = OntologyDocumentId.create();
-    private CsvExporter exporter;
 
     public MinimalObo2Owl(CountingInputStream countingInputStream,
                           long fileSize,
-                          CsvExporter csvExporter) {
+                          PerAxiomCsvExporter csvExporter) {
       super(OWLManager.createOWLOntologyManager());
       this.countingInputStream = countingInputStream;
       this.fileSize = fileSize;
@@ -128,18 +136,17 @@ public class Scratch {
     protected void add(@Nullable OWLAxiom axiom) {
       counter.increment();
       logParsed();
-      csvExporter.write(ontDocId, axiom);
+      try {
+        csvExporter.export(axiom);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
 
     @Override
     protected void add(@Nullable Set<OWLAxiom> axioms) {
-      try {
-        for (OWLAxiom ax : axioms) {
-          add(ax);
-        }
-        csvExporter.flush();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
+      for (OWLAxiom ax : axioms) {
+        add(ax);
       }
     }
 

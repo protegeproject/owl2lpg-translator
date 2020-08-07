@@ -1,10 +1,11 @@
-package edu.stanford.owl2lpg.client.read.axiom;
+package edu.stanford.owl2lpg.translator;
 
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.model.VersioningContext;
 
 import javax.annotation.Nonnull;
 
@@ -15,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public class AxiomContextModule {
+public class VersioningContextModule {
 
   @Nonnull
   private final ProjectId projectId;
@@ -26,17 +27,16 @@ public class AxiomContextModule {
   @Nonnull
   private final OntologyDocumentId ontologyDocumentId;
 
-  public AxiomContextModule(@Nonnull ProjectId projectId,
-                            @Nonnull BranchId branchId,
-                            @Nonnull OntologyDocumentId ontologyDocumentId) {
+  public VersioningContextModule(@Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId,
+                                 @Nonnull OntologyDocumentId ontologyDocumentId) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
   }
 
-  @Provides
-  public AxiomContext provideAxiomContext() {
-    return AxiomContext.create(projectId, branchId, ontologyDocumentId);
+  public VersioningContextModule() {
+    this(ProjectId.create(), BranchId.create(), OntologyDocumentId.create());
   }
 
   @Provides
@@ -52,5 +52,10 @@ public class AxiomContextModule {
   @Provides
   public OntologyDocumentId provideOntologyDocumentId() {
     return ontologyDocumentId;
+  }
+
+  @Provides
+  public VersioningContext provideVersioningContext() {
+    return VersioningContext.get(projectId, branchId, ontologyDocumentId);
   }
 }

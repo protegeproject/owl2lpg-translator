@@ -1,19 +1,20 @@
 package edu.stanford.owl2lpg.cli;
 
-import edu.stanford.owl2lpg.exporter.csv.DaggerOntologyCsvExporterComponent;
-import edu.stanford.owl2lpg.exporter.csv.OntologyModule;
+import edu.stanford.owl2lpg.exporter.csv.CsvWriterModule;
+import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
 import edu.stanford.owl2lpg.exporter.cypher.CypherTranslationExporter;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 
-import javax.annotation.Nonnull;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
-import static picocli.CommandLine.*;
+import static picocli.CommandLine.Command;
+import static picocli.CommandLine.Option;
+import static picocli.CommandLine.Parameters;
 
 @Command(
     name = "translate"
@@ -65,7 +66,10 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     CypherTranslationExporter exporter = new CypherTranslationExporter();
     try {
-      exporter.export(ontologyFileLocation, outputDirectoryLocation);
+      exporter.export(ProjectId.create(),
+          BranchId.create(),
+          OntologyDocumentId.create(),
+          ontologyFileLocation, outputDirectoryLocation);
     } catch (IOException e) {
       e.printStackTrace();
       exitCode = 1;
@@ -76,26 +80,19 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   private int translateOntologyToCsv() {
     int exitCode = 0;
     try {
-      Files.createDirectories(outputDirectoryLocation);
-      var nodesCsvPath = outputDirectoryLocation.resolve("nodes.csv");
-      var relationshipsCsvPath = outputDirectoryLocation.resolve("relationships.csv");
-      try (var nodesCsvWriter = createWriter(nodesCsvPath);
-           var relsCsvWriter = createWriter(relationshipsCsvPath)) {
-        var ontologyModule = new OntologyModule(ontologyFileLocation.toFile());
-        var exporter = DaggerOntologyCsvExporterComponent.builder()
-            .ontologyModule(ontologyModule)
-            .build()
-            .getOntologyCsvExporter();
-        exporter.export(nodesCsvWriter, relsCsvWriter);
-      }
-    } catch (IOException e) {
+      var csvWriterModule = new CsvWriterModule(outputDirectoryLocation);
+      var exporter = DaggerCsvExporterComponent.builder()
+          .csvWriterModule(csvWriterModule)
+          .build()
+          .getOntologyCsvExporter();
+      var ontologyFile = ontologyFileLocation.toFile();
+      var ontologyManager = OWLManager.createOWLOntologyManager();
+      var ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
+      exporter.export(ontology);
+    } catch (Exception e) {
       e.printStackTrace();
       exitCode = 1;
     }
     return exitCode;
-  }
-
-  private static Writer createWriter(@Nonnull Path path) throws IOException {
-    return new BufferedWriter(new FileWriter(path.toFile()));
   }
 }

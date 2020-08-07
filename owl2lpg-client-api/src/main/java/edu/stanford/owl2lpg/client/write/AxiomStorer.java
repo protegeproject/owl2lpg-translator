@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.write;
 
-import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;

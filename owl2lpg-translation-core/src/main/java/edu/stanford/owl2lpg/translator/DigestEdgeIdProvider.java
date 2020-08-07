@@ -2,10 +2,12 @@ package edu.stanford.owl2lpg.translator;
 
 import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.EdgeId;
+import edu.stanford.owl2lpg.model.EdgeIdProvider;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import java.nio.charset.StandardCharsets;
 

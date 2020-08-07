@@ -65,6 +65,7 @@ public enum NodeLabels {
   OBJECT_PROPERTY_EXPRESSION("ObjectPropertyExpression"),
   OBJECT_INVERSE_OF("ObjectInverseOf", OBJECT_PROPERTY_EXPRESSION),
 
+  DATA_PROPERTY_EXPRESSION("DataPropertyExpression"),
   DATA_RANGE("DataRange"),
   DATA_COMPLEMENT_OF("DataComplementOf", DATA_RANGE),
   DATA_INTERSECTION_OF("DataIntersectionOf", DATA_RANGE),

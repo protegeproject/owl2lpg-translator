@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.hash.Hashing;
 import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.NodeIdMapper;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.DigestNodeIdProvider;

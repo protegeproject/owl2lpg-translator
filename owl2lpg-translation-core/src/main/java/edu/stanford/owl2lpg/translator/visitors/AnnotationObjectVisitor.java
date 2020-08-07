@@ -2,17 +2,28 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.NodeFactory;
-import edu.stanford.owl2lpg.translator.*;
+import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
+import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
+import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
+import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationObjectVisitorEx;
+import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 annotations.
@@ -27,7 +38,7 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
+  private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
   private final PropertyExpressionTranslator propertyExprTranslator;
@@ -43,13 +54,13 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
 
   @Inject
   public AnnotationObjectVisitor(@Nonnull NodeFactory nodeFactory,
-                                 @Nonnull EdgeFactory edgeFactory,
+                                 @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                                  @Nonnull PropertyExpressionTranslator propertyExprTranslator,
                                  @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                  @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
                                  @Nonnull AxiomTranslator axiomTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
@@ -64,20 +75,14 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
     var edges = new ImmutableList.Builder<Edge>();
     var annotationPropertyTranslation = propertyExprTranslator.translate(annotation.getProperty());
     translations.add(annotationPropertyTranslation);
-    edges.add(edgeFactory.createEdge(mainNode,
-        annotationPropertyTranslation.getMainNode(),
-        ANNOTATION_PROPERTY));
+    edges.add(structuralEdgeFactory.getAnnotationPropertyEdge(mainNode, annotationPropertyTranslation.getMainNode()));
     var annotationValueTranslation = annotationValueTranslator.translate(annotation.getValue());
     translations.add(annotationValueTranslation);
-    edges.add(edgeFactory.createEdge(mainNode,
-        annotationValueTranslation.getMainNode(),
-        ANNOTATION_VALUE));
+    edges.add(structuralEdgeFactory.getAnnotationValueEdge(mainNode, annotationValueTranslation.getMainNode()));
     for (var ann : annotation.getAnnotations()) {
       var translation = annotationObjectTranslator.translate(ann);
       translations.add(translation);
-      edges.add(edgeFactory.createEdge(mainNode,
-          translation.getMainNode(),
-          ANNOTATION_ANNOTATION));
+      edges.add(structuralEdgeFactory.getAnnotationAnnotationEdge(mainNode, translation.getMainNode()));
     }
     return Translation.create(annotation, mainNode,
         edges.build(),

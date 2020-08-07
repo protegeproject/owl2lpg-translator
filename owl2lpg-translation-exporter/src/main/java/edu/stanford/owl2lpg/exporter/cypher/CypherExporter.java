@@ -1,12 +1,10 @@
 package edu.stanford.owl2lpg.exporter.cypher;
 
 import com.google.common.base.Charsets;
-import edu.stanford.owl2lpg.model.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -22,36 +20,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CypherExporter {
 
   @Nonnull
-  private final OntologyDocumentAxiomTranslator ontologyTranslator;
-
-  @Nonnull
-  private final AxiomContext axiomContext;
-
-  @Nonnull
   private final OWLOntology ontology;
 
   @Nonnull
   private final Path outputFilePath;
 
-  CypherExporter(@Nonnull OntologyDocumentAxiomTranslator ontologyTranslator,
-                 @Nonnull AxiomContext axiomContext,
-                 @Nonnull OWLOntology ontology,
-                 @Nonnull Path outputFilePath) {
+  @Nonnull
+  private final VersionedOntologyTranslator ontologyTranslator;
+
+  public CypherExporter(@Nonnull OWLOntology ontology,
+                        @Nonnull VersionedOntologyTranslator ontologyTranslator, @Nonnull Path outputFilePath) {
     this.ontologyTranslator = checkNotNull(ontologyTranslator);
-    this.axiomContext = axiomContext;
     this.ontology = checkNotNull(ontology);
-    this.outputFilePath = outputFilePath;
+    this.outputFilePath = checkNotNull(outputFilePath);
   }
 
   public void write() {
-    ontology.getAxioms()
-        .stream()
-        .map(this::translateAxiom)
-        .forEach(this::writeTranslation);
-  }
-
-  private Translation translateAxiom(OWLAxiom axiom) {
-    return ontologyTranslator.translate(axiomContext.getOntologyDocumentId(), axiom);
+    var translation = ontologyTranslator.translate(ontology);
+    writeTranslation(translation);
   }
 
   private void writeTranslation(Translation translation) {

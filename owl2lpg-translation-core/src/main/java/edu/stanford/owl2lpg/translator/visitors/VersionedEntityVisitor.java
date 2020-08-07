@@ -2,14 +2,19 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
+import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
+import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -33,30 +38,43 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.NAMED_INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
 
 /**
- * A visitor that contains the implementation to translate the OWL 2 entities.
- *
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 @TranslationSessionScope
-public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
+public class VersionedEntityVisitor implements OWLEntityVisitorEx<Translation> {
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final NodeFactory nodeFactory;
 
   @Nonnull
+  private final VersioningContextNodeFactory versioningContextNodeFactory;
+
+  @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
-  private final AnnotationValueTranslator translator;
+  private final AugmentedEdgeFactory augmentedEdgeFactory;
+
+  @Nonnull
+  private final AnnotationValueTranslator annotationValueTranslator;
 
   @Inject
-  public EntityVisitor(@Nonnull NodeFactory nodeFactory,
-                       @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                       @Nonnull AnnotationValueTranslator translator) {
+  public VersionedEntityVisitor(@Nonnull OntologyDocumentId ontoDocId,
+                                @Nonnull NodeFactory nodeFactory,
+                                @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
+                                @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                                @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
+                                @Nonnull AnnotationValueTranslator annotationValueTranslator) {
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
-    this.translator = checkNotNull(translator);
+    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
+    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
+    this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
   }
 
   @Nonnull
@@ -96,20 +114,42 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   }
 
   private Translation translateEntity(OWLEntity entity, NodeLabels nodeLabels) {
-    var mainNode = nodeFactory.createNode(entity, nodeLabels,
+    var entityNode = createEntityNode(entity, nodeLabels);
+    var translations = new Builder<Translation>();
+    var edges = new Builder<Edge>();
+    translateEntityIri(entity.getIRI(), entityNode, translations, edges);
+    translateEntitySignatureOf(ontoDocId, entityNode, translations, edges);
+    return Translation.create(entity,
+        entityNode,
+        edges.build(),
+        translations.build());
+  }
+
+  @NotNull
+  private Node createEntityNode(OWLEntity entity, NodeLabels nodeLabels) {
+    return nodeFactory.createNode(entity, nodeLabels,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, getIriString(entity.getIRI()),
             PropertyFields.IRI_SUFFIX, getLocalName(entity.getIRI()))));
-    var iriTranslation = translator.translate(entity.getIRI());
-    var entityIriEdge = structuralEdgeFactory.getEntityIriEdge(mainNode, iriTranslation.getMainNode());
-    return Translation.create(entity,
-        mainNode,
-        ImmutableList.of(entityIriEdge),
-        ImmutableList.of(iriTranslation));
   }
 
-  private static String getIriString(IRI iri) {
-    return iri.toString();
+  private void translateEntityIri(IRI entityIri, Node entityNode,
+                                  Builder<Translation> translations, Builder<Edge> edges) {
+    var iriTranslation = annotationValueTranslator.translate(entityIri);
+    var entityIriEdge = structuralEdgeFactory.getEntityIriEdge(entityNode, iriTranslation.getMainNode());
+    translations.add(iriTranslation);
+    edges.add(entityIriEdge);
+  }
+
+  private void translateEntitySignatureOf(OntologyDocumentId ontoDocId, Node entityNode,
+                                          Builder<Translation> translations, Builder<Edge> edges) {
+    var ontologyDocumentTranslation = Translation.create(ontoDocId,
+        versioningContextNodeFactory.createOntologyDocumentNode(ontoDocId),
+        ImmutableList.of(),
+        ImmutableList.of());
+    var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfEdge(entityNode, ontologyDocumentTranslation.getMainNode());
+    translations.add(ontologyDocumentTranslation);
+    entitySignatureOfEdge.ifPresent(edges::add);
   }
 
   private static String getLocalName(@Nonnull IRI iri) {
@@ -123,6 +163,10 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
       return decode(iriString.substring(slashIndex + 1));
     }
     return "";
+  }
+
+  private static String getIriString(IRI iri) {
+    return iri.toString();
   }
 
   private static String decode(@Nonnull String localName) {

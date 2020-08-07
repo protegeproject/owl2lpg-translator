@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Path;

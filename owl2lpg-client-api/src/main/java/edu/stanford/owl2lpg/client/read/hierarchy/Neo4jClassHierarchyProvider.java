@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.hierarchy;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyProvider;
-import edu.stanford.owl2lpg.model.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import javax.annotation.Nonnull;

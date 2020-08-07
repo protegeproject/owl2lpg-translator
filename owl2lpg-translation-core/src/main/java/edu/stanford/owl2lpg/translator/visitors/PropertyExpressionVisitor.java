@@ -1,19 +1,21 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLObjectInverseOf;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_INVERSE_OF;
 
 /**
@@ -29,7 +31,7 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
+  private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
   private final EntityTranslator entityTranslator;
@@ -39,11 +41,11 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
 
   @Inject
   public PropertyExpressionVisitor(@Nonnull NodeFactory nodeFactory,
-                                   @Nonnull EdgeFactory edgeFactory,
+                                   @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                                    @Nonnull EntityTranslator entityTranslator,
                                    @Nonnull PropertyExpressionTranslator propertyExprTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
   }
@@ -71,9 +73,7 @@ public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx
   public Translation visit(@Nonnull OWLObjectInverseOf ope) {
     var mainNode = nodeFactory.createNode(ope, OBJECT_INVERSE_OF);
     var inversePropertyTranslation = propertyExprTranslator.translate(ope.getInverseProperty());
-    var objectPropertyEdge = edgeFactory.createEdge(mainNode,
-        inversePropertyTranslation.getMainNode(),
-        OBJECT_PROPERTY);
+    var objectPropertyEdge = structuralEdgeFactory.getObjectPropertyEdge(mainNode, inversePropertyTranslation.getMainNode());
     return Translation.create(ope, mainNode,
         ImmutableList.of(objectPropertyEdge),
         ImmutableList.of(inversePropertyTranslation));

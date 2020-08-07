@@ -6,12 +6,13 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationSubjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.ClassExpressionTranslator;
 import edu.stanford.owl2lpg.translator.DataRangeTranslator;
-import edu.stanford.owl2lpg.translator.EntityTranslator;
+import edu.stanford.owl2lpg.translator.VersionedEntityTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
@@ -62,19 +63,29 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SYMMETRIC_OBJECT_
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.TRANSITIVE_OBJECT_PROPERTY;
 
 /**
- * A visitor that contains the implementation to translate the OWL 2 axioms.
- *
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 @TranslationSessionScope
-public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
+public class VersionedAxiomVisitor implements OWLAxiomVisitorEx<Translation> {
+
+  @Nonnull
+  private final OntologyDocumentId ontologyDocumentId;
 
   @Nonnull
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EntityTranslator entityTranslator;
+  private final VersioningContextNodeFactory versioningContextNodeFactory;
+
+  @Nonnull
+  private final StructuralEdgeFactory structuralEdgeFactory;
+
+  @Nonnull
+  private final AugmentedEdgeFactory augmentedEdgeFactory;
+
+  @Nonnull
+  private final VersionedEntityTranslator entityTranslator;
 
   @Nonnull
   private final ClassExpressionTranslator classExprTranslator;
@@ -100,26 +111,26 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
 
-  @Nonnull
-  private final StructuralEdgeFactory structuralEdgeFactory;
-
-  @Nonnull
-  private final AugmentedEdgeFactory augmentedEdgeFactory;
-
   @Inject
-  public AxiomVisitor(@Nonnull NodeFactory nodeFactory,
-                      @Nonnull EntityTranslator entityTranslator,
-                      @Nonnull ClassExpressionTranslator classExprTranslator,
-                      @Nonnull PropertyExpressionTranslator propertyExprTranslator,
-                      @Nonnull DataRangeTranslator dataRangeTranslator,
-                      @Nonnull LiteralTranslator literalTranslator,
-                      @Nonnull IndividualTranslator individualTranslator,
-                      @Nonnull AnnotationObjectTranslator annotationTranslator,
-                      @Nonnull AnnotationSubjectTranslator annotationSubjectTranslator,
-                      @Nonnull AnnotationValueTranslator annotationValueTranslator,
-                      @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                      @Nonnull AugmentedEdgeFactory augmentedEdgeFactory) {
+  public VersionedAxiomVisitor(@Nonnull OntologyDocumentId ontologyDocumentId,
+                               @Nonnull NodeFactory nodeFactory,
+                               @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
+                               @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                               @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
+                               @Nonnull VersionedEntityTranslator entityTranslator,
+                               @Nonnull ClassExpressionTranslator classExprTranslator,
+                               @Nonnull PropertyExpressionTranslator propertyExprTranslator,
+                               @Nonnull DataRangeTranslator dataRangeTranslator,
+                               @Nonnull LiteralTranslator literalTranslator,
+                               @Nonnull IndividualTranslator individualTranslator,
+                               @Nonnull AnnotationObjectTranslator annotationTranslator,
+                               @Nonnull AnnotationSubjectTranslator annotationSubjectTranslator,
+                               @Nonnull AnnotationValueTranslator annotationValueTranslator) {
+    this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
     this.nodeFactory = checkNotNull(nodeFactory);
+    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
+    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.classExprTranslator = checkNotNull(classExprTranslator);
     this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
@@ -129,8 +140,11 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     this.annotationTranslator = checkNotNull(annotationTranslator);
     this.annotationSubjectTranslator = checkNotNull(annotationSubjectTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
-    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
-    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
+  }
+
+  @Nonnull
+  private Node createOntologyDocumentNode() {
+    return versioningContextNodeFactory.createOntologyDocumentNode(ontologyDocumentId);
   }
 
   @Nonnull
@@ -144,6 +158,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, entityNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -160,6 +175,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, dataTypeNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -178,6 +194,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomSubjectAugmentedEdge(axiomNode, subClassNode, edges);
     addSubClassOfAugmentedEdge(subClassNode, superClassNode, edges);
     addRelatedToAugmentedEdges(subClassNode, axiom.getSuperClass(), edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -196,6 +213,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, subjectNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -252,6 +270,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -266,6 +285,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, classExprNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -283,6 +303,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addDomainAugmentedEdge(propertyExprNode, domainNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyExprNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -300,6 +321,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addDomainAugmentedEdge(propertyExprNode, domainNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyExprNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -315,6 +337,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, propertyExprNodes, edges);
     addSymmetricalSubObjectPropertyOfAugmentedEdges(propertyExprNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -333,6 +356,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, subjectNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -347,6 +371,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, individualNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -361,6 +386,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, propertyExprNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -375,6 +401,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, propertyExprNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -392,6 +419,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addRangeAugmentedEdge(propertyExprNode, rangeNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyExprNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -411,6 +439,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addRelatedToAugmentedEdge(individualSubjectNode, individualObjectNode, axiom.getProperty(), edges);
     addAxiomSubjectAugmentedEdge(axiomNode, individualSubjectNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -428,6 +457,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addSubObjectPropertyOfAugmentedEdge(subPropertyNode, superPropertyNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, subPropertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -444,6 +474,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, classExprNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -461,6 +492,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addRangeAugmentedEdge(propertyExprNode, rangeNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyExprNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -475,6 +507,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -490,6 +523,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, propertyExprNodes, edges);
     addSymmetricalSubDataPropertyOfAugmentedEdges(propertyExprNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -507,6 +541,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addTypeAugmentedEdge(individualNode, classExprNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, individualNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -522,6 +557,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, classNodes, edges);
     addSymmetricalSubClassOfAugmentedEdges(classNodes, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -541,6 +577,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addRelatedToAugmentedEdge(individualNode, literalNode, axiom.getProperty(), edges);
     addAxiomSubjectAugmentedEdge(axiomNode, individualNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -558,6 +595,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addSubDataPropertyOfAugmentedEdge(subPropertyNode, superPropertyNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, subPropertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -573,6 +611,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdges(axiomNode, individuals, edges);
     addSameIndividualAugmentedEdges(individuals, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -589,6 +628,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, firstChainNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -632,6 +672,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addInverseOfAugmentedEdge(ope1Node, ope2Node, edges);
     addInverseOfAugmentedEdge(ope2Node, ope1Node, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, ope1Node, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -650,6 +691,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, classExprNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -669,6 +711,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addRelatedToAugmentedEdge(annotationSubjectNode, annotationValueNode, axiom.getProperty(), edges);
     addAxiomSubjectAugmentedEdge(axiomNode, annotationSubjectNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -686,6 +729,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addSubAnnotationPropertyOfAugmentedEdge(subPropertyNode, superPropertyNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, subPropertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -703,6 +747,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addDomainAugmentedEdge(propertyNode, domainNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -720,6 +765,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
         axiomNode, translations, edges);
     addRangeAugmentedEdge(propertyNode, rangeNode, edges);
     addAxiomSubjectAugmentedEdge(axiomNode, propertyNode, edges);
+    addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -1196,6 +1242,10 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   /**
    * Methods to create augmented edges
    */
+
+  private void addAxiomOfAugmentedEdge(Node axiomNode, Node ontologyDocumentNode, Builder<Edge> edges) {
+    augmentedEdgeFactory.getAxiomOfEdge(axiomNode, ontologyDocumentNode).ifPresent(edges::add);
+  }
 
   private void addAxiomSubjectAugmentedEdge(Node axiomNode, Node subjectNode, Builder<Edge> edges) {
     augmentedEdgeFactory.getAxiomSubjectEdge(axiomNode, subjectNode).ifPresent(edges::add);

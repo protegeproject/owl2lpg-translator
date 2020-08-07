@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.model;
 
 import edu.stanford.owl2lpg.model.NodeId;
 

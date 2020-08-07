@@ -1,13 +1,11 @@
 package edu.stanford.owl2lpg.model;
 
+import at.favre.lib.bytes.Bytes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
-import com.google.common.hash.HashCode;
 
 import javax.annotation.Nonnull;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 /**
  * Represents a construction of a node identifier.
@@ -24,14 +22,15 @@ public abstract class NodeId {
   }
 
   public static NodeId create(long numberId) {
-    var bb = ByteBuffer.allocate(8);
-    bb.putLong(numberId);
-    return create(bb.array());
+    return create(Bytes.empty()
+        .append(numberId)
+        .array());
   }
 
   public static NodeId create(String stringId) {
-    var bytes = stringId.getBytes(Charset.defaultCharset());
-    return create(bytes);
+    return create(Bytes.empty()
+        .append(stringId)
+        .array());
   }
 
   @JsonIgnore
@@ -40,7 +39,7 @@ public abstract class NodeId {
 
   @JsonValue
   public String asString() {
-    return HashCode.fromBytes(getBytes()).toString();
+    return Bytes.wrap(getBytes()).encodeHex();
   }
 
   @Override

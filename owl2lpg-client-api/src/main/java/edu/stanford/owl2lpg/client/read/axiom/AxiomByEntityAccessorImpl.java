@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.model.AxiomContext;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLAxiom;

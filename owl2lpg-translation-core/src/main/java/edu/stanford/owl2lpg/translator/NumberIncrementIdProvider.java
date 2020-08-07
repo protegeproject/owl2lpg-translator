@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.translator.visitors.NodeIdProvider;
+import edu.stanford.owl2lpg.model.NodeIdProvider;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

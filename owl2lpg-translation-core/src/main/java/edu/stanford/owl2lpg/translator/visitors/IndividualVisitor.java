@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.EdgeFactory;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
@@ -31,17 +30,12 @@ public class IndividualVisitor implements OWLIndividualVisitorEx<Translation> {
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EdgeFactory edgeFactory;
-
-  @Nonnull
   private final EntityTranslator translator;
 
   @Inject
   public IndividualVisitor(@Nonnull NodeFactory nodeFactory,
-                           @Nonnull EdgeFactory edgeFactory,
                            @Nonnull EntityTranslator translator) {
     this.nodeFactory = checkNotNull(nodeFactory);
-    this.edgeFactory = checkNotNull(edgeFactory);
     this.translator = checkNotNull(translator);
   }
 
