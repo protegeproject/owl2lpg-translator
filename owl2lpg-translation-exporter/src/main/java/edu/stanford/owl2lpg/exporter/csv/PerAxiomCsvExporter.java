@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import edu.stanford.owl2lpg.translator.AxiomInProjectTranslator;
+import edu.stanford.owl2lpg.translator.VersionedAxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -17,13 +17,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PerAxiomCsvExporter {
 
   @Nonnull
-  private final AxiomInProjectTranslator axiomTranslator;
+  private final VersionedAxiomTranslator axiomTranslator;
 
   @Nonnull
   private final Neo4jCsvWriter csvWriter;
 
   @Inject
-  public PerAxiomCsvExporter(@Nonnull AxiomInProjectTranslator axiomTranslator,
+  public PerAxiomCsvExporter(@Nonnull VersionedAxiomTranslator axiomTranslator,
                              @Nonnull Neo4jCsvWriter csvWriter) {
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.csvWriter = checkNotNull(csvWriter);

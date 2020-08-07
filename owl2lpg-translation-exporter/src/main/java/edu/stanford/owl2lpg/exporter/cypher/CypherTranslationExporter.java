@@ -4,6 +4,7 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
+import edu.stanford.owl2lpg.translator.VersioningContextModule;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -39,12 +40,12 @@ public class CypherTranslationExporter {
                      @Nonnull Path outputFilePath) {
     checkNotNull(ontology);
     checkNotNull(outputFilePath);
-    var ontologyDocumentAxiomTranslator = DaggerTranslatorComponent.create().getOntologyDocumentAxiomTranslator();
-    var exporter = new CypherExporter(
-        ontologyDocumentId,
-        ontology,
-        outputFilePath,
-        ontologyDocumentAxiomTranslator);
+    var versioningContextModule = new VersioningContextModule(projectId, branchId, ontologyDocumentId);
+    var ontologyTranslator = DaggerTranslatorComponent.builder()
+        .versioningContextModule(versioningContextModule)
+        .build()
+        .getVersionedOntologyTranslator();
+    var exporter = new CypherExporter(ontology, ontologyTranslator, outputFilePath);
     exporter.write();
   }
 }

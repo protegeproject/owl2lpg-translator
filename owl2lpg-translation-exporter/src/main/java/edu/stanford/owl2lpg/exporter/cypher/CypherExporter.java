@@ -3,10 +3,8 @@ package edu.stanford.owl2lpg.exporter.cypher;
 import com.google.common.base.Charsets;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -22,36 +20,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CypherExporter {
 
   @Nonnull
-  private final OntologyDocumentId ontologyDocumentId;
-
-  @Nonnull
   private final OWLOntology ontology;
 
   @Nonnull
   private final Path outputFilePath;
 
   @Nonnull
-  private final OntologyDocumentAxiomTranslator ontologyTranslator;
+  private final VersionedOntologyTranslator ontologyTranslator;
 
-  public CypherExporter(@Nonnull OntologyDocumentId ontologyDocumentId,
-                        @Nonnull OWLOntology ontology,
-                        @Nonnull Path outputFilePath,
-                        @Nonnull OntologyDocumentAxiomTranslator ontologyTranslator) {
+  public CypherExporter(@Nonnull OWLOntology ontology,
+                        @Nonnull VersionedOntologyTranslator ontologyTranslator, @Nonnull Path outputFilePath) {
     this.ontologyTranslator = checkNotNull(ontologyTranslator);
-    this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
     this.ontology = checkNotNull(ontology);
     this.outputFilePath = checkNotNull(outputFilePath);
   }
 
   public void write() {
-    ontology.getAxioms()
-        .stream()
-        .map(this::translateAxiom)
-        .forEach(this::writeTranslation);
-  }
-
-  private Translation translateAxiom(OWLAxiom axiom) {
-    return ontologyTranslator.translate(ontologyDocumentId, axiom);
+    var translation = ontologyTranslator.translate(ontology);
+    writeTranslation(translation);
   }
 
   private void writeTranslation(Translation translation) {
