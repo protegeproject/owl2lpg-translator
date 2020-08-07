@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.cli;
 
 import edu.stanford.owl2lpg.exporter.csv.CsvWriterModule;
-import edu.stanford.owl2lpg.exporter.csv.DaggerOntologyCsvExporterComponent;
+import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
 import edu.stanford.owl2lpg.exporter.cypher.CypherTranslationExporter;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -81,7 +81,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     try {
       var csvWriterModule = new CsvWriterModule(outputDirectoryLocation);
-      var exporter = DaggerOntologyCsvExporterComponent.builder()
+      var exporter = DaggerCsvExporterComponent.builder()
           .csvWriterModule(csvWriterModule)
           .build()
           .getOntologyCsvExporter();
