@@ -1,7 +1,5 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.OntologyDocumentAxiomTranslator;
 import edu.stanford.owl2lpg.translator.ProjectBranchTranslator;
 
@@ -11,6 +9,7 @@ import java.io.Writer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Deprecated
 public class CsvExporterFactory {
 
   @Nonnull
