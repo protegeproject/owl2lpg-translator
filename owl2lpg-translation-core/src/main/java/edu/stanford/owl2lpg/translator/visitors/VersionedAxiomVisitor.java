@@ -12,7 +12,7 @@ import edu.stanford.owl2lpg.translator.AnnotationSubjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.ClassExpressionTranslator;
 import edu.stanford.owl2lpg.translator.DataRangeTranslator;
-import edu.stanford.owl2lpg.translator.EntityInProjectTranslator;
+import edu.stanford.owl2lpg.translator.VersionedEntityTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
@@ -67,7 +67,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.TRANSITIVE_OBJECT
  * Stanford Center for Biomedical Informatics Research
  */
 @TranslationSessionScope
-public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
+public class VersionedAxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @Nonnull
   private final OntologyDocumentId ontologyDocumentId;
@@ -76,7 +76,16 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final EntityInProjectTranslator entityTranslator;
+  private final VersioningContextNodeFactory versioningContextNodeFactory;
+
+  @Nonnull
+  private final StructuralEdgeFactory structuralEdgeFactory;
+
+  @Nonnull
+  private final AugmentedEdgeFactory augmentedEdgeFactory;
+
+  @Nonnull
+  private final VersionedEntityTranslator entityTranslator;
 
   @Nonnull
   private final ClassExpressionTranslator classExprTranslator;
@@ -102,19 +111,13 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
 
-  @Nonnull
-  private final StructuralEdgeFactory structuralEdgeFactory;
-
-  @Nonnull
-  private final AugmentedEdgeFactory augmentedEdgeFactory;
-
-  @Nonnull
-  private final VersioningContextNodeFactory versioningContextNodeFactory;
-
   @Inject
-  public AxiomInProjectVisitor(@Nonnull OntologyDocumentId ontologyDocumentId,
+  public VersionedAxiomVisitor(@Nonnull OntologyDocumentId ontologyDocumentId,
                                @Nonnull NodeFactory nodeFactory,
-                               @Nonnull EntityInProjectTranslator entityTranslator,
+                               @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
+                               @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                               @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
+                               @Nonnull VersionedEntityTranslator entityTranslator,
                                @Nonnull ClassExpressionTranslator classExprTranslator,
                                @Nonnull PropertyExpressionTranslator propertyExprTranslator,
                                @Nonnull DataRangeTranslator dataRangeTranslator,
@@ -122,12 +125,12 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
                                @Nonnull IndividualTranslator individualTranslator,
                                @Nonnull AnnotationObjectTranslator annotationTranslator,
                                @Nonnull AnnotationSubjectTranslator annotationSubjectTranslator,
-                               @Nonnull AnnotationValueTranslator annotationValueTranslator,
-                               @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                               @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
-                               @Nonnull VersioningContextNodeFactory versioningContextNodeFactory) {
+                               @Nonnull AnnotationValueTranslator annotationValueTranslator) {
     this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
     this.nodeFactory = checkNotNull(nodeFactory);
+    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
+    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
+    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.classExprTranslator = checkNotNull(classExprTranslator);
     this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
@@ -137,9 +140,6 @@ public class AxiomInProjectVisitor implements OWLAxiomVisitorEx<Translation> {
     this.annotationTranslator = checkNotNull(annotationTranslator);
     this.annotationSubjectTranslator = checkNotNull(annotationSubjectTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
-    this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
-    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
-    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
   }
 
   @Nonnull

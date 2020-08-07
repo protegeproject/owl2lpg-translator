@@ -42,7 +42,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
  * Stanford Center for Biomedical Informatics Research
  */
 @TranslationSessionScope
-public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
+public class VersionedEntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @Nonnull
   private final OntologyDocumentId ontoDocId;
@@ -63,7 +63,7 @@ public class EntityInProjectVisitor implements OWLEntityVisitorEx<Translation> {
   private final AnnotationValueTranslator annotationValueTranslator;
 
   @Inject
-  public EntityInProjectVisitor(@Nonnull OntologyDocumentId ontoDocId,
+  public VersionedEntityVisitor(@Nonnull OntologyDocumentId ontoDocId,
                                 @Nonnull NodeFactory nodeFactory,
                                 @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
                                 @Nonnull StructuralEdgeFactory structuralEdgeFactory,

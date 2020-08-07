@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.translator.visitors.AxiomInProjectVisitor;
+import edu.stanford.owl2lpg.translator.visitors.VersionedAxiomVisitor;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -13,13 +13,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomInProjectTranslator {
+public class VersionedAxiomTranslator {
 
   @Nonnull
-  private final Provider<AxiomInProjectVisitor> visitor;
+  private final Provider<VersionedAxiomVisitor> visitor;
 
   @Inject
-  public AxiomInProjectTranslator(@Nonnull Provider<AxiomInProjectVisitor> visitor) {
+  public VersionedAxiomTranslator(@Nonnull Provider<VersionedAxiomVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 

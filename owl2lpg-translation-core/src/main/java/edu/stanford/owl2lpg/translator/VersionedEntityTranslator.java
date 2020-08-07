@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.translator.visitors.EntityInProjectVisitor;
+import edu.stanford.owl2lpg.translator.visitors.VersionedEntityVisitor;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
@@ -13,13 +13,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class EntityInProjectTranslator {
+public class VersionedEntityTranslator {
 
   @Nonnull
-  private final Provider<EntityInProjectVisitor> visitor;
+  private final Provider<VersionedEntityVisitor> visitor;
 
   @Inject
-  public EntityInProjectTranslator(@Nonnull Provider<EntityInProjectVisitor> visitor) {
+  public VersionedEntityTranslator(@Nonnull Provider<VersionedEntityVisitor> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 

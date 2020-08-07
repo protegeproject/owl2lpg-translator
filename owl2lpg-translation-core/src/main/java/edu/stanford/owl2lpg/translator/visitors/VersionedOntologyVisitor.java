@@ -10,8 +10,8 @@ import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
-import edu.stanford.owl2lpg.translator.AxiomInProjectTranslator;
-import edu.stanford.owl2lpg.translator.EntityInProjectTranslator;
+import edu.stanford.owl2lpg.translator.VersionedAxiomTranslator;
+import edu.stanford.owl2lpg.translator.VersionedEntityTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -35,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Translation> {
+public class VersionedOntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Nonnull
   private final ProjectId projectId;
@@ -53,7 +53,7 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
-  private final EntityInProjectTranslator entityTranslator;
+  private final VersionedEntityTranslator entityTranslator;
 
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
@@ -62,18 +62,18 @@ public class OntologyInProjectVisitor implements OWLNamedObjectVisitorEx<Transla
   private final AnnotationObjectTranslator annotationObjectTranslator;
 
   @Nonnull
-  private final AxiomInProjectTranslator axiomTranslator;
+  private final VersionedAxiomTranslator axiomTranslator;
 
   @Inject
-  public OntologyInProjectVisitor(@Nonnull ProjectId projectId,
+  public VersionedOntologyVisitor(@Nonnull ProjectId projectId,
                                   @Nonnull BranchId branchId,
                                   @Nonnull OntologyDocumentId ontoDocId,
                                   @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
                                   @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                                  @Nonnull EntityInProjectTranslator entityTranslator,
+                                  @Nonnull VersionedEntityTranslator entityTranslator,
                                   @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                   @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
-                                  @Nonnull AxiomInProjectTranslator axiomTranslator) {
+                                  @Nonnull VersionedAxiomTranslator axiomTranslator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);

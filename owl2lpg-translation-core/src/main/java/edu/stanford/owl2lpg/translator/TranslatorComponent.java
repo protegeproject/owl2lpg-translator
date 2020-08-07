@@ -8,15 +8,15 @@ import dagger.Component;
  */
 @Component(modules = {
     TranslatorModule.class,
-    ProjectContextModule.class})
+    VersioningContextModule.class})
 @TranslationSessionScope
 public interface TranslatorComponent {
 
   AxiomTranslator getAxiomTranslator();
 
-  AxiomInProjectTranslator getAxiomInProjectTranslator();
-
   OntologyTranslator getOntologyTranslator();
 
-  OntologyInProjectTranslator getOntologyInProjectTranslator();
+  VersionedAxiomTranslator getVersionedAxiomTranslator();
+
+  VersionedOntologyTranslator getVersionedOntologyTranslator();
 }
