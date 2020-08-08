@@ -57,9 +57,10 @@ public class CsvWriter<T> {
 
   private void writeRow(@Nonnull T rowObject) throws IOException {
     objectWriter.write(rowObject);
+    objectWriter.flush();
   }
 
   public void flush() throws IOException {
-    objectWriter.flush();
+    output.flush();
   }
 }
