@@ -6,6 +6,7 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.base.Stopwatch;
 import com.google.common.io.CountingInputStream;
 import edu.stanford.bmir.protege.web.server.util.Counter;
+import edu.stanford.owl2lpg.exporter.csv.CsvWriterModule;
 import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
 import edu.stanford.owl2lpg.exporter.csv.PerAxiomCsvExporter;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -27,10 +28,17 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
@@ -42,24 +50,20 @@ public class Scratch {
   private static final Logger logger = LoggerFactory.getLogger("OboStreaming");
 
   public static void main(String[] args) throws IOException {
-    File file = new File(args[0]);
-//        for (int i = 0; i < 1000; i++) {
-    parse(file);
-//        }
+    var inputFile = new File(args[0]);
+    var outputDir = Path.of(args[1]);
+    parse(inputFile, outputDir);
   }
 
-  private static void parse(File file) throws IOException {
-    var in = new CountingInputStream(new FileInputStream(file));
+  private static void parse(File inputFile, Path outputDirectory) throws IOException {
+    var in = new CountingInputStream(new FileInputStream(inputFile));
     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
     var sw = Stopwatch.createStarted();
     OBOFormatParser parser = new OBOFormatParser();
     replaceStringCacheWithNoOpCache(parser);
     parser.setReader(bufferedReader);
 
-    var outputDirectory = Path.of("/tmp/out");
-    Files.createDirectories(outputDirectory);
-    var nodesCsvWriter = createWriter(outputDirectory.resolve("nodes.csv"));
-    var relsCsvWriter = createWriter(outputDirectory.resolve("relationships.csv"));
+    var csvWriterModule = new CsvWriterModule(outputDirectory);
     var versioningContextModule = new VersioningContextModule(
         ProjectId.create("8e62c425-8d8f-4e6a-a188-2d4b4b586468"),
         BranchId.create("49b40337-06ff-4d94-a043-7d81733f10d3"),
@@ -67,10 +71,11 @@ public class Scratch {
     PerAxiomCsvExporter csvExporter = DaggerCsvExporterComponent
         .builder()
         .versioningContextModule(versioningContextModule)
+        .csvWriterModule(csvWriterModule)
         .build()
         .getPerAxiomCsvExporter();
 
-    var translator = new MinimalObo2Owl(in, file.length(), csvExporter);
+    var translator = new MinimalObo2Owl(in, inputFile.length(), csvExporter);
     var obodoc = new MinimalOboDoc();
     // Rather ugly dep!
     obodoc.setTranslator(translator);
