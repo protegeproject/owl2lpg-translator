@@ -22,13 +22,13 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.PROJECT_ID;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class VersioningContextNodeFactory {
+public class OntologyContextNodeFactory {
 
   @Nonnull
   private final NodeFactory nodeFactory;
 
   @Inject
-  public VersioningContextNodeFactory(@Nonnull NodeFactory nodeFactory) {
+  public OntologyContextNodeFactory(@Nonnull NodeFactory nodeFactory) {
     this.nodeFactory = checkNotNull(nodeFactory);
   }
 

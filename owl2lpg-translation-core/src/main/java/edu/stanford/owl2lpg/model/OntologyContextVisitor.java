@@ -4,7 +4,7 @@ package edu.stanford.owl2lpg.model;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface VersioningContextVisitor<O> {
+public interface OntologyContextVisitor<O> {
 
-  O visit(VersioningContext versioningContext);
+  O visit(OntologyContext ontologyContext);
 }

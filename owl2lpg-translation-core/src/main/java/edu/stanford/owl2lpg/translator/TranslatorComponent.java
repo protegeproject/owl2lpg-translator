@@ -8,7 +8,7 @@ import dagger.Component;
  */
 @Component(modules = {
     TranslatorModule.class,
-    VersioningContextModule.class})
+    OntologyContextModule.class})
 @TranslationSessionScope
 public interface TranslatorComponent {
 

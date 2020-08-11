@@ -52,7 +52,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final VersioningContextNodeFactory versioningContextNodeFactory;
+  private final OntologyContextNodeFactory ontologyContextNodeFactory;
 
   @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
@@ -66,14 +66,14 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   @Inject
   public EntityVisitor(@Nonnull OntologyDocumentId ontoDocId,
                        @Nonnull NodeFactory nodeFactory,
-                       @Nonnull VersioningContextNodeFactory versioningContextNodeFactory,
+                       @Nonnull OntologyContextNodeFactory ontologyContextNodeFactory,
                        @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                        @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
                        @Nonnull AnnotationValueTranslator annotationValueTranslator) {
     this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
-    this.versioningContextNodeFactory = checkNotNull(versioningContextNodeFactory);
+    this.ontologyContextNodeFactory = checkNotNull(ontologyContextNodeFactory);
     this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
   }
@@ -145,7 +145,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   private void translateEntitySignatureOf(OntologyDocumentId ontoDocId, Node entityNode,
                                           ImmutableList.Builder<Translation> translations, ImmutableList.Builder<Edge> edges) {
     var ontologyDocumentTranslation = Translation.create(ontoDocId,
-        versioningContextNodeFactory.createOntologyDocumentNode(ontoDocId),
+        ontologyContextNodeFactory.createOntologyDocumentNode(ontoDocId),
         ImmutableList.of(),
         ImmutableList.of());
     var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfEdge(entityNode, ontologyDocumentTranslation.getMainNode());
