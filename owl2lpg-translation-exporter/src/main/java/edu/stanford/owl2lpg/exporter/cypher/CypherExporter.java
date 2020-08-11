@@ -3,8 +3,8 @@ package edu.stanford.owl2lpg.exporter.cypher;
 import com.google.common.base.Charsets;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.OntologyTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -26,10 +26,10 @@ public class CypherExporter {
   private final Path outputFilePath;
 
   @Nonnull
-  private final VersionedOntologyTranslator ontologyTranslator;
+  private final OntologyTranslator ontologyTranslator;
 
   public CypherExporter(@Nonnull OWLOntology ontology,
-                        @Nonnull VersionedOntologyTranslator ontologyTranslator, @Nonnull Path outputFilePath) {
+                        @Nonnull OntologyTranslator ontologyTranslator, @Nonnull Path outputFilePath) {
     this.ontologyTranslator = checkNotNull(ontologyTranslator);
     this.ontology = checkNotNull(ontology);
     this.outputFilePath = checkNotNull(outputFilePath);

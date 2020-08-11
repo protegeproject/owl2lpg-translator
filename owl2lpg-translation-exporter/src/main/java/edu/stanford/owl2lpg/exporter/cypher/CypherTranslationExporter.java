@@ -44,7 +44,7 @@ public class CypherTranslationExporter {
     var ontologyTranslator = DaggerTranslatorComponent.builder()
         .versioningContextModule(versioningContextModule)
         .build()
-        .getVersionedOntologyTranslator();
+        .getOntologyTranslator();
     var exporter = new CypherExporter(ontology, ontologyTranslator, outputFilePath);
     exporter.write();
   }

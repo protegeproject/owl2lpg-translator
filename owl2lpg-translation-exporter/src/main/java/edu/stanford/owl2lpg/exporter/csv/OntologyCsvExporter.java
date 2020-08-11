@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
-import edu.stanford.owl2lpg.translator.VersionedOntologyTranslator;
+import edu.stanford.owl2lpg.translator.OntologyTranslator;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
@@ -17,13 +17,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OntologyCsvExporter {
 
   @Nonnull
-  private final VersionedOntologyTranslator ontologyProjectTranslator;
+  private final OntologyTranslator ontologyProjectTranslator;
 
   @Nonnull
   private final Neo4jCsvWriter csvWriter;
 
   @Inject
-  public OntologyCsvExporter(@Nonnull VersionedOntologyTranslator ontologyProjectTranslator,
+  public OntologyCsvExporter(@Nonnull OntologyTranslator ontologyProjectTranslator,
                              @Nonnull Neo4jCsvWriter csvWriter) {
     this.ontologyProjectTranslator = checkNotNull(ontologyProjectTranslator);
     this.csvWriter = checkNotNull(csvWriter);

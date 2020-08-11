@@ -15,8 +15,4 @@ public interface TranslatorComponent {
   AxiomTranslator getAxiomTranslator();
 
   OntologyTranslator getOntologyTranslator();
-
-  VersionedAxiomTranslator getVersionedAxiomTranslator();
-
-  VersionedOntologyTranslator getVersionedOntologyTranslator();
 }

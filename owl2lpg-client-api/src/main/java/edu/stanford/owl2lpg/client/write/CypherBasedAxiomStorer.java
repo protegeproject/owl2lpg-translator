@@ -4,8 +4,8 @@ import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.VersionedAxiomTranslator;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -30,10 +30,10 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
   private final Session session;
 
   @Nonnull
-  private final VersionedAxiomTranslator axiomTranslator;
+  private final AxiomTranslator axiomTranslator;
 
   public CypherBasedAxiomStorer(@Nonnull Session session,
-                                @Nonnull VersionedAxiomTranslator axiomTranslator) {
+                                @Nonnull AxiomTranslator axiomTranslator) {
     this.session = checkNotNull(session);
     this.axiomTranslator = checkNotNull(axiomTranslator);
   }
