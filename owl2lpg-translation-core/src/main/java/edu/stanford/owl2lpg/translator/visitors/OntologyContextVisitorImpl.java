@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.VersioningContext;
-import edu.stanford.owl2lpg.model.VersioningContextVisitor;
+import edu.stanford.owl2lpg.model.OntologyContext;
+import edu.stanford.owl2lpg.model.OntologyContextVisitor;
 import edu.stanford.owl2lpg.translator.Translation;
 
 import javax.annotation.Nonnull;
@@ -14,28 +14,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class VersioningContextVisitorImpl implements VersioningContextVisitor<Translation> {
+public class OntologyContextVisitorImpl implements OntologyContextVisitor<Translation> {
 
   @Nonnull
-  private final VersioningContextNodeFactory nodeFactory;
+  private final OntologyContextNodeFactory nodeFactory;
 
   @Nonnull
   private final StructuralEdgeFactory edgeFactory;
 
   @Inject
-  public VersioningContextVisitorImpl(@Nonnull VersioningContextNodeFactory nodeFactory,
-                                      @Nonnull StructuralEdgeFactory edgeFactory) {
+  public OntologyContextVisitorImpl(@Nonnull OntologyContextNodeFactory nodeFactory,
+                                    @Nonnull StructuralEdgeFactory edgeFactory) {
     this.nodeFactory = checkNotNull(nodeFactory);
     this.edgeFactory = checkNotNull(edgeFactory);
   }
 
   @Override
-  public Translation visit(VersioningContext versioningContext) {
-    var projectId = versioningContext.getProjectId();
+  public Translation visit(OntologyContext ontologyContext) {
+    var projectId = ontologyContext.getProjectId();
     var projectNode = nodeFactory.createProjectNode(projectId);
-    var branchId = versioningContext.getBranchId();
+    var branchId = ontologyContext.getBranchId();
     var branchNode = nodeFactory.createBranchNode(branchId);
-    var ontoDocId = versioningContext.getOntologyDocumentId();
+    var ontoDocId = ontologyContext.getOntologyDocumentId();
     var ontoDocNode = nodeFactory.createOntologyDocumentNode(ontoDocId);
     return Translation.create(projectId,
         projectNode,

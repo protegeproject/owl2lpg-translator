@@ -5,7 +5,7 @@ import dagger.Provides;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import edu.stanford.owl2lpg.model.VersioningContext;
+import edu.stanford.owl2lpg.model.OntologyContext;
 
 import javax.annotation.Nonnull;
 
@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public class VersioningContextModule {
+public class OntologyContextModule {
 
   @Nonnull
   private final ProjectId projectId;
@@ -27,15 +27,15 @@ public class VersioningContextModule {
   @Nonnull
   private final OntologyDocumentId ontologyDocumentId;
 
-  public VersioningContextModule(@Nonnull ProjectId projectId,
-                                 @Nonnull BranchId branchId,
-                                 @Nonnull OntologyDocumentId ontologyDocumentId) {
+  public OntologyContextModule(@Nonnull ProjectId projectId,
+                               @Nonnull BranchId branchId,
+                               @Nonnull OntologyDocumentId ontologyDocumentId) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
   }
 
-  public VersioningContextModule() {
+  public OntologyContextModule() {
     this(ProjectId.create(), BranchId.create(), OntologyDocumentId.create());
   }
 
@@ -55,7 +55,7 @@ public class VersioningContextModule {
   }
 
   @Provides
-  public VersioningContext provideVersioningContext() {
-    return VersioningContext.get(projectId, branchId, ontologyDocumentId);
+  public OntologyContext provideVersioningContext() {
+    return OntologyContext.get(projectId, branchId, ontologyDocumentId);
   }
 }
