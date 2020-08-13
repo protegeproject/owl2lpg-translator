@@ -3,8 +3,10 @@ package edu.stanford.owl2lpg.client.read.axiom;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Path;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -39,9 +41,9 @@ public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
   }
 
   @Override
-  public Set<OWLAxiom> getSubClassOfAxiomsBySubClass(AxiomContext context, OWLClass subClass) {
+  public Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(AxiomContext context, OWLClass subClass) {
     var nodeIndex = getNodeIndex(context, subClass, SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY);
-    return collectAxiomsFromIndex(nodeIndex);
+    return collectSubClassOfAxiomsFromIndex(nodeIndex);
   }
 
   private NodeIndex getNodeIndex(AxiomContext context, OWLClass subClass, String queryString) {
@@ -67,10 +69,10 @@ public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
   }
 
   @Nonnull
-  private Set<OWLAxiom> collectAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private Set<OWLSubClassOfAxiom> collectSubClassOfAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
-        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubClassOfAxiom.class))
         .collect(Collectors.toSet());
   }
 }
