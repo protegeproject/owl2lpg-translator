@@ -12,7 +12,7 @@ import edu.stanford.owl2lpg.exporter.csv.PerAxiomCsvExporter;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import edu.stanford.owl2lpg.translator.VersioningContextModule;
+import edu.stanford.owl2lpg.translator.OntologyContextModule;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.obolibrary.obo2owl.OWLAPIObo2Owl;
@@ -22,6 +22,7 @@ import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatParser;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +65,13 @@ public class Scratch {
     parser.setReader(bufferedReader);
 
     var csvWriterModule = new CsvWriterModule(outputDirectory);
-    var versioningContextModule = new VersioningContextModule(
+    var versioningContextModule = new OntologyContextModule(
         ProjectId.create("8e62c425-8d8f-4e6a-a188-2d4b4b586468"),
         BranchId.create("49b40337-06ff-4d94-a043-7d81733f10d3"),
         OntologyDocumentId.create("f7b5f0b4-fc40-40c0-a9ef-050fce37e0e4"));
     PerAxiomCsvExporter csvExporter = DaggerCsvExporterComponent
         .builder()
-        .versioningContextModule(versioningContextModule)
+        .ontologyContextModule(versioningContextModule)
         .csvWriterModule(csvWriterModule)
         .build()
         .getPerAxiomCsvExporter();
@@ -142,7 +143,9 @@ public class Scratch {
       counter.increment();
       logParsed();
       try {
-        csvExporter.export(axiom);
+        if (!(axiom instanceof OWLAnnotationAssertionAxiom)) {
+          csvExporter.export(axiom);
+        }
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
