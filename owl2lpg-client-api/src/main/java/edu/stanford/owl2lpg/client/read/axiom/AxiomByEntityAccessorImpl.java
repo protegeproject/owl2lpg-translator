@@ -4,9 +4,11 @@ import edu.stanford.owl2lpg.client.read.Parameters;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
 import javax.annotation.Nonnull;
@@ -28,11 +30,15 @@ public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
       "axioms/sub-class-of-axiom-by-sub-class.cpy";
   private static final String SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE =
       "axioms/sub-object-property-of-axiom-by-sub-property.cpy";
+  private static final String SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE =
+      "axioms/sub-data-property-of-axiom-by-sub-property.cpy";
 
   private static final String SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY =
       read(SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY_FILE);
   private static final String SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY =
       read(SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE);
+  private static final String SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY =
+      read(SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -57,6 +63,12 @@ public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
   public Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(AxiomContext context, OWLObjectProperty subProperty) {
     var nodeIndex = getNodeIndex(context, subProperty, SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY);
     return collectSubObjectPropertyOfAxiomsFromIndex(nodeIndex);
+  }
+
+  @Override
+  public Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(AxiomContext context, OWLDataProperty subProperty) {
+    var nodeIndex = getNodeIndex(context, subProperty, SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY);
+    return collectSubDataPropertyOfAxiomsFromIndex(nodeIndex);
   }
 
   private NodeIndex getNodeIndex(AxiomContext context, OWLEntity entity, String queryString) {
@@ -94,6 +106,14 @@ public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubObjectPropertyOfAxiom.class))
+        .collect(Collectors.toSet());
+  }
+
+  @Nonnull
+  private Set<OWLSubDataPropertyOfAxiom> collectSubDataPropertyOfAxiomsFromIndex(NodeIndex nodeIndex) {
+    return nodeIndex.getNodes(AXIOM.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubDataPropertyOfAxiom.class))
         .collect(Collectors.toSet());
   }
 }
