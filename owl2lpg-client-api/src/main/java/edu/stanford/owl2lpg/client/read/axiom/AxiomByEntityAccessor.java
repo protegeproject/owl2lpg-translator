@@ -1,7 +1,9 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
 import java.util.Set;
 
@@ -12,4 +14,6 @@ import java.util.Set;
 public interface AxiomByEntityAccessor {
 
   Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(AxiomContext context, OWLClass subClass);
+
+  Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(AxiomContext context, OWLObjectProperty subProperty);
 }
