@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
@@ -16,7 +17,12 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.semanticweb.owlapi.model.EntityType.*;
+import static org.semanticweb.owlapi.model.EntityType.ANNOTATION_PROPERTY;
+import static org.semanticweb.owlapi.model.EntityType.CLASS;
+import static org.semanticweb.owlapi.model.EntityType.DATATYPE;
+import static org.semanticweb.owlapi.model.EntityType.DATA_PROPERTY;
+import static org.semanticweb.owlapi.model.EntityType.NAMED_INDIVIDUAL;
+import static org.semanticweb.owlapi.model.EntityType.OBJECT_PROPERTY;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -27,14 +33,20 @@ public class Neo4jNodeTranslatorImpl implements Neo4jNodeTranslator {
   @Nonnull
   private final OWLDataFactory dataFactory;
 
+  @Nonnull
+  private final ObjectMapper objectMapper;
+
   @Inject
-  public Neo4jNodeTranslatorImpl(@Nonnull OWLDataFactory dataFactory) {
+  public Neo4jNodeTranslatorImpl(@Nonnull OWLDataFactory dataFactory,
+                                 @Nonnull ObjectMapper objectMapper) {
     this.dataFactory = checkNotNull(dataFactory);
+    this.objectMapper = checkNotNull(objectMapper);
   }
 
   @Nonnull
   @Override
-  public OWLEntity getOwlEntity(Node entityNode) {
+  public OWLEntity getOwlEntity(Object entityObject) {
+    var entityNode = (Node) entityObject;
     var entityIri = IRI.create(entityNode.get(PropertyFields.IRI).asString());
     var entityType = getEntityTypeFromNodeLabels(entityNode.labels());
     return dataFactory.getOWLEntity(entityType, entityIri);
@@ -42,28 +54,14 @@ public class Neo4jNodeTranslatorImpl implements Neo4jNodeTranslator {
 
   @Nonnull
   @Override
-  public String getShortForm(Node literalNode) {
-    return literalNode.get(PropertyFields.LEXICAL_FORM).asString();
+  public String getShortForm(Object shortFormObject) {
+    return (String) shortFormObject;
   }
 
   @Nonnull
   @Override
-  public DictionaryLanguage getDictionaryLanguage(Node propertyNode, Node literalNode) {
-    var propertyIri = getAnnotationPropertyIri(propertyNode);
-    var language = getLanguage(literalNode);
-    return DictionaryLanguage.create(propertyIri, language);
-  }
-
-  @Nonnull
-  private IRI getAnnotationPropertyIri(Node propertyNode) {
-    return IRI.create(propertyNode.get(PropertyFields.IRI).asString());
-  }
-
-  @Nonnull
-  private String getLanguage(Node literalNode) {
-    return literalNode.hasLabel(PropertyFields.LANGUAGE)
-        ? literalNode.get(PropertyFields.LANGUAGE).asString()
-        : "";
+  public DictionaryLanguage getDictionaryLanguage(Object dictionaryLanguageObject) {
+    return objectMapper.convertValue(dictionaryLanguageObject, DictionaryLanguage.class);
   }
 
   private static EntityType<?> getEntityTypeFromNodeLabels(Iterable<String> nodeLabels) {
