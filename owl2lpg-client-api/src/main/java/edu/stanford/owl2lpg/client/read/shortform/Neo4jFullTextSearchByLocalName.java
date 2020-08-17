@@ -42,19 +42,19 @@ public class Neo4jFullTextSearchByLocalName implements Neo4jFullTextSearch {
   private final Neo4jFullTextIndexName fullTextIndexName;
 
   @Nonnull
-  private final Neo4jNodeTranslator nodeTranslator;
+  private final Neo4jResultMapper nodeTranslator;
 
   @Inject
   public Neo4jFullTextSearchByLocalName(@Nonnull ProjectId projectId,
                                         @Nonnull BranchId branchId,
                                         @Nonnull Driver driver,
                                         @Nonnull @Named("localNameFullTextIndexName") Neo4jFullTextIndexName fullTextIndexName,
-                                        @Nonnull Neo4jNodeTranslator nodeTranslator) {
+                                        @Nonnull Neo4jResultMapper resultMapper) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.driver = checkNotNull(driver);
     this.fullTextIndexName = checkNotNull(fullTextIndexName);
-    this.nodeTranslator = checkNotNull(nodeTranslator);
+    this.nodeTranslator = checkNotNull(resultMapper);
   }
 
   @Nonnull

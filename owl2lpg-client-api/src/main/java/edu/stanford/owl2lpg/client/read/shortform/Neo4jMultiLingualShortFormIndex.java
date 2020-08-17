@@ -38,17 +38,17 @@ public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormInd
   private final Driver driver;
 
   @Nonnull
-  private final Neo4jNodeTranslator nodeTranslator;
+  private final Neo4jResultMapper resultMapper;
 
   @Inject
   public Neo4jMultiLingualShortFormIndex(@Nonnull ProjectId projectId,
                                          @Nonnull BranchId branchId,
                                          @Nonnull Driver driver,
-                                         @Nonnull Neo4jNodeTranslator nodeTranslator) {
+                                         @Nonnull Neo4jResultMapper resultMapper) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.driver = checkNotNull(driver);
-    this.nodeTranslator = checkNotNull(nodeTranslator);
+    this.resultMapper = checkNotNull(resultMapper);
   }
 
   @Nonnull
@@ -72,8 +72,8 @@ public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormInd
         var result = tx.run(SHORT_FORMS_INDEX_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var dictLanguage = nodeTranslator.getDictionaryLanguage(row.get("dictionaryLanguage"));
-          var entity = nodeTranslator.getOwlEntity(row.get("entity"));
+          var dictLanguage = resultMapper.getDictionaryLanguage(row.get("dictionaryLanguage"));
+          var entity = resultMapper.getOwlEntity(row.get("entity"));
           mutableDictionaryMap.put(dictLanguage, entity);
         }
         return mutableDictionaryMap;

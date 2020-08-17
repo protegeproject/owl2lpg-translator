@@ -8,9 +8,9 @@ import dagger.Module;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public abstract class Neo4jNodeTranslatorModule {
+public abstract class Neo4jResultMapperModule {
 
   @Binds
-  public abstract Neo4jNodeTranslator
-  provideNeo4jNodeTranslator(Neo4jNodeTranslatorImpl nodeTranslator);
+  public abstract Neo4jResultMapper
+  provideNeo4jNodeTranslator(Neo4JResultMapperImpl resultMapper);
 }

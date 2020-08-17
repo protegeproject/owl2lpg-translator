@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface Neo4jNodeTranslator {
+public interface Neo4jResultMapper {
 
   OWLEntity getOwlEntity(Object entityObject);
 

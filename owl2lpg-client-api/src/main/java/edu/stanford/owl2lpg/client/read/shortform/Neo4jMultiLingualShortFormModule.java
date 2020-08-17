@@ -12,7 +12,7 @@ import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShor
  * Stanford Center for Biomedical Informatics Research
  */
 @Module(includes = {
-    Neo4jNodeTranslatorModule.class,
+    Neo4jResultMapperModule.class,
     Neo4jSearchableMultiLingualShortFormModule.class})
 public abstract class Neo4jMultiLingualShortFormModule {
 

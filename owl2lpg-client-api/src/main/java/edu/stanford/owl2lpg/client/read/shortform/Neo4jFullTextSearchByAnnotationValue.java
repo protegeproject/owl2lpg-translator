@@ -42,19 +42,19 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
   private final Neo4jFullTextIndexName fullTextIndexName;
 
   @Nonnull
-  private final Neo4jNodeTranslator nodeTranslator;
+  private final Neo4jResultMapper resultMapper;
 
   @Inject
   public Neo4jFullTextSearchByAnnotationValue(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull Driver driver,
                                               @Nonnull @Named("annotationValueFullTextIndexName") Neo4jFullTextIndexName fullTextIndexName,
-                                              @Nonnull Neo4jNodeTranslator nodeTranslator) {
+                                              @Nonnull Neo4jResultMapper resultMapper) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.driver = checkNotNull(driver);
     this.fullTextIndexName = checkNotNull(fullTextIndexName);
-    this.nodeTranslator = checkNotNull(nodeTranslator);
+    this.resultMapper = checkNotNull(resultMapper);
   }
 
   @Nonnull
@@ -67,9 +67,9 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
         var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var entity = nodeTranslator.getOwlEntity(row.get("entity"));
-          var shortForm = nodeTranslator.getShortForm(row.get("shortForm"));
-          var dictLanguage = nodeTranslator.getDictionaryLanguage(row.get("dictionaryLanguage"));
+          var entity = resultMapper.getOwlEntity(row.get("entity"));
+          var shortForm = resultMapper.getShortForm(row.get("shortForm"));
+          var dictLanguage = resultMapper.getDictionaryLanguage(row.get("dictionaryLanguage"));
           var shortFormMatch = getShortFormMatch(entity, shortForm, searchStrings, dictLanguage);
           dictionaryBuilder.add(dictLanguage, shortFormMatch);
         }

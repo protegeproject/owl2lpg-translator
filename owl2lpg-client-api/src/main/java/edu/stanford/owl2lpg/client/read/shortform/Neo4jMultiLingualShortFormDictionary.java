@@ -37,17 +37,17 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
   private final Driver driver;
 
   @Nonnull
-  private final Neo4jNodeTranslator nodeTranslator;
+  private final Neo4jResultMapper resultMapper;
 
   @Inject
   public Neo4jMultiLingualShortFormDictionary(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull Driver driver,
-                                              @Nonnull Neo4jNodeTranslator nodeTranslator) {
+                                              @Nonnull Neo4jResultMapper resultMapper) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.driver = checkNotNull(driver);
-    this.nodeTranslator = checkNotNull(nodeTranslator);
+    this.resultMapper = checkNotNull(resultMapper);
   }
 
   @Nonnull
@@ -85,8 +85,8 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
         var result = tx.run(SHORT_FORMS_DICTIONARY_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var dictLanguage = nodeTranslator.getDictionaryLanguage(row.get("dictionaryLanguage"));
-          var shortForm = nodeTranslator.getShortForm(row.get("shortForm"));
+          var dictLanguage = resultMapper.getDictionaryLanguage(row.get("dictionaryLanguage"));
+          var shortForm = resultMapper.getShortForm(row.get("shortForm"));
           mutableDictionaryMap.put(dictLanguage, shortForm);
         }
         return ImmutableMap.copyOf(mutableDictionaryMap);

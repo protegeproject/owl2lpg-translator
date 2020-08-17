@@ -28,7 +28,7 @@ import static org.semanticweb.owlapi.model.EntityType.OBJECT_PROPERTY;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class Neo4jNodeTranslatorImpl implements Neo4jNodeTranslator {
+public class Neo4JResultMapperImpl implements Neo4jResultMapper {
 
   @Nonnull
   private final OWLDataFactory dataFactory;
@@ -37,8 +37,8 @@ public class Neo4jNodeTranslatorImpl implements Neo4jNodeTranslator {
   private final ObjectMapper objectMapper;
 
   @Inject
-  public Neo4jNodeTranslatorImpl(@Nonnull OWLDataFactory dataFactory,
-                                 @Nonnull ObjectMapper objectMapper) {
+  public Neo4JResultMapperImpl(@Nonnull OWLDataFactory dataFactory,
+                               @Nonnull ObjectMapper objectMapper) {
     this.dataFactory = checkNotNull(dataFactory);
     this.objectMapper = checkNotNull(objectMapper);
   }
