@@ -14,7 +14,8 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
     DatabaseModule.class,
     MultiLingualDictionaryContextModule.class,
     Neo4jMultiLingualShortFormModule.class,
-    OwlDataFactoryModule.class
+    OwlDataFactoryModule.class,
+    JsonMapperModule.class
 })
 @DatabaseSessionScope
 public interface MultiLingualDictionaryComponent {
