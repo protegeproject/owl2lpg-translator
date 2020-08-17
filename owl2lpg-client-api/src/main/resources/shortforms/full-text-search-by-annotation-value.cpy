@@ -3,5 +3,10 @@ MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId}
 MATCH (o)<-[:AXIOM_OF]-(n:AnnotationAssertion)-[:ANNOTATION_SUBJECT]->(:IRI)<-[:ENTITY_IRI]-(entity:Entity)
 MATCH (n)-[:ANNOTATION_PROPERTY]->(annotationProperty:AnnotationProperty)
 MATCH (n)-[:ANNOTATION_VALUE]->(value:Literal)
-RETURN entity, annotationProperty, value
+RETURN { type: "AnnotationAssertion",
+         propertyIri: annotationProperty.iri,
+         lang: value.lang
+       } AS dictionaryLanguage,
+       value.lexicalForm AS shortForm,
+       entity
 LIMIT 100

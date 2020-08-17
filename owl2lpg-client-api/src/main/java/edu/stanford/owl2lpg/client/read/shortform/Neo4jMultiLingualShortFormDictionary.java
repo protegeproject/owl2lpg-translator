@@ -8,7 +8,6 @@ import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
@@ -86,11 +85,9 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
         var result = tx.run(SHORT_FORMS_DICTIONARY_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var propertyNode = (Node) row.get("annotationProperty");
-          var literalNode = (Node) row.get("value");
-          var dictionaryLanguage = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
-          var shortForm = nodeTranslator.getShortForm(literalNode);
-          mutableDictionaryMap.put(dictionaryLanguage, shortForm);
+          var dictLanguage = nodeTranslator.getDictionaryLanguage(row.get("dictionaryLanguage"));
+          var shortForm = nodeTranslator.getShortForm(row.get("shortForm"));
+          mutableDictionaryMap.put(dictLanguage, shortForm);
         }
         return ImmutableMap.copyOf(mutableDictionaryMap);
       });

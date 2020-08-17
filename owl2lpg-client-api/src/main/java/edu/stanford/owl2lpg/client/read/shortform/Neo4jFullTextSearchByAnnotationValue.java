@@ -10,7 +10,6 @@ import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
@@ -68,14 +67,11 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
         var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var entityNode = (Node) row.get("entity");
-          var propertyNode = (Node) row.get("annotationProperty");
-          var literalNode = (Node) row.get("value");
-          var entity = nodeTranslator.getOwlEntity(entityNode);
-          var shortForm = nodeTranslator.getShortForm(literalNode);
-          var language = nodeTranslator.getDictionaryLanguage(propertyNode, literalNode);
-          var shortFormMatch = getShortFormMatch(entity, shortForm, searchStrings, language);
-          dictionaryBuilder.add(language, shortFormMatch);
+          var entity = nodeTranslator.getOwlEntity(row.get("entity"));
+          var shortForm = nodeTranslator.getShortForm(row.get("shortForm"));
+          var dictLanguage = nodeTranslator.getDictionaryLanguage(row.get("dictionaryLanguage"));
+          var shortFormMatch = getShortFormMatch(entity, shortForm, searchStrings, dictLanguage);
+          dictionaryBuilder.add(dictLanguage, shortFormMatch);
         }
         return dictionaryBuilder.build();
       });
@@ -87,12 +83,13 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
                                            List<SearchString> searchStrings,
                                            DictionaryLanguage language) {
     var matchPositions = Lists.<ShortFormMatchPosition>newArrayList();
+    var lowerCasedShortForm = shortForm.toLowerCase();
     for (var ss : searchStrings) {
       var searchString = ss.getSearchString();
-      var matchIndex = shortForm.toLowerCase().indexOf(searchString);
-      if (matchIndex != -1) {
-        matchPositions.add(ShortFormMatchPosition.get(matchIndex, matchIndex + searchString.length()));
-      }
+      for (int index = lowerCasedShortForm.indexOf(searchString);
+           index >= 0;
+           index = lowerCasedShortForm.indexOf(searchString, index + 1))
+        matchPositions.add(ShortFormMatchPosition.get(index, index + searchString.length()));
     }
     return ShortFormMatch.get(entity, shortForm, language, ImmutableList.copyOf(matchPositions));
   }

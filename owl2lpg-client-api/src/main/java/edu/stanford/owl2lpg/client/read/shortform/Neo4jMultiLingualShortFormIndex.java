@@ -8,7 +8,6 @@ import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
@@ -73,14 +72,9 @@ public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormInd
         var result = tx.run(SHORT_FORMS_INDEX_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var entityNode = (Node) row.get("entity");
-          var propertyNode = (Node) row.get("annotationProperty");
-          var literalNode = (Node) row.get("value");
-          var entity = nodeTranslator.getOwlEntity(entityNode);
-          var dictionaryLanguage = (propertyNode != null && literalNode != null)
-              ? nodeTranslator.getDictionaryLanguage(propertyNode, literalNode)
-              : DictionaryLanguage.localName();
-          mutableDictionaryMap.put(dictionaryLanguage, entity);
+          var dictLanguage = nodeTranslator.getDictionaryLanguage(row.get("dictionaryLanguage"));
+          var entity = nodeTranslator.getOwlEntity(row.get("entity"));
+          mutableDictionaryMap.put(dictLanguage, entity);
         }
         return mutableDictionaryMap;
       });
