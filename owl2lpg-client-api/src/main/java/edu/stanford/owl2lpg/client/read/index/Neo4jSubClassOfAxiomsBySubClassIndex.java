@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read.index;
 
 import edu.stanford.bmir.protege.web.server.index.SubClassOfAxiomsBySubClassIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomByEntityAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.HierarchyAxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -23,18 +23,18 @@ public class Neo4jSubClassOfAxiomsBySubClassIndex implements SubClassOfAxiomsByS
   private final AxiomContext axiomContext;
 
   @Nonnull
-  private final AxiomByEntityAccessor axiomByEntityAccessor;
+  private final HierarchyAxiomBySubjectAccessor hierarchyAxiomBySubjectAccessor;
 
   @Inject
   public Neo4jSubClassOfAxiomsBySubClassIndex(@Nonnull AxiomContext axiomContext,
-                                              @Nonnull AxiomByEntityAccessor axiomByEntityAccessor) {
+                                              @Nonnull HierarchyAxiomBySubjectAccessor hierarchyAxiomBySubjectAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
-    this.axiomByEntityAccessor = checkNotNull(axiomByEntityAccessor);
+    this.hierarchyAxiomBySubjectAccessor = checkNotNull(hierarchyAxiomBySubjectAccessor);
   }
 
   @Override
   public Stream<OWLSubClassOfAxiom> getSubClassOfAxiomsForSubClass(@Nonnull OWLClass subClass,
                                                                    @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomByEntityAccessor.getSubClassOfAxiomsBySubClass(axiomContext, subClass).stream();
+    return hierarchyAxiomBySubjectAccessor.getSubClassOfAxiomsBySubClass(subClass, axiomContext).stream();
   }
 }

@@ -11,9 +11,9 @@ import edu.stanford.owl2lpg.client.DatabaseModule;
 @Module(includes = {
     DatabaseModule.class,
     NodeMapperModule.class})
-public abstract class AxiomByEntityAccessorModule {
+public abstract class HierarchyAxiomBySubjectAccessorModule {
 
   @Binds
-  public abstract AxiomByEntityAccessor
-  provideSubClassOfAxiomsBySubClassIndex(AxiomByEntityAccessorImpl impl);
+  public abstract HierarchyAxiomBySubjectAccessor
+  provideHierarchyAxiomBySubjectAccessor(HierarchyAxiomBySubjectAccessorImpl impl);
 }

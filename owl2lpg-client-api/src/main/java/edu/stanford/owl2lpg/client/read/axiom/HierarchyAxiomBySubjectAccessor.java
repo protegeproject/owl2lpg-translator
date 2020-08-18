@@ -13,11 +13,11 @@ import java.util.Set;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface AxiomByEntityAccessor {
+public interface HierarchyAxiomBySubjectAccessor {
 
-  Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(AxiomContext context, OWLClass subClass);
+  Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(OWLClass subClass, AxiomContext context);
 
-  Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(AxiomContext context, OWLObjectProperty subProperty);
+  Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(OWLObjectProperty subProperty, AxiomContext context);
 
-  Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(AxiomContext context, OWLDataProperty subProperty);
+  Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(OWLDataProperty subProperty, AxiomContext context);
 }

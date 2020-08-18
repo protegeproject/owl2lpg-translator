@@ -10,7 +10,7 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
  */
 @Component(modules = {
     AxiomSubjectAccessorModule.class,
-    AxiomByEntityAccessorModule.class,
+    HierarchyAxiomBySubjectAccessorModule.class,
     AssertionAxiomBySubjectAccessorModule.class,
     OwlDataFactoryModule.class
 })
@@ -19,7 +19,7 @@ public interface AxiomAccessorComponent {
 
   AxiomSubjectAccessor getAxiomSubjectAccessor();
 
-  AxiomByEntityAccessor getAxiomByEntityAccessor();
+  HierarchyAxiomBySubjectAccessor getHierarchyAxiomBySubjectAccessor();
 
   AssertionAxiomBySubjectAccessor getAssertionAxiomBySubjectAccessor();
 }

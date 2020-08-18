@@ -24,7 +24,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
+public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubjectAccessor {
 
   private static final String SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY_FILE =
       "axioms/sub-class-of-axiom-by-sub-class.cpy";
@@ -47,26 +47,26 @@ public class AxiomByEntityAccessorImpl implements AxiomByEntityAccessor {
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomByEntityAccessorImpl(@Nonnull Driver driver,
-                                   @Nonnull NodeMapper nodeMapper) {
+  public HierarchyAxiomBySubjectAccessorImpl(@Nonnull Driver driver,
+                                             @Nonnull NodeMapper nodeMapper) {
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
   @Override
-  public Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(AxiomContext context, OWLClass subClass) {
+  public Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(OWLClass subClass, AxiomContext context) {
     var nodeIndex = getNodeIndex(context, subClass, SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY);
     return collectSubClassOfAxiomsFromIndex(nodeIndex);
   }
 
   @Override
-  public Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(AxiomContext context, OWLObjectProperty subProperty) {
+  public Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(OWLObjectProperty subProperty, AxiomContext context) {
     var nodeIndex = getNodeIndex(context, subProperty, SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY);
     return collectSubObjectPropertyOfAxiomsFromIndex(nodeIndex);
   }
 
   @Override
-  public Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(AxiomContext context, OWLDataProperty subProperty) {
+  public Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(OWLDataProperty subProperty, AxiomContext context) {
     var nodeIndex = getNodeIndex(context, subProperty, SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY);
     return collectSubDataPropertyOfAxiomsFromIndex(nodeIndex);
   }
