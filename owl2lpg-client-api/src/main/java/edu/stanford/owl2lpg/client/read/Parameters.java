@@ -50,6 +50,7 @@ public class Parameters {
         "branchId", new StringValue(branchId.getIdentifier()),
         "searchString", new StringValue(searchStrings.stream()
             .map(SearchString::getSearchString)
+            .map(s -> s + "*")
             .collect(joining(" AND ")))));
   }
 
