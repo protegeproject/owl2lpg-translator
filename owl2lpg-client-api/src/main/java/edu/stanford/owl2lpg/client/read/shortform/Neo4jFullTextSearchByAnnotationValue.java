@@ -39,21 +39,16 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
   private final Driver driver;
 
   @Nonnull
-  private final Neo4jFullTextIndexName fullTextIndexName;
-
-  @Nonnull
   private final Neo4jResultMapper resultMapper;
 
   @Inject
   public Neo4jFullTextSearchByAnnotationValue(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull Driver driver,
-                                              @Nonnull @Named("annotationValueFullTextIndexName") Neo4jFullTextIndexName fullTextIndexName,
                                               @Nonnull Neo4jResultMapper resultMapper) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.driver = checkNotNull(driver);
-    this.fullTextIndexName = checkNotNull(fullTextIndexName);
     this.resultMapper = checkNotNull(resultMapper);
   }
 
@@ -61,7 +56,7 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
   @Override
   public EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings) {
     try (var session = driver.session()) {
-      var args = Parameters.forShortFormsContaining(projectId, branchId, fullTextIndexName, searchStrings);
+      var args = Parameters.forShortFormsContaining(projectId, branchId, searchStrings);
       return session.readTransaction(tx -> {
         var dictionaryBuilder = new EntityShortFormMatchesDictionary.Builder();
         var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);

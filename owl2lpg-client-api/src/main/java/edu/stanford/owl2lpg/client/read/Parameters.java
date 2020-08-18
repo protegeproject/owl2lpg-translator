@@ -3,7 +3,6 @@ package edu.stanford.owl2lpg.client.read;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
-import edu.stanford.owl2lpg.client.read.shortform.Neo4jFullTextIndexName;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
@@ -45,12 +44,10 @@ public class Parameters {
 
   public static Value forShortFormsContaining(ProjectId projectId,
                                               BranchId branchId,
-                                              Neo4jFullTextIndexName fullTextIndexName,
                                               List<SearchString> searchStrings) {
     return new MapValue(Map.of(
         "projectId", new StringValue(projectId.getIdentifier()),
         "branchId", new StringValue(branchId.getIdentifier()),
-        "fullTextIndexName", new StringValue(fullTextIndexName.getName()),
         "searchString", new StringValue(searchStrings.stream()
             .map(SearchString::getSearchString)
             .collect(joining(" AND ")))));

@@ -9,9 +9,7 @@ import javax.inject.Named;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = {
-    AnnotationValueFullTextIndexNameModule.class,
-    LocalNameFullTextIndexNameModule.class})
+@Module
 public abstract class Neo4jSearchableMultiLingualShortFormModule {
 
   @Binds
