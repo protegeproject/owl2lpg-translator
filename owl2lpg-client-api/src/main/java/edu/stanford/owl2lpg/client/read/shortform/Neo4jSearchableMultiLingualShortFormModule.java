@@ -13,9 +13,9 @@ import javax.inject.Named;
 public abstract class Neo4jSearchableMultiLingualShortFormModule {
 
   @Binds
-  @Named("fullTextSearchByAnnotationValue")
+  @Named("fullTextSearchByAnnotationAssertion")
   public abstract Neo4jFullTextSearch
-  providesNeo4jFullTextSearchByAnnotationValue(Neo4jFullTextSearchByAnnotationValue impl);
+  providesNeo4jFullTextSearchByAnnotationValue(Neo4jFullTextSearchByAnnotationAssertion impl);
 
   @Binds
   @Named("fullTextSearchByLocalName")

@@ -14,7 +14,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,9 +23,9 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch {
+public class Neo4jFullTextSearchByAnnotationAssertion implements Neo4jFullTextSearch {
 
-  private static final String SEARCHABLE_SHORT_FORMS_QUERY_FILE = "shortforms/full-text-search-by-annotation-value.cpy";
+  private static final String SEARCHABLE_SHORT_FORMS_QUERY_FILE = "shortforms/full-text-search-by-annotation-assertion.cpy";
   private static final String SEARCHABLE_SHORT_FORMS_QUERY = read(SEARCHABLE_SHORT_FORMS_QUERY_FILE);
 
   @Nonnull
@@ -42,10 +41,10 @@ public class Neo4jFullTextSearchByAnnotationValue implements Neo4jFullTextSearch
   private final Neo4jResultMapper resultMapper;
 
   @Inject
-  public Neo4jFullTextSearchByAnnotationValue(@Nonnull ProjectId projectId,
-                                              @Nonnull BranchId branchId,
-                                              @Nonnull Driver driver,
-                                              @Nonnull Neo4jResultMapper resultMapper) {
+  public Neo4jFullTextSearchByAnnotationAssertion(@Nonnull ProjectId projectId,
+                                                  @Nonnull BranchId branchId,
+                                                  @Nonnull Driver driver,
+                                                  @Nonnull Neo4jResultMapper resultMapper) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.driver = checkNotNull(driver);

@@ -25,15 +25,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jSearchableMultiLingualShortFormDictionary implements SearchableMultiLingualShortFormDictionary {
 
   @Nonnull
-  private final Neo4jFullTextSearch searchEntityByAnnotationValue;
+  private final Neo4jFullTextSearch searchEntityByAnnotationAssertion;
 
   @Nonnull
   private final Neo4jFullTextSearch searchEntityByLocalName;
 
   @Inject
-  public Neo4jSearchableMultiLingualShortFormDictionary(@Nonnull @Named("fullTextSearchByAnnotationValue") Neo4jFullTextSearch searchEntityByAnnotationValue,
+  public Neo4jSearchableMultiLingualShortFormDictionary(@Nonnull @Named("fullTextSearchByAnnotationAssertion") Neo4jFullTextSearch searchEntityByAnnotationAssertion,
                                                         @Nonnull @Named("fullTextSearchByLocalName") Neo4jFullTextSearch searchEntityByLocalName) {
-    this.searchEntityByAnnotationValue = checkNotNull(searchEntityByAnnotationValue);
+    this.searchEntityByAnnotationAssertion = checkNotNull(searchEntityByAnnotationAssertion);
     this.searchEntityByLocalName = checkNotNull(searchEntityByLocalName);
   }
 
@@ -43,12 +43,12 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
                                                               @Nonnull Set<EntityType<?>> entityTypes,
                                                               @Nonnull List<DictionaryLanguage> languages,
                                                               @Nonnull PageRequest pageRequest) {
-    var entityMatchesByAnnotationValue = searchEntityByAnnotationValue.getShortFormsContaining(searchStrings);
+    var entityMatchesByAnnotationAssertion = searchEntityByAnnotationAssertion.getShortFormsContaining(searchStrings);
     var entityMatchesByLocalName = searchEntityByLocalName.getShortFormsContaining(searchStrings);
     return Streams.concat(
         languages
             .stream()
-            .flatMap(entityMatchesByAnnotationValue::get)
+            .flatMap(entityMatchesByAnnotationAssertion::get)
             .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType())),
         languages
             .stream()

@@ -1,4 +1,4 @@
-CALL db.index.fulltext.queryNodes("annotation_value_index", $searchString) YIELD node AS value
+CALL db.index.fulltext.queryNodes("annotation_assertion_index", $searchString) YIELD node AS value
 MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
 MATCH (o)<-[:AXIOM_OF]-(n:AnnotationAssertion)-[:ANNOTATION_SUBJECT]->(:IRI)<-[:ENTITY_IRI]-(entity:Entity)
 MATCH (n)-[:ANNOTATION_PROPERTY]->(annotationProperty:AnnotationProperty)
