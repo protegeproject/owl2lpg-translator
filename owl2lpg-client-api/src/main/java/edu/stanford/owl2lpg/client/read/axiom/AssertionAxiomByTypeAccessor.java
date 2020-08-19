@@ -4,7 +4,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 
 import javax.annotation.Nonnull;
-import java.util.stream.Stream;
+import java.util.Set;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -13,6 +13,6 @@ import java.util.stream.Stream;
 public interface AssertionAxiomByTypeAccessor {
 
   @Nonnull
-  Stream<OWLClassAssertionAxiom>
+  Set<OWLClassAssertionAxiom>
   getClassAssertionForType(OWLClass owlClass, AxiomContext axiomContext);
 }

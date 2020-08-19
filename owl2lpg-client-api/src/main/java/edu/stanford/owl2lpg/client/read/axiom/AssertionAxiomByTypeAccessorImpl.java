@@ -1,10 +1,10 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import javax.annotation.Nonnull;
-import java.util.stream.Stream;
+import java.util.Set;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -14,7 +14,7 @@ public class AssertionAxiomByTypeAccessorImpl implements AssertionAxiomByTypeAcc
 
   @Nonnull
   @Override
-  public Stream<OWLClassAssertionAxiom> getClassAssertionForType(OWLClassExpression owlClassExpression, AxiomContext context) {
+  public Set<OWLClassAssertionAxiom> getClassAssertionForType(OWLClass owlClass, AxiomContext context) {
     return null;
   }
 }
