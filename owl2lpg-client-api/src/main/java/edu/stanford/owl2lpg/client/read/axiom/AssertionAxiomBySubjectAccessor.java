@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.client.read.axiom;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -15,6 +16,10 @@ import java.util.stream.Stream;
  * Stanford Center for Biomedical Informatics Research
  */
 public interface AssertionAxiomBySubjectAccessor {
+
+  @Nonnull
+  Stream<OWLClassAssertionAxiom>
+  getClassAssertionForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext);
 
   @Nonnull
   Stream<OWLObjectPropertyAssertionAxiom>
