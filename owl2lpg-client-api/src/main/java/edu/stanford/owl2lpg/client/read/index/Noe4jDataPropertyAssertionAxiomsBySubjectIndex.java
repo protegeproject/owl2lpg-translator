@@ -36,6 +36,6 @@ public class Noe4jDataPropertyAssertionAxiomsBySubjectIndex implements DataPrope
   @Override
   public Stream<OWLDataPropertyAssertionAxiom> getDataPropertyAssertions(@Nonnull OWLIndividual owlIndividual,
                                                                          @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomBySubjectAccessor.getDataPropertyAssertionsForSubject(owlIndividual, axiomContext);
+    return assertionAxiomBySubjectAccessor.getDataPropertyAssertionsForSubject(owlIndividual, axiomContext).stream();
   }
 }

@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
 import dagger.Component;
+import edu.stanford.owl2lpg.client.DatabaseModule;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
 
@@ -9,7 +10,8 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
  * Stanford Center for Biomedical Informatics Research
  */
 @Component(modules = {
-    AxiomSubjectAccessorModule.class,
+    DatabaseModule.class,
+    AxiomBySubjectAccessorModule.class,
     HierarchyAxiomBySubjectAccessorModule.class,
     AssertionAxiomBySubjectAccessorModule.class,
     OwlDataFactoryModule.class

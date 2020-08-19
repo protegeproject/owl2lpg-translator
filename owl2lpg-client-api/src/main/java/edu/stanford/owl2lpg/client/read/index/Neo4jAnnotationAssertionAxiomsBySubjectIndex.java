@@ -35,6 +35,6 @@ public class Neo4jAnnotationAssertionAxiomsBySubjectIndex implements AnnotationA
   @Override
   public Stream<OWLAnnotationAssertionAxiom> getAxiomsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
                                                                  @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(owlAnnotationSubject, axiomContext);
+    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(owlAnnotationSubject, axiomContext).stream();
   }
 }
