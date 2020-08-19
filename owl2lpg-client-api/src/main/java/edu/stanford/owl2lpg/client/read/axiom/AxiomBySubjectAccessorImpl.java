@@ -21,7 +21,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
+public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   private static final String CLASS_AXIOM_SUBJECT_QUERY_FILE = "axioms/class-axiom-subject.cpy";
   private static final String NAMED_INDIVIDUAL_AXIOM_SUBJECT_QUERY_FILE = "axioms/named-individual-axiom-subject.cpy";
@@ -36,23 +36,23 @@ public class AxiomSubjectAccessorImpl implements AxiomSubjectAccessor {
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomSubjectAccessorImpl(@Nonnull Driver driver,
-                                  @Nonnull NodeMapper nodeMapper) {
+  public AxiomBySubjectAccessorImpl(@Nonnull Driver driver,
+                                    @Nonnull NodeMapper nodeMapper) {
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
   @Override
-  public Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLClass subject) {
-    return getAxiomSubject(context, subject, CLASS_AXIOM_SUBJECT_QUERY);
+  public Set<OWLAxiom> getAxiomForSubject(OWLClass subject, AxiomContext context) {
+    return getAxiomForSubject(context, subject, CLASS_AXIOM_SUBJECT_QUERY);
   }
 
   @Override
-  public Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLNamedIndividual subject) {
-    return getAxiomSubject(context, subject, NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY);
+  public Set<OWLAxiom> getAxiomForSubject(OWLNamedIndividual subject, AxiomContext context) {
+    return getAxiomForSubject(context, subject, NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY);
   }
 
-  private Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLEntity subject, String queryString) {
+  private Set<OWLAxiom> getAxiomForSubject(AxiomContext context, OWLEntity subject, String queryString) {
     var nodeIndex = getNodeIndex(context, subject, queryString);
     return collectAxiomsFromIndex(nodeIndex);
   }

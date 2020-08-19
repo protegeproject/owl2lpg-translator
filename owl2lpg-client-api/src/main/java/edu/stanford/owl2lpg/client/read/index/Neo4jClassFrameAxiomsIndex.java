@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.read.index;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomSubjectAccessor;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -25,18 +25,18 @@ public class Neo4jClassFrameAxiomsIndex implements ClassFrameAxiomsIndex {
   private final AxiomContext axiomContext;
 
   @Nonnull
-  private final AxiomSubjectAccessor axiomSubjectAccessor;
+  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
 
   @Inject
   public Neo4jClassFrameAxiomsIndex(@Nonnull AxiomContext axiomContext,
-                                    @Nonnull AxiomSubjectAccessor axiomSubjectAccessor) {
+                                    @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
-    this.axiomSubjectAccessor = checkNotNull(axiomSubjectAccessor);
+    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
   }
 
   @Override
   public Set<OWLAxiom> getFrameAxioms(OWLClass owlClass, AnnotationsTreatment annotationsTreatment) {
-    return axiomSubjectAccessor.getAxiomSubject(axiomContext, owlClass)
+    return axiomBySubjectAccessor.getAxiomForSubject(owlClass, axiomContext)
         .stream()
         .filter(axiom -> {
           var accepted = true;

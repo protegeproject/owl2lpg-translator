@@ -17,7 +17,7 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
 @DatabaseSessionScope
 public interface AxiomAccessorComponent {
 
-  AxiomSubjectAccessor getAxiomSubjectAccessor();
+  AxiomBySubjectAccessor getAxiomBySubjectAccessor();
 
   HierarchyAxiomBySubjectAccessor getHierarchyAxiomBySubjectAccessor();
 

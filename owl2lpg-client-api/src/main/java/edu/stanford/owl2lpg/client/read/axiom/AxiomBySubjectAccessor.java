@@ -10,9 +10,9 @@ import java.util.Set;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface AxiomSubjectAccessor {
+public interface AxiomBySubjectAccessor {
 
-  Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLClass subject);
+  Set<OWLAxiom> getAxiomForSubject(OWLClass subject, AxiomContext context);
 
-  Set<OWLAxiom> getAxiomSubject(AxiomContext context, OWLNamedIndividual subject);
+  Set<OWLAxiom> getAxiomForSubject(OWLNamedIndividual subject, AxiomContext context);
 }

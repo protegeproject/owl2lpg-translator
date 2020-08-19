@@ -14,6 +14,6 @@ import edu.stanford.owl2lpg.client.DatabaseModule;
 public abstract class AxiomSubjectAccessorModule {
 
   @Binds
-  public abstract AxiomSubjectAccessor
-  provideAxiomSubjectAccessor(AxiomSubjectAccessorImpl accessor);
+  public abstract AxiomBySubjectAccessor
+  provideAxiomBySubjectAccessor(AxiomBySubjectAccessorImpl accessor);
 }
