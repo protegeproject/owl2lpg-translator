@@ -36,7 +36,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   private static final String DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE =
       "axioms/data-property-assertion-axiom-by-individual.cpy";
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-annotation-subject.cpy.cpy";
+      "axioms/annotation-assertion-axiom-by-annotation-subject.cpy";
 
   private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY =
       read(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
