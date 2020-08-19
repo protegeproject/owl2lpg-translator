@@ -19,15 +19,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
 
   @Nonnull
-  private final AxiomContext subClassOfAxiomContext;
+  private final AxiomContext axiomContext;
 
   @Nonnull
   private final ClassHierarchyAccessor hierarchyAccessor;
 
   @Inject
-  public Neo4jClassHierarchyProvider(@Nonnull AxiomContext subClassOfAxiomContext,
+  public Neo4jClassHierarchyProvider(@Nonnull AxiomContext axiomContext,
                                      @Nonnull ClassHierarchyAccessor hierarchyAccessor) {
-    this.subClassOfAxiomContext = checkNotNull(subClassOfAxiomContext);
+    this.axiomContext = checkNotNull(axiomContext);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
   }
 
@@ -39,36 +39,36 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
 
   @Override
   public Collection<OWLClass> getChildren(OWLClass owlClass) {
-    return hierarchyAccessor.getChildren(subClassOfAxiomContext, owlClass);
+    return hierarchyAccessor.getChildren(owlClass, axiomContext);
   }
 
   @Override
   public boolean isLeaf(OWLClass owlClass) {
-    return hierarchyAccessor.isLeaf(subClassOfAxiomContext, owlClass);
+    return hierarchyAccessor.isLeaf(owlClass, axiomContext);
   }
 
   @Override
   public Collection<OWLClass> getDescendants(OWLClass owlClass) {
-    return hierarchyAccessor.getDescendants(subClassOfAxiomContext, owlClass);
+    return hierarchyAccessor.getDescendants(owlClass, axiomContext);
   }
 
   @Override
   public Collection<OWLClass> getParents(OWLClass owlClass) {
-    return hierarchyAccessor.getParents(subClassOfAxiomContext, owlClass);
+    return hierarchyAccessor.getParents(owlClass, axiomContext);
   }
 
   @Override
   public Collection<OWLClass> getAncestors(OWLClass owlClass) {
-    return hierarchyAccessor.getAncestors(subClassOfAxiomContext, owlClass);
+    return hierarchyAccessor.getAncestors(owlClass, axiomContext);
   }
 
   @Override
   public Collection<List<OWLClass>> getPathsToRoot(OWLClass owlClass) {
-    return hierarchyAccessor.getPathsToRoot(subClassOfAxiomContext, owlClass);
+    return hierarchyAccessor.getPathsToRoot(owlClass, axiomContext);
   }
 
   @Override
   public boolean isAncestor(OWLClass parent, OWLClass child) {
-    return hierarchyAccessor.isAncestor(subClassOfAxiomContext, parent, child);
+    return hierarchyAccessor.isAncestor(parent, child, axiomContext);
   }
 }

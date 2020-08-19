@@ -51,7 +51,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public ImmutableSet<OWLClass> getAncestors(AxiomContext context, OWLClass owlClass) {
+  public ImmutableSet<OWLClass> getAncestors(OWLClass owlClass, AxiomContext context) {
     return getClassAncestorPaths(context, owlClass)
         .stream()
         .flatMap(ClassAncestorPath::getAncestors)
@@ -59,7 +59,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public ImmutableSet<OWLClass> getDescendants(AxiomContext context, OWLClass owlClass) {
+  public ImmutableSet<OWLClass> getDescendants(OWLClass owlClass, AxiomContext context) {
     return getClassDescendantPath(context, owlClass)
         .stream()
         .flatMap(ClassDescendantPath::getDescendants)
@@ -67,7 +67,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public ImmutableSet<OWLClass> getParents(AxiomContext context, OWLClass owlClass) {
+  public ImmutableSet<OWLClass> getParents(OWLClass owlClass, AxiomContext context) {
     return getClassAncestorPaths(context, owlClass)
         .stream()
         .map(path -> path.getAncestorAt(1))
@@ -75,7 +75,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public ImmutableSet<OWLClass> getChildren(AxiomContext context, OWLClass owlClass) {
+  public ImmutableSet<OWLClass> getChildren(OWLClass owlClass, AxiomContext context) {
     return getClassDescendantPath(context, owlClass)
         .stream()
         .map(path -> path.getDescendantAt(1))
@@ -83,7 +83,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public ImmutableSet<List<OWLClass>> getPathsToRoot(AxiomContext context, OWLClass owlClass) {
+  public ImmutableSet<List<OWLClass>> getPathsToRoot(OWLClass owlClass, AxiomContext context) {
     return getClassAncestorPaths(context, owlClass)
         .stream()
         .map(ClassAncestorPath::asOrderedList)
@@ -92,12 +92,12 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public boolean isAncestor(AxiomContext context, OWLClass parent, OWLClass child) {
-    return getAncestors(context, child).contains(parent);
+  public boolean isAncestor(OWLClass parent, OWLClass child, AxiomContext context) {
+    return getAncestors(child, context).contains(parent);
   }
 
   @Override
-  public boolean isLeaf(AxiomContext context, OWLClass owlClass) {
+  public boolean isLeaf(OWLClass owlClass, AxiomContext context) {
     return getClassDescendantPath(context, owlClass).size() == 0;
   }
 

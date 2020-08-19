@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,19 +10,19 @@ import java.util.List;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface HierarchyAccessor<E> {
+public interface HierarchyAccessor<E extends OWLEntity> {
 
-  Collection<E> getAncestors(AxiomContext context, E owlClass);
+  Collection<E> getAncestors(E entity, AxiomContext context);
 
-  Collection<E> getDescendants(AxiomContext context, E owlClass);
+  Collection<E> getDescendants(E entity, AxiomContext context);
 
-  Collection<E> getParents(AxiomContext context, E owlClass);
+  Collection<E> getParents(E entity, AxiomContext context);
 
-  Collection<E> getChildren(AxiomContext context, E owlClass);
+  Collection<E> getChildren(E entity, AxiomContext context);
 
-  Collection<List<E>> getPathsToRoot(AxiomContext context, E owlClass);
+  Collection<List<E>> getPathsToRoot(E entity, AxiomContext context);
 
-  boolean isAncestor(AxiomContext context, E parent, E child);
+  boolean isAncestor(E parent, E child, AxiomContext context);
 
-  boolean isLeaf(AxiomContext context, E owlClass);
+  boolean isLeaf(E entity, AxiomContext context);
 }
