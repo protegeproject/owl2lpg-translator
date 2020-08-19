@@ -39,10 +39,4 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Stream<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject, AxiomContext context) {
     return null;
   }
-
-  @Nonnull
-  @Override
-  public Stream<OWLAnnotationAssertionAxiom> getProjectAnnotationAssertionAxiomsForSubject(OWLAnnotationSubject owlAnnotationSubject, AxiomContext context) {
-    return null;
-  }
 }

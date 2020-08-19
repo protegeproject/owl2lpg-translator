@@ -34,10 +34,6 @@ public interface AssertionAxiomBySubjectAccessor {
   getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject, AxiomContext axiomContext);
 
   @Nonnull
-  Stream<OWLAnnotationAssertionAxiom>
-  getProjectAnnotationAssertionAxiomsForSubject(OWLAnnotationSubject owlAnnotationSubject, AxiomContext axiomContext);
-
-  @Nonnull
   default Stream<OWLAxiom> getPropertyAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext) {
     var annotationAssertions = getAnnotationAssertionAxioms(owlIndividual, axiomContext);
     var objectPropertyAssertions = getObjectPropertyAssertionsForSubject(owlIndividual, axiomContext);
