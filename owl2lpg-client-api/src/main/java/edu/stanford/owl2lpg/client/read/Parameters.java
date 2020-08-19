@@ -56,10 +56,10 @@ public class Parameters {
 
   public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
     return new MapValue(Map.of(
-        "entityIri", new StringValue(entityIri.toString()),
         "projectId", new StringValue(context.getProjectId().getIdentifier()),
         "branchId", new StringValue(context.getBranchId().getIdentifier()),
-        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
+        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier()),
+        "entityIri", new StringValue(entityIri.toString())));
   }
 
   public static Value forEntity(@Nonnull AxiomContext context, @Nonnull OWLEntity entity) {

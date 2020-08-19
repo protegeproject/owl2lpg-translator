@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
+import com.google.common.collect.ImmutableSet;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -9,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -18,34 +20,35 @@ import java.util.stream.Stream;
 public interface AssertionAxiomBySubjectAccessor {
 
   @Nonnull
-  Stream<OWLClassAssertionAxiom>
+  Set<OWLClassAssertionAxiom>
   getClassAssertionForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext);
 
   @Nonnull
-  Stream<OWLObjectPropertyAssertionAxiom>
+  Set<OWLObjectPropertyAssertionAxiom>
   getObjectPropertyAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext);
 
   @Nonnull
-  Stream<OWLDataPropertyAssertionAxiom>
+  Set<OWLDataPropertyAssertionAxiom>
   getDataPropertyAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext);
 
   @Nonnull
-  Stream<OWLAnnotationAssertionAxiom>
+  Set<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject, AxiomContext axiomContext);
 
   @Nonnull
-  default Stream<OWLAxiom> getPropertyAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext) {
+  default Set<OWLAxiom> getPropertyAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext) {
     var annotationAssertions = getAnnotationAssertionAxioms(owlIndividual, axiomContext);
     var objectPropertyAssertions = getObjectPropertyAssertionsForSubject(owlIndividual, axiomContext);
     var dataPropertyAssertions = getDataPropertyAssertionsForSubject(owlIndividual, axiomContext);
     return Stream
-        .of(annotationAssertions,
-            dataPropertyAssertions,
-            objectPropertyAssertions)
-        .flatMap(ax -> ax);
+        .of(annotationAssertions.stream(),
+            dataPropertyAssertions.stream(),
+            objectPropertyAssertions.stream())
+        .flatMap(ax -> ax)
+        .collect(ImmutableSet.toImmutableSet());
   }
 
-  private Stream<OWLAnnotationAssertionAxiom> getAnnotationAssertionAxioms(OWLIndividual owlIndividual, AxiomContext axiomContext) {
+  private Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionAxioms(OWLIndividual owlIndividual, AxiomContext axiomContext) {
     var annotationSubject = (owlIndividual.isNamed())
         ? owlIndividual.asOWLNamedIndividual().getIRI()
         : owlIndividual.asOWLAnonymousIndividual();
