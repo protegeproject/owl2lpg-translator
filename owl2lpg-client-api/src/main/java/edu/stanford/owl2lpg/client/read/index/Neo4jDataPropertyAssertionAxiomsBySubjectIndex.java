@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class Noe4jDataPropertyAssertionAxiomsBySubjectIndex implements DataPropertyAssertionAxiomsBySubjectIndex {
+public class Neo4jDataPropertyAssertionAxiomsBySubjectIndex implements DataPropertyAssertionAxiomsBySubjectIndex {
 
   @Nonnull
   private final AxiomContext axiomContext;
@@ -26,7 +26,7 @@ public class Noe4jDataPropertyAssertionAxiomsBySubjectIndex implements DataPrope
   private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
 
   @Inject
-  public Noe4jDataPropertyAssertionAxiomsBySubjectIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jDataPropertyAssertionAxiomsBySubjectIndex(@Nonnull AxiomContext axiomContext,
                                                         @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
     this.assertionAxiomBySubjectAccessor = checkNotNull(assertionAxiomBySubjectAccessor);
