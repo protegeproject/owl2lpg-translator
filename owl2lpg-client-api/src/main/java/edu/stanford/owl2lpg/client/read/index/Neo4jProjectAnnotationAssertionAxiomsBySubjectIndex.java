@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,6 +24,7 @@ public class Neo4jProjectAnnotationAssertionAxiomsBySubjectIndex implements Proj
   @Nonnull
   private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
 
+  @Inject
   public Neo4jProjectAnnotationAssertionAxiomsBySubjectIndex(@Nonnull AxiomContext axiomContext,
                                                              @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
