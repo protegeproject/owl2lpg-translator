@@ -52,7 +52,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<OWLClass> getAncestors(OWLClass owlClass, AxiomContext context) {
-    return getClassAncestorPaths(context, owlClass)
+    return getAncestorPaths(owlClass, context)
         .stream()
         .flatMap(ClassAncestorPath::getAncestors)
         .collect(ImmutableSet.toImmutableSet());
@@ -60,7 +60,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<OWLClass> getDescendants(OWLClass owlClass, AxiomContext context) {
-    return getClassDescendantPath(context, owlClass)
+    return getDescendantPaths(owlClass, context)
         .stream()
         .flatMap(ClassDescendantPath::getDescendants)
         .collect(ImmutableSet.toImmutableSet());
@@ -68,7 +68,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<OWLClass> getParents(OWLClass owlClass, AxiomContext context) {
-    return getClassAncestorPaths(context, owlClass)
+    return getAncestorPaths(owlClass, context)
         .stream()
         .map(path -> path.getAncestorAt(1))
         .collect(ImmutableSet.toImmutableSet());
@@ -76,7 +76,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<OWLClass> getChildren(OWLClass owlClass, AxiomContext context) {
-    return getClassDescendantPath(context, owlClass)
+    return getDescendantPaths(owlClass, context)
         .stream()
         .map(path -> path.getDescendantAt(1))
         .collect(ImmutableSet.toImmutableSet());
@@ -84,7 +84,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<List<OWLClass>> getPathsToRoot(OWLClass owlClass, AxiomContext context) {
-    return getClassAncestorPaths(context, owlClass)
+    return getAncestorPaths(owlClass, context)
         .stream()
         .map(ClassAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -98,43 +98,43 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public boolean isLeaf(OWLClass owlClass, AxiomContext context) {
-    return getClassDescendantPath(context, owlClass).size() == 0;
+    return getDescendantPaths(owlClass, context).size() == 0;
   }
 
-  private ImmutableList<ClassAncestorPath> getClassAncestorPaths(AxiomContext context, OWLClass owlClass) {
+  private ImmutableList<ClassAncestorPath> getAncestorPaths(OWLClass owlClass, AxiomContext context) {
     try (var session = driver.session()) {
-      var args = Parameters.forEntity(context, owlClass);
       return session.readTransaction(tx -> {
+        var args = Parameters.forEntity(context, owlClass);
         var result = tx.run(CLASS_ANCESTOR_QUERY, args);
-        var mutableClassAncestorPaths = Lists.<ClassAncestorPath>newArrayList();
+        var ancestorPaths = Lists.<ClassAncestorPath>newArrayList();
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
             if (column.getKey().equals("p")) {
               var path = (Path) column.getValue();
               if (path != null) {
-                var ancestralPath = Streams.stream(path.nodes())
+                var orderedAncestorList = Streams.stream(path.nodes())
                     .map(node -> node.get(PropertyFields.IRI).asString())
                     .map(IRI::create)
                     .map(dataFactory::getOWLClass)
                     .collect(ImmutableList.toImmutableList());
-                var classAncestorPath = ClassAncestorPath.get(ancestralPath);
-                mutableClassAncestorPaths.add(classAncestorPath);
+                var ancestorPath = ClassAncestorPath.get(orderedAncestorList);
+                ancestorPaths.add(ancestorPath);
               }
             }
           }
         }
-        return ImmutableList.copyOf(mutableClassAncestorPaths);
+        return ImmutableList.copyOf(ancestorPaths);
       });
     }
   }
 
-  private ImmutableList<ClassDescendantPath> getClassDescendantPath(AxiomContext context, OWLClass owlClass) {
+  private ImmutableList<ClassDescendantPath> getDescendantPaths(OWLClass owlClass, AxiomContext context) {
     try (var session = driver.session()) {
-      var args = Parameters.forEntity(context, owlClass);
       return session.readTransaction(tx -> {
+        var args = Parameters.forEntity(context, owlClass);
         var result = tx.run(CLASS_DESCENDANT_QUERY, args);
-        var mutableClassDescendantPaths = Lists.<ClassDescendantPath>newArrayList();
+        var descendantPaths = Lists.<ClassDescendantPath>newArrayList();
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -146,13 +146,13 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                     .map(IRI::create)
                     .map(dataFactory::getOWLClass)
                     .collect(ImmutableList.toImmutableList());
-                var classDescendantPath = ClassDescendantPath.get(orderedDescendantList);
-                mutableClassDescendantPaths.add(classDescendantPath);
+                var descendantPath = ClassDescendantPath.get(orderedDescendantList);
+                descendantPaths.add(descendantPath);
               }
             }
           }
         }
-        return ImmutableList.copyOf(mutableClassDescendantPaths);
+        return ImmutableList.copyOf(descendantPaths);
       });
     }
   }
