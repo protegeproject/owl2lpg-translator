@@ -12,11 +12,17 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
  */
 @Component(modules = {
     DatabaseModule.class,
-    ClassHierarchyAccessorModule.class,
+    HierarchyAccessorModule.class,
     OwlDataFactoryModule.class,
     AxiomContextModule.class})
 @DatabaseSessionScope
-public interface ClassHierarchyComponent {
+public interface HierarchyAccessorComponent {
 
   ClassHierarchyAccessor getClassHierarchyAccessor();
+
+  ObjectPropertyHierarchyAccessor getObjectPropertyHierarchyAccessor();
+
+  DataPropertyHierarchyAccessor getDataPropertyHierarchyAccessor();
+
+  AnnotationPropertyHierarchyAccessor getAnnotationPropertyHierarchyAccessor();
 }
