@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_DOMAIN;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_DOMAIN;
 
 /**
@@ -28,8 +29,10 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_D
 public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
 
   private static final String OBJECT_PROPERTY_DOMAIN_AXIOM_QUERY_FILE = "axioms/object-property-domain-axiom.cpy";
+  private static final String DATA_PROPERTY_DOMAIN_AXIOM_QUERY_FILE = "axioms/data-property-domain-axiom.cpy";
 
   private static final String OBJECT_PROPERTY_DOMAIN_AXIOM_QUERY = read(OBJECT_PROPERTY_DOMAIN_AXIOM_QUERY_FILE);
+  private static final String DATA_PROPERTY_DOMAIN_AXIOM_QUERY = read(DATA_PROPERTY_DOMAIN_AXIOM_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -51,6 +54,7 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
     return collectObjectPropertyDomainAxiomsFromIndex(nodeIndex);
   }
 
+  @Nonnull
   private Set<OWLObjectPropertyDomainAxiom> collectObjectPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(OBJECT_PROPERTY_DOMAIN.getMainLabel())
         .stream()
@@ -61,7 +65,16 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
   @Nonnull
   @Override
   public Set<OWLDataPropertyDomainAxiom> getDataPropertyDomainAxioms(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return ImmutableSet.of();
+    var nodeIndex = getNodeIndex(context, owlDataProperty, DATA_PROPERTY_DOMAIN_AXIOM_QUERY);
+    return collectDataPropertyDomainAxiomsFromIndex(nodeIndex);
+  }
+
+  @Nonnull
+  private Set<OWLDataPropertyDomainAxiom> collectDataPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
+    return nodeIndex.getNodes(DATA_PROPERTY_DOMAIN.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLDataPropertyDomainAxiom.class))
+        .collect(Collectors.toSet());
   }
 
   @Nonnull
@@ -70,6 +83,7 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
     return ImmutableSet.of();
   }
 
+  @Nonnull
   private NodeIndex getNodeIndex(AxiomContext context, OWLEntity entity, String queryString) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
