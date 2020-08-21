@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_RANGE;
 
 /**
@@ -28,8 +29,10 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_R
 public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
 
   private static final String OBJECT_PROPERTY_RANGE_AXIOM_QUERY_FILE = "axioms/object-property-range-axiom.cpy";
+  private static final String DATA_PROPERTY_RANGE_AXIOM_QUERY_FILE = "axioms/data-property-range-axiom.cpy";
 
   private static final String OBJECT_PROPERTY_RANGE_AXIOM_QUERY = read(OBJECT_PROPERTY_RANGE_AXIOM_QUERY_FILE);
+  private static final String DATA_PROPERTY_RANGE_AXIOM_QUERY = read(DATA_PROPERTY_RANGE_AXIOM_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -51,6 +54,7 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
     return collectObjectPropertyRangeAxiomsFromIndex(nodeIndex);
   }
 
+  @Nonnull
   private Set<OWLObjectPropertyRangeAxiom> collectObjectPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(OBJECT_PROPERTY_RANGE.getMainLabel())
         .stream()
@@ -61,7 +65,16 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
   @Nonnull
   @Override
   public Set<OWLDataPropertyRangeAxiom> getDataPropertyRangeAxioms(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return ImmutableSet.of();
+    var nodeIndex = getNodeIndex(context, owlDataProperty, DATA_PROPERTY_RANGE_AXIOM_QUERY);
+    return collectDataPropertyRangeAxiomsFromIndex(nodeIndex);
+  }
+
+  @Nonnull
+  private Set<OWLDataPropertyRangeAxiom> collectDataPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
+    return nodeIndex.getNodes(DATA_PROPERTY_RANGE.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLDataPropertyRangeAxiom.class))
+        .collect(Collectors.toSet());
   }
 
   @Nonnull
