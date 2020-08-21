@@ -105,7 +105,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
                                                                             AxiomContext context) {
     if (owlAnnotationSubject.isIRI()) {
       var nodeIndex = getNodeIndex(context, (IRI) owlAnnotationSubject,
-          DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY);
+          ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY);
       return collectAnnotationAssertionAxiomsFromIndex(nodeIndex);
     } else {
       return ImmutableSet.of();
