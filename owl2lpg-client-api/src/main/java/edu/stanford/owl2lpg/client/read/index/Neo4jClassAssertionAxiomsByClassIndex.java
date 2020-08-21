@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read.index;
 
 import edu.stanford.bmir.protege.web.server.index.ClassAssertionAxiomsByClassIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomByTypeAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomByTypeAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -23,11 +23,11 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   private final AxiomContext axiomContext;
 
   @Nonnull
-  private final AssertionAxiomByTypeAccessor assertionAxiomByTypeAccessor;
+  private final ClassAssertionAxiomByTypeAccessor assertionAxiomByTypeAccessor;
 
   @Inject
   public Neo4jClassAssertionAxiomsByClassIndex(@Nonnull AxiomContext axiomContext,
-                                               @Nonnull AssertionAxiomByTypeAccessor assertionAxiomByTypeAccessor) {
+                                               @Nonnull ClassAssertionAxiomByTypeAccessor assertionAxiomByTypeAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
     this.assertionAxiomByTypeAccessor = checkNotNull(assertionAxiomByTypeAccessor);
   }

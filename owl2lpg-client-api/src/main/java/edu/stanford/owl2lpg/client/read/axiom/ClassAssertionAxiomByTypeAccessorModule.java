@@ -8,9 +8,9 @@ import dagger.Module;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module(includes = NodeMapperModule.class)
-public abstract class AssertionAxiomByTypeAccessorModule {
+public abstract class ClassAssertionAxiomByTypeAccessorModule {
 
   @Binds
-  public abstract AssertionAxiomByTypeAccessor
-  provideAssertionAxiomByTypeAccessor(AssertionAxiomByTypeAccessorImpl impl);
+  public abstract ClassAssertionAxiomByTypeAccessor
+  provideClassAssertionAxiomByTypeAccessor(ClassAssertionAxiomByTypeAccessorImpl impl);
 }

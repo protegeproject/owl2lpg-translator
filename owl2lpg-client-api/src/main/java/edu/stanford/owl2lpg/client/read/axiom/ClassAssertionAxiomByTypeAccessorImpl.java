@@ -10,9 +10,11 @@ import java.util.Set;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface AssertionAxiomByTypeAccessor {
+public class ClassAssertionAxiomByTypeAccessorImpl implements ClassAssertionAxiomByTypeAccessor {
 
   @Nonnull
-  Set<OWLClassAssertionAxiom>
-  getClassAssertionForType(OWLClass owlClass, AxiomContext axiomContext);
+  @Override
+  public Set<OWLClassAssertionAxiom> getClassAssertionForType(OWLClass owlClass, AxiomContext context) {
+    return null;
+  }
 }
