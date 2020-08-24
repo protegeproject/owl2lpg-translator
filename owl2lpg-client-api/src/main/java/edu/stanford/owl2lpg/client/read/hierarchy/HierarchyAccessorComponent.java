@@ -12,6 +12,7 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
  */
 @Component(modules = {
     DatabaseModule.class,
+    HierarchyRootProviderModule.class,
     HierarchyAccessorModule.class,
     OwlDataFactoryModule.class,
     AxiomContextModule.class})
