@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
-import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.AnnotationPropertyHierarchyProvider;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -33,7 +32,7 @@ public class Neo4jAnnotationPropertyHierarchyProvider implements AnnotationPrope
 
   @Override
   public Collection<OWLAnnotationProperty> getRoots() {
-    return ImmutableSet.of();
+    return hierarchyAccessor.getRoots(axiomContext);
   }
 
   @Override

@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -27,9 +28,11 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationPropertyHierarchyAccessor {
 
+  private static final String ANNOTATION_PROPERTY_ROOT_QUERY_FILE = "hierarchy/children-of-annotation-property-root.cpy";
   private static final String ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/annotation-property-ancestor.cpy";
   private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/annotation-property-descendant.cpy";
 
+  private static final String ANNOTATION_PROPERTY_ROOT_QUERY = read(ANNOTATION_PROPERTY_ROOT_QUERY_FILE);
   private static final String ANNOTATION_PROPERTY_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE);
   private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY = read(ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE);
 
@@ -44,6 +47,11 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
                                                  @Nonnull OWLDataFactory dataFactory) {
     this.driver = checkNotNull(driver);
     this.dataFactory = checkNotNull(dataFactory);
+  }
+
+  @Override
+  public ImmutableSet<OWLAnnotationProperty> getRoots(AxiomContext context) {
+    return getRootProperties(context);
   }
 
   @Override
@@ -95,6 +103,29 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   @Override
   public boolean isLeaf(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
     return getDescendantPaths(owlAnnotationProperty, context).size() == 0;
+  }
+
+  @Nonnull
+  private ImmutableSet<OWLAnnotationProperty> getRootProperties(AxiomContext context) {
+    try (var session = driver.session()) {
+      return session.readTransaction(tx -> {
+        var args = Parameters.forContext(context);
+        var result = tx.run(ANNOTATION_PROPERTY_ROOT_QUERY, args);
+        var roots = Lists.<OWLAnnotationProperty>newArrayList();
+        while (result.hasNext()) {
+          var row = result.next().asMap();
+          for (var column : row.entrySet()) {
+            if (column.getKey().equals("n")) {
+              var node = (Node) column.getValue();
+              var iri = IRI.create(node.get(PropertyFields.IRI).asString());
+              var owlAnnotationProp = dataFactory.getOWLAnnotationProperty(iri);
+              roots.add(owlAnnotationProp);
+            }
+          }
+        }
+        return ImmutableSet.copyOf(roots);
+      });
+    }
   }
 
   @Nonnull
