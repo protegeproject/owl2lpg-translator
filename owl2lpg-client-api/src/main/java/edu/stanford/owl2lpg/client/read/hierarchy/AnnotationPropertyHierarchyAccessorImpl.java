@@ -16,7 +16,6 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -55,7 +54,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public Collection<OWLAnnotationProperty> getAncestors(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+  public ImmutableSet<OWLAnnotationProperty> getAncestors(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
     return getAncestorPaths(owlAnnotationProperty, context)
         .stream()
         .flatMap(AnnotationPropertyAncestorPath::getAncestors)
@@ -63,7 +62,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public Collection<OWLAnnotationProperty> getDescendants(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+  public ImmutableSet<OWLAnnotationProperty> getDescendants(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
     return getDescendantPaths(owlAnnotationProperty, context)
         .stream()
         .flatMap(AnnotationPropertyDescendantPath::getDescendants)
@@ -71,7 +70,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public Collection<OWLAnnotationProperty> getParents(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+  public ImmutableSet<OWLAnnotationProperty> getParents(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
     return getAncestorPaths(owlAnnotationProperty, context)
         .stream()
         .map(path -> path.getAncestorAt(1))
@@ -79,7 +78,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public Collection<OWLAnnotationProperty> getChildren(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+  public ImmutableSet<OWLAnnotationProperty> getChildren(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
     return getDescendantPaths(owlAnnotationProperty, context)
         .stream()
         .map(path -> path.getDescendantAt(1))
@@ -87,7 +86,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public Collection<List<OWLAnnotationProperty>> getPathsToRoot(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+  public ImmutableSet<List<OWLAnnotationProperty>> getPathsToRoot(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
     return getAncestorPaths(owlAnnotationProperty, context)
         .stream()
         .map(AnnotationPropertyAncestorPath::asOrderedList)

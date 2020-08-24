@@ -17,7 +17,6 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -61,7 +60,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public Collection<OWLDataProperty> getAncestors(OWLDataProperty owlDataProperty, AxiomContext context) {
+  public ImmutableSet<OWLDataProperty> getAncestors(OWLDataProperty owlDataProperty, AxiomContext context) {
     return getAncestorPaths(owlDataProperty, context)
         .stream()
         .flatMap(DataPropertyAncestorPath::getAncestors)
@@ -69,7 +68,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public Collection<OWLDataProperty> getDescendants(OWLDataProperty owlDataProperty, AxiomContext context) {
+  public ImmutableSet<OWLDataProperty> getDescendants(OWLDataProperty owlDataProperty, AxiomContext context) {
     return getDescendantPaths(owlDataProperty, context)
         .stream()
         .flatMap(DataPropertyDescendantPath::getDescendants)
@@ -77,7 +76,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public Collection<OWLDataProperty> getParents(OWLDataProperty owlDataProperty, AxiomContext context) {
+  public ImmutableSet<OWLDataProperty> getParents(OWLDataProperty owlDataProperty, AxiomContext context) {
     return getAncestorPaths(owlDataProperty, context)
         .stream()
         .map(path -> path.getAncestorAt(1))
@@ -85,7 +84,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public Collection<OWLDataProperty> getChildren(OWLDataProperty owlDataProperty, AxiomContext context) {
+  public ImmutableSet<OWLDataProperty> getChildren(OWLDataProperty owlDataProperty, AxiomContext context) {
     var children = ImmutableSet.<OWLDataProperty>builder();
     children.addAll(getDescendantPaths(owlDataProperty, context)
         .stream()
@@ -98,7 +97,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public Collection<List<OWLDataProperty>> getPathsToRoot(OWLDataProperty owlDataProperty, AxiomContext context) {
+  public ImmutableSet<List<OWLDataProperty>> getPathsToRoot(OWLDataProperty owlDataProperty, AxiomContext context) {
     return getAncestorPaths(owlDataProperty, context)
         .stream()
         .map(DataPropertyAncestorPath::asOrderedList)
