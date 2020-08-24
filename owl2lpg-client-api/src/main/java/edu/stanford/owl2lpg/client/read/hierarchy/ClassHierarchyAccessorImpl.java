@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -26,11 +28,16 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
+  private static final String CHILDREN_OF_CLASS_ROOT_QUERY_FILE = "hierarchy/children-of-class-root.cpy";
   private static final String CLASS_ANCESTOR_QUERY_FILE = "hierarchy/class-ancestor.cpy";
   private static final String CLASS_DESCENDANT_QUERY_FILE = "hierarchy/class-descendant.cpy";
 
+  private static final String CHILDREN_OF_CLASS_ROOT_QUERY = read(CHILDREN_OF_CLASS_ROOT_QUERY_FILE);
   private static final String CLASS_ANCESTOR_QUERY = read(CLASS_ANCESTOR_QUERY_FILE);
   private static final String CLASS_DESCENDANT_QUERY = read(CLASS_DESCENDANT_QUERY_FILE);
+
+  @Nonnull
+  private final OWLClass root;
 
   @Nonnull
   private final Driver driver;
@@ -39,15 +46,17 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private final OWLDataFactory dataFactory;
 
   @Inject
-  public ClassHierarchyAccessorImpl(@Nonnull Driver driver,
+  public ClassHierarchyAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
+                                    @Nonnull Driver driver,
                                     @Nonnull OWLDataFactory dataFactory) {
+    this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
     this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Override
-  public OWLClass getOwlThing() {
-    return dataFactory.getOWLThing();
+  public ImmutableSet<OWLClass> getRoots(AxiomContext context) {
+    return ImmutableSet.of(root);
   }
 
   @Override
@@ -76,10 +85,15 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<OWLClass> getChildren(OWLClass owlClass, AxiomContext context) {
-    return getDescendantPaths(owlClass, context)
+    var children = ImmutableSet.<OWLClass>builder();
+    children.addAll(getDescendantPaths(owlClass, context)
         .stream()
         .map(path -> path.getDescendantAt(1))
-        .collect(ImmutableSet.toImmutableSet());
+        .collect(ImmutableSet.toImmutableSet()));
+    if (root.equals(owlClass)) {
+      children.addAll(getChildrenOfRoot(context));
+    }
+    return children.build();
   }
 
   @Override
@@ -101,6 +115,30 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
     return getDescendantPaths(owlClass, context).size() == 0;
   }
 
+  @Nonnull
+  private ImmutableSet<OWLClass> getChildrenOfRoot(AxiomContext context) {
+    try (var session = driver.session()) {
+      return session.readTransaction(tx -> {
+        var args = Parameters.forContext(context);
+        var result = tx.run(CHILDREN_OF_CLASS_ROOT_QUERY, args);
+        var roots = Lists.<OWLClass>newArrayList();
+        while (result.hasNext()) {
+          var row = result.next().asMap();
+          for (var column : row.entrySet()) {
+            if (column.getKey().equals("n")) {
+              var node = (Node) column.getValue();
+              var iri = IRI.create(node.get(PropertyFields.IRI).asString());
+              var owlClass = dataFactory.getOWLClass(iri);
+              roots.add(owlClass);
+            }
+          }
+        }
+        return ImmutableSet.copyOf(roots);
+      });
+    }
+  }
+
+  @Nonnull
   private ImmutableList<ClassAncestorPath> getAncestorPaths(OWLClass owlClass, AxiomContext context) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
@@ -129,6 +167,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
     }
   }
 
+  @Nonnull
   private ImmutableList<ClassDescendantPath> getDescendantPaths(OWLClass owlClass, AxiomContext context) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {

@@ -24,6 +24,13 @@ import static java.util.stream.Collectors.joining;
  */
 public class Parameters {
 
+  public static Value forContext(@Nonnull AxiomContext context) {
+    return new MapValue(Map.of(
+        "projectId", new StringValue(context.getProjectId().getIdentifier()),
+        "branchId", new StringValue(context.getBranchId().getIdentifier()),
+        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
+  }
+
   public static Value forShortFormsDictionary(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull IRI entityIri) {

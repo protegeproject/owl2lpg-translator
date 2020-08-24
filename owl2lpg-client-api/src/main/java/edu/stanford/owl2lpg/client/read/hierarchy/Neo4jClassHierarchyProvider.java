@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
-import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyProvider;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -34,7 +33,7 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
 
   @Override
   public Collection<OWLClass> getRoots() {
-    return ImmutableSet.of(hierarchyAccessor.getOwlThing());
+    return hierarchyAccessor.getRoots(axiomContext);
   }
 
   @Override
