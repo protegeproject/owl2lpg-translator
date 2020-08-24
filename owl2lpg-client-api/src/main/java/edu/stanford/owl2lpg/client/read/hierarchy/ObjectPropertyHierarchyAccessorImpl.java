@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -26,11 +28,16 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierarchyAccessor {
 
+  private static final String CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY_FILE = "hierarchy/children-of-object-property-root.cpy";
   private static final String OBJECT_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/object-property-ancestor.cpy";
   private static final String OBJECT_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/object-property-descendant.cpy";
 
+  private static final String CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY = read(CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY_FILE);
   private static final String OBJECT_PROPERTY_ANCESTOR_QUERY = read(OBJECT_PROPERTY_ANCESTOR_QUERY_FILE);
   private static final String OBJECT_PROPERTY_DESCENDANT_QUERY = read(OBJECT_PROPERTY_DESCENDANT_QUERY_FILE);
+
+  @Nonnull
+  private final OWLObjectProperty root;
 
   @Nonnull
   private final Driver driver;
@@ -39,15 +46,17 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   private final OWLDataFactory dataFactory;
 
   @Inject
-  public ObjectPropertyHierarchyAccessorImpl(@Nonnull Driver driver,
+  public ObjectPropertyHierarchyAccessorImpl(@Nonnull @ObjectPropertyHierarchyRoot OWLObjectProperty root,
+                                             @Nonnull Driver driver,
                                              @Nonnull OWLDataFactory dataFactory) {
+    this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
     this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Override
-  public OWLObjectProperty getOwlTopObjectProperty() {
-    return dataFactory.getOWLTopObjectProperty();
+  public ImmutableSet<OWLObjectProperty> getRoots(AxiomContext context) {
+    return ImmutableSet.of(root);
   }
 
   @Override
@@ -76,10 +85,15 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
 
   @Override
   public ImmutableSet<OWLObjectProperty> getChildren(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return getDescendantPaths(owlObjectProperty, context)
+    var children = ImmutableSet.<OWLObjectProperty>builder();
+    children.addAll(getDescendantPaths(owlObjectProperty, context)
         .stream()
         .map(path -> path.getDescendantAt(1))
-        .collect(ImmutableSet.toImmutableSet());
+        .collect(ImmutableSet.toImmutableSet()));
+    if (root.equals(owlObjectProperty)) {
+      children.addAll(getChildrenOfRoot(context));
+    }
+    return children.build();
   }
 
   @Override
@@ -99,6 +113,29 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   @Override
   public boolean isLeaf(OWLObjectProperty owlObjectProperty, AxiomContext context) {
     return getDescendantPaths(owlObjectProperty, context).size() == 0;
+  }
+
+  @Nonnull
+  private ImmutableSet<OWLObjectProperty> getChildrenOfRoot(AxiomContext context) {
+    try (var session = driver.session()) {
+      return session.readTransaction(tx -> {
+        var args = Parameters.forContext(context);
+        var result = tx.run(CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY, args);
+        var roots = Lists.<OWLObjectProperty>newArrayList();
+        while (result.hasNext()) {
+          var row = result.next().asMap();
+          for (var column : row.entrySet()) {
+            if (column.getKey().equals("n")) {
+              var node = (Node) column.getValue();
+              var iri = IRI.create(node.get(PropertyFields.IRI).asString());
+              var owlObjectProp = dataFactory.getOWLObjectProperty(iri);
+              roots.add(owlObjectProp);
+            }
+          }
+        }
+        return ImmutableSet.copyOf(roots);
+      });
+    }
   }
 
   @Nonnull

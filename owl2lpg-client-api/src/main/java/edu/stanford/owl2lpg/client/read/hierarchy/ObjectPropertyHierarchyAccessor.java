@@ -1,6 +1,9 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+
+import java.util.Collection;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -8,5 +11,5 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
  */
 public interface ObjectPropertyHierarchyAccessor extends HierarchyAccessor<OWLObjectProperty> {
 
-  OWLObjectProperty getOwlTopObjectProperty();
+  Collection<OWLObjectProperty> getRoots(AxiomContext context);
 }
