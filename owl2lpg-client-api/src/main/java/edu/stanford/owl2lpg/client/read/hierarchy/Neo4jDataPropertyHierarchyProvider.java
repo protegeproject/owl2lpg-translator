@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
-import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.DataPropertyHierarchyProvider;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -33,7 +32,7 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
 
   @Override
   public Collection<OWLDataProperty> getRoots() {
-    return ImmutableSet.of(hierarchyAccessor.getOwlTopDataProperty());
+    return hierarchyAccessor.getRoots(axiomContext);
   }
 
   @Override
