@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.index;
+package edu.stanford.owl2lpg.client.bind.index;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex;
