@@ -86,7 +86,7 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
     var children = ImmutableSet.<OWLObjectProperty>builder();
     children.addAll(getProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlObjectProperty, context)));
     if (root.equals(owlObjectProperty)) {
-      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context)));
+      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(context)));
     }
     return children.build();
   }
@@ -162,6 +162,11 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
 
   @Nonnull
   private static Value createInputParams(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return Parameters.forEntity(context, owlObjectProperty);
+    return Parameters.forEntityIri(owlObjectProperty.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  }
+
+  @Nonnull
+  private static Value createInputParams(AxiomContext context) {
+    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

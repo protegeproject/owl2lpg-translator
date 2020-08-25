@@ -57,7 +57,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
 
   @Override
   public ImmutableSet<OWLAnnotationProperty> getRoots(AxiomContext context) {
-    return getAnnotationProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context));
+    return getAnnotationProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(context));
   }
 
   @Override
@@ -152,6 +152,11 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
 
   @Nonnull
   private static Value createInputParams(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return Parameters.forEntity(context, owlAnnotationProperty);
+    return Parameters.forEntityIri(owlAnnotationProperty.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  }
+
+  @Nonnull
+  private static Value createInputParams(AxiomContext context) {
+    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

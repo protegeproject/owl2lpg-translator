@@ -86,7 +86,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
     var children = ImmutableSet.<OWLDataProperty>builder();
     children.addAll(getProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, context)));
     if (root.equals(owlDataProperty)) {
-      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context)));
+      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(context)));
     }
     return children.build();
   }
@@ -163,6 +163,11 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
 
   @Nonnull
   private static Value createInputParams(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return Parameters.forEntity(context, owlDataProperty);
+    return Parameters.forEntityIri(owlDataProperty.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  }
+
+  @Nonnull
+  private static Value createInputParams(AxiomContext context) {
+    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -69,8 +70,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Set<OWLClassAssertionAxiom> getClassAssertionForSubject(OWLIndividual owlIndividual,
                                                                  AxiomContext context) {
     if (owlIndividual.isNamed()) {
-      var nodeIndex = getNodeIndex(context, owlIndividual.asOWLNamedIndividual().getIRI(),
-          CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY);
+      var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY, owlIndividual.asOWLNamedIndividual().getIRI(), context
+      );
       return collectClassAssertionAxiomsFromIndex(nodeIndex);
     } else {
       return ImmutableSet.of();
@@ -82,8 +83,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Set<OWLObjectPropertyAssertionAxiom> getObjectPropertyAssertionsForSubject(OWLIndividual owlIndividual,
                                                                                     AxiomContext context) {
     if (owlIndividual.isNamed()) {
-      var nodeIndex = getNodeIndex(context, owlIndividual.asOWLNamedIndividual().getIRI(),
-          OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY);
+      var nodeIndex = getNodeIndex(OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY, owlIndividual.asOWLNamedIndividual().getIRI(), context
+      );
       return collectObjectPropertyAssertionAxiomsFromIndex(nodeIndex);
     } else {
       return ImmutableSet.of();
@@ -95,8 +96,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Set<OWLDataPropertyAssertionAxiom> getDataPropertyAssertionsForSubject(OWLIndividual owlIndividual,
                                                                                 AxiomContext context) {
     if (owlIndividual.isNamed()) {
-      var nodeIndex = getNodeIndex(context, owlIndividual.asOWLNamedIndividual().getIRI(),
-          DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY);
+      var nodeIndex = getNodeIndex(DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY, owlIndividual.asOWLNamedIndividual().getIRI(), context
+      );
       return collectDataPropertyAssertionAxiomsFromIndex(nodeIndex);
     } else {
       return ImmutableSet.of();
@@ -108,19 +109,19 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject,
                                                                             AxiomContext context) {
     if (owlAnnotationSubject.isIRI()) {
-      var nodeIndex = getNodeIndex(context, (IRI) owlAnnotationSubject,
-          ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY);
+      var nodeIndex = getNodeIndex(ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY, (IRI) owlAnnotationSubject, context
+      );
       return collectAnnotationAssertionAxiomsFromIndex(nodeIndex);
     } else {
       return ImmutableSet.of();
     }
   }
 
-  private NodeIndex getNodeIndex(AxiomContext context, IRI subjectIri, String queryString) {
+  private NodeIndex getNodeIndex(String queryString, IRI subjectIri, AxiomContext context) {
     try (var session = driver.session()) {
-      var args = Parameters.forEntityIri(context, subjectIri);
+      var inputParams = createInputParams(subjectIri, context);
       return session.readTransaction(tx -> {
-        var result = tx.run(queryString, args);
+        var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -168,5 +169,10 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationAssertionAxiom.class))
         .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Nonnull
+  private static Value createInputParams(IRI entityIri, AxiomContext context) {
+    return Parameters.forEntityIri(entityIri, context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

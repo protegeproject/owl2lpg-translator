@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -48,24 +49,24 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   @Override
   public Set<OWLAxiom> getAxiomForSubject(OWLClass subject, AxiomContext context) {
-    return getAxiomForSubject(context, subject, CLASS_AXIOM_SUBJECT_QUERY);
+    return getAxiomForSubject(CLASS_AXIOM_SUBJECT_QUERY, subject, context);
   }
 
   @Override
   public Set<OWLAxiom> getAxiomForSubject(OWLNamedIndividual subject, AxiomContext context) {
-    return getAxiomForSubject(context, subject, NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY);
+    return getAxiomForSubject(NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY, subject, context);
   }
 
-  private Set<OWLAxiom> getAxiomForSubject(AxiomContext context, OWLEntity subject, String queryString) {
-    var nodeIndex = getNodeIndex(context, subject, queryString);
+  private Set<OWLAxiom> getAxiomForSubject(String queryString, OWLEntity subject, AxiomContext context) {
+    var nodeIndex = getNodeIndex(queryString, subject, context);
     return collectAxiomsFromIndex(nodeIndex);
   }
 
-  private NodeIndex getNodeIndex(AxiomContext context, OWLEntity subject, String queryString) {
+  private NodeIndex getNodeIndex(String queryString, OWLEntity subject, AxiomContext context) {
     try (var session = driver.session()) {
-      var args = Parameters.forEntity(context, subject);
+      var inputParams = createInputParams(subject, context);
       return session.readTransaction(tx -> {
-        var result = tx.run(queryString, args);
+        var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -89,5 +90,10 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
         .collect(Collectors.toSet());
+  }
+
+  @Nonnull
+  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
+    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

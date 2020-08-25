@@ -55,10 +55,10 @@ public class Neo4jFullTextSearchByAnnotationAssertion implements Neo4jFullTextSe
   @Override
   public EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings) {
     try (var session = driver.session()) {
-      var args = Parameters.forShortFormsContaining(projectId, branchId, searchStrings);
       return session.readTransaction(tx -> {
+        var inputParams = Parameters.forSearchStrings(searchStrings, projectId, branchId);
         var dictionaryBuilder = new EntityShortFormMatchesDictionary.Builder();
-        var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);
+        var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           var entity = resultMapper.getOwlEntity(row.get("entity"));

@@ -86,7 +86,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
     var children = ImmutableSet.<OWLClass>builder();
     children.addAll(getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, context)));
     if (root.equals(owlClass)) {
-      children.addAll(getClasses(CLASS_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context)));
+      children.addAll(getClasses(CLASS_CHILDREN_OF_ROOT_QUERY, createInputParams(context)));
     }
     return children.build();
   }
@@ -161,8 +161,14 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
     }
   }
 
+
   @Nonnull
   private static Value createInputParams(OWLClass owlClass, AxiomContext context) {
-    return Parameters.forEntity(context, owlClass);
+    return Parameters.forEntityIri(owlClass.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  }
+
+  @Nonnull
+  private static Value createInputParams(AxiomContext context) {
+    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

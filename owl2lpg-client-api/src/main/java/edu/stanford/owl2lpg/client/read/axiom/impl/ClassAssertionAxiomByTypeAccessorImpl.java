@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomByTypeAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -46,16 +47,16 @@ public class ClassAssertionAxiomByTypeAccessorImpl implements ClassAssertionAxio
   @Nonnull
   @Override
   public Set<OWLClassAssertionAxiom> getClassAssertionForType(OWLClass owlClass, AxiomContext context) {
-    var nodeIndex = getNodeIndex(context, owlClass, CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY);
+    var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY, owlClass, context);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
   @Nonnull
-  private NodeIndex getNodeIndex(AxiomContext context, OWLEntity subject, String queryString) {
+  private NodeIndex getNodeIndex(String queryString, OWLEntity subject, AxiomContext context) {
     try (var session = driver.session()) {
-      var args = Parameters.forEntity(context, subject);
+      var inputParams = createInputParams(subject, context);
       return session.readTransaction(tx -> {
-        var result = tx.run(queryString, args);
+        var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -79,5 +80,10 @@ public class ClassAssertionAxiomByTypeAccessorImpl implements ClassAssertionAxio
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLClassAssertionAxiom.class))
         .collect(Collectors.toSet());
+  }
+
+  @Nonnull
+  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
+    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

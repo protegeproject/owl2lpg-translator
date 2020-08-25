@@ -6,6 +6,7 @@ import edu.stanford.owl2lpg.client.read.axiom.HierarchyAxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -59,27 +60,27 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
 
   @Override
   public Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(OWLClass subClass, AxiomContext context) {
-    var nodeIndex = getNodeIndex(context, subClass, SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY);
+    var nodeIndex = getNodeIndex(SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY, subClass, context);
     return collectSubClassOfAxiomsFromIndex(nodeIndex);
   }
 
   @Override
   public Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(OWLObjectProperty subProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(context, subProperty, SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY);
+    var nodeIndex = getNodeIndex(SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, subProperty, context);
     return collectSubObjectPropertyOfAxiomsFromIndex(nodeIndex);
   }
 
   @Override
   public Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(OWLDataProperty subProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(context, subProperty, SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY);
+    var nodeIndex = getNodeIndex(SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, subProperty, context);
     return collectSubDataPropertyOfAxiomsFromIndex(nodeIndex);
   }
 
-  private NodeIndex getNodeIndex(AxiomContext context, OWLEntity entity, String queryString) {
+  private NodeIndex getNodeIndex(String queryString, OWLEntity entity, AxiomContext context) {
     try (var session = driver.session()) {
-      var args = Parameters.forEntity(context, entity);
+      var inputParams = createInputParams(entity, context);
       return session.readTransaction(tx -> {
-        var result = tx.run(queryString, args);
+        var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -119,5 +120,10 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubDataPropertyOfAxiom.class))
         .collect(Collectors.toSet());
+  }
+
+  @Nonnull
+  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
+    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 }

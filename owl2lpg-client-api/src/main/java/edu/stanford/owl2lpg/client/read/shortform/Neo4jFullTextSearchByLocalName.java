@@ -14,7 +14,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -56,10 +55,10 @@ public class Neo4jFullTextSearchByLocalName implements Neo4jFullTextSearch {
   @Override
   public EntityShortFormMatchesDictionary getShortFormsContaining(List<SearchString> searchStrings) {
     try (var session = driver.session()) {
-      var args = Parameters.forShortFormsContaining(projectId, branchId, searchStrings);
       return session.readTransaction(tx -> {
+        var inputParams = Parameters.forSearchStrings(searchStrings, projectId, branchId);
         var dictionaryBuilder = new EntityShortFormMatchesDictionary.Builder();
-        var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, args);
+        var result = tx.run(SEARCHABLE_SHORT_FORMS_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           var entity = nodeTranslator.getOwlEntity(row.get("entity"));

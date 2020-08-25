@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormIndex;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.Parameters;
@@ -66,19 +65,18 @@ public class Neo4jMultiLingualShortFormIndex implements MultiLingualShortFormInd
   @Nonnull
   public ImmutableMap<DictionaryLanguage, OWLEntity> getEntities(@Nonnull String entityName) {
     try (var session = driver.session()) {
-      var args = Parameters.forShortFormsIndex(projectId, branchId, entityName);
-      var output = session.readTransaction(tx -> {
-        var mutableDictionaryMap = Maps.<DictionaryLanguage, OWLEntity>newHashMap();
-        var result = tx.run(SHORT_FORMS_INDEX_QUERY, args);
+      return session.readTransaction(tx -> {
+        var dictionary = ImmutableMap.<DictionaryLanguage, OWLEntity>builder();
+        var inputParams = Parameters.forEntityName(entityName, projectId, branchId);
+        var result = tx.run(SHORT_FORMS_INDEX_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           var dictLanguage = resultMapper.getDictionaryLanguage(row.get("dictionaryLanguage"));
           var entity = resultMapper.getOwlEntity(row.get("entity"));
-          mutableDictionaryMap.put(dictLanguage, entity);
+          dictionary.put(dictLanguage, entity);
         }
-        return mutableDictionaryMap;
+        return dictionary.build();
       });
-      return ImmutableMap.copyOf(output);
     }
   }
 }
