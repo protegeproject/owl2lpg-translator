@@ -2,13 +2,13 @@ package edu.stanford.owl2lpg.client.read.hierarchy;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
@@ -28,13 +28,19 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
-  private static final String CHILDREN_OF_CLASS_ROOT_QUERY_FILE = "hierarchy/children-of-class-root.cpy";
+  private static final String CLASS_CHILDREN_OF_ROOT_QUERY_FILE = "hierarchy/class-children-of-root.cpy";
   private static final String CLASS_ANCESTOR_QUERY_FILE = "hierarchy/class-ancestor.cpy";
+  private static final String CLASS_PARENTS_QUERY_FILE = "hierarchy/class-parents.cpy";
   private static final String CLASS_DESCENDANT_QUERY_FILE = "hierarchy/class-descendant.cpy";
+  private static final String CLASS_CHILDREN_QUERY_FILE = "hierarchy/class-children.cpy";
+  private static final String CLASS_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/class-paths-to-ancestor.cpy";
 
-  private static final String CHILDREN_OF_CLASS_ROOT_QUERY = read(CHILDREN_OF_CLASS_ROOT_QUERY_FILE);
+  private static final String CLASS_CHILDREN_OF_ROOT_QUERY = read(CLASS_CHILDREN_OF_ROOT_QUERY_FILE);
   private static final String CLASS_ANCESTOR_QUERY = read(CLASS_ANCESTOR_QUERY_FILE);
+  private static final String CLASS_PARENTS_QUERY = read(CLASS_PARENTS_QUERY_FILE);
   private static final String CLASS_DESCENDANT_QUERY = read(CLASS_DESCENDANT_QUERY_FILE);
+  private static final String CLASS_CHILDREN_QUERY = read(CLASS_CHILDREN_QUERY_FILE);
+  private static final String PATHS_TO_ANCESTOR_QUERY = read(CLASS_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
   private final OWLClass root;
@@ -61,44 +67,32 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public ImmutableSet<OWLClass> getAncestors(OWLClass owlClass, AxiomContext context) {
-    return getAncestorPaths(owlClass, context)
-        .stream()
-        .flatMap(ClassAncestorPath::getAncestors)
-        .collect(ImmutableSet.toImmutableSet());
+    return getClasses(CLASS_ANCESTOR_QUERY, createInputParams(owlClass, context));
   }
 
   @Override
   public ImmutableSet<OWLClass> getDescendants(OWLClass owlClass, AxiomContext context) {
-    return getDescendantPaths(owlClass, context)
-        .stream()
-        .flatMap(ClassDescendantPath::getDescendants)
-        .collect(ImmutableSet.toImmutableSet());
+    return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, context));
   }
 
   @Override
   public ImmutableSet<OWLClass> getParents(OWLClass owlClass, AxiomContext context) {
-    return getAncestorPaths(owlClass, context)
-        .stream()
-        .map(path -> path.getAncestorAt(1))
-        .collect(ImmutableSet.toImmutableSet());
+    return getClasses(CLASS_PARENTS_QUERY, createInputParams(owlClass, context));
   }
 
   @Override
   public ImmutableSet<OWLClass> getChildren(OWLClass owlClass, AxiomContext context) {
     var children = ImmutableSet.<OWLClass>builder();
-    children.addAll(getDescendantPaths(owlClass, context)
-        .stream()
-        .map(path -> path.getDescendantAt(1))
-        .collect(ImmutableSet.toImmutableSet()));
+    children.addAll(getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, context)));
     if (root.equals(owlClass)) {
-      children.addAll(getChildrenOfRoot(context));
+      children.addAll(getClasses(CLASS_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context)));
     }
     return children.build();
   }
 
   @Override
   public ImmutableSet<List<OWLClass>> getPathsToRoot(OWLClass owlClass, AxiomContext context) {
-    return getAncestorPaths(owlClass, context)
+    return getPathsToAncestor(owlClass, context)
         .stream()
         .map(ClassAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -112,16 +106,15 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Override
   public boolean isLeaf(OWLClass owlClass, AxiomContext context) {
-    return getDescendantPaths(owlClass, context).size() == 0;
+    return getChildren(owlClass, context).size() == 0;
   }
 
   @Nonnull
-  private ImmutableSet<OWLClass> getChildrenOfRoot(AxiomContext context) {
+  private ImmutableSet<OWLClass> getClasses(String queryString, Value inputParams) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var args = Parameters.forContext(context);
-        var result = tx.run(CHILDREN_OF_CLASS_ROOT_QUERY, args);
-        var roots = Lists.<OWLClass>newArrayList();
+        var output = ImmutableSet.<OWLClass>builder();
+        var result = tx.run(queryString, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -129,22 +122,22 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
               var node = (Node) column.getValue();
               var iri = IRI.create(node.get(PropertyFields.IRI).asString());
               var owlClass = dataFactory.getOWLClass(iri);
-              roots.add(owlClass);
+              output.add(owlClass);
             }
           }
         }
-        return ImmutableSet.copyOf(roots);
+        return output.build();
       });
     }
   }
 
   @Nonnull
-  private ImmutableList<ClassAncestorPath> getAncestorPaths(OWLClass owlClass, AxiomContext context) {
+  private ImmutableList<ClassAncestorPath> getPathsToAncestor(OWLClass ancestor, AxiomContext context) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var args = Parameters.forEntity(context, owlClass);
-        var result = tx.run(CLASS_ANCESTOR_QUERY, args);
-        var ancestorPaths = Lists.<ClassAncestorPath>newArrayList();
+        var ancestorPaths = ImmutableList.<ClassAncestorPath>builder();
+        var args = createInputParams(ancestor, context);
+        var result = tx.run(PATHS_TO_ANCESTOR_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -162,37 +155,13 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
             }
           }
         }
-        return ImmutableList.copyOf(ancestorPaths);
+        return ancestorPaths.build();
       });
     }
   }
 
   @Nonnull
-  private ImmutableList<ClassDescendantPath> getDescendantPaths(OWLClass owlClass, AxiomContext context) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var args = Parameters.forEntity(context, owlClass);
-        var result = tx.run(CLASS_DESCENDANT_QUERY, args);
-        var descendantPaths = Lists.<ClassDescendantPath>newArrayList();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                var orderedDescendantList = Streams.stream(path.nodes())
-                    .map(node -> node.get(PropertyFields.IRI).asString())
-                    .map(IRI::create)
-                    .map(dataFactory::getOWLClass)
-                    .collect(ImmutableList.toImmutableList());
-                var descendantPath = ClassDescendantPath.get(orderedDescendantList);
-                descendantPaths.add(descendantPath);
-              }
-            }
-          }
-        }
-        return ImmutableList.copyOf(descendantPaths);
-      });
-    }
+  private static Value createInputParams(OWLClass owlClass, AxiomContext context) {
+    return Parameters.forEntity(context, owlClass);
   }
 }

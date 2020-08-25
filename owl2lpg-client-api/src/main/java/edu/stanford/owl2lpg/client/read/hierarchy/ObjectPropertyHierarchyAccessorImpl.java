@@ -2,13 +2,13 @@ package edu.stanford.owl2lpg.client.read.hierarchy;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
@@ -28,13 +28,19 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierarchyAccessor {
 
-  private static final String CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY_FILE = "hierarchy/children-of-object-property-root.cpy";
+  private static final String OBJECT_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE = "hierarchy/object-property-children-of-root.cpy";
   private static final String OBJECT_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/object-property-ancestor.cpy";
+  private static final String OBJECT_PROPERTY_PARENTS_QUERY_FILE = "hierarchy/object-property-parents.cpy";
   private static final String OBJECT_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/object-property-descendant.cpy";
+  private static final String OBJECT_PROPERTY_CHILDREN_QUERY_FILE = "hierarchy/object-property-children.cpy";
+  private static final String OBJECT_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/object-property-paths-to-ancestor.cpy";
 
-  private static final String CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY = read(CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY_FILE);
-  private static final String OBJECT_PROPERTY_ANCESTOR_QUERY = read(OBJECT_PROPERTY_ANCESTOR_QUERY_FILE);
-  private static final String OBJECT_PROPERTY_DESCENDANT_QUERY = read(OBJECT_PROPERTY_DESCENDANT_QUERY_FILE);
+  private static final String PROPERTY_CHILDREN_OF_ROOT_QUERY = read(OBJECT_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE);
+  private static final String PROPERTY_ANCESTOR_QUERY = read(OBJECT_PROPERTY_ANCESTOR_QUERY_FILE);
+  private static final String PROPERTY_PARENTS_QUERY = read(OBJECT_PROPERTY_PARENTS_QUERY_FILE);
+  private static final String PROPERTY_DESCENDANT_QUERY = read(OBJECT_PROPERTY_DESCENDANT_QUERY_FILE);
+  private static final String PROPERTY_CHILDREN_QUERY = read(OBJECT_PROPERTY_CHILDREN_QUERY_FILE);
+  private static final String PATHS_TO_ANCESTOR_QUERY = read(OBJECT_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
   private final OWLObjectProperty root;
@@ -61,44 +67,31 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
 
   @Override
   public ImmutableSet<OWLObjectProperty> getAncestors(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return getAncestorPaths(owlObjectProperty, context)
-        .stream()
-        .flatMap(ObjectPropertyAncestorPath::getAncestors)
-        .collect(ImmutableSet.toImmutableSet());
+    return getProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlObjectProperty, context));
   }
 
   @Override
   public ImmutableSet<OWLObjectProperty> getDescendants(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return getDescendantPaths(owlObjectProperty, context)
-        .stream()
-        .flatMap(ObjectPropertyDescendantPath::getDescendants)
-        .collect(ImmutableSet.toImmutableSet());
+    return getProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlObjectProperty, context));
   }
 
   @Override
   public ImmutableSet<OWLObjectProperty> getParents(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return getAncestorPaths(owlObjectProperty, context)
-        .stream()
-        .map(path -> path.getAncestorAt(1))
-        .collect(ImmutableSet.toImmutableSet());
+    return getProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlObjectProperty, context));
   }
 
   @Override
   public ImmutableSet<OWLObjectProperty> getChildren(OWLObjectProperty owlObjectProperty, AxiomContext context) {
     var children = ImmutableSet.<OWLObjectProperty>builder();
-    children.addAll(getDescendantPaths(owlObjectProperty, context)
-        .stream()
-        .map(path -> path.getDescendantAt(1))
-        .collect(ImmutableSet.toImmutableSet()));
+    children.addAll(getProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlObjectProperty, context)));
     if (root.equals(owlObjectProperty)) {
-      children.addAll(getChildrenOfRoot(context));
+      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context)));
     }
     return children.build();
   }
 
-  @Override
   public ImmutableSet<List<OWLObjectProperty>> getPathsToRoot(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return getAncestorPaths(owlObjectProperty, context)
+    return getPathsToAncestor(owlObjectProperty, context)
         .stream()
         .map(ObjectPropertyAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -112,16 +105,15 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
 
   @Override
   public boolean isLeaf(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    return getDescendantPaths(owlObjectProperty, context).size() == 0;
+    return getChildren(owlObjectProperty, context).size() == 0;
   }
 
   @Nonnull
-  private ImmutableSet<OWLObjectProperty> getChildrenOfRoot(AxiomContext context) {
+  private ImmutableSet<OWLObjectProperty> getProperties(String queryString, Value inputParams) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var args = Parameters.forContext(context);
-        var result = tx.run(CHILDREN_OF_OBJECT_PROPERTY_ROOT_QUERY, args);
-        var roots = Lists.<OWLObjectProperty>newArrayList();
+        var output = ImmutableSet.<OWLObjectProperty>builder();
+        var result = tx.run(queryString, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -129,22 +121,22 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
               var node = (Node) column.getValue();
               var iri = IRI.create(node.get(PropertyFields.IRI).asString());
               var owlObjectProp = dataFactory.getOWLObjectProperty(iri);
-              roots.add(owlObjectProp);
+              output.add(owlObjectProp);
             }
           }
         }
-        return ImmutableSet.copyOf(roots);
+        return output.build();
       });
     }
   }
 
   @Nonnull
-  private ImmutableList<ObjectPropertyAncestorPath> getAncestorPaths(OWLObjectProperty owlObjectProperty, AxiomContext context) {
+  private ImmutableList<ObjectPropertyAncestorPath> getPathsToAncestor(OWLObjectProperty owlObjectProperty, AxiomContext context) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var args = Parameters.forEntity(context, owlObjectProperty);
-        var result = tx.run(OBJECT_PROPERTY_ANCESTOR_QUERY, args);
-        var ancestorPaths = Lists.<ObjectPropertyAncestorPath>newArrayList();
+        var ancestorPaths = ImmutableList.<ObjectPropertyAncestorPath>builder();
+        var inputParams = createInputParams(owlObjectProperty, context);
+        var result = tx.run(PATHS_TO_ANCESTOR_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -162,36 +154,13 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
             }
           }
         }
-        return ImmutableList.copyOf(ancestorPaths);
+        return ancestorPaths.build();
       });
     }
   }
 
-  private ImmutableList<ObjectPropertyDescendantPath> getDescendantPaths(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var args = Parameters.forEntity(context, owlObjectProperty);
-        var result = tx.run(OBJECT_PROPERTY_DESCENDANT_QUERY, args);
-        var descendantPaths = Lists.<ObjectPropertyDescendantPath>newArrayList();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                var orderedDescendantList = Streams.stream(path.nodes())
-                    .map(node -> node.get(PropertyFields.IRI).asString())
-                    .map(IRI::create)
-                    .map(dataFactory::getOWLObjectProperty)
-                    .collect(ImmutableList.toImmutableList());
-                var descendantPath = ObjectPropertyDescendantPath.get(orderedDescendantList);
-                descendantPaths.add(descendantPath);
-              }
-            }
-          }
-        }
-        return ImmutableList.copyOf(descendantPaths);
-      });
-    }
+  @Nonnull
+  private static Value createInputParams(OWLObjectProperty owlObjectProperty, AxiomContext context) {
+    return Parameters.forEntity(context, owlObjectProperty);
   }
 }

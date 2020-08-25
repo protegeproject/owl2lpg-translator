@@ -2,12 +2,12 @@ package edu.stanford.owl2lpg.client.read.hierarchy;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
@@ -27,13 +27,19 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationPropertyHierarchyAccessor {
 
-  private static final String ANNOTATION_PROPERTY_ROOT_QUERY_FILE = "hierarchy/children-of-annotation-property-root.cpy";
+  private static final String ANNOTATION_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE = "hierarchy/annotation-property-children-of-root.cpy";
   private static final String ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/annotation-property-ancestor.cpy";
+  private static final String ANNOTATION_PROPERTY_PARENTS_QUERY_FILE = "hierarchy/annotation-property-parents.cpy";
   private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/annotation-property-descendant.cpy";
+  private static final String ANNOTATION_PROPERTY_CHILDREN_QUERY_FILE = "hierarchy/annotation-property-children.cpy";
+  private static final String ANNOTATION_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/annotation-property-paths-to-ancestor.cpy";
 
-  private static final String ANNOTATION_PROPERTY_ROOT_QUERY = read(ANNOTATION_PROPERTY_ROOT_QUERY_FILE);
-  private static final String ANNOTATION_PROPERTY_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE);
-  private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY = read(ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE);
+  private static final String PROPERTY_CHILDREN_OF_ROOT_QUERY = read(ANNOTATION_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE);
+  private static final String PROPERTY_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE);
+  private static final String PROPERTY_PARENTS_QUERY = read(ANNOTATION_PROPERTY_PARENTS_QUERY_FILE);
+  private static final String PROPERTY_DESCENDANT_QUERY = read(ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE);
+  private static final String PROPERTY_CHILDREN_QUERY = read(ANNOTATION_PROPERTY_CHILDREN_QUERY_FILE);
+  private static final String PATHS_TO_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -50,44 +56,32 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
 
   @Override
   public ImmutableSet<OWLAnnotationProperty> getRoots(AxiomContext context) {
-    return getRootProperties(context);
+    return getAnnotationProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, Parameters.forContext(context));
   }
 
   @Override
   public ImmutableSet<OWLAnnotationProperty> getAncestors(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAncestorPaths(owlAnnotationProperty, context)
-        .stream()
-        .flatMap(AnnotationPropertyAncestorPath::getAncestors)
-        .collect(ImmutableSet.toImmutableSet());
+    return getAnnotationProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlAnnotationProperty, context));
   }
 
   @Override
   public ImmutableSet<OWLAnnotationProperty> getDescendants(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getDescendantPaths(owlAnnotationProperty, context)
-        .stream()
-        .flatMap(AnnotationPropertyDescendantPath::getDescendants)
-        .collect(ImmutableSet.toImmutableSet());
+    return getAnnotationProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlAnnotationProperty, context));
   }
 
   @Override
   public ImmutableSet<OWLAnnotationProperty> getParents(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAncestorPaths(owlAnnotationProperty, context)
-        .stream()
-        .map(path -> path.getAncestorAt(1))
-        .collect(ImmutableSet.toImmutableSet());
+    return getAnnotationProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlAnnotationProperty, context));
   }
 
   @Override
   public ImmutableSet<OWLAnnotationProperty> getChildren(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getDescendantPaths(owlAnnotationProperty, context)
-        .stream()
-        .map(path -> path.getDescendantAt(1))
-        .collect(ImmutableSet.toImmutableSet());
+    return getAnnotationProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlAnnotationProperty, context));
   }
 
   @Override
   public ImmutableSet<List<OWLAnnotationProperty>> getPathsToRoot(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAncestorPaths(owlAnnotationProperty, context)
+    return getPathsToAncestor(owlAnnotationProperty, context)
         .stream()
         .map(AnnotationPropertyAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -101,16 +95,15 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
 
   @Override
   public boolean isLeaf(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getDescendantPaths(owlAnnotationProperty, context).size() == 0;
+    return getChildren(owlAnnotationProperty, context).size() == 0;
   }
 
   @Nonnull
-  private ImmutableSet<OWLAnnotationProperty> getRootProperties(AxiomContext context) {
+  private ImmutableSet<OWLAnnotationProperty> getAnnotationProperties(String queryString, Value inputParams) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var args = Parameters.forContext(context);
-        var result = tx.run(ANNOTATION_PROPERTY_ROOT_QUERY, args);
-        var roots = Lists.<OWLAnnotationProperty>newArrayList();
+        var output = ImmutableSet.<OWLAnnotationProperty>builder();
+        var result = tx.run(queryString, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -118,22 +111,22 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
               var node = (Node) column.getValue();
               var iri = IRI.create(node.get(PropertyFields.IRI).asString());
               var owlAnnotationProp = dataFactory.getOWLAnnotationProperty(iri);
-              roots.add(owlAnnotationProp);
+              output.add(owlAnnotationProp);
             }
           }
         }
-        return ImmutableSet.copyOf(roots);
+        return output.build();
       });
     }
   }
 
   @Nonnull
-  private ImmutableList<AnnotationPropertyAncestorPath> getAncestorPaths(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+  private ImmutableList<AnnotationPropertyAncestorPath> getPathsToAncestor(OWLAnnotationProperty ancestor, AxiomContext context) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var args = Parameters.forEntity(context, owlAnnotationProperty);
-        var result = tx.run(ANNOTATION_PROPERTY_ANCESTOR_QUERY, args);
-        var ancestorPaths = Lists.<AnnotationPropertyAncestorPath>newArrayList();
+        var ancestorPaths = ImmutableList.<AnnotationPropertyAncestorPath>builder();
+        var args = createInputParams(ancestor, context);
+        var result = tx.run(PATHS_TO_ANCESTOR_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
@@ -151,37 +144,13 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
             }
           }
         }
-        return ImmutableList.copyOf(ancestorPaths);
+        return ancestorPaths.build();
       });
     }
   }
 
   @Nonnull
-  private ImmutableList<AnnotationPropertyDescendantPath> getDescendantPaths(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var args = Parameters.forEntity(context, owlAnnotationProperty);
-        var result = tx.run(ANNOTATION_PROPERTY_DESCENDANT_QUERY, args);
-        var descendantPaths = Lists.<AnnotationPropertyDescendantPath>newArrayList();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                var orderedDescendantList = Streams.stream(path.nodes())
-                    .map(node -> node.get(PropertyFields.IRI).asString())
-                    .map(IRI::create)
-                    .map(dataFactory::getOWLAnnotationProperty)
-                    .collect(ImmutableList.toImmutableList());
-                var descendantPath = AnnotationPropertyDescendantPath.get(orderedDescendantList);
-                descendantPaths.add(descendantPath);
-              }
-            }
-          }
-        }
-        return ImmutableList.copyOf(descendantPaths);
-      });
-    }
+  private static Value createInputParams(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
+    return Parameters.forEntity(context, owlAnnotationProperty);
   }
 }
