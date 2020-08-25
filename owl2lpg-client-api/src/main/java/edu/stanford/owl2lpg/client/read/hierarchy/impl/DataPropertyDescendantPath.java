@@ -1,7 +1,8 @@
-package edu.stanford.owl2lpg.client.read.hierarchy;
+package edu.stanford.owl2lpg.client.read.hierarchy.impl;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.client.read.hierarchy.DescendantPath;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 
 import javax.annotation.Nonnull;
@@ -17,4 +18,7 @@ public abstract class DataPropertyDescendantPath extends DescendantPath<OWLDataP
   public static DataPropertyDescendantPath get(@Nonnull ImmutableList<OWLDataProperty> orderedAncestorList) {
     return new AutoValue_DataPropertyDescendantPath(orderedAncestorList);
   }
+
+  @Nonnull
+  public abstract ImmutableList<OWLDataProperty> asOrderedList();
 }

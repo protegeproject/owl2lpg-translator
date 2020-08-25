@@ -2,6 +2,10 @@ package edu.stanford.owl2lpg.client.read.hierarchy;
 
 import dagger.Binds;
 import dagger.Module;
+import edu.stanford.owl2lpg.client.read.hierarchy.impl.AnnotationPropertyHierarchyAccessorImpl;
+import edu.stanford.owl2lpg.client.read.hierarchy.impl.ClassHierarchyAccessorImpl;
+import edu.stanford.owl2lpg.client.read.hierarchy.impl.DataPropertyHierarchyAccessorImpl;
+import edu.stanford.owl2lpg.client.read.hierarchy.impl.ObjectPropertyHierarchyAccessorImpl;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

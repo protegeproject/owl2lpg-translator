@@ -1,9 +1,9 @@
-package edu.stanford.owl2lpg.client.read.hierarchy;
+package edu.stanford.owl2lpg.client.read.hierarchy.impl;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import edu.stanford.owl2lpg.client.read.hierarchy.AncestorPath;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLClass;
 
 import javax.annotation.Nonnull;
 
@@ -14,7 +14,11 @@ import javax.annotation.Nonnull;
 @AutoValue
 public abstract class AnnotationPropertyAncestorPath extends AncestorPath<OWLAnnotationProperty> {
 
+  @Nonnull
   public static AnnotationPropertyAncestorPath get(@Nonnull ImmutableList<OWLAnnotationProperty> orderedAncestorList) {
     return new AutoValue_AnnotationPropertyAncestorPath(orderedAncestorList);
   }
+
+  @Nonnull
+  public abstract ImmutableList<OWLAnnotationProperty> asOrderedList();
 }
