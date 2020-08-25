@@ -18,7 +18,7 @@ public abstract class Neo4jMultiLingualShortFormModule {
 
   @Binds
   public abstract MultiLingualDictionary
-  provideMultiLingualDictionary(MultiLingualDictionaryImpl impl);
+  provideMultiLingualDictionary(Neo4jMultiLingualDictionary impl);
 
   @Binds
   public abstract MultiLingualShortFormIndex

@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class MultiLingualDictionaryImpl implements MultiLingualDictionary {
+public class Neo4jMultiLingualDictionary implements MultiLingualDictionary {
 
   @Nonnull
   private final MultiLingualShortFormIndex multiLingualShortFormIndex;
@@ -32,9 +32,9 @@ public class MultiLingualDictionaryImpl implements MultiLingualDictionary {
   private final SearchableMultiLingualShortFormDictionary searchableMultiLingualShortFormDictionary;
 
   @Inject
-  public MultiLingualDictionaryImpl(@Nonnull MultiLingualShortFormIndex multiLingualShortFormIndex,
-                                    @Nonnull MultiLingualShortFormDictionary multiLingualShortFormDictionary,
-                                    @Nonnull SearchableMultiLingualShortFormDictionary searchableMultiLingualShortFormDictionary) {
+  public Neo4jMultiLingualDictionary(@Nonnull MultiLingualShortFormIndex multiLingualShortFormIndex,
+                                     @Nonnull MultiLingualShortFormDictionary multiLingualShortFormDictionary,
+                                     @Nonnull SearchableMultiLingualShortFormDictionary searchableMultiLingualShortFormDictionary) {
     this.multiLingualShortFormIndex = checkNotNull(multiLingualShortFormIndex);
     this.multiLingualShortFormDictionary = checkNotNull(multiLingualShortFormDictionary);
     this.searchableMultiLingualShortFormDictionary = checkNotNull(searchableMultiLingualShortFormDictionary);
