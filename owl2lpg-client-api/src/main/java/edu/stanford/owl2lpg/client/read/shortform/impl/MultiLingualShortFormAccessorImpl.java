@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.pagination.PageCollector;
 import edu.stanford.bmir.protege.web.server.shortform.EntityShortFormMatches;
@@ -149,7 +150,7 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
                                                                  @Nonnull BranchId branchId) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var dictionary = ImmutableMap.<DictionaryLanguage, OWLEntity>builder();
+        var dictionary = Maps.<DictionaryLanguage, OWLEntity>newHashMap();
         var inputParams = Parameters.forEntityName(entityName, projectId, branchId);
         var result = tx.run(SHORT_FORMS_INDEX_QUERY, inputParams);
         while (result.hasNext()) {
@@ -160,7 +161,7 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
           var dictLanguage = getDictLanguage(dictLangObject);
           dictionary.put(dictLanguage, entity);
         }
-        return dictionary.build();
+        return ImmutableMap.copyOf(dictionary);
       });
     }
   }
@@ -171,7 +172,7 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
                                                                  @Nonnull BranchId branchId) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var dictionary = ImmutableMap.<DictionaryLanguage, String>builder();
+        var dictionary = Maps.<DictionaryLanguage, String>newHashMap();
         var inputParams = Parameters.forEntityIri(owlEntity.getIRI(), projectId, branchId);
         var result = tx.run(SHORT_FORMS_DICTIONARY_QUERY, inputParams);
         while (result.hasNext()) {
@@ -181,7 +182,7 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
           var shortForm = (String) row.get("shortForm");
           dictionary.put(dictLanguage, shortForm);
         }
-        return dictionary.build();
+        return ImmutableMap.copyOf(dictionary);
       });
     }
   }
