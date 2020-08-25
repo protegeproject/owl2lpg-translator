@@ -14,7 +14,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -43,10 +42,10 @@ public class OntologySignatureAccessorImpl implements OntologySignatureAccessor 
 
   @Nonnull
   @Override
-  public Set<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
-                                               @Nonnull ProjectId projectId,
-                                               @Nonnull BranchId branchId,
-                                               @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
+                                                        @Nonnull ProjectId projectId,
+                                                        @Nonnull BranchId branchId,
+                                                        @Nonnull OntologyDocumentId ontoDocId) {
     return getEntities(Parameters.forEntityIri(iri, projectId, branchId, ontoDocId));
   }
 
