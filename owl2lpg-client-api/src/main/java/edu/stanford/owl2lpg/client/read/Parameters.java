@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.ListValue;
@@ -66,6 +67,17 @@ public class Parameters {
         "projectId", new StringValue(context.getProjectId().getIdentifier()),
         "branchId", new StringValue(context.getBranchId().getIdentifier()),
         "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier()),
+        "entityIri", new StringValue(entityIri.toString())));
+  }
+
+  public static Value forEntityIri(@Nonnull IRI entityIri,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontologyDocumentId) {
+    return new MapValue(Map.of(
+        "projectId", new StringValue(projectId.getIdentifier()),
+        "branchId", new StringValue(branchId.getIdentifier()),
+        "ontoDocId", new StringValue(ontologyDocumentId.getIdentifier()),
         "entityIri", new StringValue(entityIri.toString())));
   }
 
