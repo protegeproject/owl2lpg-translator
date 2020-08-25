@@ -45,7 +45,6 @@ public class EntityNodeMapper {
       entity = Optional.of(dataFactory.getOWLDatatype(iri));
     } else if (nodeLabels.contains(NodeLabels.NAMED_INDIVIDUAL.getMainLabel())) {
       entity = Optional.of(dataFactory.getOWLNamedIndividual(iri));
-      entity = Optional.of(dataFactory.getOWLNamedIndividual(iri));
     }
     return entity.orElseThrow(() -> new RuntimeException("Node " + node + " is not an OWL entity"));
   }
