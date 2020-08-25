@@ -11,6 +11,8 @@ import org.semanticweb.owlapi.model.OWLOntologyID;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
@@ -34,10 +36,10 @@ public class Neo4jEntitiesInOntologySignatureIndex implements EntitiesInOntology
                                                @Nonnull BranchId branchId,
                                                @Nonnull OntologyDocumentId ontoDocId,
                                                @Nonnull OntologySignatureAccessor ontologySignatureAccessor) {
-    this.projectId = projectId;
-    this.branchId = branchId;
-    this.ontoDocId = ontoDocId;
-    this.ontologySignatureAccessor = ontologySignatureAccessor;
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
+    this.ontologySignatureAccessor = checkNotNull(ontologySignatureAccessor);
   }
 
   @Override
