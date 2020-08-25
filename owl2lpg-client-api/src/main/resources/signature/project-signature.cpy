@@ -1,0 +1,3 @@
+MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch)-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
+MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(n:Entity)-[:ENTITY_IRI]->(:IRI { iri:$entityIri })
+RETURN DISTINCT n

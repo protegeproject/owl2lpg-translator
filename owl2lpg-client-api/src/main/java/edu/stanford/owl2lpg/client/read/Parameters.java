@@ -81,6 +81,13 @@ public class Parameters {
         "entityIri", new StringValue(entityIri.toString())));
   }
 
+  public static Value forEntityIri(@Nonnull IRI entityIri,
+                                   @Nonnull ProjectId projectId) {
+    return new MapValue(Map.of(
+        "projectId", new StringValue(projectId.getIdentifier()),
+        "entityIri", new StringValue(entityIri.toString())));
+  }
+
   public static Value forEntity(@Nonnull AxiomContext context, @Nonnull OWLEntity entity) {
     return forEntityIri(context, entity.getIRI());
   }
