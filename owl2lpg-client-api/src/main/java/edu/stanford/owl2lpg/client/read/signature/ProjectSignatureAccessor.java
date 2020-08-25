@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.signature;
 
+import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -14,7 +15,11 @@ import java.util.Set;
 public interface ProjectSignatureAccessor {
 
   @Nonnull
-  Set<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri, @Nonnull ProjectId projectId);
+  Set<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
+                                        @Nonnull ProjectId projectId,
+                                        @Nonnull BranchId branchId);
 
-  boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity, @Nonnull ProjectId projectId);
+  boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId);
 }

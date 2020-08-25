@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.EntitiesInProjectSignatureByIriIndex;
 import edu.stanford.owl2lpg.client.read.signature.ProjectSignatureAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -22,18 +23,23 @@ public class Neo4jEntitiesInProjectSignatureByIriIndex implements EntitiesInProj
   private final ProjectId projectId;
 
   @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
   private final ProjectSignatureAccessor projectSignatureAccessor;
 
   @Inject
   public Neo4jEntitiesInProjectSignatureByIriIndex(@Nonnull ProjectId projectId,
+                                                   @Nonnull BranchId branchId,
                                                    @Nonnull ProjectSignatureAccessor projectSignatureAccessor) {
     this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
     this.projectSignatureAccessor = checkNotNull(projectSignatureAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri) {
-    return projectSignatureAccessor.getEntitiesInSignature(iri, projectId).stream();
+    return projectSignatureAccessor.getEntitiesInSignature(iri, projectId, branchId).stream();
   }
 }

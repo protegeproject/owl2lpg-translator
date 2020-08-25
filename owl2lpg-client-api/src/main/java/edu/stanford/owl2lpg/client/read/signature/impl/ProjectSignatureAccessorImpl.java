@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.client.read.signature.impl;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.signature.ProjectSignatureAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
@@ -40,14 +41,18 @@ public class ProjectSignatureAccessorImpl implements ProjectSignatureAccessor {
 
   @Nonnull
   @Override
-  public ImmutableSet<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri, @Nonnull ProjectId projectId) {
-    return getEntities(Parameters.forEntityIri(iri, projectId));
+  public ImmutableSet<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
+                                                        @Nonnull ProjectId projectId,
+                                                        @Nonnull BranchId branchId) {
+    return getEntities(Parameters.forEntityIri(iri, projectId, branchId));
   }
 
   @Nonnull
   @Override
-  public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity, @Nonnull ProjectId projectId) {
-    return getEntitiesInSignature(owlEntity.getIRI(), projectId).contains(owlEntity);
+  public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity,
+                                           @Nonnull ProjectId projectId,
+                                           @Nonnull BranchId branchId) {
+    return getEntitiesInSignature(owlEntity.getIRI(), projectId, branchId).contains(owlEntity);
   }
 
   @Nonnull
