@@ -3,6 +3,8 @@ package edu.stanford.owl2lpg.client.read.axiom;
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.client.read.axiom.handlers.NodeHandlerModule;
+import edu.stanford.owl2lpg.client.read.axiom.impl.NodeHandlerRegistryImpl;
+import edu.stanford.owl2lpg.client.read.axiom.impl.NodeMapperImpl;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

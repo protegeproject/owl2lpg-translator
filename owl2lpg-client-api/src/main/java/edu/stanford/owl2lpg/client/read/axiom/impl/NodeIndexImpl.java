@@ -1,6 +1,7 @@
-package edu.stanford.owl2lpg.client.read.axiom;
+package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.*;
+import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
 

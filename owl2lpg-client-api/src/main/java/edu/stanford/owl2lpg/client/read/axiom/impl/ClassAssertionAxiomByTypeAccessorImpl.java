@@ -1,6 +1,10 @@
-package edu.stanford.owl2lpg.client.read.axiom;
+package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomByTypeAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
+import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLClass;

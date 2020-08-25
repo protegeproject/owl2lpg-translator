@@ -1,6 +1,9 @@
-package edu.stanford.owl2lpg.client.read.axiom;
+package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.axiom.NodeHandlerRegistry;
+import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
+import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import edu.stanford.owl2lpg.client.read.axiom.handlers.NodeHandler;
 import org.neo4j.driver.types.Node;
 
