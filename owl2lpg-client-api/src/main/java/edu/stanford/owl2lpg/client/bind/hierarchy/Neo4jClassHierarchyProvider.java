@@ -1,7 +1,8 @@
-package edu.stanford.owl2lpg.client.read.hierarchy;
+package edu.stanford.owl2lpg.client.bind.hierarchy;
 
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyProvider;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import javax.annotation.Nonnull;
