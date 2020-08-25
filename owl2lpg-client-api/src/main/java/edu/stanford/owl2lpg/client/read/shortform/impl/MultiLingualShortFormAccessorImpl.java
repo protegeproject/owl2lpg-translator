@@ -126,8 +126,10 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
                                                               @Nonnull PageRequest pageRequest,
                                                               @Nonnull ProjectId projectId,
                                                               @Nonnull BranchId branchId) {
-    var entityMatchesByAnnotationAssertion = getEntityShortFormMatches(FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY, searchStrings, projectId, branchId);
-    var entityMatchesByLocalName = getEntityShortFormMatches(FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY, searchStrings, projectId, branchId);
+    var entityMatchesByAnnotationAssertion = getEntityShortFormMatches(
+        FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY, searchStrings, projectId, branchId);
+    var entityMatchesByLocalName = getEntityShortFormMatches(
+        FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY, searchStrings, projectId, branchId);
     return Streams.concat(
         languages
             .stream()
