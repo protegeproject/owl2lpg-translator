@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
 import dagger.Component;
-import edu.stanford.bmir.protege.web.server.shortform.MultiLingualDictionary;
 import edu.stanford.owl2lpg.client.DatabaseModule;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
@@ -12,13 +11,12 @@ import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
  */
 @Component(modules = {
     DatabaseModule.class,
-    MultiLingualDictionaryContextModule.class,
-    Neo4jMultiLingualShortFormModule.class,
     OwlDataFactoryModule.class,
-    JsonMapperModule.class
+    ObjectMapperModule.class,
+    MultiLingualShortFormAccessorModule.class
 })
 @DatabaseSessionScope
-public interface MultiLingualDictionaryComponent {
+public interface MultiLingualShortFormAccessorComponent {
 
-  MultiLingualDictionary getMultiLingualDictionary();
+  MultiLingualShortFormAccessor getMultiLingualShortFormAccessor();
 }

@@ -11,7 +11,7 @@ import edu.stanford.owl2lpg.client.DatabaseSessionScope;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public class JsonMapperModule {
+public class ObjectMapperModule {
 
   @Provides
   @DatabaseSessionScope

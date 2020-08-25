@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.signature.impl;
+package edu.stanford.owl2lpg.client.read.entity;
 
 import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;

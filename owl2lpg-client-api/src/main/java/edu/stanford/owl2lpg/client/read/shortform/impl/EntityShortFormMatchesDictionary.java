@@ -1,7 +1,11 @@
-package edu.stanford.owl2lpg.client.read.shortform;
+package edu.stanford.owl2lpg.client.read.shortform.impl;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import edu.stanford.bmir.protege.web.server.shortform.EntityShortFormMatches;
 import edu.stanford.bmir.protege.web.server.shortform.ShortFormMatch;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
@@ -22,7 +26,7 @@ public abstract class EntityShortFormMatchesDictionary {
     return new AutoValue_EntityShortFormMatchesDictionary(matchesDictionary);
   }
 
-  public abstract Multimap<DictionaryLanguage, EntityShortFormMatches> asMultimap();
+  public abstract ImmutableMultimap<DictionaryLanguage, EntityShortFormMatches> asMultimap();
 
   public Stream<EntityShortFormMatches> get(DictionaryLanguage language) {
     return asMultimap().get(language).stream();
