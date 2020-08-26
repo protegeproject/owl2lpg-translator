@@ -40,8 +40,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
       "axioms/object-property-assertion-axiom-by-individual.cpy";
   private static final String DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE =
       "axioms/data-property-assertion-axiom-by-individual.cpy";
-  private static final String ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-annotation-subject.cpy";
+  private static final String ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY_FILE =
+      "axioms/annotation-assertion-axiom-by-iri.cpy";
 
   private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY =
       read(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
@@ -49,8 +49,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
       read(OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
   private static final String DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY =
       read(DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
-  private static final String ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY =
-      read(ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY_FILE);
+  private static final String ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY =
+      read(ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -109,7 +109,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject,
                                                                             AxiomContext context) {
     if (owlAnnotationSubject.isIRI()) {
-      var nodeIndex = getNodeIndex(ANNOTATION_ASSERTION_AXIOM_BY_ANNOTATION_SUBJECT_QUERY, (IRI) owlAnnotationSubject, context
+      var nodeIndex = getNodeIndex(ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY, (IRI) owlAnnotationSubject, context
       );
       return collectAnnotationAssertionAxiomsFromIndex(nodeIndex);
     } else {
