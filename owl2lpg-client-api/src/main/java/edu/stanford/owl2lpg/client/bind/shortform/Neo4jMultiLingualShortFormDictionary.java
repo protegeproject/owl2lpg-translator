@@ -50,6 +50,7 @@ public class Neo4jMultiLingualShortFormDictionary implements MultiLingualShortFo
   @Override
   public ImmutableMap<DictionaryLanguage, String> getShortForms(@Nonnull OWLEntity owlEntity,
                                                                 @Nonnull List<DictionaryLanguage> languages) {
-    return multiLingualShortFormAccessor.getShortForms(owlEntity, languages, projectId, branchId);
+    var shortForms = multiLingualShortFormAccessor.getShortForms(owlEntity, languages, projectId, branchId);
+    return ImmutableMap.copyOf(shortForms);
   }
 }
