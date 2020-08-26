@@ -14,5 +14,5 @@ public interface ClassAssertionAxiomByTypeAccessor {
 
   @Nonnull
   Set<OWLClassAssertionAxiom>
-  getClassAssertionForType(OWLClass owlClass, AxiomContext axiomContext);
+  getClassAssertionsForType(OWLClass owlClass, AxiomContext axiomContext);
 }

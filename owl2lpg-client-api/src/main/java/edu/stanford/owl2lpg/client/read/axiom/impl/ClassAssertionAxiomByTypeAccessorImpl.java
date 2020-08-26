@@ -46,7 +46,7 @@ public class ClassAssertionAxiomByTypeAccessorImpl implements ClassAssertionAxio
 
   @Nonnull
   @Override
-  public Set<OWLClassAssertionAxiom> getClassAssertionForType(OWLClass owlClass, AxiomContext context) {
+  public Set<OWLClassAssertionAxiom> getClassAssertionsForType(OWLClass owlClass, AxiomContext context) {
     var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY, owlClass, context);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
