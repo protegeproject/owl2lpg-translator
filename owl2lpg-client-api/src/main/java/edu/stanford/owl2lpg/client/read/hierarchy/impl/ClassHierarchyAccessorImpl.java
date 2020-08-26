@@ -5,8 +5,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
@@ -62,38 +64,61 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public ImmutableSet<OWLClass> getRoots(AxiomContext context) {
+  @Nonnull
+  public ImmutableSet<OWLClass> getRoots(@Nonnull ProjectId projectId,
+                                         @Nonnull BranchId branchId,
+                                         @Nonnull OntologyDocumentId ontoDocId) {
     return ImmutableSet.of(root);
   }
 
   @Override
-  public ImmutableSet<OWLClass> getAncestors(OWLClass owlClass, AxiomContext context) {
-    return getClasses(CLASS_ANCESTOR_QUERY, createInputParams(owlClass, context));
+  @Nonnull
+  public ImmutableSet<OWLClass> getAncestors(@Nonnull OWLClass owlClass,
+                                             @Nonnull ProjectId projectId,
+                                             @Nonnull BranchId branchId,
+                                             @Nonnull OntologyDocumentId ontoDocId) {
+    return getClasses(CLASS_ANCESTOR_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLClass> getDescendants(OWLClass owlClass, AxiomContext context) {
-    return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, context));
+  @Nonnull
+  public ImmutableSet<OWLClass> getDescendants(@Nonnull OWLClass owlClass,
+                                               @Nonnull ProjectId projectId,
+                                               @Nonnull BranchId branchId,
+                                               @Nonnull OntologyDocumentId ontoDocId) {
+    return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLClass> getParents(OWLClass owlClass, AxiomContext context) {
-    return getClasses(CLASS_PARENTS_QUERY, createInputParams(owlClass, context));
+  @Nonnull
+  public ImmutableSet<OWLClass> getParents(@Nonnull OWLClass owlClass,
+                                           @Nonnull ProjectId projectId,
+                                           @Nonnull BranchId branchId,
+                                           @Nonnull OntologyDocumentId ontoDocId) {
+    return getClasses(CLASS_PARENTS_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLClass> getChildren(OWLClass owlClass, AxiomContext context) {
+  @Nonnull
+  public ImmutableSet<OWLClass> getChildren(@Nonnull OWLClass owlClass,
+                                            @Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId) {
     var children = ImmutableSet.<OWLClass>builder();
-    children.addAll(getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, context)));
+    children.addAll(getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId)));
     if (root.equals(owlClass)) {
-      children.addAll(getClasses(CLASS_CHILDREN_OF_ROOT_QUERY, createInputParams(context)));
+      children.addAll(getClasses(CLASS_CHILDREN_OF_ROOT_QUERY, createInputParams(projectId, branchId, ontoDocId)));
     }
     return children.build();
   }
 
   @Override
-  public ImmutableSet<List<OWLClass>> getPathsToRoot(OWLClass owlClass, AxiomContext context) {
-    return getPathsToAncestor(owlClass, context)
+  @Nonnull
+  public ImmutableSet<List<OWLClass>> getPathsToRoot(@Nonnull OWLClass owlClass,
+                                                     @Nonnull ProjectId projectId,
+                                                     @Nonnull BranchId branchId,
+                                                     @Nonnull OntologyDocumentId ontoDocId) {
+    return getPathsToAncestor(owlClass, projectId, branchId, ontoDocId)
         .stream()
         .map(ClassAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -101,13 +126,20 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Override
-  public boolean isAncestor(OWLClass parent, OWLClass child, AxiomContext context) {
-    return getAncestors(child, context).contains(parent);
+  public boolean isAncestor(@Nonnull OWLClass parent,
+                            @Nonnull OWLClass child,
+                            @Nonnull ProjectId projectId,
+                            @Nonnull BranchId branchId,
+                            @Nonnull OntologyDocumentId ontoDocId) {
+    return getAncestors(child, projectId, branchId, ontoDocId).contains(parent);
   }
 
   @Override
-  public boolean isLeaf(OWLClass owlClass, AxiomContext context) {
-    return getChildren(owlClass, context).size() == 0;
+  public boolean isLeaf(@Nonnull OWLClass owlClass,
+                        @Nonnull ProjectId projectId,
+                        @Nonnull BranchId branchId,
+                        @Nonnull OntologyDocumentId ontoDocId) {
+    return getChildren(owlClass, projectId, branchId, ontoDocId).size() == 0;
   }
 
   @Nonnull
@@ -133,11 +165,14 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   }
 
   @Nonnull
-  private ImmutableList<ClassAncestorPath> getPathsToAncestor(OWLClass ancestor, AxiomContext context) {
+  private ImmutableList<ClassAncestorPath> getPathsToAncestor(OWLClass ancestor,
+                                                              ProjectId projectId,
+                                                              BranchId branchId,
+                                                              OntologyDocumentId ontoDocId) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
         var ancestorPaths = ImmutableList.<ClassAncestorPath>builder();
-        var args = createInputParams(ancestor, context);
+        var args = createInputParams(ancestor, projectId, branchId, ontoDocId);
         var result = tx.run(PATHS_TO_ANCESTOR_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -163,12 +198,17 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
 
   @Nonnull
-  private static Value createInputParams(OWLClass owlClass, AxiomContext context) {
-    return Parameters.forEntityIri(owlClass.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLClass owlClass,
+                                         ProjectId projectId,
+                                         BranchId branchId,
+                                         OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(owlClass.getIRI(), projectId, branchId, ontoDocId);
   }
 
   @Nonnull
-  private static Value createInputParams(AxiomContext context) {
-    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(ProjectId projectId,
+                                         BranchId branchId,
+                                         OntologyDocumentId ontoDocId) {
+    return Parameters.forContext(projectId, branchId, ontoDocId);
   }
 }

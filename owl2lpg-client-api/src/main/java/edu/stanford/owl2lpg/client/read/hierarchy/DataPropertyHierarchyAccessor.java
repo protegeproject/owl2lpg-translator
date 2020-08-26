@@ -1,8 +1,11 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -11,5 +14,8 @@ import java.util.Collection;
  */
 public interface DataPropertyHierarchyAccessor extends HierarchyAccessor<OWLDataProperty> {
 
-  Collection<OWLDataProperty> getRoots(AxiomContext context);
+  @Nonnull
+  Collection<OWLDataProperty> getRoots(@Nonnull ProjectId projectId,
+                                       @Nonnull BranchId branchId,
+                                       @Nonnull OntologyDocumentId ontoDocId);
 }

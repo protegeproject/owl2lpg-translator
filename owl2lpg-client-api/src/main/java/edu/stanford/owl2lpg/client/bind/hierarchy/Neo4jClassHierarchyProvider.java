@@ -1,8 +1,10 @@
 package edu.stanford.owl2lpg.client.bind.hierarchy;
 
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyProvider;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import javax.annotation.Nonnull;
@@ -19,56 +21,65 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final ClassHierarchyAccessor hierarchyAccessor;
 
   @Inject
-  public Neo4jClassHierarchyProvider(@Nonnull AxiomContext axiomContext,
+  public Neo4jClassHierarchyProvider(@Nonnull ProjectId projectId,
+                                     @Nonnull BranchId branchId,
+                                     @Nonnull OntologyDocumentId ontoDocId,
                                      @Nonnull ClassHierarchyAccessor hierarchyAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
   }
 
-
   @Override
   public Collection<OWLClass> getRoots() {
-    return hierarchyAccessor.getRoots(axiomContext);
+    return hierarchyAccessor.getRoots(projectId, branchId, ontoDocId);
   }
 
   @Override
   public Collection<OWLClass> getChildren(OWLClass owlClass) {
-    return hierarchyAccessor.getChildren(owlClass, axiomContext);
+    return hierarchyAccessor.getChildren(owlClass, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isLeaf(OWLClass owlClass) {
-    return hierarchyAccessor.isLeaf(owlClass, axiomContext);
+    return hierarchyAccessor.isLeaf(owlClass, projectId, branchId, ontoDocId);
   }
 
   @Override
   public Collection<OWLClass> getDescendants(OWLClass owlClass) {
-    return hierarchyAccessor.getDescendants(owlClass, axiomContext);
+    return hierarchyAccessor.getDescendants(owlClass, projectId, branchId, ontoDocId);
   }
 
   @Override
   public Collection<OWLClass> getParents(OWLClass owlClass) {
-    return hierarchyAccessor.getParents(owlClass, axiomContext);
+    return hierarchyAccessor.getParents(owlClass, projectId, branchId, ontoDocId);
   }
 
   @Override
   public Collection<OWLClass> getAncestors(OWLClass owlClass) {
-    return hierarchyAccessor.getAncestors(owlClass, axiomContext);
+    return hierarchyAccessor.getAncestors(owlClass, projectId, branchId, ontoDocId);
   }
 
   @Override
   public Collection<List<OWLClass>> getPathsToRoot(OWLClass owlClass) {
-    return hierarchyAccessor.getPathsToRoot(owlClass, axiomContext);
+    return hierarchyAccessor.getPathsToRoot(owlClass, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isAncestor(OWLClass parent, OWLClass child) {
-    return hierarchyAccessor.isAncestor(parent, child, axiomContext);
+    return hierarchyAccessor.isAncestor(parent, child, projectId, branchId, ontoDocId);
   }
 }

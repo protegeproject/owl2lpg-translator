@@ -5,8 +5,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.hierarchy.DataPropertyHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.hierarchy.DataPropertyHierarchyAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
@@ -62,38 +64,61 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public ImmutableSet<OWLDataProperty> getRoots(AxiomContext context) {
+  @Nonnull
+  public ImmutableSet<OWLDataProperty> getRoots(@Nonnull ProjectId projectId,
+                                                @Nonnull BranchId branchId,
+                                                @Nonnull OntologyDocumentId ontoDocId) {
     return ImmutableSet.of(root);
   }
 
   @Override
-  public ImmutableSet<OWLDataProperty> getAncestors(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return getProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlDataProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLDataProperty> getAncestors(@Nonnull OWLDataProperty owlDataProperty,
+                                                    @Nonnull ProjectId projectId,
+                                                    @Nonnull BranchId branchId,
+                                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return getProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLDataProperty> getDescendants(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return getProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlDataProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLDataProperty> getDescendants(@Nonnull OWLDataProperty owlDataProperty,
+                                                      @Nonnull ProjectId projectId,
+                                                      @Nonnull BranchId branchId,
+                                                      @Nonnull OntologyDocumentId ontoDocId) {
+    return getProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLDataProperty> getParents(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return getProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlDataProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLDataProperty> getParents(@Nonnull OWLDataProperty owlDataProperty,
+                                                  @Nonnull ProjectId projectId,
+                                                  @Nonnull BranchId branchId,
+                                                  @Nonnull OntologyDocumentId ontoDocId) {
+    return getProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLDataProperty> getChildren(OWLDataProperty owlDataProperty, AxiomContext context) {
+  @Nonnull
+  public ImmutableSet<OWLDataProperty> getChildren(@Nonnull OWLDataProperty owlDataProperty,
+                                                   @Nonnull ProjectId projectId,
+                                                   @Nonnull BranchId branchId,
+                                                   @Nonnull OntologyDocumentId ontoDocId) {
     var children = ImmutableSet.<OWLDataProperty>builder();
-    children.addAll(getProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, context)));
+    children.addAll(getProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId)));
     if (root.equals(owlDataProperty)) {
-      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(context)));
+      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(projectId, branchId, ontoDocId)));
     }
     return children.build();
   }
 
   @Override
-  public ImmutableSet<List<OWLDataProperty>> getPathsToRoot(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return getPathsToAncestor(owlDataProperty, context)
+  @Nonnull
+  public ImmutableSet<List<OWLDataProperty>> getPathsToRoot(@Nonnull OWLDataProperty owlDataProperty,
+                                                            @Nonnull ProjectId projectId,
+                                                            @Nonnull BranchId branchId,
+                                                            @Nonnull OntologyDocumentId ontoDocId) {
+    return getPathsToAncestor(owlDataProperty, projectId, branchId, ontoDocId)
         .stream()
         .map(DataPropertyAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -101,13 +126,20 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Override
-  public boolean isAncestor(OWLDataProperty parent, OWLDataProperty child, AxiomContext context) {
-    return getAncestors(child, context).contains(parent);
+  public boolean isAncestor(@Nonnull OWLDataProperty parent,
+                            @Nonnull OWLDataProperty child,
+                            @Nonnull ProjectId projectId,
+                            @Nonnull BranchId branchId,
+                            @Nonnull OntologyDocumentId ontoDocId) {
+    return getAncestors(child, projectId, branchId, ontoDocId).contains(parent);
   }
 
   @Override
-  public boolean isLeaf(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return getChildren(owlDataProperty, context).size() == 0;
+  public boolean isLeaf(@Nonnull OWLDataProperty owlDataProperty,
+                        @Nonnull ProjectId projectId,
+                        @Nonnull BranchId branchId,
+                        @Nonnull OntologyDocumentId ontoDocId) {
+    return getChildren(owlDataProperty, projectId, branchId, ontoDocId).size() == 0;
   }
 
   @Nonnull
@@ -133,11 +165,14 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Nonnull
-  private ImmutableList<DataPropertyAncestorPath> getPathsToAncestor(OWLDataProperty ancestor, AxiomContext context) {
+  private ImmutableList<DataPropertyAncestorPath> getPathsToAncestor(OWLDataProperty ancestor,
+                                                                     ProjectId projectId,
+                                                                     BranchId branchId,
+                                                                     OntologyDocumentId ontoDocId) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
         var ancestorPaths = ImmutableList.<DataPropertyAncestorPath>builder();
-        var args = createInputParams(ancestor, context);
+        var args = createInputParams(ancestor, projectId, branchId, ontoDocId);
         var result = tx.run(PATHS_TO_ANCESTOR_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -162,12 +197,17 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   }
 
   @Nonnull
-  private static Value createInputParams(OWLDataProperty owlDataProperty, AxiomContext context) {
-    return Parameters.forEntityIri(owlDataProperty.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLDataProperty owlDataProperty,
+                                         ProjectId projectId,
+                                         BranchId branchId,
+                                         OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(owlDataProperty.getIRI(), projectId, branchId, ontoDocId);
   }
 
   @Nonnull
-  private static Value createInputParams(AxiomContext context) {
-    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(ProjectId projectId,
+                                         BranchId branchId,
+                                         OntologyDocumentId ontoDocId) {
+    return Parameters.forContext(projectId, branchId, ontoDocId);
   }
 }

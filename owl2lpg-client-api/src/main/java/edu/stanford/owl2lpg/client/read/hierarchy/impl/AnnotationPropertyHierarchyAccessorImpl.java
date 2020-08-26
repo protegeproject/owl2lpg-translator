@@ -4,8 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.hierarchy.AnnotationPropertyHierarchyAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
@@ -56,33 +58,56 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public ImmutableSet<OWLAnnotationProperty> getRoots(AxiomContext context) {
-    return getAnnotationProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(context));
+  @Nonnull
+  public ImmutableSet<OWLAnnotationProperty> getRoots(@Nonnull ProjectId projectId,
+                                                      @Nonnull BranchId branchId,
+                                                      @Nonnull OntologyDocumentId ontoDocId) {
+    return getAnnotationProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLAnnotationProperty> getAncestors(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAnnotationProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlAnnotationProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLAnnotationProperty> getAncestors(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                                          @Nonnull ProjectId projectId,
+                                                          @Nonnull BranchId branchId,
+                                                          @Nonnull OntologyDocumentId ontoDocId) {
+    return getAnnotationProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlAnnotationProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLAnnotationProperty> getDescendants(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAnnotationProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlAnnotationProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLAnnotationProperty> getDescendants(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                                            @Nonnull ProjectId projectId,
+                                                            @Nonnull BranchId branchId,
+                                                            @Nonnull OntologyDocumentId ontoDocId) {
+    return getAnnotationProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlAnnotationProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLAnnotationProperty> getParents(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAnnotationProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlAnnotationProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLAnnotationProperty> getParents(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                                        @Nonnull ProjectId projectId,
+                                                        @Nonnull BranchId branchId,
+                                                        @Nonnull OntologyDocumentId ontoDocId) {
+    return getAnnotationProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlAnnotationProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<OWLAnnotationProperty> getChildren(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getAnnotationProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlAnnotationProperty, context));
+  @Nonnull
+  public ImmutableSet<OWLAnnotationProperty> getChildren(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                                         @Nonnull ProjectId projectId,
+                                                         @Nonnull BranchId branchId,
+                                                         @Nonnull OntologyDocumentId ontoDocId) {
+    return getAnnotationProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlAnnotationProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
-  public ImmutableSet<List<OWLAnnotationProperty>> getPathsToRoot(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getPathsToAncestor(owlAnnotationProperty, context)
+  @Nonnull
+  public ImmutableSet<List<OWLAnnotationProperty>> getPathsToRoot(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                                                  @Nonnull ProjectId projectId,
+                                                                  @Nonnull BranchId branchId,
+                                                                  @Nonnull OntologyDocumentId ontoDocId) {
+    return getPathsToAncestor(owlAnnotationProperty, projectId, branchId, ontoDocId)
         .stream()
         .map(AnnotationPropertyAncestorPath::asOrderedList)
         .map(ImmutableList::reverse)
@@ -90,13 +115,20 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Override
-  public boolean isAncestor(OWLAnnotationProperty parent, OWLAnnotationProperty child, AxiomContext context) {
-    return getAncestors(child, context).contains(parent);
+  public boolean isAncestor(@Nonnull OWLAnnotationProperty parent,
+                            @Nonnull OWLAnnotationProperty child,
+                            @Nonnull ProjectId projectId,
+                            @Nonnull BranchId branchId,
+                            @Nonnull OntologyDocumentId ontoDocId) {
+    return getAncestors(child, projectId, branchId, ontoDocId).contains(parent);
   }
 
   @Override
-  public boolean isLeaf(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return getChildren(owlAnnotationProperty, context).size() == 0;
+  public boolean isLeaf(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                        @Nonnull ProjectId projectId,
+                        @Nonnull BranchId branchId,
+                        @Nonnull OntologyDocumentId ontoDocId) {
+    return getChildren(owlAnnotationProperty, projectId, branchId, ontoDocId).size() == 0;
   }
 
   @Nonnull
@@ -122,11 +154,14 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Nonnull
-  private ImmutableList<AnnotationPropertyAncestorPath> getPathsToAncestor(OWLAnnotationProperty ancestor, AxiomContext context) {
+  private ImmutableList<AnnotationPropertyAncestorPath> getPathsToAncestor(OWLAnnotationProperty ancestor,
+                                                                           ProjectId projectId,
+                                                                           BranchId branchId,
+                                                                           OntologyDocumentId ontoDocId) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
         var ancestorPaths = ImmutableList.<AnnotationPropertyAncestorPath>builder();
-        var args = createInputParams(ancestor, context);
+        var args = createInputParams(ancestor, projectId, branchId, ontoDocId);
         var result = tx.run(PATHS_TO_ANCESTOR_QUERY, args);
         while (result.hasNext()) {
           var row = result.next().asMap();
@@ -151,12 +186,17 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   }
 
   @Nonnull
-  private static Value createInputParams(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    return Parameters.forEntityIri(owlAnnotationProperty.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLAnnotationProperty owlAnnotationProperty,
+                                         ProjectId projectId,
+                                         BranchId branchId,
+                                         OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(owlAnnotationProperty.getIRI(), projectId, branchId, ontoDocId);
   }
 
   @Nonnull
-  private static Value createInputParams(AxiomContext context) {
-    return Parameters.forContext(context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(ProjectId projectId,
+                                         BranchId branchId,
+                                         OntologyDocumentId ontoDocId) {
+    return Parameters.forContext(projectId, branchId, ontoDocId);
   }
 }

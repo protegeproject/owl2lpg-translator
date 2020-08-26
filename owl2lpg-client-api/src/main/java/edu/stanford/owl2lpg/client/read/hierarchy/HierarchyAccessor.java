@@ -1,8 +1,11 @@
 package edu.stanford.owl2lpg.client.read.hierarchy;
 
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLEntity;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,17 +15,44 @@ import java.util.List;
  */
 public interface HierarchyAccessor<E extends OWLEntity> {
 
-  Collection<E> getAncestors(E entity, AxiomContext context);
+  @Nonnull
+  Collection<E> getAncestors(@Nonnull E entity,
+                             @Nonnull ProjectId projectId,
+                             @Nonnull BranchId branchId,
+                             @Nonnull OntologyDocumentId ontoDocId);
 
-  Collection<E> getDescendants(E entity, AxiomContext context);
+  @Nonnull
+  Collection<E> getDescendants(@Nonnull E entity,
+                               @Nonnull ProjectId projectId,
+                               @Nonnull BranchId branchId,
+                               @Nonnull OntologyDocumentId ontoDocId);
 
-  Collection<E> getParents(E entity, AxiomContext context);
+  @Nonnull
+  Collection<E> getParents(@Nonnull E entity,
+                           @Nonnull ProjectId projectId,
+                           @Nonnull BranchId branchId,
+                           @Nonnull OntologyDocumentId ontoDocId);
 
-  Collection<E> getChildren(E entity, AxiomContext context);
+  @Nonnull
+  Collection<E> getChildren(@Nonnull E entity,
+                            @Nonnull ProjectId projectId,
+                            @Nonnull BranchId branchId,
+                            @Nonnull OntologyDocumentId ontoDocId);
 
-  Collection<List<E>> getPathsToRoot(E entity, AxiomContext context);
+  @Nonnull
+  Collection<List<E>> getPathsToRoot(@Nonnull E entity,
+                                     @Nonnull ProjectId projectId,
+                                     @Nonnull BranchId branchId,
+                                     @Nonnull OntologyDocumentId ontoDocId);
 
-  boolean isAncestor(E parent, E child, AxiomContext context);
+  boolean isAncestor(@Nonnull E parent,
+                     @Nonnull E child,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId);
 
-  boolean isLeaf(E entity, AxiomContext context);
+  boolean isLeaf(@Nonnull E entity,
+                 @Nonnull ProjectId projectId,
+                 @Nonnull BranchId branchId,
+                 @Nonnull OntologyDocumentId ontoDocId);
 }
