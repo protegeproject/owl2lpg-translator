@@ -85,8 +85,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLClassAssertionAxiom> getClassAssertionForSubject(OWLIndividual owlIndividual,
-                                                                 AxiomContext context) {
+  public Set<OWLClassAssertionAxiom> getClassAssertionsForSubject(OWLIndividual owlIndividual,
+                                                                  AxiomContext context) {
     var nodeIndex = (owlIndividual.isNamed()) ?
         getNodeIndex(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY,
             createInputParams(owlIndividual.asOWLNamedIndividual().getIRI(), context)) :

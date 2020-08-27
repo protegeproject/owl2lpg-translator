@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public interface AxiomBySubjectAccessor {
 
-  Set<OWLAxiom> getAxiomForSubject(OWLClass subject, AxiomContext context);
+  Set<OWLAxiom> getAxiomsForSubject(OWLClass subject, AxiomContext context);
 
-  Set<OWLAxiom> getAxiomForSubject(OWLNamedIndividual subject, AxiomContext context);
+  Set<OWLAxiom> getAxiomsForSubject(OWLNamedIndividual subject, AxiomContext context);
 }

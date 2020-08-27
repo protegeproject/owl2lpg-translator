@@ -21,7 +21,7 @@ public interface AssertionAxiomBySubjectAccessor {
 
   @Nonnull
   Set<OWLClassAssertionAxiom>
-  getClassAssertionForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext);
+  getClassAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext);
 
   @Nonnull
   Set<OWLObjectPropertyAssertionAxiom>

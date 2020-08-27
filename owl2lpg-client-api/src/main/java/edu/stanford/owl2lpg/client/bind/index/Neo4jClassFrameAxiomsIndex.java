@@ -36,7 +36,7 @@ public class Neo4jClassFrameAxiomsIndex implements ClassFrameAxiomsIndex {
 
   @Override
   public Set<OWLAxiom> getFrameAxioms(OWLClass owlClass, AnnotationsTreatment annotationsTreatment) {
-    return axiomBySubjectAccessor.getAxiomForSubject(owlClass, axiomContext)
+    return axiomBySubjectAccessor.getAxiomsForSubject(owlClass, axiomContext)
         .stream()
         .filter(axiom -> {
           var accepted = true;

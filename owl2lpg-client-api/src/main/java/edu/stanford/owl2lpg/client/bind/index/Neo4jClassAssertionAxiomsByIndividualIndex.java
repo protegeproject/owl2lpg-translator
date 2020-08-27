@@ -35,6 +35,6 @@ public class Neo4jClassAssertionAxiomsByIndividualIndex implements ClassAssertio
   @Override
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLIndividual owlIndividual,
                                                                 @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomBySubjectAccessor.getClassAssertionForSubject(owlIndividual, axiomContext).stream();
+    return assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(owlIndividual, axiomContext).stream();
   }
 }

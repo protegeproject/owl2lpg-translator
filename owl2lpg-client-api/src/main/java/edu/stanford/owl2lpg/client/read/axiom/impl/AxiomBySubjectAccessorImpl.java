@@ -48,16 +48,16 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   }
 
   @Override
-  public Set<OWLAxiom> getAxiomForSubject(OWLClass subject, AxiomContext context) {
-    return getAxiomForSubject(CLASS_AXIOM_SUBJECT_QUERY, subject, context);
+  public Set<OWLAxiom> getAxiomsForSubject(OWLClass subject, AxiomContext context) {
+    return getAxiomsForSubject(CLASS_AXIOM_SUBJECT_QUERY, subject, context);
   }
 
   @Override
-  public Set<OWLAxiom> getAxiomForSubject(OWLNamedIndividual subject, AxiomContext context) {
-    return getAxiomForSubject(NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY, subject, context);
+  public Set<OWLAxiom> getAxiomsForSubject(OWLNamedIndividual subject, AxiomContext context) {
+    return getAxiomsForSubject(NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY, subject, context);
   }
 
-  private Set<OWLAxiom> getAxiomForSubject(String queryString, OWLEntity subject, AxiomContext context) {
+  private Set<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject, AxiomContext context) {
     var nodeIndex = getNodeIndex(queryString, subject, context);
     return collectAxiomsFromIndex(nodeIndex);
   }
