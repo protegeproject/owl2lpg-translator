@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
-import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomByTypeAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import org.neo4j.driver.Driver;
@@ -25,7 +25,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class ClassAssertionAxiomByTypeAccessorImpl implements ClassAssertionAxiomByTypeAccessor {
+public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
   private static final String CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY_FILE = "axioms/class-assertion-axiom-by-type.cpy";
 
@@ -38,15 +38,15 @@ public class ClassAssertionAxiomByTypeAccessorImpl implements ClassAssertionAxio
   private final NodeMapper nodeMapper;
 
   @Inject
-  public ClassAssertionAxiomByTypeAccessorImpl(@Nonnull Driver driver,
-                                               @Nonnull NodeMapper nodeMapper) {
+  public ClassAssertionAxiomAccessorImpl(@Nonnull Driver driver,
+                                         @Nonnull NodeMapper nodeMapper) {
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
   @Nonnull
   @Override
-  public Set<OWLClassAssertionAxiom> getClassAssertionsForType(OWLClass owlClass, AxiomContext context) {
+  public Set<OWLClassAssertionAxiom> getClassAssertions(OWLClass owlClass, AxiomContext context) {
     var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY, owlClass, context);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }

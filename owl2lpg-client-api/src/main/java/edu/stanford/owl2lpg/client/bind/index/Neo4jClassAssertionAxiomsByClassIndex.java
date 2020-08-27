@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ClassAssertionAxiomsByClassIndex;
-import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomByTypeAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -23,11 +23,11 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   private final AxiomContext axiomContext;
 
   @Nonnull
-  private final ClassAssertionAxiomByTypeAccessor assertionAxiomByTypeAccessor;
+  private final ClassAssertionAxiomAccessor assertionAxiomByTypeAccessor;
 
   @Inject
   public Neo4jClassAssertionAxiomsByClassIndex(@Nonnull AxiomContext axiomContext,
-                                               @Nonnull ClassAssertionAxiomByTypeAccessor assertionAxiomByTypeAccessor) {
+                                               @Nonnull ClassAssertionAxiomAccessor assertionAxiomByTypeAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
     this.assertionAxiomByTypeAccessor = checkNotNull(assertionAxiomByTypeAccessor);
   }
@@ -36,6 +36,6 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   @Override
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLClass owlClass,
                                                                 @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomByTypeAccessor.getClassAssertionsForType(owlClass, axiomContext).stream();
+    return assertionAxiomByTypeAccessor.getClassAssertions(owlClass, axiomContext).stream();
   }
 }
