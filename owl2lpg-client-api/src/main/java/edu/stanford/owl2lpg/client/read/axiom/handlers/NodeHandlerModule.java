@@ -193,6 +193,10 @@ public abstract class NodeHandlerModule {
 
   @Binds
   @IntoSet
+  public abstract NodeHandler<?> provideOwlAnonymousIndividualNodeHandler(OwlAnonymousIndividualNodeHandler handler);
+
+  @Binds
+  @IntoSet
   public abstract NodeHandler<?> provideOwlNegativeDataPropertyAssertionNodeHandler(OwlNegativeDataPropertyAssertionNodeHandler handler);
 
   @Binds

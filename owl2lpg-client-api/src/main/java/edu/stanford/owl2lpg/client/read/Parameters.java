@@ -8,6 +8,7 @@ import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.NodeID;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -26,6 +27,7 @@ public class Parameters {
   private static final String ONTO_DOC_ID = "ontoDocId";
   private static final String ENTITY_IRI = "entityIri";
   private static final String ENTITY_NAME = "entityName";
+  private static final String NODE_ID = "nodeId";
   private static final String SEARCH_STRING = "searchString";
 
   public static Value forContext(@Nonnull ProjectId projectId,
@@ -75,6 +77,17 @@ public class Parameters {
         PROJECT_ID, new StringValue(projectId.getIdentifier()),
         BRANCH_ID, new StringValue(branchId.getIdentifier()),
         ENTITY_NAME, new StringValue(entityName)));
+  }
+
+  public static Value forNodeId(@Nonnull NodeID nodeId,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        NODE_ID, new StringValue(nodeId.getID())));
   }
 
   public static Value forSearchStrings(@Nonnull List<SearchString> searchStrings,
