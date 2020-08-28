@@ -23,19 +23,19 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   private final AxiomContext axiomContext;
 
   @Nonnull
-  private final ClassAssertionAxiomAccessor assertionAxiomByTypeAccessor;
+  private final ClassAssertionAxiomAccessor assertionAxiomAccessor;
 
   @Inject
   public Neo4jClassAssertionAxiomsByClassIndex(@Nonnull AxiomContext axiomContext,
-                                               @Nonnull ClassAssertionAxiomAccessor assertionAxiomByTypeAccessor) {
+                                               @Nonnull ClassAssertionAxiomAccessor assertionAxiomAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
-    this.assertionAxiomByTypeAccessor = checkNotNull(assertionAxiomByTypeAccessor);
+    this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLClass owlClass,
                                                                 @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomByTypeAccessor.getClassAssertions(owlClass, axiomContext).stream();
+    return assertionAxiomAccessor.getClassAssertions(owlClass, axiomContext).stream();
   }
 }
