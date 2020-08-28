@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.read.axiom;
 
 import com.google.common.collect.ImmutableSet;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -34,6 +35,10 @@ public interface AssertionAxiomBySubjectAccessor {
   @Nonnull
   Set<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject, AxiomContext axiomContext);
+
+  @Nonnull
+  Set<OWLAnnotationAssertionAxiom>
+  getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject, OWLAnnotationProperty property, AxiomContext axiomContext);
 
   @Nonnull
   default Set<OWLAxiom> getPropertyAssertionsForSubject(OWLIndividual owlIndividual, AxiomContext axiomContext) {

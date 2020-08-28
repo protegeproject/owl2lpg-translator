@@ -12,6 +12,7 @@ import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -129,6 +130,17 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
         getNodeIndex(ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY,
             createInputParams(((OWLAnonymousIndividual) owlAnnotationSubject).getID(), context));
     return collectAnnotationAssertionAxiomsFromIndex(nodeIndex);
+  }
+
+  @Nonnull
+  @Override
+  public Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject,
+                                                                            OWLAnnotationProperty owlAnnotationProperty,
+                                                                            AxiomContext context) {
+    return getAnnotationAssertionsForSubject(owlAnnotationSubject, context)
+        .stream()
+        .filter(ax -> ax.getProperty().equals(owlAnnotationProperty))
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   private NodeIndex getNodeIndex(String queryString, Value inputParams) {
