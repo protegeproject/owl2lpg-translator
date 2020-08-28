@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
@@ -15,6 +16,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,9 +32,11 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   private static final String CLASS_AXIOM_SUBJECT_QUERY_FILE = "axioms/class-axiom-subject.cpy";
   private static final String NAMED_INDIVIDUAL_AXIOM_SUBJECT_QUERY_FILE = "axioms/named-individual-axiom-subject.cpy";
+  private static final String ANY_AXIOM_BY_SUBJECT_QUERY_FILE = "axioms/axiom-by-subject.cpy";
 
   private static final String CLASS_AXIOM_SUBJECT_QUERY = read(CLASS_AXIOM_SUBJECT_QUERY_FILE);
   private static final String NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY = read(NAMED_INDIVIDUAL_AXIOM_SUBJECT_QUERY_FILE);
+  private static final String ANY_AXIOM_BY_SUBJECT_QUERY = read(ANY_AXIOM_BY_SUBJECT_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -55,6 +59,18 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   @Override
   public Set<OWLAxiom> getAxiomsForSubject(OWLNamedIndividual subject, AxiomContext context) {
     return getAxiomsForSubject(NAMED_INDIVIDUAL_AXIOM_SUBEJCT_QUERY, subject, context);
+  }
+
+  @Override
+  public Set<OWLAxiom> getAxiomsForSubject(OWLEntity subject, AxiomContext context) {
+    return getAxiomsForSubject(ANY_AXIOM_BY_SUBJECT_QUERY, subject, context);
+  }
+
+  @Override
+  public Set<OWLAxiom> getAxiomsForSubjects(Collection<OWLEntity> entities, AxiomContext context) {
+    return entities.stream()
+        .flatMap(entity -> getAxiomsForSubject(entity, context).stream())
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   private Set<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject, AxiomContext context) {
