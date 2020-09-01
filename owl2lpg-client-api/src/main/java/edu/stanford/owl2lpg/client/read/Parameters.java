@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
 
@@ -29,6 +30,7 @@ public class Parameters {
   private static final String ENTITY_NAME = "entityName";
   private static final String NODE_ID = "nodeId";
   private static final String SEARCH_STRING = "searchString";
+  private static final String AXIOM_TYPE = "axiomType";
 
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId,
@@ -88,6 +90,17 @@ public class Parameters {
         BRANCH_ID, new StringValue(branchId.getIdentifier()),
         ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
         NODE_ID, new StringValue(nodeId.getID())));
+  }
+
+  public static Value forAxiomType(@Nonnull AxiomType axiomType,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        AXIOM_TYPE, new StringValue(axiomType.getName())));
   }
 
   public static Value forSearchStrings(@Nonnull List<SearchString> searchStrings,
