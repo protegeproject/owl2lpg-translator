@@ -11,6 +11,6 @@ CALL {
     RETURN DISTINCT { type: "LocalName" } as dictionaryLanguage, entity.localName AS shortForm, entity
     UNION
     MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {oboId:$entityName})
-    RETURN DISTINCT { type: "OboId" } as dictionaryLanguage, entity.obiId AS shortForm, entity
+    RETURN DISTINCT { type: "OboId" } as dictionaryLanguage, entity.oboId AS shortForm, entity
 }
 return dictionaryLanguage, shortForm, entity
