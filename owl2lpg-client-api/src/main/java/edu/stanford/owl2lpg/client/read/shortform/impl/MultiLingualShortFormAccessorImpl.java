@@ -46,6 +46,8 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
       "shortforms/full-text-search-by-annotation-assertion.cpy";
   private static final String FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY_FILE =
       "shortforms/full-text-search-by-local-name.cpy";
+  private static final String FULL_TEXT_SEARCH_BY_OBO_ID_QUERY_FILE =
+      "shortforms/full-text-search-by-obo-id.cpy";
 
   private static final String SHORT_FORMS_DICTIONARY_QUERY = read(SHORT_FORMS_DICTIONARY_QUERY_FILE);
   private static final String SHORT_FORMS_INDEX_QUERY = read(SHORT_FORMS_INDEX_QUERY_FILE);
@@ -53,6 +55,8 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
       read(FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY_FILE);
   private static final String FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY =
       read(FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY_FILE);
+  private static final String FULL_TEXT_SEARCH_BY_OBO_ID_QUERY =
+      read(FULL_TEXT_SEARCH_BY_OBO_ID_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -130,6 +134,8 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
         FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY, searchStrings, projectId, branchId);
     var entityMatchesByLocalName = getEntityShortFormMatches(
         FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY, searchStrings, projectId, branchId);
+    var entityMatchesByOboId = getEntityShortFormMatches(
+        FULL_TEXT_SEARCH_BY_OBO_ID_QUERY, searchStrings, projectId, branchId);
     return Streams.concat(
         languages
             .stream()
@@ -138,6 +144,10 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
         languages
             .stream()
             .flatMap(entityMatchesByLocalName::get)
+            .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType())),
+        languages
+            .stream()
+            .flatMap(entityMatchesByOboId::get)
             .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType())))
         .distinct()
         .collect(PageCollector.toPage(
