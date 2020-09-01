@@ -92,7 +92,8 @@ public class Neo4jCsvWriter {
         EdgeLabel.RESTRICTION_VALUE,
         EdgeLabel.RESTRICTION,
         EdgeLabel.INDIVIDUAL,
-        EdgeLabel.LITERAL).anyMatch(edgeLabel::isa);
+        EdgeLabel.LITERAL,
+        EdgeLabel.NEXT).anyMatch(edgeLabel::isa);
   }
 
   private void writeNode(Node node, boolean potentialDuplicate) {
