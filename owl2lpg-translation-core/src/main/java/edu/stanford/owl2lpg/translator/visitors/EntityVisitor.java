@@ -132,7 +132,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     return nodeFactory.createNode(entity, nodeLabels,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, getIriString(entity.getIRI()),
-            PropertyFields.IRI_SUFFIX, getLocalName(entity.getIRI()),
+            PropertyFields.LOCAL_NAME, getLocalName(entity.getIRI()),
             PropertyFields.OBO_ID, getOboId(entity.getIRI()))));
   }
 
