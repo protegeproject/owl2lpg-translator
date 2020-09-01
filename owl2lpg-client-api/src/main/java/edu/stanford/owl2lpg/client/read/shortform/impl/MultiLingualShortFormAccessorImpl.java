@@ -46,6 +46,8 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
       "shortforms/full-text-search-by-annotation-assertion.cpy";
   private static final String FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY_FILE =
       "shortforms/full-text-search-by-local-name.cpy";
+  private static final String FULL_TEXT_SEARCH_BY_PREFIXED_NAME_QUERY_FILE =
+      "shortforms/full-text-search-by-prefixed-name.cpy";
   private static final String FULL_TEXT_SEARCH_BY_OBO_ID_QUERY_FILE =
       "shortforms/full-text-search-by-obo-id.cpy";
 
@@ -55,6 +57,8 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
       read(FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY_FILE);
   private static final String FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY =
       read(FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY_FILE);
+  private static final String FULL_TEXT_SEARCH_BY_PREFIXED_NAME_QUERY =
+      read(FULL_TEXT_SEARCH_BY_PREFIXED_NAME_QUERY_FILE);
   private static final String FULL_TEXT_SEARCH_BY_OBO_ID_QUERY =
       read(FULL_TEXT_SEARCH_BY_OBO_ID_QUERY_FILE);
 
@@ -134,21 +138,18 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
         FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY, searchStrings, projectId, branchId);
     var entityMatchesByLocalName = getEntityShortFormMatches(
         FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY, searchStrings, projectId, branchId);
+    var entityMatchesByPrefixedName = getEntityShortFormMatches(
+        FULL_TEXT_SEARCH_BY_PREFIXED_NAME_QUERY, searchStrings, projectId, branchId);
     var entityMatchesByOboId = getEntityShortFormMatches(
         FULL_TEXT_SEARCH_BY_OBO_ID_QUERY, searchStrings, projectId, branchId);
-    return Streams.concat(
-        languages
-            .stream()
-            .flatMap(entityMatchesByAnnotationAssertion::get)
-            .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType())),
-        languages
-            .stream()
-            .flatMap(entityMatchesByLocalName::get)
-            .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType())),
-        languages
-            .stream()
-            .flatMap(entityMatchesByOboId::get)
-            .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType())))
+    return languages
+        .stream()
+        .flatMap(lang -> Streams.concat(
+            entityMatchesByAnnotationAssertion.get(lang),
+            entityMatchesByLocalName.get(lang),
+            entityMatchesByPrefixedName.get(lang),
+            entityMatchesByOboId.get(lang)))
+        .filter(shortForm -> entityTypes.contains(shortForm.getEntity().getEntityType()))
         .distinct()
         .collect(PageCollector.toPage(
             pageRequest.getPageNumber(),

@@ -10,6 +10,9 @@ CALL {
     MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {localName:$entityName})
     RETURN DISTINCT { type: "LocalName" } as dictionaryLanguage, entity.localName AS shortForm, entity
     UNION
+    MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {prefixedName:$entityName})
+    RETURN DISTINCT { type: "PrefixedName" } as dictionaryLanguage, entity.prefixedName AS shortForm, entity
+    UNION
     MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {oboId:$entityName})
     RETURN DISTINCT { type: "OboId" } as dictionaryLanguage, entity.oboId AS shortForm, entity
 }
