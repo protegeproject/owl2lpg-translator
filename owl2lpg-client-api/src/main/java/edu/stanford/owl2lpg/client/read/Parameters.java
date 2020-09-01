@@ -31,6 +31,7 @@ public class Parameters {
   private static final String NODE_ID = "nodeId";
   private static final String SEARCH_STRING = "searchString";
   private static final String AXIOM_TYPE = "axiomType";
+  private static final String CHARACTERISTIC_TYPE = "characteristicType";
 
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId,
@@ -101,6 +102,20 @@ public class Parameters {
         BRANCH_ID, new StringValue(branchId.getIdentifier()),
         ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
         AXIOM_TYPE, new StringValue(axiomType.getName())));
+  }
+
+  public static Value forPropertyWithCharacteristicType(@Nonnull IRI propertyIri,
+                                                        @Nonnull String characteristicType,
+                                                        @Nonnull ProjectId projectId,
+                                                        @Nonnull BranchId branchId,
+                                                        @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        ENTITY_IRI, new StringValue(propertyIri.toString()),
+        CHARACTERISTIC_TYPE, new StringValue(characteristicType)));
+
   }
 
   public static Value forSearchStrings(@Nonnull List<SearchString> searchStrings,
