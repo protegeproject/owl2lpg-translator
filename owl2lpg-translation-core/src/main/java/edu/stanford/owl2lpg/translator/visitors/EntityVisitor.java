@@ -27,6 +27,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.net.URLDecoder;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_PROPERTY;
@@ -131,7 +132,8 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     return nodeFactory.createNode(entity, nodeLabels,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, getIriString(entity.getIRI()),
-            PropertyFields.IRI_SUFFIX, getLocalName(entity.getIRI()))));
+            PropertyFields.IRI_SUFFIX, getLocalName(entity.getIRI()),
+            PropertyFields.OBO_ID, getOboId(entity.getIRI()))));
   }
 
   private void translateEntityIri(IRI entityIri, Node entityNode,
@@ -153,6 +155,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     entitySignatureOfEdge.ifPresent(edges::add);
   }
 
+  @Nonnull
   private static String getLocalName(@Nonnull IRI iri) {
     String iriString = getIriString(iri);
     int hashIndex = iriString.lastIndexOf("#");
@@ -164,6 +167,14 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
       return decode(iriString.substring(slashIndex + 1));
     }
     return "";
+  }
+
+  @Nonnull
+  private static String getOboId(@Nonnull IRI iri) {
+    var oboIdPattern = Pattern.compile("/([A-Z|a-z]+(_[A-Z|a-z]+)?)_([0-9]+)$");
+    var iriString = getIriString(iri);
+    var matcher = oboIdPattern.matcher(iriString);
+    return (matcher.find()) ? matcher.group(1) + ":" + matcher.group(3) : "";
   }
 
   private static String getIriString(IRI iri) {
