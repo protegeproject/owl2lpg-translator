@@ -622,39 +622,39 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SUB_OBJECT_PROPERTY_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var firstChainNode = addPropertyChainTranslationAndEdge(axiom.getPropertyChain(),
+    var subObjectPropertyNode = addSubObjectPropertyChainTranslationAndEdge(axiom.getPropertyChain(),
         axiomNode, translations, edges);
     addSuperObjectPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
         axiomNode, translations, edges);
     addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
         axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, firstChainNode, edges);
+    addAxiomSubjectAugmentedEdge(axiomNode, subObjectPropertyNode, edges);
     addAxiomOfAugmentedEdge(axiomNode, createOntologyDocumentNode(), edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
-  private Node addPropertyChainTranslationAndEdge(@Nonnull List<OWLObjectPropertyExpression> propertyChain,
-                                                  @Nonnull Node axiomNode,
-                                                  @Nonnull Builder<Translation> translations,
-                                                  @Nonnull Builder<Edge> edges) {
-    var firstChainNode = addSubObjectPropertyExprTranslationAndStructuralEdge(propertyChain.get(0),
-        axiomNode, translations, edges);
-    if (propertyChain.size() > 1) {
-      var nextChain = propertyChain.subList(1, propertyChain.size());
-      addPropertyChainRecursively(nextChain, firstChainNode, translations, edges);
-    }
-    return firstChainNode;
+  private Node addSubObjectPropertyChainTranslationAndEdge(@Nonnull List<OWLObjectPropertyExpression> propertyChain,
+                                                           @Nonnull Node axiomNode,
+                                                           @Nonnull Builder<Translation> translations,
+                                                           @Nonnull Builder<Edge> edges) {
+    var headLinkOfPropertyChain = propertyChain.get(0);
+    var headLinkOfPropertyChainNode = propertyExprTranslator.translate(headLinkOfPropertyChain).getMainNode();
+    var remainderOfPropertyChain = propertyChain.subList(1, propertyChain.size());
+    addPropertyChainRecursively(headLinkOfPropertyChainNode, remainderOfPropertyChain, translations, edges);
+    addSubObjectPropertyExprTranslationAndStructuralEdge(headLinkOfPropertyChain, axiomNode, translations, edges);
+    return headLinkOfPropertyChainNode;
   }
 
-  private void addPropertyChainRecursively(@Nonnull List<OWLObjectPropertyExpression> propertyChain,
-                                           @Nonnull Node mainNode,
+  private void addPropertyChainRecursively(@Nonnull Node headOfPropertyChainNode,
+                                           @Nonnull List<OWLObjectPropertyExpression> propertyChain,
                                            @Nonnull Builder<Translation> translations,
                                            @Nonnull Builder<Edge> edges) {
     if (!propertyChain.isEmpty()) {
-      var nextMainNode = addNextTranslationAndStructuralEdge(propertyChain.get(0),
-          mainNode, translations, edges);
-      var nextChain = propertyChain.subList(1, propertyChain.size());
-      addPropertyChainRecursively(nextChain, nextMainNode, translations, edges);
+      var nextLinkOfPropertyChain = propertyChain.get(0);
+      var nextLinkOfPropertyChainNode = addNextTranslationAndStructuralEdge(nextLinkOfPropertyChain,
+          headOfPropertyChainNode, translations, edges);
+      var remainderOfPropertyChain = propertyChain.subList(1, propertyChain.size());
+      addPropertyChainRecursively(nextLinkOfPropertyChainNode, remainderOfPropertyChain, translations, edges);
     }
   }
 
