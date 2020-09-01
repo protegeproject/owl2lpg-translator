@@ -16,6 +16,7 @@ public class PropertyFields {
   public static final String ONTOLOGY_VERSION_IRI = "ontologyVersionIri";
   public static final String IRI = "iri";
   public static final String LOCAL_NAME = "localName";
+  public static final String PREFIXED_NAME = "prefixedName";
   public static final String OBO_ID = "oboId";
   public static final String CARDINALITY = "cardinality";
   public static final String NODE_ID = "nodeID";

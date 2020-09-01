@@ -5,6 +5,7 @@ import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.model.EdgeIdProvider;
 import edu.stanford.owl2lpg.model.NodeIdProvider;
+import edu.stanford.owl2lpg.translator.visitors.BuiltInPrefixDeclarationsModule;
 
 import javax.inject.Named;
 
@@ -13,7 +14,7 @@ import javax.inject.Named;
  * Stanford Center for Biomedical Informatics Research
  */
 @SuppressWarnings("UnstableApiUsage")
-@Module
+@Module(includes = BuiltInPrefixDeclarationsModule.class)
 public class TranslatorModule {
 
   @Provides
