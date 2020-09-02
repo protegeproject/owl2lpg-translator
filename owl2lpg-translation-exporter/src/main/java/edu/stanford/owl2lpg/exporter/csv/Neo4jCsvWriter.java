@@ -75,7 +75,8 @@ public class Neo4jCsvWriter {
         NodeLabels.DATA_RANGE,
         NodeLabels.FACET_RESTRICTION,
         NodeLabels.LITERAL,
-        NodeLabels.ONTOLOGY_DOCUMENT).anyMatch(nodeLabels::isa);
+        NodeLabels.ONTOLOGY_DOCUMENT,
+        NodeLabels.PROPERTY_CHAIN).anyMatch(nodeLabels::isa);
   }
 
   private static boolean canPotentiallyHaveDuplicates(Edge edge) {
@@ -92,8 +93,7 @@ public class Neo4jCsvWriter {
         EdgeLabel.RESTRICTION_VALUE,
         EdgeLabel.RESTRICTION,
         EdgeLabel.INDIVIDUAL,
-        EdgeLabel.LITERAL,
-        EdgeLabel.NEXT).anyMatch(edgeLabel::isa);
+        EdgeLabel.LITERAL).anyMatch(edgeLabel::isa);
   }
 
   private void writeNode(Node node, boolean potentialDuplicate) {
