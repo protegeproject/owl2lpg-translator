@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
@@ -28,8 +29,13 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
 public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
   private static final String CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY_FILE = "axioms/class-assertion-axiom-by-type.cpy";
+  private static final String ALL_CLASS_ASSERTION_AXIOMS_QUERY_FILE = "axioms/all-class-assertion-axioms.cpy";
 
   private static final String CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY = read(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY_FILE);
+  private static final String ALL_CLASS_ASSERTION_AXIOMS_QUERY = read(ALL_CLASS_ASSERTION_AXIOMS_QUERY_FILE);
+
+  @Nonnull
+  private final OWLClass root;
 
   @Nonnull
   private final Driver driver;
@@ -38,8 +44,10 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   private final NodeMapper nodeMapper;
 
   @Inject
-  public ClassAssertionAxiomAccessorImpl(@Nonnull Driver driver,
+  public ClassAssertionAxiomAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
+                                         @Nonnull Driver driver,
                                          @Nonnull NodeMapper nodeMapper) {
+    this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
@@ -47,14 +55,16 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   @Nonnull
   @Override
   public Set<OWLClassAssertionAxiom> getClassAssertions(OWLClass owlClass, AxiomContext context) {
-    var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY, owlClass, context);
+    var inputParams = createInputParams(owlClass, context);
+    var nodeIndex = (root.equals(owlClass)) ?
+        getNodeIndex(ALL_CLASS_ASSERTION_AXIOMS_QUERY, inputParams) :
+        getNodeIndex(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
   @Nonnull
-  private NodeIndex getNodeIndex(String queryString, OWLEntity subject, AxiomContext context) {
+  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
     try (var session = driver.session()) {
-      var inputParams = createInputParams(subject, context);
       return session.readTransaction(tx -> {
         var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
