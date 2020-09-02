@@ -28,10 +28,10 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
  */
 public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
-  private static final String CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY_FILE = "axioms/class-assertion-axiom-by-type.cpy";
+  private static final String CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY_FILE = "axioms/class-assertion-axioms-by-class.cpy";
   private static final String ALL_CLASS_ASSERTION_AXIOMS_QUERY_FILE = "axioms/all-class-assertion-axioms.cpy";
 
-  private static final String CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY = read(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY_FILE);
+  private static final String CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY = read(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY_FILE);
   private static final String ALL_CLASS_ASSERTION_AXIOMS_QUERY = read(ALL_CLASS_ASSERTION_AXIOMS_QUERY_FILE);
 
   @Nonnull
@@ -58,7 +58,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
     var inputParams = createInputParams(owlClass, context);
     var nodeIndex = (root.equals(owlClass)) ?
         getNodeIndex(ALL_CLASS_ASSERTION_AXIOMS_QUERY, inputParams) :
-        getNodeIndex(CLASS_ASSERTION_AXIOM_BY_TYPE_QUERY, inputParams);
+        getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
