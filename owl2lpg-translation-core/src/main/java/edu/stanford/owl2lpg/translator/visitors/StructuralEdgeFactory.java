@@ -118,6 +118,11 @@ public class StructuralEdgeFactory {
   }
 
   @Nonnull
+  public Edge getObjectPropertyExpressionEdge(@Nonnull Node startNode, @Nonnull Node endNode, int orderPosition) {
+    return getStructuralEdge(startNode, endNode, OBJECT_PROPERTY_EXPRESSION, orderPosition);
+  }
+
+  @Nonnull
   public Edge getInverseObjectPropertyExpressionEdge(@Nonnull Node startNode, @Nonnull Node endNode) {
     return getStructuralEdge(startNode, endNode, INVERSE_OBJECT_PROPERTY_EXPRESSION);
   }
@@ -140,11 +145,6 @@ public class StructuralEdgeFactory {
   @Nonnull
   public Edge getSuperAnnotationPropertyEdge(@Nonnull Node startNode, @Nonnull Node endNode) {
     return getStructuralEdge(startNode, endNode, SUPER_ANNOTATION_PROPERTY);
-  }
-
-  @Nonnull
-  public Edge getNextEdge(@Nonnull Node startNode, @Nonnull Node endNode) {
-    return getStructuralEdge(startNode, endNode, NEXT);
   }
 
   @Nonnull
@@ -238,5 +238,13 @@ public class StructuralEdgeFactory {
         endNode,
         edgeLabel,
         Properties.of(PropertyFields.STRUCTURAL_SPEC, true));
+  }
+
+  @Nonnull
+  public Edge getStructuralEdge(@Nonnull Node startNode, @Nonnull Node endNode, @Nonnull EdgeLabel edgeLabel, int orderPosition) {
+    return edgeFactory.createEdge(startNode,
+        endNode,
+        edgeLabel,
+        Properties.of(PropertyFields.STRUCTURAL_SPEC, true, PropertyFields.POS, orderPosition));
   }
 }

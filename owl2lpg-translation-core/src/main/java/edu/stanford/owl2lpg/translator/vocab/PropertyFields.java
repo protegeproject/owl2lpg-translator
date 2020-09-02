@@ -25,4 +25,5 @@ public class PropertyFields {
   public static final String LANGUAGE = "language";
   public static final String STRUCTURAL_SPEC = "structuralSpec";
   public static final String TYPE = "type";
+  public static final String POS = "pos";
 }

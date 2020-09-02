@@ -36,6 +36,16 @@ public abstract class Properties {
     return create(ImmutableMap.of(property, value));
   }
 
+  @Nonnull
+  public static Properties of(@Nonnull String property1, @Nonnull Object value1, @Nonnull String property2, @Nonnull Object value2) {
+    return create(ImmutableMap.of(property1, value1, property2, value2));
+  }
+
+  @Nonnull
+  public static Properties of(@Nonnull String property1, @Nonnull Object value1, @Nonnull String property2, @Nonnull Object value2, @Nonnull String property3, @Nonnull Object value3) {
+    return create(ImmutableMap.of(property1, value1, property2, value2, property3, value3));
+  }
+
   private static String escape(String value) {
     return value.replace("\\", "\\\\")
         .replace("\"", "\\\"")
@@ -68,11 +78,9 @@ public abstract class Properties {
   private static String toTypedNeoKey(Map.Entry<String, Object> e) {
     if (e.getValue() instanceof Integer) {
       return e.getKey() + ":int";
-    }
-    else if (e.getValue() instanceof Boolean) {
+    } else if (e.getValue() instanceof Boolean) {
       return e.getKey() + ":boolean";
-    }
-    else {
+    } else {
       return e.getKey();
     }
   }
