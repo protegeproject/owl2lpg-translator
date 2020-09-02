@@ -168,10 +168,10 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
         var result = tx.run(SHORT_FORMS_INDEX_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
-          var entityNode = (Node) row.get("entity");
-          var entity = getOwlEntity(entityNode);
           var dictLangObject = row.get("dictionaryLanguage");
           var dictLanguage = getDictLanguage(dictLangObject);
+          var entityNode = (Node) row.get("entity");
+          var entity = getOwlEntity(entityNode);
           dictionary.put(dictLanguage, entity);
         }
         return ImmutableMap.copyOf(dictionary);
@@ -193,7 +193,9 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
           var dictLangObject = row.get("dictionaryLanguage");
           var dictLanguage = getDictLanguage(dictLangObject);
           var shortForm = (String) row.get("shortForm");
-          dictionary.put(dictLanguage, shortForm);
+          if (shortForm != null) {
+            dictionary.put(dictLanguage, shortForm);
+          }
         }
         return ImmutableMap.copyOf(dictionary);
       });

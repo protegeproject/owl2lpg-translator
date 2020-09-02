@@ -5,15 +5,15 @@ CALL {
     RETURN DISTINCT { type: "AnnotationAssertion",
          	 propertyIri: relatedTo.iri,
              lang: value.lang
-       	   } as dictionaryLanguage, value.lexicalForm AS shortForm, entity
+       	   } AS dictionaryLanguage, entity
     UNION
     MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {localName:$entityName})
-    RETURN DISTINCT { type: "LocalName" } as dictionaryLanguage, entity.localName AS shortForm, entity
+    RETURN DISTINCT { type: "LocalName" } AS dictionaryLanguage, entity
     UNION
     MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {prefixedName:$entityName})
-    RETURN DISTINCT { type: "PrefixedName" } as dictionaryLanguage, entity.prefixedName AS shortForm, entity
+    RETURN DISTINCT { type: "PrefixedName" } AS dictionaryLanguage, entity
     UNION
     MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {oboId:$entityName})
-    RETURN DISTINCT { type: "OboId" } as dictionaryLanguage, entity.oboId AS shortForm, entity
+    RETURN DISTINCT { type: "OboId" } AS dictionaryLanguage, entity
 }
-return dictionaryLanguage, shortForm, entity
+RETURN dictionaryLanguage, entity
