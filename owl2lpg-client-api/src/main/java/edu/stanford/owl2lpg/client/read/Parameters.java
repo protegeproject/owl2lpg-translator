@@ -8,6 +8,7 @@ import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
 
@@ -30,6 +31,7 @@ public class Parameters {
   private static final String ENTITY_NAME = "entityName";
   private static final String NODE_ID = "nodeId";
   private static final String SEARCH_STRING = "searchString";
+  private static final String ENTITY_TYPE = "entityType";
   private static final String AXIOM_TYPE = "axiomType";
   private static final String CHARACTERISTIC_TYPE = "characteristicType";
 
@@ -80,6 +82,17 @@ public class Parameters {
         PROJECT_ID, new StringValue(projectId.getIdentifier()),
         BRANCH_ID, new StringValue(branchId.getIdentifier()),
         ENTITY_NAME, new StringValue(entityName)));
+  }
+
+  public static Value forEntityType(@Nonnull EntityType entityType,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        ENTITY_TYPE, new StringValue(entityType.getName())));
   }
 
   public static Value forNodeId(@Nonnull NodeID nodeId,
