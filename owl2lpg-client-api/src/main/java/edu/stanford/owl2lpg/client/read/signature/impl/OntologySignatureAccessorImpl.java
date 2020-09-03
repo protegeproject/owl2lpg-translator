@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.read.signature.impl;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.entity.EntityNodeMapper;
+import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
 import edu.stanford.owl2lpg.client.read.signature.OntologySignatureAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;

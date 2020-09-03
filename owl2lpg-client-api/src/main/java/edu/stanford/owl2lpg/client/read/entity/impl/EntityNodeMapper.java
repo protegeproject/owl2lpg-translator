@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.entity;
+package edu.stanford.owl2lpg.client.read.entity.impl;
 
 import com.google.common.collect.Lists;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;

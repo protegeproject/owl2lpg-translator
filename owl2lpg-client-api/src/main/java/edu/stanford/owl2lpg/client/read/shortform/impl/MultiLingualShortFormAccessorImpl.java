@@ -16,7 +16,7 @@ import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.entity.EntityNodeMapper;
+import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
 import edu.stanford.owl2lpg.client.read.shortform.MultiLingualShortFormAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
