@@ -36,6 +36,13 @@ public class Parameters {
   private static final String CHARACTERISTIC_TYPE = "characteristicType";
 
   public static Value forContext(@Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier())));
+  }
+
+  public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId,
                                  @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
