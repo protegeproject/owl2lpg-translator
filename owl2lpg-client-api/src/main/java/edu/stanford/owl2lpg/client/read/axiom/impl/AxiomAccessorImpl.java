@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomByTypeAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
 import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -20,15 +20,18 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AxiomByTypeAccessorImpl implements AxiomByTypeAccessor {
+public class AxiomAccessorImpl implements AxiomAccessor {
 
+  private static final String ALL_AXIOM_QUERY_FILE = "axioms/all-axioms.cpy";
   private static final String AXIOM_BY_TYPE_QUERY_FILE = "axioms/axiom-by-type.cpy";
 
+  private static final String ALL_AXIOM_QUERY = read(ALL_AXIOM_QUERY_FILE);
   private static final String AXIOM_BY_TYPE_QUERY = read(AXIOM_BY_TYPE_QUERY_FILE);
 
   @Nonnull
@@ -38,17 +41,38 @@ public class AxiomByTypeAccessorImpl implements AxiomByTypeAccessor {
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomByTypeAccessorImpl(@Nonnull Driver driver,
-                                 @Nonnull NodeMapper nodeMapper) {
+  public AxiomAccessorImpl(@Nonnull Driver driver,
+                           @Nonnull NodeMapper nodeMapper) {
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
   @Nonnull
   @Override
-  public <T extends OWLAxiom> Set<T> getAxiomsByType(AxiomType<T> axiomType, ProjectId projectId,
-                                                     BranchId branchId, OntologyDocumentId ontoDocId) {
-    var nodeIndex = getNodeIndex(AXIOM_BY_TYPE_QUERY, createInputParams(axiomType, projectId, branchId, ontoDocId));
+  public Set<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = Parameters.forContext(projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(ALL_AXIOM_QUERY, inputParams);
+    return collectAxiomsFromNodeIndex(nodeIndex);
+  }
+
+  @Nonnull
+  private Set<OWLAxiom> collectAxiomsFromNodeIndex(NodeIndex nodeIndex) {
+    return nodeIndex.getNodes(AXIOM.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
+        .collect(Collectors.toSet());
+  }
+
+  @Nonnull
+  @Override
+  public <T extends OWLAxiom> Set<T> getAxiomsByType(@Nonnull AxiomType<T> axiomType,
+                                                     @Nonnull ProjectId projectId,
+                                                     @Nonnull BranchId branchId,
+                                                     @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = Parameters.forAxiomType(axiomType, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(AXIOM_BY_TYPE_QUERY, inputParams);
     return collectAxiomsFromIndex(nodeIndex, axiomType);
   }
 
@@ -80,11 +104,5 @@ public class AxiomByTypeAccessorImpl implements AxiomByTypeAccessor {
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, axiomType.getActualClass()))
         .collect(Collectors.toSet());
-  }
-
-  @Nonnull
-  private static <T extends OWLAxiom> Value createInputParams(AxiomType<T> axiomType, ProjectId projectId,
-                                                              BranchId branchId, OntologyDocumentId ontoDocId) {
-    return Parameters.forAxiomType(axiomType, projectId, branchId, ontoDocId);
   }
 }

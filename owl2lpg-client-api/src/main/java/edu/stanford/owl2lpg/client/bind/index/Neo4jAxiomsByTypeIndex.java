@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AxiomsByTypeIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomByTypeAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -23,19 +23,19 @@ public class Neo4jAxiomsByTypeIndex implements AxiomsByTypeIndex {
   private final AxiomContext axiomContext;
 
   @Nonnull
-  private final AxiomByTypeAccessor axiomByTypeAccessor;
+  private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jAxiomsByTypeIndex(@Nonnull AxiomContext axiomContext,
-                                @Nonnull AxiomByTypeAccessor axiomByTypeAccessor) {
+                                @Nonnull AxiomAccessor axiomAccessor) {
     this.axiomContext = checkNotNull(axiomContext);
-    this.axiomByTypeAccessor = checkNotNull(axiomByTypeAccessor);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Override
   public <T extends OWLAxiom> Stream<T> getAxiomsByType(@Nonnull AxiomType<T> axiomType,
                                                         @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomByTypeAccessor.getAxiomsByType(axiomType,
+    return axiomAccessor.getAxiomsByType(axiomType,
         axiomContext.getProjectId(),
         axiomContext.getBranchId(),
         axiomContext.getOntologyDocumentId()).stream();

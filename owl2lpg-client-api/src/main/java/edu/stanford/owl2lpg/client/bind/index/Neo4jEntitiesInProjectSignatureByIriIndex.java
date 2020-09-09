@@ -40,6 +40,6 @@ public class Neo4jEntitiesInProjectSignatureByIriIndex implements EntitiesInProj
   @Nonnull
   @Override
   public Stream<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri) {
-    return projectSignatureAccessor.getEntitiesInSignature(iri, projectId, branchId).stream();
+    return projectSignatureAccessor.getEntitiesByIri(iri, projectId, branchId);
   }
 }

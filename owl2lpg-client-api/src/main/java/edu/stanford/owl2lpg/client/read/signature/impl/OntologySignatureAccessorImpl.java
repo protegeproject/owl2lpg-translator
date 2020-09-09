@@ -1,23 +1,22 @@
 package edu.stanford.owl2lpg.client.read.signature.impl;
 
-import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
+import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.signature.OntologySignatureAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Node;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.client.util.Resources.read;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -25,29 +24,70 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class OntologySignatureAccessorImpl implements OntologySignatureAccessor {
 
-  private static final String ONTOLOGY_SIGNATURE_QUERY_FILE = "signature/ontology-signature.cpy";
-  private static final String ONTOLOGY_SIGNATURE_QUERY = read(ONTOLOGY_SIGNATURE_QUERY_FILE);
+  @Nonnull
+  private final AxiomAccessor axiomAccessor;
 
   @Nonnull
-  private final Driver driver;
-
-  @Nonnull
-  private final EntityNodeMapper entityNodeMapper;
+  private final EntityAccessor entityAccessor;
 
   @Inject
-  public OntologySignatureAccessorImpl(@Nonnull Driver driver,
-                                       @Nonnull EntityNodeMapper entityNodeMapper) {
-    this.driver = checkNotNull(driver);
-    this.entityNodeMapper = checkNotNull(entityNodeMapper);
+  public OntologySignatureAccessorImpl(@Nonnull AxiomAccessor axiomAccessor,
+                                       @Nonnull EntityAccessor entityAccessor) {
+    this.axiomAccessor = checkNotNull(axiomAccessor);
+    this.entityAccessor = checkNotNull(entityAccessor);
   }
 
   @Nonnull
   @Override
-  public ImmutableSet<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
+  public Set<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return axiomAccessor.getAllAxioms(projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  @Override
+  public <E extends OWLAxiom> Set<E> getAxiomsByType(@Nonnull AxiomType<E> axiomType,
+                                                     @Nonnull ProjectId projectId,
+                                                     @Nonnull BranchId branchId,
+                                                     @Nonnull OntologyDocumentId ontoDocId) {
+    return axiomAccessor.getAxiomsByType(axiomType, projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  @Override
+  public Set<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
+                                       @Nonnull BranchId branchId,
+                                       @Nonnull OntologyDocumentId ontoDocId) {
+    return entityAccessor.getAllEntities(projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  @Override
+  public <E extends OWLEntity> Set<E> getEntitiesByType(@Nonnull EntityType<E> entityType,
                                                         @Nonnull ProjectId projectId,
                                                         @Nonnull BranchId branchId,
                                                         @Nonnull OntologyDocumentId ontoDocId) {
-    return getEntities(Parameters.forEntityIri(iri, projectId, branchId, ontoDocId));
+    return entityAccessor.getEntitiesByType(entityType, projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  @Override
+  public Set<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
+                                               @Nonnull ProjectId projectId,
+                                               @Nonnull BranchId branchId,
+                                               @Nonnull OntologyDocumentId ontoDocId) {
+    return entityAccessor.getEntitiesByIri(iri, projectId, branchId, ontoDocId);
+  }
+
+  @Override
+  public boolean containsAxiomInSignature(@Nonnull OWLAxiom owlAxiom,
+                                          @Nonnull ProjectId projectId,
+                                          @Nonnull BranchId branchId,
+                                          @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsByType(owlAxiom.getAxiomType(), projectId, branchId, ontoDocId)
+        .stream()
+        .anyMatch(owlAxiom::equals);
   }
 
   @Override
@@ -55,27 +95,8 @@ public class OntologySignatureAccessorImpl implements OntologySignatureAccessor 
                                            @Nonnull ProjectId projectId,
                                            @Nonnull BranchId branchId,
                                            @Nonnull OntologyDocumentId ontoDocId) {
-    return getEntitiesInSignature(owlEntity.getIRI(), projectId, branchId, ontoDocId).contains(owlEntity);
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLEntity> getEntities(Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var entities = ImmutableSet.<OWLEntity>builder();
-        var result = tx.run(ONTOLOGY_SIGNATURE_QUERY, inputParams);
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("n")) {
-              var node = (Node) column.getValue();
-              var owlEntity = entityNodeMapper.toOwlEntity(node);
-              entities.add(owlEntity);
-            }
-          }
-        }
-        return entities.build();
-      });
-    }
+    return getEntitiesInSignature(owlEntity.getIRI(), projectId, branchId, ontoDocId)
+        .stream()
+        .anyMatch(owlEntity::equals);
   }
 }
