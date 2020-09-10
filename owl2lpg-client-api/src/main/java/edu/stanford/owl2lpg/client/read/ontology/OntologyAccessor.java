@@ -9,9 +9,9 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -21,12 +21,7 @@ import java.util.Set;
 public interface OntologyAccessor {
 
   @Nonnull
-  IRI getOntologyIri(@Nonnull ProjectId projectId,
-                     @Nonnull BranchId branchId,
-                     @Nonnull OntologyDocumentId ontoDocId);
-
-  @Nonnull
-  Optional<IRI> getVersionIri(@Nonnull ProjectId projectId,
+  OWLOntologyID getOntologyId(@Nonnull ProjectId projectId,
                               @Nonnull BranchId branchId,
                               @Nonnull OntologyDocumentId ontoDocId);
 
