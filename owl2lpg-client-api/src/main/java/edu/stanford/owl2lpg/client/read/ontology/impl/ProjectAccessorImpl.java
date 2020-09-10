@@ -1,9 +1,9 @@
-package edu.stanford.owl2lpg.client.read.signature.impl;
+package edu.stanford.owl2lpg.client.read.ontology.impl;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
-import edu.stanford.owl2lpg.client.read.signature.ProjectSignatureAccessor;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -23,9 +23,9 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class ProjectSignatureAccessorImpl implements ProjectSignatureAccessor {
+public class ProjectAccessorImpl implements ProjectAccessor {
 
-  private static final String PROJECT_INFO_QUERY_FILE = "signature/project-info.cpy";
+  private static final String PROJECT_INFO_QUERY_FILE = "ontology/project-info.cpy";
   private static final String PROJECT_INFO_QUERY = read(PROJECT_INFO_QUERY_FILE);
 
   @Nonnull
@@ -35,8 +35,8 @@ public class ProjectSignatureAccessorImpl implements ProjectSignatureAccessor {
   private final EntityAccessor entityAccessor;
 
   @Inject
-  public ProjectSignatureAccessorImpl(@Nonnull Driver driver,
-                                      @Nonnull EntityAccessor entityAccessor) {
+  public ProjectAccessorImpl(@Nonnull Driver driver,
+                             @Nonnull EntityAccessor entityAccessor) {
     this.driver = checkNotNull(driver);
     this.entityAccessor = checkNotNull(entityAccessor);
   }

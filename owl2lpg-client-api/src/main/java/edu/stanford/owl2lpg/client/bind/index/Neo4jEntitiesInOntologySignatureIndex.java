@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.EntitiesInOntologySignatureIndex;
-import edu.stanford.owl2lpg.client.read.signature.OntologySignatureAccessor;
+import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -29,21 +29,21 @@ public class Neo4jEntitiesInOntologySignatureIndex implements EntitiesInOntology
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final OntologySignatureAccessor ontologySignatureAccessor;
+  private final OntologyAccessor ontologyAccessor;
 
   @Inject
   public Neo4jEntitiesInOntologySignatureIndex(@Nonnull ProjectId projectId,
                                                @Nonnull BranchId branchId,
                                                @Nonnull OntologyDocumentId ontoDocId,
-                                               @Nonnull OntologySignatureAccessor ontologySignatureAccessor) {
+                                               @Nonnull OntologyAccessor ontologyAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.ontologySignatureAccessor = checkNotNull(ontologySignatureAccessor);
+    this.ontologyAccessor = checkNotNull(ontologyAccessor);
   }
 
   @Override
   public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity, @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologySignatureAccessor.containsEntityInSignature(owlEntity, projectId, branchId, ontoDocId);
+    return ontologyAccessor.containsEntityInSignature(owlEntity, projectId, branchId, ontoDocId);
   }
 }

@@ -1,10 +1,10 @@
-package edu.stanford.owl2lpg.client.read.signature.impl;
+package edu.stanford.owl2lpg.client.read.ontology.impl;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
-import edu.stanford.owl2lpg.client.read.signature.OntologySignatureAccessor;
+import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -28,9 +28,9 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologySignatureAccessorImpl implements OntologySignatureAccessor {
+public class OntologyAccessorImpl implements OntologyAccessor {
 
-  private static final String ONTOLOGY_INFO_QUERY_FILE = "signature/ontology-info.cpy";
+  private static final String ONTOLOGY_INFO_QUERY_FILE = "ontology/ontology-info.cpy";
   private static final String ONTOLOGY_INFO_QUERY = read(ONTOLOGY_INFO_QUERY_FILE);
 
   @Nonnull
@@ -46,10 +46,10 @@ public class OntologySignatureAccessorImpl implements OntologySignatureAccessor 
   private final EntityAccessor entityAccessor;
 
   @Inject
-  public OntologySignatureAccessorImpl(@Nonnull Driver driver,
-                                       @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor,
-                                       @Nonnull AxiomAccessor axiomAccessor,
-                                       @Nonnull EntityAccessor entityAccessor) {
+  public OntologyAccessorImpl(@Nonnull Driver driver,
+                              @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor,
+                              @Nonnull AxiomAccessor axiomAccessor,
+                              @Nonnull EntityAccessor entityAccessor) {
     this.driver = checkNotNull(driver);
     this.ontologyAnnotationsAccessor = checkNotNull(ontologyAnnotationsAccessor);
     this.axiomAccessor = checkNotNull(axiomAccessor);

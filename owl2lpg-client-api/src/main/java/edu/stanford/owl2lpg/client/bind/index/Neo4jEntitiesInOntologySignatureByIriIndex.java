@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.EntitiesInOntologySignatureByIriIndex;
-import edu.stanford.owl2lpg.client.read.signature.OntologySignatureAccessor;
+import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,22 +31,22 @@ public class Neo4jEntitiesInOntologySignatureByIriIndex implements EntitiesInOnt
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final OntologySignatureAccessor ontologySignatureAccessor;
+  private final OntologyAccessor ontologyAccessor;
 
   @Inject
   public Neo4jEntitiesInOntologySignatureByIriIndex(@Nonnull ProjectId projectId,
                                                     @Nonnull BranchId branchId,
                                                     @Nonnull OntologyDocumentId ontoDocId,
-                                                    @Nonnull OntologySignatureAccessor ontologySignatureAccessor) {
+                                                    @Nonnull OntologyAccessor ontologyAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.ontologySignatureAccessor = checkNotNull(ontologySignatureAccessor);
+    this.ontologyAccessor = checkNotNull(ontologyAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri, @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologySignatureAccessor.getEntitiesByIri(iri, projectId, branchId, ontoDocId).stream();
+    return ontologyAccessor.getEntitiesByIri(iri, projectId, branchId, ontoDocId).stream();
   }
 }

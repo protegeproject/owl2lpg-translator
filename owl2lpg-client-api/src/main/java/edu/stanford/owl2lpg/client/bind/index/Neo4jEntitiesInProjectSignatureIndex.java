@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.EntitiesInProjectSignatureIndex;
-import edu.stanford.owl2lpg.client.read.signature.ProjectSignatureAccessor;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -24,19 +24,19 @@ public class Neo4jEntitiesInProjectSignatureIndex implements EntitiesInProjectSi
   private final BranchId branchId;
 
   @Nonnull
-  private final ProjectSignatureAccessor projectSignatureAccessor;
+  private final ProjectAccessor projectAccessor;
 
   @Inject
   public Neo4jEntitiesInProjectSignatureIndex(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull ProjectSignatureAccessor projectSignatureAccessor) {
+                                              @Nonnull ProjectAccessor projectAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.projectSignatureAccessor = checkNotNull(projectSignatureAccessor);
+    this.projectAccessor = checkNotNull(projectAccessor);
   }
 
   @Override
   public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity) {
-    return projectSignatureAccessor.containsEntityInSignature(owlEntity, projectId, branchId);
+    return projectAccessor.containsEntityInSignature(owlEntity, projectId, branchId);
   }
 }

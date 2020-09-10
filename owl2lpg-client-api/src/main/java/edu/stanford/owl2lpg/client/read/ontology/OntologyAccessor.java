@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.read.signature;
+package edu.stanford.owl2lpg.client.read.ontology;
 
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface OntologySignatureAccessor {
+public interface OntologyAccessor {
 
   @Nonnull
   IRI getOntologyIri(@Nonnull ProjectId projectId,
