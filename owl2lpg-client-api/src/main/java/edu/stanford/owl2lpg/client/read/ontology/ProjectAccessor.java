@@ -6,8 +6,10 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -22,12 +24,12 @@ public interface ProjectAccessor {
                                                  @Nonnull BranchId branchId);
 
   @Nonnull
-  Set<IRI> getOntologyIris(@Nonnull ProjectId projectId,
-                           @Nonnull BranchId branchId);
+  Set<OWLOntologyID> getOntologyIds(@Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId);
 
   @Nonnull
-  Set<IRI> getVersionIris(@Nonnull ProjectId projectId,
-                          @Nonnull BranchId branchId);
+  Map<OntologyDocumentId, OWLOntologyID> getOntologyDocumentIdMap(@Nonnull ProjectId projectId,
+                                                                  @Nonnull BranchId branchId);
 
   @Nonnull
   Stream<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
