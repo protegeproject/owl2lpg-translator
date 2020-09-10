@@ -37,6 +37,7 @@ public class Neo4jEntitiesInProjectSignatureIndex implements EntitiesInProjectSi
 
   @Override
   public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity) {
-    return projectAccessor.containsEntityInSignature(owlEntity, projectId, branchId);
+    return projectAccessor.getEntitiesByIri(owlEntity.getIRI(), projectId, branchId)
+        .anyMatch(owlEntity::equals);
   }
 }

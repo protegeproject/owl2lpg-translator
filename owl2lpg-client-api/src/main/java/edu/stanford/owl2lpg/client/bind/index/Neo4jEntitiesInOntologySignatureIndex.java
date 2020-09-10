@@ -44,6 +44,8 @@ public class Neo4jEntitiesInOntologySignatureIndex implements EntitiesInOntology
 
   @Override
   public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity, @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.containsEntityInSignature(owlEntity, projectId, branchId, ontoDocId);
+    return ontologyAccessor.getEntitiesByIri(owlEntity.getIRI(), projectId, branchId, ontoDocId)
+        .stream()
+        .anyMatch(owlEntity::equals);
   }
 }
