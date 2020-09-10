@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -26,6 +27,7 @@ public class Neo4jProjectSignatureIndex implements ProjectSignatureIndex {
   @Nonnull
   private final ProjectAccessor projectAccessor;
 
+  @Inject
   public Neo4jProjectSignatureIndex(@Nonnull ProjectId projectId,
                                     @Nonnull BranchId branchId,
                                     @Nonnull ProjectAccessor projectAccessor) {

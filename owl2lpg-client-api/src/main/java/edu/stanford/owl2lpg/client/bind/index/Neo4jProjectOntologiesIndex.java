@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -26,6 +27,7 @@ public class Neo4jProjectOntologiesIndex implements ProjectOntologiesIndex {
   @Nonnull
   private final ProjectAccessor projectAccessor;
 
+  @Inject
   public Neo4jProjectOntologiesIndex(@Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
                                      @Nonnull ProjectAccessor projectAccessor) {

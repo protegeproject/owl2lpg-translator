@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -27,6 +28,7 @@ public class Neo4jProjectSignatureByTypeIndex implements ProjectSignatureByTypeI
   @Nonnull
   private final ProjectAccessor projectAccessor;
 
+  @Inject
   public Neo4jProjectSignatureByTypeIndex(@Nonnull ProjectId projectId,
                                           @Nonnull BranchId branchId,
                                           @Nonnull ProjectAccessor projectAccessor) {

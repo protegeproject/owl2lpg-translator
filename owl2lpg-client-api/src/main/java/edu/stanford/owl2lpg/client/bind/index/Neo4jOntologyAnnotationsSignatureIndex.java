@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,6 +34,7 @@ public class Neo4jOntologyAnnotationsSignatureIndex implements OntologyAnnotatio
   @Nonnull
   private final OntologyAnnotationsAccessor ontologyAnnotationsAccessor;
 
+  @Inject
   public Neo4jOntologyAnnotationsSignatureIndex(@Nonnull ProjectId projectId,
                                                 @Nonnull BranchId branchId,
                                                 @Nonnull OntologyDocumentId ontoDocId,
