@@ -32,6 +32,7 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
 public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   private static final String CLASS_CHILDREN_OF_ROOT_QUERY_FILE = "hierarchy/class-children-of-root.cpy";
+  private static final String CLASS_DESCENDANT_OF_OWL_THING_QUERY_FILE = "hierarchy/class-descendant-of-owl-thing.cpy";
   private static final String CLASS_ANCESTOR_QUERY_FILE = "hierarchy/class-ancestor.cpy";
   private static final String CLASS_PARENTS_QUERY_FILE = "hierarchy/class-parents.cpy";
   private static final String CLASS_DESCENDANT_QUERY_FILE = "hierarchy/class-descendant.cpy";
@@ -39,6 +40,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String CLASS_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/class-paths-to-ancestor.cpy";
 
   private static final String CLASS_CHILDREN_OF_ROOT_QUERY = read(CLASS_CHILDREN_OF_ROOT_QUERY_FILE);
+  private static final String CLASS_DESCENDANT_OF_OWL_THING_QUERY = read(CLASS_DESCENDANT_OF_OWL_THING_QUERY_FILE);
   private static final String CLASS_ANCESTOR_QUERY = read(CLASS_ANCESTOR_QUERY_FILE);
   private static final String CLASS_PARENTS_QUERY = read(CLASS_PARENTS_QUERY_FILE);
   private static final String CLASS_DESCENDANT_QUERY = read(CLASS_DESCENDANT_QUERY_FILE);
@@ -86,7 +88,11 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                                                @Nonnull ProjectId projectId,
                                                @Nonnull BranchId branchId,
                                                @Nonnull OntologyDocumentId ontoDocId) {
-    return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
+    if (root.equals(dataFactory.getOWLThing()) && root.equals(owlClass)) {
+      return getClasses(CLASS_DESCENDANT_OF_OWL_THING_QUERY, createInputParams(projectId, branchId, ontoDocId));
+    } else {
+      return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
+    }
   }
 
   @Override
