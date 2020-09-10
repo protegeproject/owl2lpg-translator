@@ -47,6 +47,6 @@ public class Neo4jEntitiesInOntologySignatureByIriIndex implements EntitiesInOnt
   @Nonnull
   @Override
   public Stream<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri, @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologySignatureAccessor.getEntitiesInSignature(iri, projectId, branchId, ontoDocId).stream();
+    return ontologySignatureAccessor.getEntitiesByIri(iri, projectId, branchId, ontoDocId).stream();
   }
 }

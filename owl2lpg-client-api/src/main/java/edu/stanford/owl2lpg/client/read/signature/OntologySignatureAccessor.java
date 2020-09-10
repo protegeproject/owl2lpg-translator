@@ -6,10 +6,12 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -17,6 +19,21 @@ import java.util.Set;
  * Stanford Center for Biomedical Informatics Research
  */
 public interface OntologySignatureAccessor {
+
+  @Nonnull
+  IRI getOntologyIri(@Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId);
+
+  @Nonnull
+  Optional<IRI> getVersionIri(@Nonnull ProjectId projectId,
+                              @Nonnull BranchId branchId,
+                              @Nonnull OntologyDocumentId ontoDocId);
+
+  @Nonnull
+  Set<OWLAnnotation> getOntologyAnnotations(@Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   Set<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
@@ -41,10 +58,10 @@ public interface OntologySignatureAccessor {
                                                  @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLEntity> getEntitiesInSignature(@Nonnull IRI iri,
-                                        @Nonnull ProjectId projectId,
-                                        @Nonnull BranchId branchId,
-                                        @Nonnull OntologyDocumentId ontoDocId);
+  Set<OWLEntity> getEntitiesByIri(@Nonnull IRI iri,
+                                  @Nonnull ProjectId projectId,
+                                  @Nonnull BranchId branchId,
+                                  @Nonnull OntologyDocumentId ontoDocId);
 
   boolean containsAxiomInSignature(@Nonnull OWLAxiom owlAxiom,
                                    @Nonnull ProjectId projectId,

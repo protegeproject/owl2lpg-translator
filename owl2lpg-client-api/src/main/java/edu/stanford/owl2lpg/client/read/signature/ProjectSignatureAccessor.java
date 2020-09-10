@@ -22,6 +22,14 @@ public interface ProjectSignatureAccessor {
                                                  @Nonnull BranchId branchId);
 
   @Nonnull
+  Set<IRI> getOntologyIris(@Nonnull ProjectId projectId,
+                           @Nonnull BranchId branchId);
+
+  @Nonnull
+  Set<IRI> getVersionIris(@Nonnull ProjectId projectId,
+                          @Nonnull BranchId branchId);
+
+  @Nonnull
   Stream<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
                                    @Nonnull BranchId branchId);
 

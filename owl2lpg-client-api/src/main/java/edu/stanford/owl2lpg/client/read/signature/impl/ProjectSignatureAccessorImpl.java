@@ -25,8 +25,8 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ProjectSignatureAccessorImpl implements ProjectSignatureAccessor {
 
-  private static final String ONTOLOGY_DOCUMENT_IDS_QUERY_FILE = "signature/ontology-document-ids.cpy";
-  private static final String ONTOLOGY_DOCUMENT_IDS_QUERY = read(ONTOLOGY_DOCUMENT_IDS_QUERY_FILE);
+  private static final String PROJECT_INFO_QUERY_FILE = "signature/project-info.cpy";
+  private static final String PROJECT_INFO_QUERY = read(PROJECT_INFO_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -43,23 +43,48 @@ public class ProjectSignatureAccessorImpl implements ProjectSignatureAccessor {
 
   @Nonnull
   @Override
-  public ImmutableSet<OntologyDocumentId> getOntologyDocumentIds(@Nonnull ProjectId projectId,
-                                                                 @Nonnull BranchId branchId) {
+  public ImmutableSet<OntologyDocumentId> getOntologyDocumentIds(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
+    return getProjectInfo("ontoDocId", projectId, branchId)
+        .map(OntologyDocumentId::create)
+        .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<IRI> getOntologyIris(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
+    return getProjectInfo("ontologyIri", projectId, branchId)
+        .map(IRI::create)
+        .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<IRI> getVersionIris(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
+    return getProjectInfo("versionIri", projectId, branchId)
+        .map(IRI::create)
+        .collect(ImmutableSet.toImmutableSet());
+  }
+
+  private Stream<String> getProjectInfo(@Nonnull String variable,
+                                        @Nonnull ProjectId projectId,
+                                        @Nonnull BranchId branchId) {
     var inputParams = Parameters.forContext(projectId, branchId);
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var ontoDocIds = ImmutableSet.<OntologyDocumentId>builder();
-        var result = tx.run(ONTOLOGY_DOCUMENT_IDS_QUERY, inputParams);
+        var outStream = Stream.<String>builder();
+        var result = tx.run(PROJECT_INFO_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next().asMap();
           for (var column : row.entrySet()) {
-            if (column.getKey().equals("ontoDocId")) {
-              var ontoDocId = (String) column.getValue();
-              ontoDocIds.add(OntologyDocumentId.create(ontoDocId));
+            if (column.getKey().equals(variable)) {
+              var value = column.getValue();
+              if (value != null) {
+                outStream.add((String) value);
+              }
             }
           }
         }
-        return ontoDocIds.build();
+        return outStream.build();
       });
     }
   }
