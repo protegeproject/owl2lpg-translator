@@ -62,14 +62,4 @@ public interface OntologyAccessor {
                                   @Nonnull ProjectId projectId,
                                   @Nonnull BranchId branchId,
                                   @Nonnull OntologyDocumentId ontoDocId);
-
-  boolean containsAxiomInSignature(@Nonnull OWLAxiom owlAxiom,
-                                   @Nonnull ProjectId projectId,
-                                   @Nonnull BranchId branchId,
-                                   @Nonnull OntologyDocumentId ontoDocId);
-
-  boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity,
-                                    @Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId);
 }

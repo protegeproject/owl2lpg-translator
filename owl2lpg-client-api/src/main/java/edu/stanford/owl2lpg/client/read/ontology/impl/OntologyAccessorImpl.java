@@ -147,24 +147,4 @@ public class OntologyAccessorImpl implements OntologyAccessor {
                                          @Nonnull OntologyDocumentId ontoDocId) {
     return entityAccessor.getEntitiesByIri(iri, projectId, branchId, ontoDocId);
   }
-
-  @Override
-  public boolean containsAxiomInSignature(@Nonnull OWLAxiom owlAxiom,
-                                          @Nonnull ProjectId projectId,
-                                          @Nonnull BranchId branchId,
-                                          @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsByType(owlAxiom.getAxiomType(), projectId, branchId, ontoDocId)
-        .stream()
-        .anyMatch(owlAxiom::equals);
-  }
-
-  @Override
-  public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity,
-                                           @Nonnull ProjectId projectId,
-                                           @Nonnull BranchId branchId,
-                                           @Nonnull OntologyDocumentId ontoDocId) {
-    return getEntitiesByIri(owlEntity.getIRI(), projectId, branchId, ontoDocId)
-        .stream()
-        .anyMatch(owlEntity::equals);
-  }
 }

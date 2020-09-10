@@ -42,8 +42,4 @@ public interface ProjectAccessor {
   <E extends OWLEntity> Stream<E> getEntitiesByType(@Nonnull EntityType<E> entityType,
                                                     @Nonnull ProjectId projectId,
                                                     @Nonnull BranchId branchId);
-
-  boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity,
-                                    @Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId);
 }

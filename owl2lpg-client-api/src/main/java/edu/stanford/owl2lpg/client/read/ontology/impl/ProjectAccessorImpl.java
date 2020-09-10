@@ -117,12 +117,4 @@ public class ProjectAccessorImpl implements ProjectAccessor {
         .stream()
         .flatMap(ontoDocId -> entityAccessor.getEntitiesByType(entityType, projectId, branchId, ontoDocId).stream());
   }
-
-  @Nonnull
-  @Override
-  public boolean containsEntityInSignature(@Nonnull OWLEntity owlEntity,
-                                           @Nonnull ProjectId projectId,
-                                           @Nonnull BranchId branchId) {
-    return getEntitiesByIri(owlEntity.getIRI(), projectId, branchId).anyMatch(owlEntity::equals);
-  }
 }
