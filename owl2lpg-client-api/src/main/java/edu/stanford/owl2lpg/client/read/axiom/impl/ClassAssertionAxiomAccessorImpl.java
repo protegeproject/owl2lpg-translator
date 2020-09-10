@@ -12,6 +12,7 @@ import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
@@ -30,10 +31,10 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
 public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
   private static final String CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY_FILE = "axioms/class-assertion-axioms-by-class.cpy";
-  private static final String ALL_CLASS_ASSERTION_AXIOMS_QUERY_FILE = "axioms/all-class-assertion-axioms.cpy";
+  private static final String CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY_FILE = "axioms/class-assertion-axioms-of-owl-thing.cpy";
 
   private static final String CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY = read(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY_FILE);
-  private static final String ALL_CLASS_ASSERTION_AXIOMS_QUERY = read(ALL_CLASS_ASSERTION_AXIOMS_QUERY_FILE);
+  private static final String CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY = read(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY_FILE);
 
   @Nonnull
   private final OWLClass root;
@@ -44,21 +45,26 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   @Nonnull
   private final NodeMapper nodeMapper;
 
+  @Nonnull
+  private final OWLDataFactory dataFactory;
+
   @Inject
   public ClassAssertionAxiomAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
                                          @Nonnull Driver driver,
-                                         @Nonnull NodeMapper nodeMapper) {
+                                         @Nonnull NodeMapper nodeMapper,
+                                         @Nonnull OWLDataFactory dataFactory) {
     this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
+    this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Nonnull
   @Override
   public Set<OWLClassAssertionAxiom> getClassAssertions(OWLClass owlClass, AxiomContext context) {
     var inputParams = createInputParams(owlClass, context);
-    var nodeIndex = (root.equals(owlClass)) ?
-        getNodeIndex(ALL_CLASS_ASSERTION_AXIOMS_QUERY, inputParams) :
+    var nodeIndex = (root.equals(dataFactory.getOWLThing()) && root.equals(owlClass)) ?
+        getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams) :
         getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
