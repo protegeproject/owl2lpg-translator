@@ -2,8 +2,9 @@ package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
-import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
+import edu.stanford.owl2lpg.client.read.NodeIndex;
+import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;

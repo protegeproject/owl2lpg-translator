@@ -2,9 +2,10 @@ package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
-import edu.stanford.owl2lpg.client.read.axiom.NodeIndex;
-import edu.stanford.owl2lpg.client.read.axiom.NodeMapper;
+import edu.stanford.owl2lpg.client.read.NodeIndex;
+import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.axiom.RangeAxiomAccessor;
+import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;

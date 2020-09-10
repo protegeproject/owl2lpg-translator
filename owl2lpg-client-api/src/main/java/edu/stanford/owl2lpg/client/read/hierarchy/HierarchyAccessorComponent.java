@@ -4,7 +4,7 @@ import dagger.Component;
 import edu.stanford.owl2lpg.client.DatabaseModule;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomContextModule;
-import edu.stanford.owl2lpg.client.read.axiom.handlers.OwlDataFactoryModule;
+import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
