@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.hierarchy.DataPropertyHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.DataPropertyHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -14,6 +15,7 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
+import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -31,18 +33,20 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyAccessor {
 
-  private static final String DATA_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE = "hierarchy/data-property-children-of-root.cpy";
+  private static final String DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY_FILE =
+      "hierarchy/data-property-children-of-owl-top-data-property.cpy";
   private static final String DATA_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/data-property-ancestor.cpy";
   private static final String DATA_PROPERTY_PARENTS_QUERY_FILE = "hierarchy/data-property-parents.cpy";
   private static final String DATA_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/data-property-descendant.cpy";
   private static final String DATA_PROPERTY_CHILDREN_QUERY_FILE = "hierarchy/data-property-children.cpy";
   private static final String DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/data-property-paths-to-ancestor.cpy";
 
-  private static final String PROPERTY_CHILDREN_OF_ROOT_QUERY = read(DATA_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE);
-  private static final String PROPERTY_ANCESTOR_QUERY = read(DATA_PROPERTY_ANCESTOR_QUERY_FILE);
-  private static final String PROPERTY_PARENTS_QUERY = read(DATA_PROPERTY_PARENTS_QUERY_FILE);
-  private static final String PROPERTY_DESCENDANT_QUERY = read(DATA_PROPERTY_DESCENDANT_QUERY_FILE);
-  private static final String PROPERTY_CHILDREN_QUERY = read(DATA_PROPERTY_CHILDREN_QUERY_FILE);
+  private static final String DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY =
+      read(DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY_FILE);
+  private static final String DATA_PROPERTY_ANCESTOR_QUERY = read(DATA_PROPERTY_ANCESTOR_QUERY_FILE);
+  private static final String DATA_PROPERTY_PARENTS_QUERY = read(DATA_PROPERTY_PARENTS_QUERY_FILE);
+  private static final String DATA_PROPERTY_DESCENDANT_QUERY = read(DATA_PROPERTY_DESCENDANT_QUERY_FILE);
+  private static final String DATA_PROPERTY_CHILDREN_QUERY = read(DATA_PROPERTY_CHILDREN_QUERY_FILE);
   private static final String PATHS_TO_ANCESTOR_QUERY = read(DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
@@ -52,14 +56,19 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   private final Driver driver;
 
   @Nonnull
+  private final EntityAccessor entityAccessor;
+
+  @Nonnull
   private final OWLDataFactory dataFactory;
 
   @Inject
   public DataPropertyHierarchyAccessorImpl(@Nonnull @DataPropertyHierarchyRoot OWLDataProperty root,
                                            @Nonnull Driver driver,
+                                           @Nonnull EntityAccessor entityAccessor,
                                            @Nonnull OWLDataFactory dataFactory) {
     this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
+    this.entityAccessor = checkNotNull(entityAccessor);
     this.dataFactory = checkNotNull(dataFactory);
   }
 
@@ -77,7 +86,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                     @Nonnull ProjectId projectId,
                                                     @Nonnull BranchId branchId,
                                                     @Nonnull OntologyDocumentId ontoDocId) {
-    return getProperties(PROPERTY_ANCESTOR_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
+    return getProperties(DATA_PROPERTY_ANCESTOR_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
@@ -86,7 +95,20 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                       @Nonnull ProjectId projectId,
                                                       @Nonnull BranchId branchId,
                                                       @Nonnull OntologyDocumentId ontoDocId) {
-    return getProperties(PROPERTY_DESCENDANT_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
+    if (root.equals(dataFactory.getOWLTopDataProperty()) && root.equals(owlDataProperty)) {
+      return getAllDataProperties(projectId, branchId, ontoDocId);
+    } else {
+      return getProperties(DATA_PROPERTY_DESCENDANT_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
+    }
+  }
+
+  @Nonnull
+  private ImmutableSet<OWLDataProperty> getAllDataProperties(@Nonnull ProjectId projectId,
+                                                             @Nonnull BranchId branchId,
+                                                             @Nonnull OntologyDocumentId ontoDocId) {
+    return entityAccessor.getEntitiesByType(EntityType.DATA_PROPERTY, projectId, branchId, ontoDocId)
+        .stream()
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
@@ -95,7 +117,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                   @Nonnull ProjectId projectId,
                                                   @Nonnull BranchId branchId,
                                                   @Nonnull OntologyDocumentId ontoDocId) {
-    return getProperties(PROPERTY_PARENTS_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
+    return getProperties(DATA_PROPERTY_PARENTS_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
@@ -105,9 +127,9 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                    @Nonnull BranchId branchId,
                                                    @Nonnull OntologyDocumentId ontoDocId) {
     var children = ImmutableSet.<OWLDataProperty>builder();
-    children.addAll(getProperties(PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId)));
-    if (root.equals(owlDataProperty)) {
-      children.addAll(getProperties(PROPERTY_CHILDREN_OF_ROOT_QUERY, createInputParams(projectId, branchId, ontoDocId)));
+    children.addAll(getProperties(DATA_PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId)));
+    if (root.equals(dataFactory.getOWLTopDataProperty()) && root.equals(owlDataProperty)) {
+      children.addAll(getProperties(DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY, createInputParams(projectId, branchId, ontoDocId)));
     }
     return children.build();
   }
