@@ -1,11 +1,12 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.AnnotationAssertionAxiomAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
@@ -15,7 +16,6 @@ import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
-import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -27,7 +27,6 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_ASSERTION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_ASSERTION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_ASSERTION;
@@ -50,10 +49,6 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
       "axioms/data-property-assertion-axiom-by-individual.cpy";
   private static final String DATA_PROPERTY_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE =
       "axioms/data-property-assertion-axiom-by-anonymous-individual.cpy";
-  private static final String ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-iri.cpy";
-  private static final String ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-anonymous-individual.cpy";
 
   private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY =
       read(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
@@ -67,10 +62,6 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
       read(DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
   private static final String DATA_PROPERTY_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY =
       read(DATA_PROPERTY_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
-  private static final String ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY =
-      read(ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY_FILE);
-  private static final String ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY =
-      read(ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -78,11 +69,16 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   @Nonnull
   private final NodeMapper nodeMapper;
 
+  @Nonnull
+  private final AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor;
+
   @Inject
   public AssertionAxiomBySubjectAccessorImpl(@Nonnull Driver driver,
-                                             @Nonnull NodeMapper nodeMapper) {
+                                             @Nonnull NodeMapper nodeMapper,
+                                             @Nonnull AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor) {
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
+    this.annotationAssertionAxiomAccessor = checkNotNull(annotationAssertionAxiomAccessor);
   }
 
   @Nonnull
@@ -125,12 +121,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   @Override
   public Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject,
                                                                             AxiomContext context) {
-    var nodeIndex = (owlAnnotationSubject.isIRI()) ?
-        getNodeIndex(ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY,
-            createInputParams((IRI) owlAnnotationSubject, context)) :
-        getNodeIndex(ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY,
-            createInputParams(((OWLAnonymousIndividual) owlAnnotationSubject).getID(), context));
-    return collectAnnotationAssertionAxiomsFromIndex(nodeIndex);
+    return annotationAssertionAxiomAccessor.getAxiomsBySubject(owlAnnotationSubject,
+        context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 
   @Nonnull
@@ -138,10 +130,8 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   public Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(OWLAnnotationSubject owlAnnotationSubject,
                                                                             OWLAnnotationProperty owlAnnotationProperty,
                                                                             AxiomContext context) {
-    return getAnnotationAssertionsForSubject(owlAnnotationSubject, context)
-        .stream()
-        .filter(ax -> ax.getProperty().equals(owlAnnotationProperty))
-        .collect(ImmutableSet.toImmutableSet());
+    return annotationAssertionAxiomAccessor.getAxiomsBySubjectAndProperty(owlAnnotationSubject, owlAnnotationProperty,
+        context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
   }
 
   private NodeIndex getNodeIndex(String queryString, Value inputParams) {
@@ -186,14 +176,6 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
     return nodeIndex.getNodes(DATA_PROPERTY_ASSERTION.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLDataPropertyAssertionAxiom.class))
-        .collect(ImmutableSet.toImmutableSet());
-  }
-
-  @Nonnull
-  private Set<OWLAnnotationAssertionAxiom> collectAnnotationAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
-    return nodeIndex.getNodes(ANNOTATION_ASSERTION.getMainLabel())
-        .stream()
-        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationAssertionAxiom.class))
         .collect(ImmutableSet.toImmutableSet());
   }
 
