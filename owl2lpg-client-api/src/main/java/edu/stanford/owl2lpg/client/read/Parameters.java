@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -34,6 +35,9 @@ public class Parameters {
   private static final String ENTITY_TYPE = "entityType";
   private static final String AXIOM_TYPE = "axiomType";
   private static final String CHARACTERISTIC_TYPE = "characteristicType";
+  private static final String LEXICAL_FORM = "lexicalForm";
+  private static final String DATATYPE = "datatype";
+  private static final String IRI = "iri";
 
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId) {
@@ -135,7 +139,29 @@ public class Parameters {
         ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
         ENTITY_IRI, new StringValue(propertyIri.toString()),
         CHARACTERISTIC_TYPE, new StringValue(characteristicType)));
+  }
 
+  public static Value forLiteral(@Nonnull OWLLiteral literal,
+                                 @Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId,
+                                 @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        LEXICAL_FORM, new StringValue(literal.getLiteral()),
+        DATATYPE, new StringValue(literal.getDatatype().getIRI().toString())));
+  }
+
+  public static Value forValueIri(IRI iri,
+                                  ProjectId projectId,
+                                  BranchId branchId,
+                                  OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        IRI, new StringValue(iri.toString())));
   }
 
   public static Value forSearchStrings(@Nonnull List<SearchString> searchStrings,
