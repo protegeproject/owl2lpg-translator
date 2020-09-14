@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
 
 /**
@@ -93,7 +94,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                                                @Nonnull ProjectId projectId,
                                                @Nonnull BranchId branchId,
                                                @Nonnull OntologyDocumentId ontoDocId) {
-    if (root.equals(dataFactory.getOWLThing()) && root.equals(owlClass)) {
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return getAllClasses(projectId, branchId, ontoDocId);
     } else {
       return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
@@ -126,7 +127,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                                             @Nonnull OntologyDocumentId ontoDocId) {
     var children = ImmutableSet.<OWLClass>builder();
     children.addAll(getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId)));
-    if (root.equals(dataFactory.getOWLThing()) && root.equals(owlClass)) {
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       children.addAll(getClasses(CLASS_CHILDREN_OF_OWL_THING_QUERY, createInputParams(projectId, branchId, ontoDocId)));
     }
     return children.build();

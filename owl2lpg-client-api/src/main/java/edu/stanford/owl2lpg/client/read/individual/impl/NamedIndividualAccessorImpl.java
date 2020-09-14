@@ -12,7 +12,6 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -20,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -36,18 +36,13 @@ public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
   @Nonnull
   private final ClassAssertionAxiomAccessor classAssertionAxiomAccessor;
 
-  @Nonnull
-  private final OWLDataFactory dataFactory;
-
   @Inject
   public NamedIndividualAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
                                      @Nonnull EntityAccessor entityAccessor,
-                                     @Nonnull ClassAssertionAxiomAccessor classAssertionAxiomAccessor,
-                                     @Nonnull OWLDataFactory dataFactory) {
+                                     @Nonnull ClassAssertionAxiomAccessor classAssertionAxiomAccessor) {
     this.root = checkNotNull(root);
     this.entityAccessor = checkNotNull(entityAccessor);
     this.classAssertionAxiomAccessor = checkNotNull(classAssertionAxiomAccessor);
-    this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Nonnull
@@ -66,7 +61,7 @@ public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
                                                                @Nonnull ProjectId projectId,
                                                                @Nonnull BranchId branchId,
                                                                @Nonnull OntologyDocumentId ontoDocId) {
-    if (root.equals(dataFactory.getOWLThing()) && root.equals(owlClass)) {
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return getAllIndividuals(projectId, branchId, ontoDocId);
     } else {
       return classAssertionAxiomAccessor.getClassAssertions(owlClass, AxiomContext.create(projectId, branchId, ontoDocId))

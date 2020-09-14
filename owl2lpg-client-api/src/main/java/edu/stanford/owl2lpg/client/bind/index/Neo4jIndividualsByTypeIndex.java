@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.bmir.protege.web.server.index.IndividualsByTypeIndex;
+import edu.stanford.bmir.protege.web.shared.DataFactory;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
@@ -9,7 +10,6 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import javax.annotation.Nonnull;
@@ -42,24 +42,19 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
   @Nonnull
   private final NamedIndividualAccessor namedIndividualAccessor;
 
-  @Nonnull
-  private final OWLDataFactory dataFactory;
-
   @Inject
   public Neo4jIndividualsByTypeIndex(@Nonnull @ClassHierarchyRoot OWLClass root,
                                      @Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
                                      @Nonnull OntologyDocumentId ontoDocId,
                                      @Nonnull ClassHierarchyAccessor classHierarchyAccessor,
-                                     @Nonnull NamedIndividualAccessor namedIndividualAccessor,
-                                     @Nonnull OWLDataFactory dataFactory) {
+                                     @Nonnull NamedIndividualAccessor namedIndividualAccessor) {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
     this.classHierarchyAccessor = checkNotNull(classHierarchyAccessor);
     this.namedIndividualAccessor = checkNotNull(namedIndividualAccessor);
-    this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Nonnull
@@ -77,7 +72,7 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
   }
 
   private Stream<OWLNamedIndividual> getAllInstances(OWLClass owlClass) {
-    if (root.equals(dataFactory.getOWLThing()) && root.equals(owlClass)) {
+    if (root.equals(DataFactory.getOWLThing()) && root.equals(owlClass)) {
       return namedIndividualAccessor.getAllIndividuals(projectId, branchId, ontoDocId).stream();
     } else {
       return Stream.concat(getDirectInstances(owlClass), getIndirectInstances(owlClass)).distinct();
