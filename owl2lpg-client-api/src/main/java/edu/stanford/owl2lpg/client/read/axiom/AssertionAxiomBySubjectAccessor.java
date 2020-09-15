@@ -24,49 +24,49 @@ public interface AssertionAxiomBySubjectAccessor {
 
   @Nonnull
   ImmutableSet<OWLClassAssertionAxiom>
-  getClassAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                               @Nonnull ProjectId projectId,
-                               @Nonnull BranchId branchId,
-                               @Nonnull OntologyDocumentId ontoDocId);
+  getClassAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                              @Nonnull ProjectId projectId,
+                              @Nonnull BranchId branchId,
+                              @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   ImmutableSet<OWLObjectPropertyAssertionAxiom>
-  getObjectPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                                        @Nonnull ProjectId projectId,
-                                        @Nonnull BranchId branchId,
-                                        @Nonnull OntologyDocumentId ontoDocId);
+  getObjectPropertyAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                                       @Nonnull ProjectId projectId,
+                                       @Nonnull BranchId branchId,
+                                       @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   ImmutableSet<OWLDataPropertyAssertionAxiom>
-  getDataPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                                      @Nonnull ProjectId projectId,
-                                      @Nonnull BranchId branchId,
-                                      @Nonnull OntologyDocumentId ontoDocId);
+  getDataPropertyAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                                     @Nonnull ProjectId projectId,
+                                     @Nonnull BranchId branchId,
+                                     @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   ImmutableSet<OWLAnnotationAssertionAxiom>
-  getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
-                                    @Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId);
+  getAnnotationAssertionsBySubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   ImmutableSet<OWLAnnotationAssertionAxiom>
-  getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
-                                    @Nonnull OWLAnnotationProperty property,
-                                    @Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId);
+  getAnnotationAssertionsBySubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
+                                   @Nonnull OWLAnnotationProperty property,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   default ImmutableSet<OWLAxiom>
-  getPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                                  @Nonnull ProjectId projectId,
-                                  @Nonnull BranchId branchId,
-                                  @Nonnull OntologyDocumentId ontoDocId) {
+  getPropertyAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                                 @Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId,
+                                 @Nonnull OntologyDocumentId ontoDocId) {
     var annotationAssertions = getAnnotationAssertionAxioms(owlIndividual, projectId, branchId, ontoDocId);
-    var objectPropertyAssertions = getObjectPropertyAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId);
-    var dataPropertyAssertions = getDataPropertyAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId);
+    var objectPropertyAssertions = getObjectPropertyAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId);
+    var dataPropertyAssertions = getDataPropertyAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId);
     return Stream
         .of(annotationAssertions.stream(),
             dataPropertyAssertions.stream(),
@@ -83,6 +83,6 @@ public interface AssertionAxiomBySubjectAccessor {
     var annotationSubject = (owlIndividual.isNamed())
         ? owlIndividual.asOWLNamedIndividual().getIRI()
         : owlIndividual.asOWLAnonymousIndividual();
-    return getAnnotationAssertionsForSubject(annotationSubject, projectId, branchId, ontoDocId);
+    return getAnnotationAssertionsBySubject(annotationSubject, projectId, branchId, ontoDocId);
   }
 }

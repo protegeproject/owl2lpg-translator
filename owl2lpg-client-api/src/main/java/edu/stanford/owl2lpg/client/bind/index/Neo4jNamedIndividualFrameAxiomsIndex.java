@@ -46,6 +46,6 @@ public class Neo4jNamedIndividualFrameAxiomsIndex implements NamedIndividualFram
   @Nonnull
   @Override
   public Set<OWLAxiom> getNamedIndividualFrameAxioms(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return axiomBySubjectAccessor.getAxiomsForSubject(owlNamedIndividual, projectId, branchId, ontoDocId);
+    return axiomBySubjectAccessor.getAxiomsBySubject(owlNamedIndividual, projectId, branchId, ontoDocId);
   }
 }

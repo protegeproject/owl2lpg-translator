@@ -49,7 +49,7 @@ public class Neo4jProjectAnnotationAssertionAxiomsBySubjectIndex implements Proj
     return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor
-            .getAnnotationAssertionsForSubject(owlAnnotationSubject, projectId, branchId, ontoDocId)
+            .getAnnotationAssertionsBySubject(owlAnnotationSubject, projectId, branchId, ontoDocId)
             .stream());
   }
 }

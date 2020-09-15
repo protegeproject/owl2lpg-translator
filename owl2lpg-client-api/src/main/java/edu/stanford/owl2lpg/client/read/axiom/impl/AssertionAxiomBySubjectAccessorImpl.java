@@ -82,20 +82,20 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   @Nonnull
   @Override
   public ImmutableSet<OWLClassAssertionAxiom>
-  getClassAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                               @Nonnull ProjectId projectId,
-                               @Nonnull BranchId branchId,
-                               @Nonnull OntologyDocumentId ontoDocId) {
+  getClassAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                              @Nonnull ProjectId projectId,
+                              @Nonnull BranchId branchId,
+                              @Nonnull OntologyDocumentId ontoDocId) {
     return classAssertionAxiomAccessor.getAxiomsBySubject(owlIndividual, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
   public ImmutableSet<OWLObjectPropertyAssertionAxiom>
-  getObjectPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                                        @Nonnull ProjectId projectId,
-                                        @Nonnull BranchId branchId,
-                                        @Nonnull OntologyDocumentId ontoDocId) {
+  getObjectPropertyAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                                       @Nonnull ProjectId projectId,
+                                       @Nonnull BranchId branchId,
+                                       @Nonnull OntologyDocumentId ontoDocId) {
     var nodeIndex = (owlIndividual.isNamed()) ?
         getNodeIndex(OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY,
             createInputParams(owlIndividual.asOWLNamedIndividual().getIRI(), projectId, branchId, ontoDocId)) :
@@ -107,10 +107,10 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   @Nonnull
   @Override
   public ImmutableSet<OWLDataPropertyAssertionAxiom>
-  getDataPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
-                                      @Nonnull ProjectId projectId,
-                                      @Nonnull BranchId branchId,
-                                      @Nonnull OntologyDocumentId ontoDocId) {
+  getDataPropertyAssertionsBySubject(@Nonnull OWLIndividual owlIndividual,
+                                     @Nonnull ProjectId projectId,
+                                     @Nonnull BranchId branchId,
+                                     @Nonnull OntologyDocumentId ontoDocId) {
     var nodeIndex = (owlIndividual.isNamed()) ?
         getNodeIndex(DATA_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY,
             createInputParams(owlIndividual.asOWLNamedIndividual().getIRI(), projectId, branchId, ontoDocId)) :
@@ -122,21 +122,21 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   @Nonnull
   @Override
   public ImmutableSet<OWLAnnotationAssertionAxiom>
-  getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
-                                    @Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId) {
+  getAnnotationAssertionsBySubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId) {
     return annotationAssertionAxiomAccessor.getAxiomsBySubject(owlAnnotationSubject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
   public ImmutableSet<OWLAnnotationAssertionAxiom>
-  getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
-                                    @Nonnull OWLAnnotationProperty owlAnnotationProperty,
-                                    @Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId) {
+  getAnnotationAssertionsBySubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
+                                   @Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId) {
     return annotationAssertionAxiomAccessor.getAxiomsBySubjectAndProperty(owlAnnotationSubject, owlAnnotationProperty,
         projectId, branchId, ontoDocId);
   }

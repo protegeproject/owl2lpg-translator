@@ -87,7 +87,7 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   @Nonnull
   @Override
   public Stream<OWLClass> getTypes(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(owlNamedIndividual, projectId, branchId, ontoDocId)
+    return assertionAxiomBySubjectAccessor.getClassAssertionsBySubject(owlNamedIndividual, projectId, branchId, ontoDocId)
         .stream()
         .map(OWLClassAssertionAxiom::getClassExpression)
         .filter(OWLClassExpression::isNamed)

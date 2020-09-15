@@ -49,7 +49,7 @@ public class Neo4jProjectClassAssertionAxiomsByIndividualIndex implements Projec
     return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor
-            .getClassAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId)
+            .getClassAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId)
             .stream());
   }
 }

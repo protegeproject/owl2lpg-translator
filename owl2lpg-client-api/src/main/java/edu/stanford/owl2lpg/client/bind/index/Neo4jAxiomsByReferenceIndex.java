@@ -49,6 +49,6 @@ public class Neo4jAxiomsByReferenceIndex implements AxiomsByReferenceIndex {
   @Override
   public Stream<OWLAxiom> getReferencingAxioms(@Nonnull Collection<OWLEntity> collection,
                                                @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomBySubjectAccessor.getAxiomsForSubjects(collection, projectId, branchId, ontoDocId).stream();
+    return axiomBySubjectAccessor.getAxiomsBySubjects(collection, projectId, branchId, ontoDocId).stream();
   }
 }

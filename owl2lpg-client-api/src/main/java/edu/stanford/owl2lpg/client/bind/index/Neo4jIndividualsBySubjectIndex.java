@@ -84,7 +84,7 @@ public class Neo4jIndividualsBySubjectIndex {
         var types = projectAccessor.getOntologyDocumentIds(projectId, branchId)
             .stream()
             .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor
-                .getClassAssertionsForSubject(individual, projectId, branchId, ontoDocId)
+                .getClassAssertionsBySubject(individual, projectId, branchId, ontoDocId)
                 .stream())
             .map(OWLClassAssertionAxiom::getClassExpression)
             .filter(OWLClassExpression::isNamed)
@@ -109,7 +109,7 @@ public class Neo4jIndividualsBySubjectIndex {
       actualType = projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
           .flatMap(ontoDoId -> assertionAxiomBySubjectAccessor
-              .getClassAssertionsForSubject(individual, projectId, branchId, ontoDocId)
+              .getClassAssertionsBySubject(individual, projectId, branchId, ontoDocId)
               .stream())
           .map(OWLClassAssertionAxiom::getClassExpression)
           .filter(OWLClassExpression::isNamed)

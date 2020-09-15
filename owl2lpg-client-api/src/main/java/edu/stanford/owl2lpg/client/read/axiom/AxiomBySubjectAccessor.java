@@ -19,26 +19,26 @@ import java.util.Collection;
 public interface AxiomBySubjectAccessor {
 
   @Nonnull
-  ImmutableSet<OWLAxiom> getAxiomsForSubject(@Nonnull OWLClass subject,
+  ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLClass subject,
+                                            @Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId);
+
+  @Nonnull
+  ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLNamedIndividual subject,
+                                            @Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId);
+
+  @Nonnull
+  ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLEntity entity,
+                                            @Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId);
+
+  @Nonnull
+  ImmutableSet<OWLAxiom> getAxiomsBySubjects(@Nonnull Collection<OWLEntity> entities,
                                              @Nonnull ProjectId projectId,
                                              @Nonnull BranchId branchId,
                                              @Nonnull OntologyDocumentId ontoDocId);
-
-  @Nonnull
-  ImmutableSet<OWLAxiom> getAxiomsForSubject(@Nonnull OWLNamedIndividual subject,
-                                             @Nonnull ProjectId projectId,
-                                             @Nonnull BranchId branchId,
-                                             @Nonnull OntologyDocumentId ontoDocId);
-
-  @Nonnull
-  ImmutableSet<OWLAxiom> getAxiomsForSubject(@Nonnull OWLEntity entity,
-                                             @Nonnull ProjectId projectId,
-                                             @Nonnull BranchId branchId,
-                                             @Nonnull OntologyDocumentId ontoDocId);
-
-  @Nonnull
-  ImmutableSet<OWLAxiom> getAxiomsForSubjects(@Nonnull Collection<OWLEntity> entities,
-                                              @Nonnull ProjectId projectId,
-                                              @Nonnull BranchId branchId,
-                                              @Nonnull OntologyDocumentId ontoDocId);
 }

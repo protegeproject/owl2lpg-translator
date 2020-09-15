@@ -55,50 +55,50 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   @Nonnull
   @Override
   public ImmutableSet<OWLAxiom>
-  getAxiomsForSubject(@Nonnull OWLClass subject,
-                      @Nonnull ProjectId projectId,
-                      @Nonnull BranchId branchId,
-                      @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsForSubject(CLASS_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
+  getAxiomsBySubject(@Nonnull OWLClass subject,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsBySubject(CLASS_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
   public ImmutableSet<OWLAxiom>
-  getAxiomsForSubject(@Nonnull OWLNamedIndividual subject,
-                      @Nonnull ProjectId projectId,
-                      @Nonnull BranchId branchId,
-                      @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsForSubject(NAMED_INDIVIDUAL_AXIOM_BY_SUBEJCT_QUERY, subject, projectId, branchId, ontoDocId);
+  getAxiomsBySubject(@Nonnull OWLNamedIndividual subject,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsBySubject(NAMED_INDIVIDUAL_AXIOM_BY_SUBEJCT_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
   public ImmutableSet<OWLAxiom>
-  getAxiomsForSubject(@Nonnull OWLEntity subject,
-                      @Nonnull ProjectId projectId,
-                      @Nonnull BranchId branchId,
-                      @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsForSubject(ANY_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
+  getAxiomsBySubject(@Nonnull OWLEntity subject,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsBySubject(ANY_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
   public ImmutableSet<OWLAxiom>
-  getAxiomsForSubjects(@Nonnull Collection<OWLEntity> entities,
-                       @Nonnull ProjectId projectId,
-                       @Nonnull BranchId branchId,
-                       @Nonnull OntologyDocumentId ontoDocId) {
+  getAxiomsBySubjects(@Nonnull Collection<OWLEntity> entities,
+                      @Nonnull ProjectId projectId,
+                      @Nonnull BranchId branchId,
+                      @Nonnull OntologyDocumentId ontoDocId) {
     return entities.stream()
-        .flatMap(entity -> getAxiomsForSubject(entity, projectId, branchId, ontoDocId).stream())
+        .flatMap(entity -> getAxiomsBySubject(entity, projectId, branchId, ontoDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
-  private ImmutableSet<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject,
-                                                     ProjectId projectId,
-                                                     BranchId branchId,
-                                                     OntologyDocumentId ontoDocId) {
+  private ImmutableSet<OWLAxiom> getAxiomsBySubject(String queryString, OWLEntity subject,
+                                                    ProjectId projectId,
+                                                    BranchId branchId,
+                                                    OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(subject, projectId, branchId, ontoDocId);
     var nodeIndex = getNodeIndex(queryString, inputParams);
     return collectAxiomsFromIndex(nodeIndex);

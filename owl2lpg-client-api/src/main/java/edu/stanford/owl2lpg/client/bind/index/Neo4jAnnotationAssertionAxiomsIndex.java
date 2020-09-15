@@ -59,7 +59,7 @@ public class Neo4jAnnotationAssertionAxiomsIndex implements AnnotationAssertionA
 
   @Nonnull
   private Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(@Nonnull IRI iri) {
-    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(iri, projectId, branchId, ontoDocId);
+    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsBySubject(iri, projectId, branchId, ontoDocId);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class Neo4jAnnotationAssertionAxiomsIndex implements AnnotationAssertionA
   private Set<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubjectAndProperty(@Nonnull IRI iri, @Nonnull OWLAnnotationProperty owlAnnotationProperty) {
     return assertionAxiomBySubjectAccessor
-        .getAnnotationAssertionsForSubject(iri, owlAnnotationProperty, projectId, branchId, ontoDocId);
+        .getAnnotationAssertionsBySubject(iri, owlAnnotationProperty, projectId, branchId, ontoDocId);
   }
 
   @Override

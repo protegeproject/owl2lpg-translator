@@ -49,7 +49,7 @@ public class Neo4jDataPropertyAssertionAxiomsBySubjectIndex implements DataPrope
   public Stream<OWLDataPropertyAssertionAxiom> getDataPropertyAssertions(@Nonnull OWLIndividual owlIndividual,
                                                                          @Nonnull OWLOntologyID owlOntologyID) {
     return assertionAxiomBySubjectAccessor
-        .getDataPropertyAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId)
+        .getDataPropertyAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId)
         .stream();
   }
 }

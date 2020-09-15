@@ -49,7 +49,7 @@ public class Neo4jPropertyAssertionAxiomsBySubjectIndex implements PropertyAsser
   public Stream<OWLAxiom> getPropertyAssertions(@Nonnull OWLIndividual owlIndividual,
                                                 @Nonnull OWLOntologyID owlOntologyID) {
     return assertionAxiomBySubjectAccessor
-        .getPropertyAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId)
+        .getPropertyAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId)
         .stream();
   }
 }
