@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
@@ -21,8 +22,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -59,7 +58,7 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLObjectPropertyRangeAxiom>
+  public ImmutableSet<OWLObjectPropertyRangeAxiom>
   getObjectPropertyRangeAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
                                @Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
@@ -70,16 +69,16 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLObjectPropertyRangeAxiom> collectObjectPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLObjectPropertyRangeAxiom> collectObjectPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(OBJECT_PROPERTY_RANGE.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLObjectPropertyRangeAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
   @Override
-  public Set<OWLDataPropertyRangeAxiom>
+  public ImmutableSet<OWLDataPropertyRangeAxiom>
   getDataPropertyRangeAxioms(@Nonnull OWLDataProperty owlDataProperty,
                              @Nonnull ProjectId projectId,
                              @Nonnull BranchId branchId,
@@ -90,16 +89,16 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLDataPropertyRangeAxiom> collectDataPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLDataPropertyRangeAxiom> collectDataPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(DATA_PROPERTY_RANGE.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLDataPropertyRangeAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationPropertyRangeAxiom>
+  public ImmutableSet<OWLAnnotationPropertyRangeAxiom>
   getAnnotationPropertyRangeAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
                                    @Nonnull ProjectId projectId,
                                    @Nonnull BranchId branchId,
@@ -110,11 +109,11 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLAnnotationPropertyRangeAxiom> collectAnnotationPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLAnnotationPropertyRangeAxiom> collectAnnotationPropertyRangeAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(ANNOTATION_PROPERTY_RANGE.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationPropertyRangeAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull

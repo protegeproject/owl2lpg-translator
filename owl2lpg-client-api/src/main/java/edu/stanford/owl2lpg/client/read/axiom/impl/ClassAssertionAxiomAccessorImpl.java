@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
@@ -18,8 +19,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
@@ -58,7 +57,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
 
   @Nonnull
   @Override
-  public Set<OWLClassAssertionAxiom>
+  public ImmutableSet<OWLClassAssertionAxiom>
   getClassAssertions(@Nonnull OWLClass owlClass,
                      @Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
@@ -93,11 +92,11 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   }
 
   @Nonnull
-  private Set<OWLClassAssertionAxiom> collectClassAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLClassAssertionAxiom> collectClassAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(CLASS_ASSERTION.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLClassAssertionAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull

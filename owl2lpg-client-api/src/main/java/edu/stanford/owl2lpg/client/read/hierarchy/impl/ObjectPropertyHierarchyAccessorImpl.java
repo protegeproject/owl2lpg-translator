@@ -22,6 +22,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -136,10 +137,10 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
 
   @Override
   @Nonnull
-  public ImmutableSet<List<OWLObjectProperty>> getPathsToRoot(@Nonnull OWLObjectProperty owlObjectProperty,
-                                                              @Nonnull ProjectId projectId,
-                                                              @Nonnull BranchId branchId,
-                                                              @Nonnull OntologyDocumentId ontoDocId) {
+  public Collection<List<OWLObjectProperty>> getPathsToRoot(@Nonnull OWLObjectProperty owlObjectProperty,
+                                                            @Nonnull ProjectId projectId,
+                                                            @Nonnull BranchId branchId,
+                                                            @Nonnull OntologyDocumentId ontoDocId) {
     return getPathsToAncestor(owlObjectProperty, projectId, branchId, ontoDocId)
         .stream()
         .map(ObjectPropertyAncestorPath::asOrderedList)

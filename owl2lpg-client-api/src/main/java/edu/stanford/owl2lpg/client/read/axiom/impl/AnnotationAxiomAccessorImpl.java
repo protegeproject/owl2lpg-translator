@@ -1,9 +1,10 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AnnotationAxiomAccessor;
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.AnnotationAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -16,8 +17,6 @@ import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -48,10 +47,10 @@ public class AnnotationAxiomAccessorImpl implements AnnotationAxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationAxiom> getAnnotationAxioms(@Nonnull IRI iri,
-                                                     @Nonnull ProjectId projectId,
-                                                     @Nonnull BranchId branchId,
-                                                     @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLAnnotationAxiom> getAnnotationAxioms(@Nonnull IRI iri,
+                                                              @Nonnull ProjectId projectId,
+                                                              @Nonnull BranchId branchId,
+                                                              @Nonnull OntologyDocumentId ontoDocId) {
     var nodeIndex = getNodeIndex(ANNOTATION_AXIOM_BY_SUBJECT_QUERY, iri, projectId, branchId, ontoDocId);
     return collectAnnotationAxiomsFromIndex(nodeIndex);
   }
@@ -80,11 +79,11 @@ public class AnnotationAxiomAccessorImpl implements AnnotationAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLAnnotationAxiom> collectAnnotationAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLAnnotationAxiom> collectAnnotationAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(ANNOTATION_AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull

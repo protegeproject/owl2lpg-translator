@@ -1,5 +1,7 @@
 package edu.stanford.owl2lpg.client.read.shortform;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.shortform.EntityShortFormMatches;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
@@ -12,7 +14,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,10 +23,10 @@ import java.util.Set;
 public interface MultiLingualShortFormAccessor {
 
   @Nonnull
-  Set<OWLEntity> getEntities(@Nonnull String entityName,
-                             @Nonnull List<DictionaryLanguage> languages,
-                             @Nonnull ProjectId projectId,
-                             @Nonnull BranchId branchId);
+  ImmutableSet<OWLEntity> getEntities(@Nonnull String entityName,
+                                      @Nonnull List<DictionaryLanguage> languages,
+                                      @Nonnull ProjectId projectId,
+                                      @Nonnull BranchId branchId);
 
   @Nonnull
   String getShortForm(@Nonnull OWLEntity owlEntity,
@@ -35,10 +36,10 @@ public interface MultiLingualShortFormAccessor {
                       @Nonnull BranchId branchId);
 
   @Nonnull
-  Map<DictionaryLanguage, String> getShortForms(@Nonnull OWLEntity owlEntity,
-                                                @Nonnull List<DictionaryLanguage> languages,
-                                                @Nonnull ProjectId projectId,
-                                                @Nonnull BranchId branchId);
+  ImmutableMap<DictionaryLanguage, String> getShortForms(@Nonnull OWLEntity owlEntity,
+                                                         @Nonnull List<DictionaryLanguage> languages,
+                                                         @Nonnull ProjectId projectId,
+                                                         @Nonnull BranchId branchId);
 
   @Nonnull
   Page<EntityShortFormMatches> getShortFormsContaining(@Nonnull List<SearchString> searchStrings,

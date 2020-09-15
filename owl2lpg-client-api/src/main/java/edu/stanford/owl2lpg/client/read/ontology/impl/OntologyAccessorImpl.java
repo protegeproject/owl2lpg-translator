@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.ontology.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
@@ -18,7 +19,6 @@ import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -61,52 +61,52 @@ public class OntologyAccessorImpl implements OntologyAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAnnotation> getOntologyAnnotations(@Nonnull ProjectId projectId,
-                                                   @Nonnull BranchId branchId,
-                                                   @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLAnnotation> getOntologyAnnotations(@Nonnull ProjectId projectId,
+                                                            @Nonnull BranchId branchId,
+                                                            @Nonnull OntologyDocumentId ontoDocId) {
     return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
-  public Set<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
+                                             @Nonnull BranchId branchId,
+                                             @Nonnull OntologyDocumentId ontoDocId) {
     return axiomAccessor.getAllAxioms(projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
-  public <E extends OWLAxiom> Set<E> getAxiomsByType(@Nonnull AxiomType<E> axiomType,
-                                                     @Nonnull ProjectId projectId,
-                                                     @Nonnull BranchId branchId,
-                                                     @Nonnull OntologyDocumentId ontoDocId) {
+  public <E extends OWLAxiom> ImmutableSet<E> getAxiomsByType(@Nonnull AxiomType<E> axiomType,
+                                                              @Nonnull ProjectId projectId,
+                                                              @Nonnull BranchId branchId,
+                                                              @Nonnull OntologyDocumentId ontoDocId) {
     return axiomAccessor.getAxiomsByType(axiomType, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
-  public Set<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
-                                       @Nonnull BranchId branchId,
-                                       @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
+                                                @Nonnull BranchId branchId,
+                                                @Nonnull OntologyDocumentId ontoDocId) {
     return entityAccessor.getAllEntities(projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
-  public <E extends OWLEntity> Set<E> getEntitiesByType(@Nonnull EntityType<E> entityType,
-                                                        @Nonnull ProjectId projectId,
-                                                        @Nonnull BranchId branchId,
-                                                        @Nonnull OntologyDocumentId ontoDocId) {
+  public <E extends OWLEntity> ImmutableSet<E> getEntitiesByType(@Nonnull EntityType<E> entityType,
+                                                                 @Nonnull ProjectId projectId,
+                                                                 @Nonnull BranchId branchId,
+                                                                 @Nonnull OntologyDocumentId ontoDocId) {
     return entityAccessor.getEntitiesByType(entityType, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
   @Override
-  public Set<OWLEntity> getEntitiesByIri(@Nonnull IRI iri,
-                                         @Nonnull ProjectId projectId,
-                                         @Nonnull BranchId branchId,
-                                         @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLEntity> getEntitiesByIri(@Nonnull IRI iri,
+                                                  @Nonnull ProjectId projectId,
+                                                  @Nonnull BranchId branchId,
+                                                  @Nonnull OntologyDocumentId ontoDocId) {
     return entityAccessor.getEntitiesByIri(iri, projectId, branchId, ontoDocId);
   }
 }

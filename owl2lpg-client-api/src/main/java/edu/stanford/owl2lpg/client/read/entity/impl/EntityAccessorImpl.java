@@ -15,7 +15,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -50,18 +49,18 @@ public class EntityAccessorImpl implements EntityAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
-                                       @Nonnull BranchId branchId,
-                                       @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
+                                                @Nonnull BranchId branchId,
+                                                @Nonnull OntologyDocumentId ontoDocId) {
     return getEntities(ALL_ENTITIES_QUERY, Parameters.forContext(projectId, branchId, ontoDocId));
   }
 
   @Nonnull
   @Override
-  public Set<OWLEntity> getEntitiesByIri(@Nonnull IRI entityIri,
-                                         @Nonnull ProjectId projectId,
-                                         @Nonnull BranchId branchId,
-                                         @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLEntity> getEntitiesByIri(@Nonnull IRI entityIri,
+                                                  @Nonnull ProjectId projectId,
+                                                  @Nonnull BranchId branchId,
+                                                  @Nonnull OntologyDocumentId ontoDocId) {
     return getEntities(ENTITIES_BY_IRI_QUERY, Parameters.forEntityIri(entityIri, projectId, branchId, ontoDocId));
   }
 
@@ -88,10 +87,10 @@ public class EntityAccessorImpl implements EntityAccessor {
 
   @Nonnull
   @Override
-  public <E extends OWLEntity> Set<E> getEntitiesByType(@Nonnull EntityType<E> entityType,
-                                                        @Nonnull ProjectId projectId,
-                                                        @Nonnull BranchId branchId,
-                                                        @Nonnull OntologyDocumentId ontoDocId) {
+  public <E extends OWLEntity> ImmutableSet<E> getEntitiesByType(@Nonnull EntityType<E> entityType,
+                                                                 @Nonnull ProjectId projectId,
+                                                                 @Nonnull BranchId branchId,
+                                                                 @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forEntityType(entityType, projectId, branchId, ontoDocId);
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {

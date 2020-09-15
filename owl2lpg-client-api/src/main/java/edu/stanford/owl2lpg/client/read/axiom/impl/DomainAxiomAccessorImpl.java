@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
@@ -21,8 +22,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -59,7 +58,7 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLObjectPropertyDomainAxiom>
+  public ImmutableSet<OWLObjectPropertyDomainAxiom>
   getObjectPropertyDomainAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
                                 @Nonnull ProjectId projectId,
                                 @Nonnull BranchId branchId,
@@ -70,16 +69,16 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLObjectPropertyDomainAxiom> collectObjectPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLObjectPropertyDomainAxiom> collectObjectPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(OBJECT_PROPERTY_DOMAIN.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLObjectPropertyDomainAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
   @Override
-  public Set<OWLDataPropertyDomainAxiom>
+  public ImmutableSet<OWLDataPropertyDomainAxiom>
   getDataPropertyDomainAxioms(@Nonnull OWLDataProperty owlDataProperty,
                               @Nonnull ProjectId projectId,
                               @Nonnull BranchId branchId,
@@ -90,16 +89,16 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLDataPropertyDomainAxiom> collectDataPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLDataPropertyDomainAxiom> collectDataPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(DATA_PROPERTY_DOMAIN.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLDataPropertyDomainAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationPropertyDomainAxiom>
+  public ImmutableSet<OWLAnnotationPropertyDomainAxiom>
   getAnnotationPropertyDomainAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
                                     @Nonnull ProjectId projectId,
                                     @Nonnull BranchId branchId,
@@ -110,11 +109,11 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
   }
 
   @Nonnull
-  private Set<OWLAnnotationPropertyDomainAxiom> collectAnnotationPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLAnnotationPropertyDomainAxiom> collectAnnotationPropertyDomainAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(ANNOTATION_PROPERTY_DOMAIN.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationPropertyDomainAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull

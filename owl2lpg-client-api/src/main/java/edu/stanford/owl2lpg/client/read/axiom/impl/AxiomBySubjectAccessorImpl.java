@@ -20,8 +20,6 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -56,7 +54,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAxiom>
+  public ImmutableSet<OWLAxiom>
   getAxiomsForSubject(@Nonnull OWLClass subject,
                       @Nonnull ProjectId projectId,
                       @Nonnull BranchId branchId,
@@ -66,7 +64,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAxiom>
+  public ImmutableSet<OWLAxiom>
   getAxiomsForSubject(@Nonnull OWLNamedIndividual subject,
                       @Nonnull ProjectId projectId,
                       @Nonnull BranchId branchId,
@@ -76,7 +74,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAxiom>
+  public ImmutableSet<OWLAxiom>
   getAxiomsForSubject(@Nonnull OWLEntity subject,
                       @Nonnull ProjectId projectId,
                       @Nonnull BranchId branchId,
@@ -86,7 +84,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAxiom>
+  public ImmutableSet<OWLAxiom>
   getAxiomsForSubjects(@Nonnull Collection<OWLEntity> entities,
                        @Nonnull ProjectId projectId,
                        @Nonnull BranchId branchId,
@@ -97,10 +95,10 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   }
 
   @Nonnull
-  private Set<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject,
-                                            ProjectId projectId,
-                                            BranchId branchId,
-                                            OntologyDocumentId ontoDocId) {
+  private ImmutableSet<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject,
+                                                     ProjectId projectId,
+                                                     BranchId branchId,
+                                                     OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(subject, projectId, branchId, ontoDocId);
     var nodeIndex = getNodeIndex(queryString, inputParams);
     return collectAxiomsFromIndex(nodeIndex);
@@ -129,11 +127,11 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   }
 
   @Nonnull
-  private Set<OWLAxiom> collectAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLAxiom> collectAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull

@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
@@ -21,8 +22,6 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -63,7 +62,7 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLSubClassOfAxiom>
+  public ImmutableSet<OWLSubClassOfAxiom>
   getSubClassOfAxiomsBySubClass(@Nonnull OWLClass subClass,
                                 @Nonnull ProjectId projectId,
                                 @Nonnull BranchId branchId,
@@ -75,7 +74,7 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLSubObjectPropertyOfAxiom>
+  public ImmutableSet<OWLSubObjectPropertyOfAxiom>
   getSubObjectPropertyOfAxiomsBySubProperty(@Nonnull OWLObjectProperty subProperty,
                                             @Nonnull ProjectId projectId,
                                             @Nonnull BranchId branchId,
@@ -87,7 +86,7 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLSubDataPropertyOfAxiom>
+  public ImmutableSet<OWLSubDataPropertyOfAxiom>
   getSubDataPropertyOfAxiomsBySubProperty(@Nonnull OWLDataProperty subProperty,
                                           @Nonnull ProjectId projectId,
                                           @Nonnull BranchId branchId,
@@ -119,27 +118,27 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
   }
 
   @Nonnull
-  private Set<OWLSubClassOfAxiom> collectSubClassOfAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLSubClassOfAxiom> collectSubClassOfAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubClassOfAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
-  private Set<OWLSubObjectPropertyOfAxiom> collectSubObjectPropertyOfAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLSubObjectPropertyOfAxiom> collectSubObjectPropertyOfAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubObjectPropertyOfAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
-  private Set<OWLSubDataPropertyOfAxiom> collectSubDataPropertyOfAxiomsFromIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLSubDataPropertyOfAxiom> collectSubDataPropertyOfAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubDataPropertyOfAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull

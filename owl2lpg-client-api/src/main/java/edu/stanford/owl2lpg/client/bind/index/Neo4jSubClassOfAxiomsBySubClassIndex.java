@@ -47,6 +47,8 @@ public class Neo4jSubClassOfAxiomsBySubClassIndex implements SubClassOfAxiomsByS
   @Override
   public Stream<OWLSubClassOfAxiom> getSubClassOfAxiomsForSubClass(@Nonnull OWLClass subClass,
                                                                    @Nonnull OWLOntologyID owlOntologyID) {
-    return hierarchyAxiomBySubjectAccessor.getSubClassOfAxiomsBySubClass(subClass, projectId, branchId, ontoDocId).stream();
+    return hierarchyAxiomBySubjectAccessor
+        .getSubClassOfAxiomsBySubClass(subClass, projectId, branchId, ontoDocId)
+        .stream();
   }
 }

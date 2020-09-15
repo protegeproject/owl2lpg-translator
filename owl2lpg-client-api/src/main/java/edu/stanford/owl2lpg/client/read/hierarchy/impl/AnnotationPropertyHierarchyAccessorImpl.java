@@ -19,6 +19,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -103,10 +104,10 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
 
   @Override
   @Nonnull
-  public ImmutableSet<List<OWLAnnotationProperty>> getPathsToRoot(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
-                                                                  @Nonnull ProjectId projectId,
-                                                                  @Nonnull BranchId branchId,
-                                                                  @Nonnull OntologyDocumentId ontoDocId) {
+  public Collection<List<OWLAnnotationProperty>> getPathsToRoot(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                                                @Nonnull ProjectId projectId,
+                                                                @Nonnull BranchId branchId,
+                                                                @Nonnull OntologyDocumentId ontoDocId) {
     return getPathsToAncestor(owlAnnotationProperty, projectId, branchId, ontoDocId)
         .stream()
         .map(AnnotationPropertyAncestorPath::asOrderedList)

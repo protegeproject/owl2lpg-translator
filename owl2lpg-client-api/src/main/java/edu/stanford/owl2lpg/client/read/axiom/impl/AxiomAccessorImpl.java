@@ -1,9 +1,10 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -16,8 +17,6 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -50,28 +49,28 @@ public class AxiomAccessorImpl implements AxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
-                                    @Nonnull BranchId branchId,
-                                    @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLAxiom> getAllAxioms(@Nonnull ProjectId projectId,
+                                             @Nonnull BranchId branchId,
+                                             @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forContext(projectId, branchId, ontoDocId);
     var nodeIndex = getNodeIndex(ALL_AXIOM_QUERY, inputParams);
     return collectAxiomsFromNodeIndex(nodeIndex);
   }
 
   @Nonnull
-  private Set<OWLAxiom> collectAxiomsFromNodeIndex(NodeIndex nodeIndex) {
+  private ImmutableSet<OWLAxiom> collectAxiomsFromNodeIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
   @Override
-  public <T extends OWLAxiom> Set<T> getAxiomsByType(@Nonnull AxiomType<T> axiomType,
-                                                     @Nonnull ProjectId projectId,
-                                                     @Nonnull BranchId branchId,
-                                                     @Nonnull OntologyDocumentId ontoDocId) {
+  public <T extends OWLAxiom> ImmutableSet<T> getAxiomsByType(@Nonnull AxiomType<T> axiomType,
+                                                              @Nonnull ProjectId projectId,
+                                                              @Nonnull BranchId branchId,
+                                                              @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forAxiomType(axiomType, projectId, branchId, ontoDocId);
     var nodeIndex = getNodeIndex(AXIOM_BY_TYPE_QUERY, inputParams);
     return collectAxiomsFromIndex(nodeIndex, axiomType);
@@ -100,10 +99,10 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   }
 
   @Nonnull
-  private <T extends OWLAxiom> Set<T> collectAxiomsFromIndex(NodeIndex nodeIndex, AxiomType<T> axiomType) {
+  private <T extends OWLAxiom> ImmutableSet<T> collectAxiomsFromIndex(NodeIndex nodeIndex, AxiomType<T> axiomType) {
     return nodeIndex.getNodes(axiomType.getName())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, axiomType.getActualClass()))
-        .collect(Collectors.toSet());
+        .collect(ImmutableSet.toImmutableSet());
   }
 }

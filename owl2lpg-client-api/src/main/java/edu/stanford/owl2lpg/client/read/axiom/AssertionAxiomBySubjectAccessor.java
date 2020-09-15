@@ -14,7 +14,6 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -24,35 +23,35 @@ import java.util.stream.Stream;
 public interface AssertionAxiomBySubjectAccessor {
 
   @Nonnull
-  Set<OWLClassAssertionAxiom>
+  ImmutableSet<OWLClassAssertionAxiom>
   getClassAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                @Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
                                @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLObjectPropertyAssertionAxiom>
+  ImmutableSet<OWLObjectPropertyAssertionAxiom>
   getObjectPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                         @Nonnull ProjectId projectId,
                                         @Nonnull BranchId branchId,
                                         @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLDataPropertyAssertionAxiom>
+  ImmutableSet<OWLDataPropertyAssertionAxiom>
   getDataPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                       @Nonnull ProjectId projectId,
                                       @Nonnull BranchId branchId,
                                       @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLAnnotationAssertionAxiom>
+  ImmutableSet<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
                                     @Nonnull ProjectId projectId,
                                     @Nonnull BranchId branchId,
                                     @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLAnnotationAssertionAxiom>
+  ImmutableSet<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
                                     @Nonnull OWLAnnotationProperty property,
                                     @Nonnull ProjectId projectId,
@@ -60,7 +59,7 @@ public interface AssertionAxiomBySubjectAccessor {
                                     @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  default Set<OWLAxiom>
+  default ImmutableSet<OWLAxiom>
   getPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                   @Nonnull ProjectId projectId,
                                   @Nonnull BranchId branchId,
@@ -76,7 +75,7 @@ public interface AssertionAxiomBySubjectAccessor {
         .collect(ImmutableSet.toImmutableSet());
   }
 
-  private Set<OWLAnnotationAssertionAxiom>
+  private ImmutableSet<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionAxioms(@Nonnull OWLIndividual owlIndividual,
                                @Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,

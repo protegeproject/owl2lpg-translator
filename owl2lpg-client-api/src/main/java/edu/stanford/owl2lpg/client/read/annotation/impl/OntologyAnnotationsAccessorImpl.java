@@ -1,10 +1,10 @@
 package edu.stanford.owl2lpg.client.read.annotation.impl;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -17,7 +17,6 @@ import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -48,9 +47,9 @@ public class OntologyAnnotationsAccessorImpl implements OntologyAnnotationsAcces
 
   @Nonnull
   @Override
-  public Set<OWLAnnotation> getOntologyAnnotations(@Nonnull ProjectId projectId,
-                                                   @Nonnull BranchId branchId,
-                                                   @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLAnnotation> getOntologyAnnotations(@Nonnull ProjectId projectId,
+                                                            @Nonnull BranchId branchId,
+                                                            @Nonnull OntologyDocumentId ontoDocId) {
     var nodeIndex = getNodeIndex(Parameters.forContext(projectId, branchId, ontoDocId));
     return nodeIndex.getNodes(ANNOTATION.getMainLabel())
         .stream()
@@ -60,9 +59,9 @@ public class OntologyAnnotationsAccessorImpl implements OntologyAnnotationsAcces
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationProperty> getOntologyAnnotationProperties(@Nonnull ProjectId projectId,
-                                                                    @Nonnull BranchId branchId,
-                                                                    @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLAnnotationProperty> getOntologyAnnotationProperties(@Nonnull ProjectId projectId,
+                                                                             @Nonnull BranchId branchId,
+                                                                             @Nonnull OntologyDocumentId ontoDocId) {
     return getOntologyAnnotations(projectId, branchId, ontoDocId)
         .stream()
         .map(OWLAnnotation::getProperty)

@@ -25,7 +25,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -85,7 +84,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLClassAssertionAxiom>
+  public ImmutableSet<OWLClassAssertionAxiom>
   getClassAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                @Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
@@ -100,7 +99,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLObjectPropertyAssertionAxiom>
+  public ImmutableSet<OWLObjectPropertyAssertionAxiom>
   getObjectPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                         @Nonnull ProjectId projectId,
                                         @Nonnull BranchId branchId,
@@ -115,7 +114,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLDataPropertyAssertionAxiom>
+  public ImmutableSet<OWLDataPropertyAssertionAxiom>
   getDataPropertyAssertionsForSubject(@Nonnull OWLIndividual owlIndividual,
                                       @Nonnull ProjectId projectId,
                                       @Nonnull BranchId branchId,
@@ -130,7 +129,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationAssertionAxiom>
+  public ImmutableSet<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
                                     @Nonnull ProjectId projectId,
                                     @Nonnull BranchId branchId,
@@ -140,7 +139,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationAssertionAxiom>
+  public ImmutableSet<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
                                     @Nonnull OWLAnnotationProperty owlAnnotationProperty,
                                     @Nonnull ProjectId projectId,
@@ -173,7 +172,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   }
 
   @Nonnull
-  private Set<OWLClassAssertionAxiom> collectClassAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLClassAssertionAxiom> collectClassAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(CLASS_ASSERTION.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLClassAssertionAxiom.class))
@@ -181,7 +180,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   }
 
   @Nonnull
-  private Set<OWLObjectPropertyAssertionAxiom> collectObjectPropertyAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLObjectPropertyAssertionAxiom> collectObjectPropertyAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(OBJECT_PROPERTY_ASSERTION.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLObjectPropertyAssertionAxiom.class))
@@ -189,7 +188,7 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   }
 
   @Nonnull
-  private Set<OWLDataPropertyAssertionAxiom> collectDataPropertyAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
+  private ImmutableSet<OWLDataPropertyAssertionAxiom> collectDataPropertyAssertionAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(DATA_PROPERTY_ASSERTION.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLDataPropertyAssertionAxiom.class))
