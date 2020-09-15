@@ -2,4 +2,3 @@ MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId}
 MATCH (o)<-[:AXIOM_OF]-(n:ClassAssertion)
 MATCH p=(n)-[* {structuralSpec:true}]->(m)
 RETURN p
-LIMIT 500

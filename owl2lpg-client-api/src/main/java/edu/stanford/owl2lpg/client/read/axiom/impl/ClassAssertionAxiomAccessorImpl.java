@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
@@ -24,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
 
@@ -45,21 +43,26 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
 
   @Nonnull
-  private final OWLClass root;
-
-  @Nonnull
   private final Driver driver;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public ClassAssertionAxiomAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
-                                         @Nonnull Driver driver,
+  public ClassAssertionAxiomAccessorImpl(@Nonnull Driver driver,
                                          @Nonnull NodeMapper nodeMapper) {
-    this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
     this.nodeMapper = checkNotNull(nodeMapper);
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<OWLClassAssertionAxiom> getAllAxioms(@Nonnull ProjectId projectId,
+                                                           @Nonnull BranchId branchId,
+                                                           @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams);
+    return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
   @Nonnull
@@ -69,9 +72,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
                                                               @Nonnull BranchId branchId,
                                                               @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlClass, projectId, branchId, ontoDocId);
-    var nodeIndex = (root.equals(getOWLThing()) && root.equals(owlClass)) ?
-        getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams) :
-        getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY, inputParams);
+    var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
@@ -117,6 +118,11 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLClassAssertionAxiom.class))
         .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Nonnull
+  private static Value createInputParams(ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forContext(projectId, branchId, ontoDocId);
   }
 
   @Nonnull
