@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.client.read.hierarchy;
 import dagger.Component;
 import edu.stanford.owl2lpg.client.DatabaseModule;
 import edu.stanford.owl2lpg.client.DatabaseSessionScope;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContextModule;
+import edu.stanford.owl2lpg.client.OntologyProjectModule;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessorModule;
 import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
 
@@ -13,11 +13,11 @@ import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
  */
 @Component(modules = {
     DatabaseModule.class,
+    OntologyProjectModule.class,
     HierarchyRootProviderModule.class,
     HierarchyAccessorModule.class,
     EntityAccessorModule.class,
-    OwlDataFactoryModule.class,
-    AxiomContextModule.class})
+    OwlDataFactoryModule.class})
 @DatabaseSessionScope
 public interface HierarchyAccessorComponent {
 
