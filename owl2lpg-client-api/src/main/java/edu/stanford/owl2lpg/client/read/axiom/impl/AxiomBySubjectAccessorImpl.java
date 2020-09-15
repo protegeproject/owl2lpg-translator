@@ -1,12 +1,14 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
@@ -52,36 +54,61 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLAxiom> getAxiomsForSubject(OWLClass subject, AxiomContext context) {
-    return getAxiomsForSubject(CLASS_AXIOM_BY_SUBJECT_QUERY, subject, context);
+  public Set<OWLAxiom>
+  getAxiomsForSubject(@Nonnull OWLClass subject,
+                      @Nonnull ProjectId projectId,
+                      @Nonnull BranchId branchId,
+                      @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsForSubject(CLASS_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLAxiom> getAxiomsForSubject(OWLNamedIndividual subject, AxiomContext context) {
-    return getAxiomsForSubject(NAMED_INDIVIDUAL_AXIOM_BY_SUBEJCT_QUERY, subject, context);
+  public Set<OWLAxiom>
+  getAxiomsForSubject(@Nonnull OWLNamedIndividual subject,
+                      @Nonnull ProjectId projectId,
+                      @Nonnull BranchId branchId,
+                      @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsForSubject(NAMED_INDIVIDUAL_AXIOM_BY_SUBEJCT_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLAxiom> getAxiomsForSubject(OWLEntity subject, AxiomContext context) {
-    return getAxiomsForSubject(ANY_AXIOM_BY_SUBJECT_QUERY, subject, context);
+  public Set<OWLAxiom>
+  getAxiomsForSubject(@Nonnull OWLEntity subject,
+                      @Nonnull ProjectId projectId,
+                      @Nonnull BranchId branchId,
+                      @Nonnull OntologyDocumentId ontoDocId) {
+    return getAxiomsForSubject(ANY_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLAxiom> getAxiomsForSubjects(Collection<OWLEntity> entities, AxiomContext context) {
+  public Set<OWLAxiom>
+  getAxiomsForSubjects(@Nonnull Collection<OWLEntity> entities,
+                       @Nonnull ProjectId projectId,
+                       @Nonnull BranchId branchId,
+                       @Nonnull OntologyDocumentId ontoDocId) {
     return entities.stream()
-        .flatMap(entity -> getAxiomsForSubject(entity, context).stream())
+        .flatMap(entity -> getAxiomsForSubject(entity, projectId, branchId, ontoDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
-  private Set<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject, AxiomContext context) {
-    var nodeIndex = getNodeIndex(queryString, subject, context);
+  @Nonnull
+  private Set<OWLAxiom> getAxiomsForSubject(String queryString, OWLEntity subject,
+                                            ProjectId projectId,
+                                            BranchId branchId,
+                                            OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(subject, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(queryString, inputParams);
     return collectAxiomsFromIndex(nodeIndex);
   }
 
-  private NodeIndex getNodeIndex(String queryString, OWLEntity subject, AxiomContext context) {
+  @Nonnull
+  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
     try (var session = driver.session()) {
-      var inputParams = createInputParams(subject, context);
       return session.readTransaction(tx -> {
         var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
@@ -110,7 +137,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   }
 
   @Nonnull
-  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
-    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLEntity entity, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(entity.getIRI(), projectId, branchId, ontoDocId);
   }
 }

@@ -6,7 +6,6 @@ import edu.stanford.bmir.protege.web.shared.DataFactory;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -84,8 +83,9 @@ public class Neo4jIndividualsBySubjectIndex {
       if (!thePreferredType.isOWLThing()) {
         var types = projectAccessor.getOntologyDocumentIds(projectId, branchId)
             .stream()
-            .map(ontoDocId -> AxiomContext.create(projectId, branchId, ontoDocId))
-            .flatMap(axiomContext -> assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(individual, axiomContext).stream())
+            .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor
+                .getClassAssertionsForSubject(individual, projectId, branchId, ontoDocId)
+                .stream())
             .map(OWLClassAssertionAxiom::getClassExpression)
             .filter(OWLClassExpression::isNamed)
             .map(OWLClassExpression::asOWLClass)
@@ -108,9 +108,9 @@ public class Neo4jIndividualsBySubjectIndex {
       // No preferred type or preferred type not found. Try for a specific type
       actualType = projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
-          .flatMap(ontoDoId -> assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(
-              individual,
-              AxiomContext.create(projectId, branchId, ontoDocId)).stream())
+          .flatMap(ontoDoId -> assertionAxiomBySubjectAccessor
+              .getClassAssertionsForSubject(individual, projectId, branchId, ontoDocId)
+              .stream())
           .map(OWLClassAssertionAxiom::getClassExpression)
           .filter(OWLClassExpression::isNamed)
           .map(OWLClassExpression::asOWLClass)

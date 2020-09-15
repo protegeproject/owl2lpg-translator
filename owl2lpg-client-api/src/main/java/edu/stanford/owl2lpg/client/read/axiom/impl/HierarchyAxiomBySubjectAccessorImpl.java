@@ -1,11 +1,13 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
-import edu.stanford.owl2lpg.client.read.axiom.HierarchyAxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.HierarchyAxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
@@ -59,27 +61,44 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(OWLClass subClass, AxiomContext context) {
-    var nodeIndex = getNodeIndex(SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY, subClass, context);
+  public Set<OWLSubClassOfAxiom>
+  getSubClassOfAxiomsBySubClass(@Nonnull OWLClass subClass,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(subClass, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY, inputParams);
     return collectSubClassOfAxiomsFromIndex(nodeIndex);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(OWLObjectProperty subProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, subProperty, context);
+  public Set<OWLSubObjectPropertyOfAxiom>
+  getSubObjectPropertyOfAxiomsBySubProperty(@Nonnull OWLObjectProperty subProperty,
+                                            @Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(subProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, inputParams);
     return collectSubObjectPropertyOfAxiomsFromIndex(nodeIndex);
   }
 
+  @Nonnull
   @Override
-  public Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(OWLDataProperty subProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, subProperty, context);
+  public Set<OWLSubDataPropertyOfAxiom>
+  getSubDataPropertyOfAxiomsBySubProperty(@Nonnull OWLDataProperty subProperty,
+                                          @Nonnull ProjectId projectId,
+                                          @Nonnull BranchId branchId,
+                                          @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(subProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, inputParams);
     return collectSubDataPropertyOfAxiomsFromIndex(nodeIndex);
   }
 
-  private NodeIndex getNodeIndex(String queryString, OWLEntity entity, AxiomContext context) {
+  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
     try (var session = driver.session()) {
-      var inputParams = createInputParams(entity, context);
       return session.readTransaction(tx -> {
         var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
@@ -124,7 +143,7 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
   }
 
   @Nonnull
-  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
-    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLEntity entity, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(entity.getIRI(), projectId, branchId, ontoDocId);
   }
 }

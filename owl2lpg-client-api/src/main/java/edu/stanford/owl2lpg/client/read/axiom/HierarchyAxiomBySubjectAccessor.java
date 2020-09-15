@@ -1,5 +1,8 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -7,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -15,9 +19,24 @@ import java.util.Set;
  */
 public interface HierarchyAxiomBySubjectAccessor {
 
-  Set<OWLSubClassOfAxiom> getSubClassOfAxiomsBySubClass(OWLClass subClass, AxiomContext context);
+  @Nonnull
+  Set<OWLSubClassOfAxiom>
+  getSubClassOfAxiomsBySubClass(@Nonnull OWLClass subClass,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontoDocId);
 
-  Set<OWLSubObjectPropertyOfAxiom> getSubObjectPropertyOfAxiomsBySubProperty(OWLObjectProperty subProperty, AxiomContext context);
+  @Nonnull
+  Set<OWLSubObjectPropertyOfAxiom>
+  getSubObjectPropertyOfAxiomsBySubProperty(@Nonnull OWLObjectProperty subProperty,
+                                            @Nonnull ProjectId projectId,
+                                            @Nonnull BranchId branchId,
+                                            @Nonnull OntologyDocumentId ontoDocId);
 
-  Set<OWLSubDataPropertyOfAxiom> getSubDataPropertyOfAxiomsBySubProperty(OWLDataProperty subProperty, AxiomContext context);
+  @Nonnull
+  Set<OWLSubDataPropertyOfAxiom>
+  getSubDataPropertyOfAxiomsBySubProperty(@Nonnull OWLDataProperty subProperty,
+                                          @Nonnull ProjectId projectId,
+                                          @Nonnull BranchId branchId,
+                                          @Nonnull OntologyDocumentId ontoDocId);
 }

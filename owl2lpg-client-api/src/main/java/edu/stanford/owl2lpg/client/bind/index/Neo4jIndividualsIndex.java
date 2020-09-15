@@ -5,7 +5,6 @@ import edu.stanford.bmir.protege.web.server.index.IndividualsQueryResult;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -88,7 +87,7 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   @Nonnull
   @Override
   public Stream<OWLClass> getTypes(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(owlNamedIndividual, AxiomContext.create(projectId, branchId, ontoDocId))
+    return assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(owlNamedIndividual, projectId, branchId, ontoDocId)
         .stream()
         .map(OWLClassAssertionAxiom::getClassExpression)
         .filter(OWLClassExpression::isNamed)

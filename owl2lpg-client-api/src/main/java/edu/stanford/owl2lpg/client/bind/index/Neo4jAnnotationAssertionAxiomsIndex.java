@@ -2,7 +2,9 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationAssertionAxiomsIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -21,15 +23,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jAnnotationAssertionAxiomsIndex implements AnnotationAssertionAxiomsIndex {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
 
   @Inject
-  public Neo4jAnnotationAssertionAxiomsIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jAnnotationAssertionAxiomsIndex(@Nonnull ProjectId projectId,
+                                             @Nonnull BranchId branchId,
+                                             @Nonnull OntologyDocumentId ontoDocId,
                                              @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.assertionAxiomBySubjectAccessor = checkNotNull(assertionAxiomBySubjectAccessor);
   }
 
@@ -47,7 +59,7 @@ public class Neo4jAnnotationAssertionAxiomsIndex implements AnnotationAssertionA
 
   @Nonnull
   private Set<OWLAnnotationAssertionAxiom> getAnnotationAssertionsForSubject(@Nonnull IRI iri) {
-    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(iri, axiomContext);
+    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(iri, projectId, branchId, ontoDocId);
   }
 
   @Override
@@ -60,7 +72,8 @@ public class Neo4jAnnotationAssertionAxiomsIndex implements AnnotationAssertionA
   @Nonnull
   private Set<OWLAnnotationAssertionAxiom>
   getAnnotationAssertionsForSubjectAndProperty(@Nonnull IRI iri, @Nonnull OWLAnnotationProperty owlAnnotationProperty) {
-    return assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(iri, owlAnnotationProperty, axiomContext);
+    return assertionAxiomBySubjectAccessor
+        .getAnnotationAssertionsForSubject(iri, owlAnnotationProperty, projectId, branchId, ontoDocId);
   }
 
   @Override

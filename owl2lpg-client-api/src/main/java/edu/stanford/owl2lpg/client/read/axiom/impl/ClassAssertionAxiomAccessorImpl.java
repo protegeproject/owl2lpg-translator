@@ -4,9 +4,11 @@ import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
@@ -56,8 +58,12 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
 
   @Nonnull
   @Override
-  public Set<OWLClassAssertionAxiom> getClassAssertions(OWLClass owlClass, AxiomContext context) {
-    var inputParams = createInputParams(owlClass, context);
+  public Set<OWLClassAssertionAxiom>
+  getClassAssertions(@Nonnull OWLClass owlClass,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(owlClass, projectId, branchId, ontoDocId);
     var nodeIndex = (root.equals(getOWLThing()) && root.equals(owlClass)) ?
         getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams) :
         getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY, inputParams);
@@ -95,7 +101,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   }
 
   @Nonnull
-  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
-    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLEntity entity, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(entity.getIRI(), projectId, branchId, ontoDocId);
   }
 }

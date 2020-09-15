@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ProjectAnnotationAssertionAxiomsBySubjectIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -49,8 +48,8 @@ public class Neo4jProjectAnnotationAssertionAxiomsBySubjectIndex implements Proj
   public Stream<OWLAnnotationAssertionAxiom> getAnnotationAssertionAxioms(@Nonnull OWLAnnotationSubject owlAnnotationSubject) {
     return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor.getAnnotationAssertionsForSubject(
-            owlAnnotationSubject,
-            AxiomContext.create(projectId, branchId, ontoDocId)).stream());
+        .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor
+            .getAnnotationAssertionsForSubject(owlAnnotationSubject, projectId, branchId, ontoDocId)
+            .stream());
   }
 }

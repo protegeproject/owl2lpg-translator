@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.client.read.individual.impl;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
@@ -64,7 +63,7 @@ public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return getAllIndividuals(projectId, branchId, ontoDocId);
     } else {
-      return classAssertionAxiomAccessor.getClassAssertions(owlClass, AxiomContext.create(projectId, branchId, ontoDocId))
+      return classAssertionAxiomAccessor.getClassAssertions(owlClass, projectId, branchId, ontoDocId)
           .stream()
           .map(OWLClassAssertionAxiom::getIndividual)
           .filter(OWLIndividual::isNamed)

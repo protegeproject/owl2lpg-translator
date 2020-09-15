@@ -1,8 +1,10 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.DataPropertyRangeAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.RangeAxiomAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -20,15 +22,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jDataPropertyRangeAxiomsIndex implements DataPropertyRangeAxiomsIndex {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final RangeAxiomAccessor rangeAxiomAccessor;
 
   @Inject
-  public Neo4jDataPropertyRangeAxiomsIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jDataPropertyRangeAxiomsIndex(@Nonnull ProjectId projectId,
+                                           @Nonnull BranchId branchId,
+                                           @Nonnull OntologyDocumentId ontoDocId,
                                            @Nonnull RangeAxiomAccessor rangeAxiomAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.rangeAxiomAccessor = checkNotNull(rangeAxiomAccessor);
   }
 
@@ -36,6 +48,6 @@ public class Neo4jDataPropertyRangeAxiomsIndex implements DataPropertyRangeAxiom
   @Override
   public Stream<OWLDataPropertyRangeAxiom> getDataPropertyRangeAxioms(@Nonnull OWLDataProperty owlDataProperty,
                                                                       @Nonnull OWLOntologyID owlOntologyID) {
-    return rangeAxiomAccessor.getDataPropertyRangeAxioms(owlDataProperty, axiomContext).stream();
+    return rangeAxiomAccessor.getDataPropertyRangeAxioms(owlDataProperty, projectId, branchId, ontoDocId).stream();
   }
 }

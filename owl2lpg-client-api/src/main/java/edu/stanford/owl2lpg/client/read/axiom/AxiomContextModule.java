@@ -35,11 +35,6 @@ public class AxiomContextModule {
   }
 
   @Provides
-  public AxiomContext provideAxiomContext() {
-    return AxiomContext.create(projectId, branchId, ontologyDocumentId);
-  }
-
-  @Provides
   public ProjectId provideProjectId() {
     return projectId;
   }

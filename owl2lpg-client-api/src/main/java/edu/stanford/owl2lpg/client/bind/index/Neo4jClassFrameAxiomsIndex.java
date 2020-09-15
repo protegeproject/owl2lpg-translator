@@ -3,7 +3,9 @@ package edu.stanford.owl2lpg.client.bind.index;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -22,21 +24,31 @@ import static edu.stanford.bmir.protege.web.server.index.ClassFrameAxiomsIndex.A
 public class Neo4jClassFrameAxiomsIndex implements ClassFrameAxiomsIndex {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final AxiomBySubjectAccessor axiomBySubjectAccessor;
 
   @Inject
-  public Neo4jClassFrameAxiomsIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jClassFrameAxiomsIndex(@Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId,
                                     @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
   }
 
   @Override
   public Set<OWLAxiom> getFrameAxioms(OWLClass owlClass, AnnotationsTreatment annotationsTreatment) {
-    return axiomBySubjectAccessor.getAxiomsForSubject(owlClass, axiomContext)
+    return axiomBySubjectAccessor.getAxiomsForSubject(owlClass, projectId, branchId, ontoDocId)
         .stream()
         .filter(axiom -> {
           var accepted = true;

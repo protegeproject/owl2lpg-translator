@@ -2,8 +2,10 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ObjectPropertyCharacteristicsIndex;
 import edu.stanford.bmir.protege.web.shared.frame.ObjectPropertyCharacteristic;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.CharacteristicsAxiomAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 
@@ -19,15 +21,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jObjectPropertyCharacteristicsIndex implements ObjectPropertyCharacteristicsIndex {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final CharacteristicsAxiomAccessor characteristicsAxiomAccessor;
 
   @Inject
-  public Neo4jObjectPropertyCharacteristicsIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jObjectPropertyCharacteristicsIndex(@Nonnull ProjectId projectId,
+                                                 @Nonnull BranchId branchId,
+                                                 @Nonnull OntologyDocumentId ontoDocId,
                                                  @Nonnull CharacteristicsAxiomAccessor characteristicsAxiomAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.characteristicsAxiomAccessor = checkNotNull(characteristicsAxiomAccessor);
   }
 
@@ -35,9 +47,6 @@ public class Neo4jObjectPropertyCharacteristicsIndex implements ObjectPropertyCh
   public boolean hasCharacteristic(@Nonnull OWLObjectProperty owlObjectProperty,
                                    @Nonnull ObjectPropertyCharacteristic objectPropertyCharacteristic,
                                    @Nonnull OWLOntologyID owlOntologyID) {
-    var projectId = axiomContext.getProjectId();
-    var branchId = axiomContext.getBranchId();
-    var ontoDocId = axiomContext.getOntologyDocumentId();
     switch (objectPropertyCharacteristic) {
       case FUNCTIONAL:
         return characteristicsAxiomAccessor.isFunctional(owlObjectProperty, projectId, branchId, ontoDocId);

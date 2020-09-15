@@ -1,5 +1,8 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -17,11 +20,23 @@ import java.util.Set;
 public interface DomainAxiomAccessor {
 
   @Nonnull
-  Set<OWLObjectPropertyDomainAxiom> getObjectPropertyDomainAxioms(OWLObjectProperty owlObjectProperty, AxiomContext context);
+  Set<OWLObjectPropertyDomainAxiom>
+  getObjectPropertyDomainAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLDataPropertyDomainAxiom> getDataPropertyDomainAxioms(OWLDataProperty owlDataProperty, AxiomContext context);
+  Set<OWLDataPropertyDomainAxiom>
+  getDataPropertyDomainAxioms(@Nonnull OWLDataProperty owlDataProperty,
+                              @Nonnull ProjectId projectId,
+                              @Nonnull BranchId branchId,
+                              @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  Set<OWLAnnotationPropertyDomainAxiom> getAnnotationPropertyDomainAxioms(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context);
+  Set<OWLAnnotationPropertyDomainAxiom>
+  getAnnotationPropertyDomainAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId);
 }

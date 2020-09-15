@@ -2,7 +2,9 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.PropertyAssertionAxiomsBySubjectIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -20,15 +22,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jPropertyAssertionAxiomsBySubjectIndex implements PropertyAssertionAxiomsBySubjectIndex {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
 
   @Inject
-  public Neo4jPropertyAssertionAxiomsBySubjectIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jPropertyAssertionAxiomsBySubjectIndex(@Nonnull ProjectId projectId,
+                                                    @Nonnull BranchId branchId,
+                                                    @Nonnull OntologyDocumentId ontoDocId,
                                                     @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.assertionAxiomBySubjectAccessor = checkNotNull(assertionAxiomBySubjectAccessor);
   }
 
@@ -36,6 +48,8 @@ public class Neo4jPropertyAssertionAxiomsBySubjectIndex implements PropertyAsser
   @Override
   public Stream<OWLAxiom> getPropertyAssertions(@Nonnull OWLIndividual owlIndividual,
                                                 @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomBySubjectAccessor.getPropertyAssertionsForSubject(owlIndividual, axiomContext).stream();
+    return assertionAxiomBySubjectAccessor
+        .getPropertyAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId)
+        .stream();
   }
 }

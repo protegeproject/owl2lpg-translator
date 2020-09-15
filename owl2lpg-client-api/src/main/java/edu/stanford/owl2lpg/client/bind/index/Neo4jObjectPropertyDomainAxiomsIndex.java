@@ -1,8 +1,10 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ObjectPropertyDomainAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.axiom.DomainAxiomAccessor;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -20,21 +22,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jObjectPropertyDomainAxiomsIndex implements ObjectPropertyDomainAxiomsIndex {
 
   @Nonnull
-  private final AxiomContext axiomContext;
+  private final ProjectId projectId;
+
+  @Nonnull
+  private final BranchId branchId;
+
+  @Nonnull
+  private final OntologyDocumentId ontoDocId;
 
   @Nonnull
   private final DomainAxiomAccessor domainAxiomAccessor;
 
   @Inject
-  public Neo4jObjectPropertyDomainAxiomsIndex(@Nonnull AxiomContext axiomContext,
+  public Neo4jObjectPropertyDomainAxiomsIndex(@Nonnull ProjectId projectId,
+                                              @Nonnull BranchId branchId,
+                                              @Nonnull OntologyDocumentId ontoDocId,
                                               @Nonnull DomainAxiomAccessor domainAxiomAccessor) {
-    this.axiomContext = checkNotNull(axiomContext);
+    this.projectId = checkNotNull(projectId);
+    this.branchId = checkNotNull(branchId);
+    this.ontoDocId = checkNotNull(ontoDocId);
     this.domainAxiomAccessor = checkNotNull(domainAxiomAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLObjectPropertyDomainAxiom> getObjectPropertyDomainAxioms(@Nonnull OWLObjectProperty owlObjectProperty, @Nonnull OWLOntologyID owlOntologyID) {
-    return domainAxiomAccessor.getObjectPropertyDomainAxioms(owlObjectProperty, axiomContext).stream();
+  public Stream<OWLObjectPropertyDomainAxiom> getObjectPropertyDomainAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
+                                                                            @Nonnull OWLOntologyID owlOntologyID) {
+    return domainAxiomAccessor.getObjectPropertyDomainAxioms(owlObjectProperty, projectId, branchId, ontoDocId).stream();
   }
 }

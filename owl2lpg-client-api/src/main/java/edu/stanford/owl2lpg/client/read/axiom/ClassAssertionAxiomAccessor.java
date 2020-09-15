@@ -1,5 +1,8 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 
@@ -13,5 +16,8 @@ import java.util.Set;
 public interface ClassAssertionAxiomAccessor {
 
   @Nonnull
-  Set<OWLClassAssertionAxiom> getClassAssertions(OWLClass owlClass, AxiomContext axiomContext);
+  Set<OWLClassAssertionAxiom> getClassAssertions(@Nonnull OWLClass owlClass,
+                                                 @Nonnull ProjectId projectId,
+                                                 @Nonnull BranchId branchId,
+                                                 @Nonnull OntologyDocumentId ontoDocId);
 }

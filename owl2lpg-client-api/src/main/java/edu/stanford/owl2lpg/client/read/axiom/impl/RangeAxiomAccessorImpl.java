@@ -1,11 +1,13 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
-import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
+import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.RangeAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
@@ -57,8 +59,13 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLObjectPropertyRangeAxiom> getObjectPropertyRangeAxioms(OWLObjectProperty owlObjectProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(OBJECT_PROPERTY_RANGE_AXIOM_QUERY, owlObjectProperty, context);
+  public Set<OWLObjectPropertyRangeAxiom>
+  getObjectPropertyRangeAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
+                               @Nonnull ProjectId projectId,
+                               @Nonnull BranchId branchId,
+                               @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(owlObjectProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(OBJECT_PROPERTY_RANGE_AXIOM_QUERY, inputParams);
     return collectObjectPropertyRangeAxiomsFromIndex(nodeIndex);
   }
 
@@ -72,8 +79,13 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLDataPropertyRangeAxiom> getDataPropertyRangeAxioms(OWLDataProperty owlDataProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(DATA_PROPERTY_RANGE_AXIOM_QUERY, owlDataProperty, context);
+  public Set<OWLDataPropertyRangeAxiom>
+  getDataPropertyRangeAxioms(@Nonnull OWLDataProperty owlDataProperty,
+                             @Nonnull ProjectId projectId,
+                             @Nonnull BranchId branchId,
+                             @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(owlDataProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(DATA_PROPERTY_RANGE_AXIOM_QUERY, inputParams);
     return collectDataPropertyRangeAxiomsFromIndex(nodeIndex);
   }
 
@@ -87,8 +99,13 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
 
   @Nonnull
   @Override
-  public Set<OWLAnnotationPropertyRangeAxiom> getAnnotationPropertyRangeAxioms(OWLAnnotationProperty owlAnnotationProperty, AxiomContext context) {
-    var nodeIndex = getNodeIndex(ANNOTATION_PROPERTY_RANGE_AXIOM_QUERY, owlAnnotationProperty, context);
+  public Set<OWLAnnotationPropertyRangeAxiom>
+  getAnnotationPropertyRangeAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(owlAnnotationProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = getNodeIndex(ANNOTATION_PROPERTY_RANGE_AXIOM_QUERY, inputParams);
     return collectAnnotationPropertyRangeAxiomsFromIndex(nodeIndex);
   }
 
@@ -101,10 +118,9 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
   }
 
   @Nonnull
-  private NodeIndex getNodeIndex(String queryString, OWLEntity entity, AxiomContext context) {
+  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
-        var inputParams = createInputParams(entity, context);
         var result = tx.run(queryString, inputParams);
         var nodeIndexBuilder = new NodeIndexImpl.Builder();
         while (result.hasNext()) {
@@ -124,7 +140,7 @@ public class RangeAxiomAccessorImpl implements RangeAxiomAccessor {
   }
 
   @Nonnull
-  private static Value createInputParams(OWLEntity entity, AxiomContext context) {
-    return Parameters.forEntityIri(entity.getIRI(), context.getProjectId(), context.getBranchId(), context.getOntologyDocumentId());
+  private static Value createInputParams(OWLEntity entity, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(entity.getIRI(), projectId, branchId, ontoDocId);
   }
 }

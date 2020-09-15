@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ProjectClassAssertionAxiomsByIndividualIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -49,8 +48,8 @@ public class Neo4jProjectClassAssertionAxiomsByIndividualIndex implements Projec
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLIndividual owlIndividual) {
     return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor.getClassAssertionsForSubject(
-            owlIndividual,
-            AxiomContext.create(projectId, branchId, ontoDocId)).stream());
+        .flatMap(ontoDocId -> assertionAxiomBySubjectAccessor
+            .getClassAssertionsForSubject(owlIndividual, projectId, branchId, ontoDocId)
+            .stream());
   }
 }
