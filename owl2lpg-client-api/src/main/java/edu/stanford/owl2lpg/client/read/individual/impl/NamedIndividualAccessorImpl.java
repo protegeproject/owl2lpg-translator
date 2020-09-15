@@ -63,7 +63,7 @@ public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return getAllIndividuals(projectId, branchId, ontoDocId);
     } else {
-      return classAssertionAxiomAccessor.getClassAssertions(owlClass, projectId, branchId, ontoDocId)
+      return classAssertionAxiomAccessor.getAxiomsByType(owlClass, projectId, branchId, ontoDocId)
           .stream()
           .map(OWLClassAssertionAxiom::getIndividual)
           .filter(OWLIndividual::isNamed)

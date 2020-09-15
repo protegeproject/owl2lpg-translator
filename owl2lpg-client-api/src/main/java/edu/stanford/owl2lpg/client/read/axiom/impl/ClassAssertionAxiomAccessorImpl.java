@@ -13,9 +13,12 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Path;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -31,11 +34,15 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
  */
 public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
-  private static final String CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY_FILE = "axioms/class-assertion-axioms-by-class.cpy";
+  private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE = "axioms/class-assertion-axioms-by-type.cpy";
   private static final String CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY_FILE = "axioms/class-assertion-axioms-of-owl-thing.cpy";
+  private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE = "axioms/class-assertion-axiom-by-individual.cpy";
+  private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE = "axioms/class-assertion-axiom-by-anonymous-individual.cpy";
 
-  private static final String CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY = read(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY_FILE);
+  private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY = read(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE);
   private static final String CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY = read(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY_FILE);
+  private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
+  private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
 
   @Nonnull
   private final OWLClass root;
@@ -57,15 +64,28 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
 
   @Nonnull
   @Override
-  public ImmutableSet<OWLClassAssertionAxiom>
-  getClassAssertions(@Nonnull OWLClass owlClass,
-                     @Nonnull ProjectId projectId,
-                     @Nonnull BranchId branchId,
-                     @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLClassAssertionAxiom> getAxiomsByType(@Nonnull OWLClass owlClass,
+                                                              @Nonnull ProjectId projectId,
+                                                              @Nonnull BranchId branchId,
+                                                              @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlClass, projectId, branchId, ontoDocId);
     var nodeIndex = (root.equals(getOWLThing()) && root.equals(owlClass)) ?
         getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams) :
-        getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_CLASS_QUERY, inputParams);
+        getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY, inputParams);
+    return collectClassAssertionAxiomsFromIndex(nodeIndex);
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<OWLClassAssertionAxiom> getAxiomsBySubject(@Nonnull OWLIndividual owlIndividual,
+                                                                 @Nonnull ProjectId projectId,
+                                                                 @Nonnull BranchId branchId,
+                                                                 @Nonnull OntologyDocumentId ontoDocId) {
+    var nodeIndex = (owlIndividual.isNamed()) ?
+        getNodeIndex(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY,
+            createInputParams(owlIndividual.asOWLNamedIndividual().getIRI(), projectId, branchId, ontoDocId)) :
+        getNodeIndex(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY,
+            createInputParams(owlIndividual.asOWLAnonymousIndividual().getID(), projectId, branchId, ontoDocId));
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
@@ -102,5 +122,15 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   @Nonnull
   private static Value createInputParams(OWLEntity entity, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
     return Parameters.forEntityIri(entity.getIRI(), projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  private static Value createInputParams(IRI entityIri, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(entityIri, projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  private static Value createInputParams(NodeID nodeId, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forNodeId(nodeId, projectId, branchId, ontoDocId);
   }
 }

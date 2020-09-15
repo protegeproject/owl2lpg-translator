@@ -48,6 +48,6 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   @Override
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLClass owlClass,
                                                                 @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomAccessor.getClassAssertions(owlClass, projectId, branchId, ontoDocId).stream();
+    return assertionAxiomAccessor.getAxiomsByType(owlClass, projectId, branchId, ontoDocId).stream();
   }
 }
