@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ObjectPropertyRangeAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.RangeAxiomAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,23 +31,26 @@ public class Neo4jObjectPropertyRangeAxiomsIndex implements ObjectPropertyRangeA
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final RangeAxiomAccessor rangeAxiomAccessor;
+  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
 
   @Inject
   public Neo4jObjectPropertyRangeAxiomsIndex(@Nonnull ProjectId projectId,
                                              @Nonnull BranchId branchId,
                                              @Nonnull OntologyDocumentId ontoDocId,
-                                             @Nonnull RangeAxiomAccessor rangeAxiomAccessor) {
+                                             @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.rangeAxiomAccessor = checkNotNull(rangeAxiomAccessor);
+    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLObjectPropertyRangeAxiom> getObjectPropertyRangeAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
                                                                           @Nonnull OWLOntologyID owlOntologyID) {
-    return rangeAxiomAccessor.getObjectPropertyRangeAxioms(owlObjectProperty, projectId, branchId, ontoDocId).stream();
+    return axiomBySubjectAccessor.getAxiomsBySubject(owlObjectProperty, projectId, branchId, ontoDocId)
+        .stream()
+        .filter(OWLObjectPropertyRangeAxiom.class::isInstance)
+        .map(OWLObjectPropertyRangeAxiom.class::cast);
   }
 }

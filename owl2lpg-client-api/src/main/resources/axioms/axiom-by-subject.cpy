@@ -7,4 +7,4 @@ CALL {
   RETURN n
 }
 MATCH p=(n)-[* {structuralSpec:true}]->(m)
-RETURN p
+RETURN DISTINCT p

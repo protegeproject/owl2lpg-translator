@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ObjectPropertyDomainAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.DomainAxiomAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,23 +31,26 @@ public class Neo4jObjectPropertyDomainAxiomsIndex implements ObjectPropertyDomai
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final DomainAxiomAccessor domainAxiomAccessor;
+  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
 
   @Inject
   public Neo4jObjectPropertyDomainAxiomsIndex(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull OntologyDocumentId ontoDocId,
-                                              @Nonnull DomainAxiomAccessor domainAxiomAccessor) {
+                                              @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.domainAxiomAccessor = checkNotNull(domainAxiomAccessor);
+    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLObjectPropertyDomainAxiom> getObjectPropertyDomainAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
                                                                             @Nonnull OWLOntologyID owlOntologyID) {
-    return domainAxiomAccessor.getObjectPropertyDomainAxioms(owlObjectProperty, projectId, branchId, ontoDocId).stream();
+    return axiomBySubjectAccessor.getAxiomsBySubject(owlObjectProperty, projectId, branchId, ontoDocId)
+        .stream()
+        .filter(OWLObjectPropertyDomainAxiom.class::isInstance)
+        .map(OWLObjectPropertyDomainAxiom.class::cast);
   }
 }

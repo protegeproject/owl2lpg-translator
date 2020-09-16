@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationPropertyDomainAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.DomainAxiomAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,23 +31,26 @@ public class Neo4jAnnotationPropertyDomainAxiomsIndex implements AnnotationPrope
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final DomainAxiomAccessor domainAxiomAccessor;
+  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
 
   @Inject
   public Neo4jAnnotationPropertyDomainAxiomsIndex(@Nonnull ProjectId projectId,
                                                   @Nonnull BranchId branchId,
                                                   @Nonnull OntologyDocumentId ontoDocId,
-                                                  @Nonnull DomainAxiomAccessor domainAxiomAccessor) {
+                                                  @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.domainAxiomAccessor = checkNotNull(domainAxiomAccessor);
+    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLAnnotationPropertyDomainAxiom> getAnnotationPropertyDomainAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
                                                                                     @Nonnull OWLOntologyID owlOntologyID) {
-    return domainAxiomAccessor.getAnnotationPropertyDomainAxioms(owlAnnotationProperty, projectId, branchId, ontoDocId).stream();
+    return axiomBySubjectAccessor.getAxiomsBySubject(owlAnnotationProperty, projectId, branchId, ontoDocId)
+        .stream()
+        .filter(OWLAnnotationPropertyDomainAxiom.class::isInstance)
+        .map(OWLAnnotationPropertyDomainAxiom.class::cast);
   }
 }
