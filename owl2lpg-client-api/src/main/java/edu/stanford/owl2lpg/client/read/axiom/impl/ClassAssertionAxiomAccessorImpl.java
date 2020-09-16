@@ -5,11 +5,13 @@ import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -31,12 +33,10 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
 public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
   private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE = "axioms/class-assertion-axioms-by-type.cpy";
-  private static final String CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY_FILE = "axioms/class-assertion-axioms-of-owl-thing.cpy";
   private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE = "axioms/class-assertion-axiom-by-individual.cpy";
   private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE = "axioms/class-assertion-axiom-by-anonymous-individual.cpy";
 
   private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY = read(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE);
-  private static final String CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY = read(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY_FILE);
   private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);
   private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
 
@@ -46,11 +46,16 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   @Nonnull
   private final NodeMapper nodeMapper;
 
+  @Nonnull
+  private final AxiomAccessor axiomAccessor;
+
   @Inject
   public ClassAssertionAxiomAccessorImpl(@Nonnull GraphReader graphReader,
-                                         @Nonnull NodeMapper nodeMapper) {
+                                         @Nonnull NodeMapper nodeMapper,
+                                         @Nonnull AxiomAccessor axiomAccessor) {
     this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
@@ -58,9 +63,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   public ImmutableSet<OWLClassAssertionAxiom> getAllAxioms(@Nonnull ProjectId projectId,
                                                            @Nonnull BranchId branchId,
                                                            @Nonnull OntologyDocumentId ontoDocId) {
-    var inputParams = createInputParams(projectId, branchId, ontoDocId);
-    var nodeIndex = graphReader.getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams);
-    return collectClassAssertionAxiomsFromIndex(nodeIndex);
+    return axiomAccessor.getAxiomsByType(AxiomType.CLASS_ASSERTION, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
