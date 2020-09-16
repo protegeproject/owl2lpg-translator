@@ -10,10 +10,12 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
@@ -37,6 +39,10 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
       "axioms/sub-object-property-of-axiom-by-sub-property.cpy";
   private static final String SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE =
       "axioms/sub-data-property-of-axiom-by-sub-property.cpy";
+  private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE =
+      "axioms/sub-annotation-property-of-axiom-by-sub-property.cpy";
+  private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY_FILE =
+      "axioms/sub-annotation-property-of-axiom-by-super-property.cpy";
 
   private static final String SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY =
       read(SUB_CLASS_OF_AXIOMS_BY_SUB_CLASS_QUERY_FILE);
@@ -44,6 +50,10 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
       read(SUB_OBJECT_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE);
   private static final String SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY =
       read(SUB_DATA_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE);
+  private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY =
+      read(SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY_FILE);
+  private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY =
+      read(SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -95,6 +105,30 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
   }
 
   @Nonnull
+  @Override
+  public ImmutableSet<OWLSubAnnotationPropertyOfAxiom>
+  getSubAnnotationPropertyOfAxiomsBySubProperty(@Nonnull OWLAnnotationProperty subProperty,
+                                                @Nonnull ProjectId projectId,
+                                                @Nonnull BranchId branchId,
+                                                @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(subProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUB_PROPERTY_QUERY, inputParams);
+    return collectSubAnnotationPropertyOfAxiomsFromIndex(nodeIndex);
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<OWLSubAnnotationPropertyOfAxiom>
+  getSubAnnotationPropertyOfAxiomsBySuperProperty(@Nonnull OWLAnnotationProperty superProperty,
+                                                  @Nonnull ProjectId projectId,
+                                                  @Nonnull BranchId branchId,
+                                                  @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(superProperty, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY, inputParams);
+    return collectSubAnnotationPropertyOfAxiomsFromIndex(nodeIndex);
+  }
+
+  @Nonnull
   private ImmutableSet<OWLSubClassOfAxiom> collectSubClassOfAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
@@ -115,6 +149,14 @@ public class HierarchyAxiomBySubjectAccessorImpl implements HierarchyAxiomBySubj
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubDataPropertyOfAxiom.class))
+        .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Nonnull
+  private ImmutableSet<OWLSubAnnotationPropertyOfAxiom> collectSubAnnotationPropertyOfAxiomsFromIndex(NodeIndex nodeIndex) {
+    return nodeIndex.getNodes(AXIOM.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubAnnotationPropertyOfAxiom.class))
         .collect(ImmutableSet.toImmutableSet());
   }
 
