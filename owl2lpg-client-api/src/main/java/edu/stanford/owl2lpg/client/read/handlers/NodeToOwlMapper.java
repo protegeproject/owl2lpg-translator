@@ -3,13 +3,61 @@ package edu.stanford.owl2lpg.client.read.handlers;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import org.neo4j.driver.types.Node;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
+import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLFacetRestriction;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.inject.Inject;
 import java.util.Set;
 
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_ANNOTATION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_SUBJECT;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_VALUE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_ANNOTATION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CONSTRAINING_FACET;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATATYPE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DOMAIN;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INVERSE_OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RESTRICTION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RESTRICTION_VALUE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SOURCE_INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_ANNOTATION_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_ANNOTATION_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_VALUE;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -59,6 +107,11 @@ public class NodeToOwlMapper {
   public OWLDataRange toDataPropertyRange(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var rangeNode = nodeIndex.getEndNode(mainNode, RANGE.name());
     return nodeMapper.toObject(rangeNode, nodeIndex, OWLDataRange.class);
+  }
+
+  public OWLObjectPropertyExpression toObjectProperty(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
+    var propertyNode = nodeIndex.getEndNode(mainNode, OBJECT_PROPERTY.name());
+    return nodeMapper.toObject(propertyNode, nodeIndex, OWLObjectProperty.class);
   }
 
   public OWLObjectPropertyExpression toObjectPropertyExpr(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {

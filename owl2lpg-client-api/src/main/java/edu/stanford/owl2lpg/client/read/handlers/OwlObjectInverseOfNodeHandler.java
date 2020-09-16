@@ -38,7 +38,7 @@ public class OwlObjectInverseOfNodeHandler implements NodeHandler<OWLObjectInver
 
   @Override
   public OWLObjectInverseOf handle(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
-    var property = nodeToOwlMapper.toObjectPropertyExpr(mainNode, nodeIndex, nodeMapper);
+    var property = nodeToOwlMapper.toObjectProperty(mainNode, nodeIndex, nodeMapper);
     return dataFactory.getOWLObjectInverseOf(property);
   }
 }
