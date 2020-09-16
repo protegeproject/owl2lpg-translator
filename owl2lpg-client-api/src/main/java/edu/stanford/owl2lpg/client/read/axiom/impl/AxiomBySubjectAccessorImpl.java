@@ -29,13 +29,13 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
  */
 public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
 
-  private static final String CLASS_AXIOM_BY_SUBJECT_QUERY_FILE = "axioms/class-axiom-by-subject.cpy";
-  private static final String NAMED_INDIVIDUAL_AXIOM_BY_SUBJECT_QUERY_FILE = "axioms/named-individual-axiom-by-subject.cpy";
-  private static final String ANY_AXIOM_BY_SUBJECT_QUERY_FILE = "axioms/axiom-by-subject.cpy";
+  private static final String AXIOM_BY_SUBJECT_CLASS_QUERY_FILE = "axioms/axiom-by-subject-class.cpy";
+  private static final String AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY_FILE = "axioms/axiom-by-subject-named-individual.cpy";
+  private static final String AXIOM_BY_SUBJECT_ENTITY_QUERY_FILE = "axioms/axiom-by-subject-entity.cpy";
 
-  private static final String CLASS_AXIOM_BY_SUBJECT_QUERY = read(CLASS_AXIOM_BY_SUBJECT_QUERY_FILE);
-  private static final String NAMED_INDIVIDUAL_AXIOM_BY_SUBEJCT_QUERY = read(NAMED_INDIVIDUAL_AXIOM_BY_SUBJECT_QUERY_FILE);
-  private static final String ANY_AXIOM_BY_SUBJECT_QUERY = read(ANY_AXIOM_BY_SUBJECT_QUERY_FILE);
+  private static final String AXIOM_BY_SUBJECT_CLASS_QUERY = read(AXIOM_BY_SUBJECT_CLASS_QUERY_FILE);
+  private static final String AXIOM_BY_SUBEJCT_NAMED_INDIVIDUAL_QUERY = read(AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY_FILE);
+  private static final String AXIOM_BY_SUBJECT_ENTITY_QUERY = read(AXIOM_BY_SUBJECT_ENTITY_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -57,7 +57,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
                      @Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
                      @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsBySubject(CLASS_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
+    return getAxiomsBySubject(AXIOM_BY_SUBJECT_CLASS_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
@@ -67,7 +67,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
                      @Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
                      @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsBySubject(NAMED_INDIVIDUAL_AXIOM_BY_SUBEJCT_QUERY, subject, projectId, branchId, ontoDocId);
+    return getAxiomsBySubject(AXIOM_BY_SUBEJCT_NAMED_INDIVIDUAL_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
@@ -77,7 +77,7 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
                      @Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
                      @Nonnull OntologyDocumentId ontoDocId) {
-    return getAxiomsBySubject(ANY_AXIOM_BY_SUBJECT_QUERY, subject, projectId, branchId, ontoDocId);
+    return getAxiomsBySubject(AXIOM_BY_SUBJECT_ENTITY_QUERY, subject, projectId, branchId, ontoDocId);
   }
 
   @Nonnull
