@@ -1,10 +1,15 @@
 package edu.stanford.owl2lpg.client.bind.hierarchy;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyProvider;
+import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoot;
+import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ObjectPropertyHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import org.semanticweb.owlapi.model.EntityType;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import javax.annotation.Nonnull;
@@ -21,6 +26,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHierarchyProvider {
 
   @Nonnull
+  private final OWLObjectProperty root;
+
+  @Nonnull
   private final ProjectId projectId;
 
   @Nonnull
@@ -30,27 +38,43 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
+  private final EntityAccessor entityAccessor;
+
+  @Nonnull
   private final ObjectPropertyHierarchyAccessor hierarchyAccessor;
 
+  @Nonnull
+  private final OWLDataFactory dataFactory;
+
   @Inject
-  public Neo4jObjectPropertyHierarchyProvider(@Nonnull ProjectId projectId,
+  public Neo4jObjectPropertyHierarchyProvider(@Nonnull @ObjectPropertyHierarchyRoot OWLObjectProperty root,
+                                              @Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull OntologyDocumentId ontoDocId,
-                                              @Nonnull ObjectPropertyHierarchyAccessor hierarchyAccessor) {
+                                              @Nonnull EntityAccessor entityAccessor,
+                                              @Nonnull ObjectPropertyHierarchyAccessor hierarchyAccessor,
+                                              @Nonnull OWLDataFactory dataFactory) {
+    this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
+    this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
+    this.dataFactory = checkNotNull(dataFactory);
   }
 
   @Override
   public Collection<OWLObjectProperty> getRoots() {
-    return hierarchyAccessor.getRoots(projectId, branchId, ontoDocId);
+    return ImmutableSet.of(root);
   }
 
   @Override
   public Collection<OWLObjectProperty> getChildren(OWLObjectProperty owlObjectProperty) {
-    return hierarchyAccessor.getChildren(owlObjectProperty, projectId, branchId, ontoDocId);
+    if (root.equals(dataFactory.getOWLTopObjectProperty()) && root.equals(owlObjectProperty)) {
+      return hierarchyAccessor.getTopChildren(projectId, branchId, ontoDocId);
+    } else {
+      return hierarchyAccessor.getChildren(owlObjectProperty, projectId, branchId, ontoDocId);
+    }
   }
 
   @Override
@@ -60,7 +84,18 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Override
   public Collection<OWLObjectProperty> getDescendants(OWLObjectProperty owlObjectProperty) {
-    return hierarchyAccessor.getDescendants(owlObjectProperty, projectId, branchId, ontoDocId);
+    if (root.equals(dataFactory.getOWLTopObjectProperty()) && root.equals(owlObjectProperty)) {
+      return getAllObjectProperties();
+    } else {
+      return hierarchyAccessor.getDescendants(owlObjectProperty, projectId, branchId, ontoDocId);
+    }
+  }
+
+  @Nonnull
+  private ImmutableSet<OWLObjectProperty> getAllObjectProperties() {
+    return entityAccessor.getEntitiesByType(EntityType.OBJECT_PROPERTY, projectId, branchId, ontoDocId)
+        .stream()
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override

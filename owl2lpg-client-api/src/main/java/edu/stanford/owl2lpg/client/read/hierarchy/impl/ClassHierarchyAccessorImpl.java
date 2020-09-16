@@ -3,9 +3,7 @@ package edu.stanford.owl2lpg.client.read.hierarchy.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
-import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -15,7 +13,6 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
-import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -26,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
 
 /**
@@ -50,34 +46,16 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String PATHS_TO_ANCESTOR_QUERY = read(CLASS_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
-  private final OWLClass root;
-
-  @Nonnull
   private final Driver driver;
-
-  @Nonnull
-  private final EntityAccessor entityAccessor;
 
   @Nonnull
   private final OWLDataFactory dataFactory;
 
   @Inject
-  public ClassHierarchyAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
-                                    @Nonnull Driver driver,
-                                    @Nonnull EntityAccessor entityAccessor,
+  public ClassHierarchyAccessorImpl(@Nonnull Driver driver,
                                     @Nonnull OWLDataFactory dataFactory) {
-    this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
-    this.entityAccessor = checkNotNull(entityAccessor);
     this.dataFactory = checkNotNull(dataFactory);
-  }
-
-  @Override
-  @Nonnull
-  public ImmutableSet<OWLClass> getRoots(@Nonnull ProjectId projectId,
-                                         @Nonnull BranchId branchId,
-                                         @Nonnull OntologyDocumentId ontoDocId) {
-    return ImmutableSet.of(root);
   }
 
   @Override
@@ -95,20 +73,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                                                @Nonnull ProjectId projectId,
                                                @Nonnull BranchId branchId,
                                                @Nonnull OntologyDocumentId ontoDocId) {
-    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
-      return getAllClasses(projectId, branchId, ontoDocId);
-    } else {
-      return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
-    }
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLClass> getAllClasses(@Nonnull ProjectId projectId,
-                                               @Nonnull BranchId branchId,
-                                               @Nonnull OntologyDocumentId ontoDocId) {
-    return entityAccessor.getEntitiesByType(EntityType.CLASS, projectId, branchId, ontoDocId)
-        .stream()
-        .collect(ImmutableSet.toImmutableSet());
+    return getClasses(CLASS_DESCENDANT_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
   }
 
   @Override
@@ -126,12 +91,15 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                                             @Nonnull ProjectId projectId,
                                             @Nonnull BranchId branchId,
                                             @Nonnull OntologyDocumentId ontoDocId) {
-    var children = ImmutableSet.<OWLClass>builder();
-    children.addAll(getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId)));
-    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
-      children.addAll(getClasses(CLASS_CHILDREN_OF_OWL_THING_QUERY, createInputParams(projectId, branchId, ontoDocId)));
-    }
-    return children.build();
+    return getClasses(CLASS_CHILDREN_QUERY, createInputParams(owlClass, projectId, branchId, ontoDocId));
+  }
+
+  @Override
+  @Nonnull
+  public ImmutableSet<OWLClass> getTopChildren(@Nonnull ProjectId projectId,
+                                               @Nonnull BranchId branchId,
+                                               @Nonnull OntologyDocumentId ontoDocId) {
+    return getClasses(CLASS_CHILDREN_OF_OWL_THING_QUERY, createInputParams(projectId, branchId, ontoDocId));
   }
 
   @Override

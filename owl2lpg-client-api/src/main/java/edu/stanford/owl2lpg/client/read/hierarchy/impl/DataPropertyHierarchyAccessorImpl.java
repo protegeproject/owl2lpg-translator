@@ -3,7 +3,6 @@ package edu.stanford.owl2lpg.client.read.hierarchy.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
-import edu.stanford.bmir.protege.web.server.hierarchy.DataPropertyHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.DataPropertyHierarchyAccessor;
@@ -15,7 +14,6 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
-import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -51,9 +49,6 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   private static final String PATHS_TO_ANCESTOR_QUERY = read(DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
-  private final OWLDataProperty root;
-
-  @Nonnull
   private final Driver driver;
 
   @Nonnull
@@ -63,22 +58,12 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   private final OWLDataFactory dataFactory;
 
   @Inject
-  public DataPropertyHierarchyAccessorImpl(@Nonnull @DataPropertyHierarchyRoot OWLDataProperty root,
-                                           @Nonnull Driver driver,
+  public DataPropertyHierarchyAccessorImpl(@Nonnull Driver driver,
                                            @Nonnull EntityAccessor entityAccessor,
                                            @Nonnull OWLDataFactory dataFactory) {
-    this.root = checkNotNull(root);
     this.driver = checkNotNull(driver);
     this.entityAccessor = checkNotNull(entityAccessor);
     this.dataFactory = checkNotNull(dataFactory);
-  }
-
-  @Override
-  @Nonnull
-  public ImmutableSet<OWLDataProperty> getRoots(@Nonnull ProjectId projectId,
-                                                @Nonnull BranchId branchId,
-                                                @Nonnull OntologyDocumentId ontoDocId) {
-    return ImmutableSet.of(root);
   }
 
   @Override
@@ -96,20 +81,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                       @Nonnull ProjectId projectId,
                                                       @Nonnull BranchId branchId,
                                                       @Nonnull OntologyDocumentId ontoDocId) {
-    if (root.equals(dataFactory.getOWLTopDataProperty()) && root.equals(owlDataProperty)) {
-      return getAllDataProperties(projectId, branchId, ontoDocId);
-    } else {
-      return getProperties(DATA_PROPERTY_DESCENDANT_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
-    }
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLDataProperty> getAllDataProperties(@Nonnull ProjectId projectId,
-                                                             @Nonnull BranchId branchId,
-                                                             @Nonnull OntologyDocumentId ontoDocId) {
-    return entityAccessor.getEntitiesByType(EntityType.DATA_PROPERTY, projectId, branchId, ontoDocId)
-        .stream()
-        .collect(ImmutableSet.toImmutableSet());
+    return getProperties(DATA_PROPERTY_DESCENDANT_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
   }
 
   @Override
@@ -127,12 +99,15 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                    @Nonnull ProjectId projectId,
                                                    @Nonnull BranchId branchId,
                                                    @Nonnull OntologyDocumentId ontoDocId) {
-    var children = ImmutableSet.<OWLDataProperty>builder();
-    children.addAll(getProperties(DATA_PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId)));
-    if (root.equals(dataFactory.getOWLTopDataProperty()) && root.equals(owlDataProperty)) {
-      children.addAll(getProperties(DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY, createInputParams(projectId, branchId, ontoDocId)));
-    }
-    return children.build();
+    return getProperties(DATA_PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
+  }
+
+  @Override
+  @Nonnull
+  public ImmutableSet<OWLDataProperty> getTopChildren(@Nonnull ProjectId projectId,
+                                                      @Nonnull BranchId branchId,
+                                                      @Nonnull OntologyDocumentId ontoDocId) {
+    return getProperties(DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY, createInputParams(projectId, branchId, ontoDocId));
   }
 
   @Override

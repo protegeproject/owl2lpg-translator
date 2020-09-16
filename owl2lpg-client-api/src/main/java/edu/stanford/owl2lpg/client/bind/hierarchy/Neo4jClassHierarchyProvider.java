@@ -1,10 +1,14 @@
 package edu.stanford.owl2lpg.client.bind.hierarchy;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyProvider;
+import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
+import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLClass;
 
 import javax.annotation.Nonnull;
@@ -13,12 +17,16 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
+
+  @Nonnull
+  private final OWLClass root;
 
   @Nonnull
   private final ProjectId projectId;
@@ -30,27 +38,38 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
+  private final EntityAccessor entityAccessor;
+
+  @Nonnull
   private final ClassHierarchyAccessor hierarchyAccessor;
 
   @Inject
-  public Neo4jClassHierarchyProvider(@Nonnull ProjectId projectId,
+  public Neo4jClassHierarchyProvider(@Nonnull @ClassHierarchyRoot OWLClass root,
+                                     @Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
                                      @Nonnull OntologyDocumentId ontoDocId,
+                                     @Nonnull EntityAccessor entityAccessor,
                                      @Nonnull ClassHierarchyAccessor hierarchyAccessor) {
+    this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
+    this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
   }
 
   @Override
   public Collection<OWLClass> getRoots() {
-    return hierarchyAccessor.getRoots(projectId, branchId, ontoDocId);
+    return ImmutableSet.of(root);
   }
 
   @Override
   public Collection<OWLClass> getChildren(OWLClass owlClass) {
-    return hierarchyAccessor.getChildren(owlClass, projectId, branchId, ontoDocId);
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
+      return hierarchyAccessor.getTopChildren(projectId, branchId, ontoDocId);
+    } else {
+      return hierarchyAccessor.getChildren(owlClass, projectId, branchId, ontoDocId);
+    }
   }
 
   @Override
@@ -60,7 +79,18 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
 
   @Override
   public Collection<OWLClass> getDescendants(OWLClass owlClass) {
-    return hierarchyAccessor.getDescendants(owlClass, projectId, branchId, ontoDocId);
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
+      return getAllClasses();
+    } else {
+      return hierarchyAccessor.getDescendants(owlClass, projectId, branchId, ontoDocId);
+    }
+  }
+
+  @Nonnull
+  private ImmutableSet<OWLClass> getAllClasses() {
+    return entityAccessor.getEntitiesByType(EntityType.CLASS, projectId, branchId, ontoDocId)
+        .stream()
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
