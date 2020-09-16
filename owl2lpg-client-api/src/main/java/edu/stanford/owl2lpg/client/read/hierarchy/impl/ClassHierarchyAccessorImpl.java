@@ -3,16 +3,14 @@ package edu.stanford.owl2lpg.client.read.hierarchy.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
-import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Node;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -46,15 +44,15 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String PATHS_TO_ANCESTOR_QUERY = read(CLASS_PATHS_TO_ANCESTOR_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final OWLDataFactory dataFactory;
 
   @Inject
-  public ClassHierarchyAccessorImpl(@Nonnull Driver driver,
+  public ClassHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
                                     @Nonnull OWLDataFactory dataFactory) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.dataFactory = checkNotNull(dataFactory);
   }
 
@@ -134,24 +132,12 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
   @Nonnull
   private ImmutableSet<OWLClass> getClasses(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var output = ImmutableSet.<OWLClass>builder();
-        var result = tx.run(queryString, inputParams);
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("n")) {
-              var node = (Node) column.getValue();
-              var iri = IRI.create(node.get(PropertyFields.IRI).asString());
-              var owlClass = dataFactory.getOWLClass(iri);
-              output.add(owlClass);
-            }
-          }
-        }
-        return output.build();
-      });
-    }
+    return graphReader.getNodes(queryString, inputParams)
+        .stream()
+        .map(node -> node.get(PropertyFields.IRI).asString())
+        .map(IRI::create)
+        .map(dataFactory::getOWLClass)
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
@@ -159,31 +145,17 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                                                               ProjectId projectId,
                                                               BranchId branchId,
                                                               OntologyDocumentId ontoDocId) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var ancestorPaths = ImmutableList.<ClassAncestorPath>builder();
-        var args = createInputParams(ancestor, projectId, branchId, ontoDocId);
-        var result = tx.run(PATHS_TO_ANCESTOR_QUERY, args);
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                var orderedAncestorList = Streams.stream(path.nodes())
-                    .map(node -> node.get(PropertyFields.IRI).asString())
-                    .map(IRI::create)
-                    .map(dataFactory::getOWLClass)
-                    .collect(ImmutableList.toImmutableList());
-                var ancestorPath = ClassAncestorPath.get(orderedAncestorList);
-                ancestorPaths.add(ancestorPath);
-              }
-            }
-          }
-        }
-        return ancestorPaths.build();
-      });
-    }
+    var ancestorPaths = ImmutableList.<ClassAncestorPath>builder();
+    graphReader.getPaths(PATHS_TO_ANCESTOR_QUERY, createInputParams(ancestor, projectId, branchId, ontoDocId))
+        .stream()
+        .map(path -> Streams.stream(path.nodes())
+            .map(node -> node.get(PropertyFields.IRI).asString())
+            .map(IRI::create)
+            .map(dataFactory::getOWLClass)
+            .collect(ImmutableList.toImmutableList()))
+        .map(ClassAncestorPath::get)
+        .forEach(ancestorPaths::add);
+    return ancestorPaths.build();
   }
 
 

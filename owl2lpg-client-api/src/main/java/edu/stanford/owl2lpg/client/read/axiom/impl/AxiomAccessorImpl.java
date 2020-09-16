@@ -1,17 +1,14 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
-import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -35,15 +32,15 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   private static final String AXIOM_BY_TYPE_QUERY = read(AXIOM_BY_TYPE_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomAccessorImpl(@Nonnull Driver driver,
+  public AxiomAccessorImpl(@Nonnull GraphReader graphReader,
                            @Nonnull NodeMapper nodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -53,7 +50,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                              @Nonnull BranchId branchId,
                                              @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forContext(projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(ALL_AXIOM_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(ALL_AXIOM_QUERY, inputParams);
     return collectAxiomsFromNodeIndex(nodeIndex);
   }
 
@@ -72,30 +69,8 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                                               @Nonnull BranchId branchId,
                                                               @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forAxiomType(axiomType, projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(AXIOM_BY_TYPE_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_TYPE_QUERY, inputParams);
     return collectAxiomsFromIndex(nodeIndex, axiomType);
-  }
-
-  @Nonnull
-  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var result = tx.run(queryString, inputParams);
-        var nodeIndexBuilder = new NodeIndexImpl.Builder();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
-              }
-            }
-          }
-        }
-        return nodeIndexBuilder.build();
-      });
-    }
   }
 
   @Nonnull

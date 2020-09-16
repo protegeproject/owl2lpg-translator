@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.CharacteristicsAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -39,61 +39,59 @@ public class CharacteristicsAxiomAccessorImpl implements CharacteristicsAxiomAcc
   private static final String DATA_PROPERTY_CHARACTERISTICS_QUERY = read(DATA_PROPERTY_CHARACTERISTICS_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Inject
-  public CharacteristicsAxiomAccessorImpl(@Nonnull Driver driver) {
-    this.driver = checkNotNull(driver);
+  public CharacteristicsAxiomAccessorImpl(@Nonnull GraphReader graphReader) {
+    this.graphReader = checkNotNull(graphReader);
   }
 
   @Override
   public boolean isFunctional(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, FUNCTIONAL_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(FUNCTIONAL_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isInverseFunctional(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, INVERSE_FUNCTIONAL_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(INVERSE_FUNCTIONAL_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isTransitive(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, TRANSITIVE_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(TRANSITIVE_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isSymmetric(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, SYMMETRIC_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(SYMMETRIC_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isAsymmetric(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, ASYMMETRIC_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(ASYMMETRIC_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isReflexive(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, REFLEXIVE_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(REFLEXIVE_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
   }
 
   @Override
   public boolean isIrreflexive(OWLObjectProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, IRREFLEXIVE_OBJECT_PROPERTY, projectId, branchId, ontoDocId));
+    return hasResult(IRREFLEXIVE_OBJECT_PROPERTY, property, projectId, branchId, ontoDocId);
+  }
+
+  private boolean hasResult(NodeLabels propertyNodeLabels, OWLProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return graphReader.hasResult(OBJECT_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, propertyNodeLabels, projectId, branchId, ontoDocId));
   }
 
   @Override
   public boolean isFunctional(OWLDataProperty property, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return hasResult(DATA_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, FUNCTIONAL_DATA_PROPERTY, projectId, branchId, ontoDocId));
+    return graphReader.hasResult(DATA_PROPERTY_CHARACTERISTICS_QUERY, getInputParams(property, FUNCTIONAL_DATA_PROPERTY, projectId, branchId, ontoDocId));
   }
 
   @Nonnull
   private static Value getInputParams(OWLProperty property, NodeLabels nodeLabels, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
     return Parameters.forPropertyWithCharacteristicType(property.getIRI(), nodeLabels.getMainLabel(), projectId, branchId, ontoDocId);
-  }
-
-  private boolean hasResult(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> tx.run(queryString, inputParams).list().isEmpty());
-    }
   }
 }

@@ -1,17 +1,15 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
-import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -43,15 +41,15 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
   private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public ClassAssertionAxiomAccessorImpl(@Nonnull Driver driver,
+  public ClassAssertionAxiomAccessorImpl(@Nonnull GraphReader graphReader,
                                          @Nonnull NodeMapper nodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -61,7 +59,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
                                                            @Nonnull BranchId branchId,
                                                            @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(CLASS_ASSERTION_AXIOMS_OF_OWL_THING_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
@@ -72,7 +70,7 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
                                                               @Nonnull BranchId branchId,
                                                               @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlClass, projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
   }
 
@@ -83,33 +81,11 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
                                                                  @Nonnull BranchId branchId,
                                                                  @Nonnull OntologyDocumentId ontoDocId) {
     var nodeIndex = (owlIndividual.isNamed()) ?
-        getNodeIndex(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY,
+        graphReader.getNodeIndex(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY,
             createInputParams(owlIndividual.asOWLNamedIndividual().getIRI(), projectId, branchId, ontoDocId)) :
-        getNodeIndex(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY,
+        graphReader.getNodeIndex(CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY,
             createInputParams(owlIndividual.asOWLAnonymousIndividual().getID(), projectId, branchId, ontoDocId));
     return collectClassAssertionAxiomsFromIndex(nodeIndex);
-  }
-
-  @Nonnull
-  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var result = tx.run(queryString, inputParams);
-        var nodeIndexBuilder = new NodeIndexImpl.Builder();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
-              }
-            }
-          }
-        }
-        return nodeIndexBuilder.build();
-      });
-    }
   }
 
   @Nonnull

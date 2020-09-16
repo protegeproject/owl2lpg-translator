@@ -1,17 +1,15 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
-import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -40,15 +38,15 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
   private static final String ANY_AXIOM_BY_SUBJECT_QUERY = read(ANY_AXIOM_BY_SUBJECT_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AxiomBySubjectAccessorImpl(@Nonnull Driver driver,
+  public AxiomBySubjectAccessorImpl(@Nonnull GraphReader graphReader,
                                     @Nonnull NodeMapper nodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -100,30 +98,8 @@ public class AxiomBySubjectAccessorImpl implements AxiomBySubjectAccessor {
                                                     BranchId branchId,
                                                     OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(subject, projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(queryString, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(queryString, inputParams);
     return collectAxiomsFromIndex(nodeIndex);
-  }
-
-  @Nonnull
-  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var result = tx.run(queryString, inputParams);
-        var nodeIndexBuilder = new NodeIndexImpl.Builder();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
-              }
-            }
-          }
-        }
-        return nodeIndexBuilder.build();
-      });
-    }
   }
 
   @Nonnull

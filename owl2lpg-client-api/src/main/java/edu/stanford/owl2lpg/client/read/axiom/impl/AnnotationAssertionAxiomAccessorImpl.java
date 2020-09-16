@@ -1,17 +1,14 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AnnotationAssertionAxiomAccessor;
-import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -56,15 +53,15 @@ public class AnnotationAssertionAxiomAccessorImpl implements AnnotationAssertion
       read(ANNOTATION_ASSERTION_AXIOM_BY_VALUE_ANONYMOUS_INDIVIDUAL_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public AnnotationAssertionAxiomAccessorImpl(@Nonnull Driver driver,
+  public AnnotationAssertionAxiomAccessorImpl(@Nonnull GraphReader graphReader,
                                               @Nonnull NodeMapper nodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -84,11 +81,11 @@ public class AnnotationAssertionAxiomAccessorImpl implements AnnotationAssertion
                                  @Nonnull BranchId branchId,
                                  @Nonnull OntologyDocumentId ontoDocId) {
     if (owlAnnotationSubject.isIRI()) {
-      return getNodeIndex(
+      return graphReader.getNodeIndex(
           ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY,
           Parameters.forEntityIri((IRI) owlAnnotationSubject, projectId, branchId, ontoDocId));
     } else if (owlAnnotationSubject.isAnonymous()) {
-      return getNodeIndex(
+      return graphReader.getNodeIndex(
           ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY,
           Parameters.forNodeId(((OWLAnonymousIndividual) owlAnnotationSubject).getID(), projectId, branchId, ontoDocId));
     } else {
@@ -125,40 +122,19 @@ public class AnnotationAssertionAxiomAccessorImpl implements AnnotationAssertion
                                  @Nonnull BranchId branchId,
                                  @Nonnull OntologyDocumentId ontoDocId) {
     if (owlAnnotationValue.isLiteral()) {
-      return getNodeIndex(
+      return graphReader.getNodeIndex(
           ANNOTATION_ASSERTION_AXIOM_BY_VALUE_LITERAL_QUERY,
           Parameters.forLiteral((OWLLiteral) owlAnnotationValue, projectId, branchId, ontoDocId));
     } else if (owlAnnotationValue.isIRI()) {
-      return getNodeIndex(
+      return graphReader.getNodeIndex(
           ANNOTATION_ASSERTION_AXIOM_BY_VALUE_IRI_QUERY,
           Parameters.forValueIri((IRI) owlAnnotationValue, projectId, branchId, ontoDocId));
     } else if (owlAnnotationValue.isAnonymous()) {
-      return getNodeIndex(
+      return graphReader.getNodeIndex(
           ANNOTATION_ASSERTION_AXIOM_BY_VALUE_ANONYMOUS_INDIVIDUAL_QUERY,
           Parameters.forNodeId(((OWLAnonymousIndividual) owlAnnotationValue).getID(), projectId, branchId, ontoDocId));
     }
     throw new RuntimeException("Unknown type of OWL annotation value");
-  }
-
-  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var result = tx.run(queryString, inputParams);
-        var nodeIndexBuilder = new NodeIndexImpl.Builder();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
-              }
-            }
-          }
-        }
-        return nodeIndexBuilder.build();
-      });
-    }
   }
 
   @Nonnull

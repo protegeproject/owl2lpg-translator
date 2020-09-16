@@ -1,17 +1,15 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.DomainAxiomAccessor;
-import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -44,15 +42,15 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
   private static final String ANNOTATION_PROPERTY_DOMAIN_AXIOM_QUERY = read(ANNOTATION_PROPERTY_DOMAIN_AXIOM_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public DomainAxiomAccessorImpl(@Nonnull Driver driver,
+  public DomainAxiomAccessorImpl(@Nonnull GraphReader graphReader,
                                  @Nonnull NodeMapper nodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -64,7 +62,7 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
                                 @Nonnull BranchId branchId,
                                 @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlObjectProperty, projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(OBJECT_PROPERTY_DOMAIN_AXIOM_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(OBJECT_PROPERTY_DOMAIN_AXIOM_QUERY, inputParams);
     return collectObjectPropertyDomainAxiomsFromIndex(nodeIndex);
   }
 
@@ -84,7 +82,7 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
                               @Nonnull BranchId branchId,
                               @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlDataProperty, projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(DATA_PROPERTY_DOMAIN_AXIOM_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(DATA_PROPERTY_DOMAIN_AXIOM_QUERY, inputParams);
     return collectDataPropertyDomainAxiomsFromIndex(nodeIndex);
   }
 
@@ -104,7 +102,7 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
                                     @Nonnull BranchId branchId,
                                     @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlAnnotationProperty, projectId, branchId, ontoDocId);
-    var nodeIndex = getNodeIndex(ANNOTATION_PROPERTY_DOMAIN_AXIOM_QUERY, inputParams);
+    var nodeIndex = graphReader.getNodeIndex(ANNOTATION_PROPERTY_DOMAIN_AXIOM_QUERY, inputParams);
     return collectAnnotationPropertyDomainAxiomsFromIndex(nodeIndex);
   }
 
@@ -114,28 +112,6 @@ public class DomainAxiomAccessorImpl implements DomainAxiomAccessor {
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationPropertyDomainAxiom.class))
         .collect(ImmutableSet.toImmutableSet());
-  }
-
-  @Nonnull
-  private NodeIndex getNodeIndex(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var result = tx.run(queryString, inputParams);
-        var nodeIndexBuilder = new NodeIndexImpl.Builder();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
-              }
-            }
-          }
-        }
-        return nodeIndexBuilder.build();
-      });
-    }
   }
 
   @Nonnull

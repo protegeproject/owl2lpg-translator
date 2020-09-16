@@ -1,17 +1,13 @@
 package edu.stanford.owl2lpg.client.read.annotation.impl;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.client.read.NodeIndex;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
-import edu.stanford.owl2lpg.client.read.impl.NodeIndexImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Path;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 
@@ -33,15 +29,15 @@ public class OntologyAnnotationsAccessorImpl implements OntologyAnnotationsAcces
   private static final String ONTOLOGY_ANNOTATIONS_QUERY = read(ONTOLOGY_ANNOTATIONS_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final NodeMapper nodeMapper;
 
   @Inject
-  public OntologyAnnotationsAccessorImpl(@Nonnull Driver driver,
+  public OntologyAnnotationsAccessorImpl(@Nonnull GraphReader graphReader,
                                          @Nonnull NodeMapper nodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
   }
 
@@ -50,7 +46,8 @@ public class OntologyAnnotationsAccessorImpl implements OntologyAnnotationsAcces
   public ImmutableSet<OWLAnnotation> getOntologyAnnotations(@Nonnull ProjectId projectId,
                                                             @Nonnull BranchId branchId,
                                                             @Nonnull OntologyDocumentId ontoDocId) {
-    var nodeIndex = getNodeIndex(Parameters.forContext(projectId, branchId, ontoDocId));
+    var inputParams = Parameters.forContext(projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(ONTOLOGY_ANNOTATIONS_QUERY, inputParams);
     return nodeIndex.getNodes(ANNOTATION.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotation.class))
@@ -76,27 +73,5 @@ public class OntologyAnnotationsAccessorImpl implements OntologyAnnotationsAcces
     return getOntologyAnnotations(projectId, branchId, ontoDocId)
         .stream()
         .anyMatch(annotation::equals);
-  }
-
-  @Nonnull
-  private NodeIndex getNodeIndex(Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var result = tx.run(ONTOLOGY_ANNOTATIONS_QUERY, inputParams);
-        var nodeIndexBuilder = new NodeIndexImpl.Builder();
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("p")) {
-              var path = (Path) column.getValue();
-              if (path != null) {
-                path.spliterator().forEachRemaining(nodeIndexBuilder::add);
-              }
-            }
-          }
-        }
-        return nodeIndexBuilder.build();
-      });
-    }
   }
 }

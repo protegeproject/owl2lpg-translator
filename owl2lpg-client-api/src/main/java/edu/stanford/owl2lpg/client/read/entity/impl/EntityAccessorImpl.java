@@ -1,14 +1,12 @@
 package edu.stanford.owl2lpg.client.read.entity.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Value;
-import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -34,16 +32,16 @@ public class EntityAccessorImpl implements EntityAccessor {
   private static final String ENTITIES_BY_TYPE_QUERY = read(ENTITIES_BY_TYPE_QUERY_FILE);
 
   @Nonnull
-  private final Driver driver;
+  private final GraphReader graphReader;
 
   @Nonnull
   private final EntityNodeMapper entityNodeMapper;
 
 
   @Inject
-  public EntityAccessorImpl(@Nonnull Driver driver,
+  public EntityAccessorImpl(@Nonnull GraphReader graphReader,
                             @Nonnull EntityNodeMapper entityNodeMapper) {
-    this.driver = checkNotNull(driver);
+    this.graphReader = checkNotNull(graphReader);
     this.entityNodeMapper = checkNotNull(entityNodeMapper);
   }
 
@@ -52,7 +50,10 @@ public class EntityAccessorImpl implements EntityAccessor {
   public ImmutableSet<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,
                                                 @Nonnull BranchId branchId,
                                                 @Nonnull OntologyDocumentId ontoDocId) {
-    return getEntities(ALL_ENTITIES_QUERY, Parameters.forContext(projectId, branchId, ontoDocId));
+    return graphReader.getNodes(ALL_ENTITIES_QUERY, Parameters.forContext(projectId, branchId, ontoDocId))
+        .stream()
+        .map(entityNodeMapper::toOwlEntity)
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
@@ -61,28 +62,10 @@ public class EntityAccessorImpl implements EntityAccessor {
                                                   @Nonnull ProjectId projectId,
                                                   @Nonnull BranchId branchId,
                                                   @Nonnull OntologyDocumentId ontoDocId) {
-    return getEntities(ENTITIES_BY_IRI_QUERY, Parameters.forEntityIri(entityIri, projectId, branchId, ontoDocId));
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLEntity> getEntities(String queryString, Value inputParams) {
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var entities = ImmutableSet.<OWLEntity>builder();
-        var result = tx.run(queryString, inputParams);
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("n")) {
-              var node = (Node) column.getValue();
-              var owlEntity = entityNodeMapper.toOwlEntity(node);
-              entities.add(owlEntity);
-            }
-          }
-        }
-        return entities.build();
-      });
-    }
+    return graphReader.getNodes(ENTITIES_BY_IRI_QUERY, Parameters.forEntityIri(entityIri, projectId, branchId, ontoDocId))
+        .stream()
+        .map(entityNodeMapper::toOwlEntity)
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
@@ -91,23 +74,9 @@ public class EntityAccessorImpl implements EntityAccessor {
                                                                  @Nonnull ProjectId projectId,
                                                                  @Nonnull BranchId branchId,
                                                                  @Nonnull OntologyDocumentId ontoDocId) {
-    var inputParams = Parameters.forEntityType(entityType, projectId, branchId, ontoDocId);
-    try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
-        var entities = ImmutableSet.<E>builder();
-        var result = tx.run(ENTITIES_BY_TYPE_QUERY, inputParams);
-        while (result.hasNext()) {
-          var row = result.next().asMap();
-          for (var column : row.entrySet()) {
-            if (column.getKey().equals("n")) {
-              var node = (Node) column.getValue();
-              var owlEntity = (E) entityNodeMapper.toOwlEntity(node);
-              entities.add(owlEntity);
-            }
-          }
-        }
-        return entities.build();
-      });
-    }
+    return graphReader.getNodes(ENTITIES_BY_TYPE_QUERY, Parameters.forEntityType(entityType, projectId, branchId, ontoDocId))
+        .stream()
+        .map(node -> (E) entityNodeMapper.toOwlEntity(node))
+        .collect(ImmutableSet.toImmutableSet());
   }
 }
