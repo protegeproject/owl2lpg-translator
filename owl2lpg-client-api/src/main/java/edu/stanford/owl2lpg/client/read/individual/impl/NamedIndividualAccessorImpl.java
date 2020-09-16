@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.client.read.individual.impl;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
@@ -18,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -27,19 +25,14 @@ import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
 
   @Nonnull
-  private final OWLClass root;
-
-  @Nonnull
   private final EntityAccessor entityAccessor;
 
   @Nonnull
   private final ClassAssertionAxiomAccessor classAssertionAxiomAccessor;
 
   @Inject
-  public NamedIndividualAccessorImpl(@Nonnull @ClassHierarchyRoot OWLClass root,
-                                     @Nonnull EntityAccessor entityAccessor,
+  public NamedIndividualAccessorImpl(@Nonnull EntityAccessor entityAccessor,
                                      @Nonnull ClassAssertionAxiomAccessor classAssertionAxiomAccessor) {
-    this.root = checkNotNull(root);
     this.entityAccessor = checkNotNull(entityAccessor);
     this.classAssertionAxiomAccessor = checkNotNull(classAssertionAxiomAccessor);
   }
@@ -60,15 +53,11 @@ public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
                                                                @Nonnull ProjectId projectId,
                                                                @Nonnull BranchId branchId,
                                                                @Nonnull OntologyDocumentId ontoDocId) {
-    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
-      return getAllIndividuals(projectId, branchId, ontoDocId);
-    } else {
-      return classAssertionAxiomAccessor.getAxiomsByType(owlClass, projectId, branchId, ontoDocId)
-          .stream()
-          .map(OWLClassAssertionAxiom::getIndividual)
-          .filter(OWLIndividual::isNamed)
-          .map(OWLIndividual::asOWLNamedIndividual)
-          .collect(ImmutableSet.toImmutableSet());
-    }
+    return classAssertionAxiomAccessor.getAxiomsByType(owlClass, projectId, branchId, ontoDocId)
+        .stream()
+        .map(OWLClassAssertionAxiom::getIndividual)
+        .filter(OWLIndividual::isNamed)
+        .map(OWLIndividual::asOWLNamedIndividual)
+        .collect(ImmutableSet.toImmutableSet());
   }
 }

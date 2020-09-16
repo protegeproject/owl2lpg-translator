@@ -7,7 +7,6 @@ import edu.stanford.bmir.protege.web.server.shortform.MultiLingualDictionary;
 import edu.stanford.bmir.protege.web.server.shortform.Scanner;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
 import edu.stanford.bmir.protege.web.server.util.Counter;
-import edu.stanford.bmir.protege.web.shared.DataFactory;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
@@ -27,6 +26,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.bmir.protege.web.server.pagination.PageCollector.toPage;
+import static edu.stanford.bmir.protege.web.shared.DataFactory.getOWLThing;
 import static edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode.ALL_INSTANCES;
 import static edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode.DIRECT_INSTANCES;
 
@@ -82,7 +82,7 @@ public class Neo4jIndividualsByNameIndex {
   @Nonnull
   public IndividualsQueryResult getIndividuals(@Nonnull String searchString,
                                                @Nonnull PageRequest pageRequest) {
-    return getIndividuals(DataFactory.getOWLThing(), ALL_INSTANCES, searchString, pageRequest);
+    return getIndividuals(getOWLThing(), ALL_INSTANCES, searchString, pageRequest);
   }
 
   @Nonnull
@@ -105,7 +105,7 @@ public class Neo4jIndividualsByNameIndex {
   private IndividualsQueryResult getAllInstances(OWLClass owlClass, List<SearchString> searchStrings, PageRequest pageRequest) {
     var counter = new Counter();
     var page = Optional.<Page<OWLNamedIndividual>>empty();
-    if (root.equals(DataFactory.getOWLThing()) && root.equals(owlClass)) {
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       page = getAllInstances(searchStrings)
           .peek(individual -> counter.increment())
           .collect(toPage(pageRequest.getPageNumber(), pageRequest.getPageSize()));
@@ -141,9 +141,15 @@ public class Neo4jIndividualsByNameIndex {
 
   @Nonnull
   private Stream<OWLNamedIndividual> getDirectInstances(OWLClass owlClass, List<SearchString> searchStrings) {
-    return namedIndividualAccessor.getIndividualsByType(owlClass, projectId, branchId, ontoDocId)
-        .stream()
-        .filter(individual -> matchesSearchStrings(individual, searchStrings));
+    if (root.equals(getOWLThing()) && root.equals(owlClass)) {
+      return namedIndividualAccessor.getAllIndividuals(projectId, branchId, ontoDocId)
+          .stream()
+          .filter(individual -> matchesSearchStrings(individual, searchStrings));
+    } else {
+      return namedIndividualAccessor.getIndividualsByType(owlClass, projectId, branchId, ontoDocId)
+          .stream()
+          .filter(individual -> matchesSearchStrings(individual, searchStrings));
+    }
   }
 
   @Nonnull
