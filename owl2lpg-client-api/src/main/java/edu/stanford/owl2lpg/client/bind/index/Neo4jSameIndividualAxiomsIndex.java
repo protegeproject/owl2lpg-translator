@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.SameIndividualAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,17 +31,17 @@ public class Neo4jSameIndividualAxiomsIndex implements SameIndividualAxiomsIndex
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
+  private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jSameIndividualAxiomsIndex(@Nonnull ProjectId projectId,
                                         @Nonnull BranchId branchId,
                                         @Nonnull OntologyDocumentId ontoDocId,
-                                        @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
+                                        @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
@@ -50,7 +50,7 @@ public class Neo4jSameIndividualAxiomsIndex implements SameIndividualAxiomsIndex
                                                                 @Nonnull OWLOntologyID owlOntologyID) {
     // TODO Handle the case when the instance is anonymous
     return (owlIndividual.isNamed()) ?
-        axiomBySubjectAccessor.getAxiomsBySubject(owlIndividual.asOWLNamedIndividual(), projectId, branchId, ontoDocId)
+        axiomAccessor.getAxiomsBySubject(owlIndividual.asOWLNamedIndividual(), projectId, branchId, ontoDocId)
             .stream()
             .filter(OWLSameIndividualAxiom.class::isInstance)
             .map(OWLSameIndividualAxiom.class::cast) :

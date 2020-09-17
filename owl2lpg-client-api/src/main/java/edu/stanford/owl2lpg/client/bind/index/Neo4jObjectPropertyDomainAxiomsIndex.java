@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ObjectPropertyDomainAxiomsIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,24 +31,24 @@ public class Neo4jObjectPropertyDomainAxiomsIndex implements ObjectPropertyDomai
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
+  private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jObjectPropertyDomainAxiomsIndex(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull OntologyDocumentId ontoDocId,
-                                              @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
+                                              @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLObjectPropertyDomainAxiom> getObjectPropertyDomainAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
                                                                             @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomBySubjectAccessor.getAxiomsBySubject(owlObjectProperty, projectId, branchId, ontoDocId)
+    return axiomAccessor.getAxiomsBySubject(owlObjectProperty, projectId, branchId, ontoDocId)
         .stream()
         .filter(OWLObjectPropertyDomainAxiom.class::isInstance)
         .map(OWLObjectPropertyDomainAxiom.class::cast);

@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.SubAnnotationPropertyAxiomsBySubPropertyIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,24 +31,24 @@ public class Neo4jSubAnnotationPropertyAxiomsBySubPropertyIndex implements SubAn
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
+  private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jSubAnnotationPropertyAxiomsBySubPropertyIndex(@Nonnull ProjectId projectId,
                                                             @Nonnull BranchId branchId,
                                                             @Nonnull OntologyDocumentId ontoDocId,
-                                                            @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
+                                                            @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLSubAnnotationPropertyOfAxiom> getSubPropertyOfAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
                                                                         @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomBySubjectAccessor.getAxiomsBySubject(owlAnnotationProperty, projectId, branchId, ontoDocId)
+    return axiomAccessor.getAxiomsBySubject(owlAnnotationProperty, projectId, branchId, ontoDocId)
         .stream()
         .filter(OWLSubAnnotationPropertyOfAxiom.class::isInstance)
         .map(OWLSubAnnotationPropertyOfAxiom.class::cast);

@@ -13,14 +13,14 @@ import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
     DatabaseModule.class,
     OwlDataFactoryModule.class,
     AxiomAccessorModule.class,
-    AxiomBySubjectAccessorModule.class,
-    AssertionAxiomAccessorModule.class})
+    AssertionAxiomAccessorModule.class,
+    CharacteristicsAxiomAccessorModule.class})
 @DatabaseSessionScope
 public interface AxiomAccessorComponent {
 
   AxiomAccessor getAxiomAccessor();
 
-  AxiomBySubjectAccessor getAxiomBySubjectAccessor();
+  AssertionAxiomAccessor getAssertionAxiomAccessor();
 
-  AssertionAxiomAccessor getAssertionAxiomBySubjectAccessor();
+  CharacteristicsAxiomAccessor getCharacteristicsAxiomAccessor();
 }
