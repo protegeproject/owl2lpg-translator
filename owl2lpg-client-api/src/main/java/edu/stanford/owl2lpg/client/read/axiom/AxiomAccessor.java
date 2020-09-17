@@ -74,16 +74,34 @@ public interface AxiomAccessor {
                                             @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLEntity entity,
-                                            @Nonnull ProjectId projectId,
-                                            @Nonnull BranchId branchId,
-                                            @Nonnull OntologyDocumentId ontoDocId);
+  default ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLEntity subject,
+                                                    @Nonnull ProjectId projectId,
+                                                    @Nonnull BranchId branchId,
+                                                    @Nonnull OntologyDocumentId ontoDocId) {
+    if (subject.isOWLClass()) {
+      return getAxiomsBySubject(subject.asOWLClass(), projectId, branchId, ontoDocId);
+    } else if (subject.isOWLDataProperty()) {
+      return getAxiomsBySubject(subject.asOWLDataProperty(), projectId, branchId, ontoDocId);
+    } else if (subject.isOWLObjectProperty()) {
+      return getAxiomsBySubject(subject.asOWLObjectProperty(), projectId, branchId, ontoDocId);
+    } else if (subject.isOWLAnnotationProperty()) {
+      return getAxiomsBySubject(subject.asOWLAnnotationProperty(), projectId, branchId, ontoDocId);
+    } else if (subject.isOWLNamedIndividual()) {
+      return getAxiomsBySubject(subject.asOWLNamedIndividual(), projectId, branchId, ontoDocId);
+    } else { // must be a datatype
+      return getAxiomsBySubject(subject.asOWLDatatype(), projectId, branchId, ontoDocId);
+    }
+  }
 
   @Nonnull
-  ImmutableSet<OWLAxiom> getAxiomsBySubjects(@Nonnull Collection<OWLEntity> entities,
-                                             @Nonnull ProjectId projectId,
-                                             @Nonnull BranchId branchId,
-                                             @Nonnull OntologyDocumentId ontoDocId);
+  default ImmutableSet<OWLAxiom> getAxiomsBySubjects(@Nonnull Collection<OWLEntity> entities,
+                                                     @Nonnull ProjectId projectId,
+                                                     @Nonnull BranchId branchId,
+                                                     @Nonnull OntologyDocumentId ontoDocId) {
+    return entities.stream()
+        .flatMap(entity -> getAxiomsBySubject(entity, projectId, branchId, ontoDocId).stream())
+        .collect(ImmutableSet.toImmutableSet());
+  }
 
   @Nonnull
   ImmutableSet<OWLAnnotationAxiom> getAnnotationAxioms(@Nonnull IRI iri,

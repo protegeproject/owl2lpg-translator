@@ -24,7 +24,6 @@ import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -172,40 +171,6 @@ public class AxiomAccessorImpl implements AxiomAccessor {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
-        .collect(ImmutableSet.toImmutableSet());
-  }
-
-  @Nonnull
-  @Override
-  public ImmutableSet<OWLAxiom>
-  getAxiomsBySubject(@Nonnull OWLEntity subject,
-                     @Nonnull ProjectId projectId,
-                     @Nonnull BranchId branchId,
-                     @Nonnull OntologyDocumentId ontoDocId) {
-    if (subject.isOWLClass()) {
-      return getAxiomsBySubject(subject.asOWLClass(), projectId, branchId, ontoDocId);
-    } else if (subject.isOWLDataProperty()) {
-      return getAxiomsBySubject(subject.asOWLDataProperty(), projectId, branchId, ontoDocId);
-    } else if (subject.isOWLObjectProperty()) {
-      return getAxiomsBySubject(subject.asOWLObjectProperty(), projectId, branchId, ontoDocId);
-    } else if (subject.isOWLAnnotationProperty()) {
-      return getAxiomsBySubject(subject.asOWLAnnotationProperty(), projectId, branchId, ontoDocId);
-    } else if (subject.isOWLNamedIndividual()) {
-      return getAxiomsBySubject(subject.asOWLNamedIndividual(), projectId, branchId, ontoDocId);
-    } else { // must be a datatype
-      return getAxiomsBySubject(subject.asOWLDatatype(), projectId, branchId, ontoDocId);
-    }
-  }
-
-  @Nonnull
-  @Override
-  public ImmutableSet<OWLAxiom>
-  getAxiomsBySubjects(@Nonnull Collection<OWLEntity> entities,
-                      @Nonnull ProjectId projectId,
-                      @Nonnull BranchId branchId,
-                      @Nonnull OntologyDocumentId ontoDocId) {
-    return entities.stream()
-        .flatMap(entity -> getAxiomsBySubject(entity, projectId, branchId, ontoDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
