@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.SubObjectPropertyAxiomsBySubPropertyIndex;
-import edu.stanford.owl2lpg.client.read.axiom.HierarchyAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomBySubjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,25 +31,26 @@ public class Neo4jSubObjectPropertyAxiomsBySubPropertyIndex implements SubObject
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final HierarchyAxiomBySubjectAccessor hierarchyAxiomBySubjectAccessor;
+  private final AxiomBySubjectAccessor axiomBySubjectAccessor;
 
   @Inject
   public Neo4jSubObjectPropertyAxiomsBySubPropertyIndex(@Nonnull ProjectId projectId,
                                                         @Nonnull BranchId branchId,
                                                         @Nonnull OntologyDocumentId ontoDocId,
-                                                        @Nonnull HierarchyAxiomBySubjectAccessor hierarchyAxiomBySubjectAccessor) {
+                                                        @Nonnull AxiomBySubjectAccessor axiomBySubjectAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.hierarchyAxiomBySubjectAccessor = checkNotNull(hierarchyAxiomBySubjectAccessor);
+    this.axiomBySubjectAccessor = checkNotNull(axiomBySubjectAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLSubObjectPropertyOfAxiom> getSubPropertyOfAxioms(@Nonnull OWLObjectProperty subProperty,
+  public Stream<OWLSubObjectPropertyOfAxiom> getSubPropertyOfAxioms(@Nonnull OWLObjectProperty owlObjectProperty,
                                                                     @Nonnull OWLOntologyID owlOntologyID) {
-    return hierarchyAxiomBySubjectAccessor
-        .getSubObjectPropertyOfAxiomsBySubProperty(subProperty, projectId, branchId, ontoDocId)
-        .stream();
+    return axiomBySubjectAccessor.getAxiomsBySubject(owlObjectProperty, projectId, branchId, ontoDocId)
+        .stream()
+        .filter(OWLSubObjectPropertyOfAxiom.class::isInstance)
+        .map(OWLSubObjectPropertyOfAxiom.class::cast);
   }
 }

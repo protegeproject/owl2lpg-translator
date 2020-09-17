@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.SubAnnotationPropertyAxiomsBySuperPropertyIndex;
-import edu.stanford.owl2lpg.client.read.axiom.HierarchyAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,24 +31,24 @@ public class Neo4jSubAnnotationPropertyAxiomsBySuperPropertyIndex implements Sub
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final HierarchyAxiomBySubjectAccessor hierarchyAxiomBySubjectAccessor;
+  private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jSubAnnotationPropertyAxiomsBySuperPropertyIndex(@Nonnull ProjectId projectId,
                                                               @Nonnull BranchId branchId,
                                                               @Nonnull OntologyDocumentId ontoDocId,
-                                                              @Nonnull HierarchyAxiomBySubjectAccessor hierarchyAxiomBySubjectAccessor) {
+                                                              @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.hierarchyAxiomBySubjectAccessor = checkNotNull(hierarchyAxiomBySubjectAccessor);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLSubAnnotationPropertyOfAxiom> getAxiomsForSuperProperty(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
                                                                            @Nonnull OWLOntologyID owlOntologyID) {
-    return hierarchyAxiomBySubjectAccessor
+    return axiomAccessor
         .getSubAnnotationPropertyOfAxiomsBySuperProperty(owlAnnotationProperty, projectId, branchId, ontoDocId)
         .stream();
   }
