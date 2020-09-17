@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationAssertionAxiomsBySubjectIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,23 +31,23 @@ public class Neo4jAnnotationAssertionAxiomsBySubjectIndex implements AnnotationA
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
+  private final AssertionAxiomAccessor assertionAxiomAccessor;
 
   @Inject
   public Neo4jAnnotationAssertionAxiomsBySubjectIndex(@Nonnull ProjectId projectId,
                                                       @Nonnull BranchId branchId,
                                                       @Nonnull OntologyDocumentId ontoDocId,
-                                                      @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
+                                                      @Nonnull AssertionAxiomAccessor assertionAxiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.assertionAxiomBySubjectAccessor = checkNotNull(assertionAxiomBySubjectAccessor);
+    this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
   }
 
   @Override
   public Stream<OWLAnnotationAssertionAxiom> getAxiomsForSubject(@Nonnull OWLAnnotationSubject owlAnnotationSubject,
                                                                  @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomBySubjectAccessor
+    return assertionAxiomAccessor
         .getAnnotationAssertionsBySubject(owlAnnotationSubject, projectId, branchId, ontoDocId)
         .stream();
   }

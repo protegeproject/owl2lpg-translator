@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ObjectPropertyAssertionAxiomsBySubjectIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,24 +31,24 @@ public class Neo4jObjectPropertyAssertionAxiomsBySubjectIndex implements ObjectP
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
+  private final AssertionAxiomAccessor assertionAxiomAccessor;
 
   @Inject
   public Neo4jObjectPropertyAssertionAxiomsBySubjectIndex(@Nonnull ProjectId projectId,
                                                           @Nonnull BranchId branchId,
                                                           @Nonnull OntologyDocumentId ontoDocId,
-                                                          @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
+                                                          @Nonnull AssertionAxiomAccessor assertionAxiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.assertionAxiomBySubjectAccessor = checkNotNull(assertionAxiomBySubjectAccessor);
+    this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLObjectPropertyAssertionAxiom> getObjectPropertyAssertions(@Nonnull OWLIndividual owlIndividual,
                                                                              @Nonnull OWLOntologyID owlOntologyID) {
-    return assertionAxiomBySubjectAccessor
+    return assertionAxiomAccessor
         .getObjectPropertyAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId)
         .stream();
   }

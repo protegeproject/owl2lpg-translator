@@ -4,7 +4,7 @@ import edu.stanford.bmir.protege.web.server.index.IndividualsIndex;
 import edu.stanford.bmir.protege.web.server.index.IndividualsQueryResult;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
-import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -36,7 +36,7 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor;
+  private final AssertionAxiomAccessor assertionAxiomAccessor;
 
   @Nonnull
   private final Neo4jIndividualsByNameIndex individualsByNameIndex;
@@ -50,13 +50,13 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
                                @Nonnull OntologyDocumentId ontoDocId,
                                @Nonnull Neo4jIndividualsByNameIndex individualsByNameIndex,
                                @Nonnull Neo4jIndividualsBySubjectIndex individualsBySubjectIndex,
-                               @Nonnull AssertionAxiomBySubjectAccessor assertionAxiomBySubjectAccessor) {
+                               @Nonnull AssertionAxiomAccessor assertionAxiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
     this.individualsByNameIndex = checkNotNull(individualsByNameIndex);
     this.individualsBySubjectIndex = checkNotNull(individualsBySubjectIndex);
-    this.assertionAxiomBySubjectAccessor = checkNotNull(assertionAxiomBySubjectAccessor);
+    this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
   }
 
   @Nonnull
@@ -87,7 +87,7 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   @Nonnull
   @Override
   public Stream<OWLClass> getTypes(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return assertionAxiomBySubjectAccessor.getClassAssertionsBySubject(owlNamedIndividual, projectId, branchId, ontoDocId)
+    return assertionAxiomAccessor.getClassAssertionsBySubject(owlNamedIndividual, projectId, branchId, ontoDocId)
         .stream()
         .map(OWLClassAssertionAxiom::getClassExpression)
         .filter(OWLClassExpression::isNamed)

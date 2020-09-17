@@ -6,7 +6,7 @@ import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AnnotationAssertionAxiomAccessor;
-import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomBySubjectAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -34,7 +34,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_A
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubjectAccessor {
+public class AssertionAxiomAccessorImpl implements AssertionAxiomAccessor {
 
   private static final String OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE =
       "axioms/object-property-assertion-axiom-by-individual.cpy";
@@ -67,10 +67,10 @@ public class AssertionAxiomBySubjectAccessorImpl implements AssertionAxiomBySubj
   private final AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor;
 
   @Inject
-  public AssertionAxiomBySubjectAccessorImpl(@Nonnull GraphReader graphReader,
-                                             @Nonnull NodeMapper nodeMapper,
-                                             @Nonnull ClassAssertionAxiomAccessor classAssertionAxiomAccessor,
-                                             @Nonnull AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor) {
+  public AssertionAxiomAccessorImpl(@Nonnull GraphReader graphReader,
+                                    @Nonnull NodeMapper nodeMapper,
+                                    @Nonnull ClassAssertionAxiomAccessor classAssertionAxiomAccessor,
+                                    @Nonnull AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor) {
     this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
     this.classAssertionAxiomAccessor = checkNotNull(classAssertionAxiomAccessor);
