@@ -5,6 +5,8 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -82,6 +84,12 @@ public interface AxiomAccessor {
                                              @Nonnull ProjectId projectId,
                                              @Nonnull BranchId branchId,
                                              @Nonnull OntologyDocumentId ontoDocId);
+
+  @Nonnull
+  ImmutableSet<OWLAnnotationAxiom> getAnnotationAxioms(@Nonnull IRI iri,
+                                                       @Nonnull ProjectId projectId,
+                                                       @Nonnull BranchId branchId,
+                                                       @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   default ImmutableSet<OWLSubAnnotationPropertyOfAxiom>

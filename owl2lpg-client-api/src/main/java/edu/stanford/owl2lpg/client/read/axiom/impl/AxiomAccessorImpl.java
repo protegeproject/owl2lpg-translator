@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.client.read.axiom.impl;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.owl2lpg.client.read.GraphReader;
-import edu.stanford.owl2lpg.client.read.NodeIndex;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
@@ -11,6 +10,8 @@ import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -27,6 +28,7 @@ import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_AXIOM;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SUB_ANNOTATION_PROPERTY_OF;
 
@@ -44,6 +46,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   private static final String AXIOM_BY_SUBJECT_ANNOTATION_PROPERTY_QUERY_FILE = "axioms/axiom-by-subject-annotation-property.cpy";
   private static final String AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY_FILE = "axioms/axiom-by-subject-named-individual.cpy";
   private static final String AXIOM_BY_SUBJECT_DATATYPE_QUERY_FILE = "axioms/axiom-by-subject-datatype.cpy";
+  private static final String ANNOTATION_AXIOM_BY_SUBJECT_IRI_QUERY_FILE = "axioms/annotation-axiom-by-subject-iri.cpy";
   private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY_FILE =
       "axioms/sub-annotation-property-of-axiom-by-super-property.cpy";
 
@@ -55,6 +58,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   private static final String AXIOM_BY_SUBJECT_ANNOTATION_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_ANNOTATION_PROPERTY_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY = read(AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_DATATYPE_QUERY = read(AXIOM_BY_SUBJECT_DATATYPE_QUERY_FILE);
+  private static final String ANNOTATION_AXIOM_BY_SUBJECT_IRI_QUERY = read(ANNOTATION_AXIOM_BY_SUBJECT_IRI_QUERY_FILE);
   private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY =
       read(SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY_FILE);
 
@@ -78,11 +82,6 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                              @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forContext(projectId, branchId, ontoDocId);
     var nodeIndex = graphReader.getNodeIndex(ALL_AXIOM_QUERY, inputParams);
-    return collectAxiomsFromNodeIndex(nodeIndex);
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLAxiom> collectAxiomsFromNodeIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(AXIOM.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
@@ -97,11 +96,6 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                                               @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forAxiomType(axiomType, projectId, branchId, ontoDocId);
     var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_TYPE_QUERY, inputParams);
-    return collectAxiomsFromIndex(nodeIndex, axiomType);
-  }
-
-  @Nonnull
-  private <T extends OWLAxiom> ImmutableSet<T> collectAxiomsFromIndex(NodeIndex nodeIndex, AxiomType<T> axiomType) {
     return nodeIndex.getNodes(axiomType.getName())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, axiomType.getActualClass()))
@@ -169,6 +163,19 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   }
 
   @Nonnull
+  private ImmutableSet<OWLAxiom> getAxiomsBySubject(String queryString, OWLEntity subject,
+                                                    ProjectId projectId,
+                                                    BranchId branchId,
+                                                    OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(subject, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(queryString, inputParams);
+    return nodeIndex.getNodes(AXIOM.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
+        .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Nonnull
   @Override
   public ImmutableSet<OWLAxiom>
   getAxiomsBySubject(@Nonnull OWLEntity subject,
@@ -203,20 +210,17 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   }
 
   @Nonnull
-  private ImmutableSet<OWLAxiom> getAxiomsBySubject(String queryString, OWLEntity subject,
-                                                    ProjectId projectId,
-                                                    BranchId branchId,
-                                                    OntologyDocumentId ontoDocId) {
-    var inputParams = createInputParams(subject, projectId, branchId, ontoDocId);
-    var nodeIndex = graphReader.getNodeIndex(queryString, inputParams);
-    return collectAxiomsFromIndex(nodeIndex);
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLAxiom> collectAxiomsFromIndex(@Nonnull NodeIndex nodeIndex) {
-    return nodeIndex.getNodes(AXIOM.getMainLabel())
+  @Override
+  public ImmutableSet<OWLAnnotationAxiom>
+  getAnnotationAxioms(@Nonnull IRI entityIri,
+                      @Nonnull ProjectId projectId,
+                      @Nonnull BranchId branchId,
+                      @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = createInputParams(entityIri, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(ANNOTATION_AXIOM_BY_SUBJECT_IRI_QUERY, inputParams);
+    return nodeIndex.getNodes(ANNOTATION_AXIOM.getMainLabel())
         .stream()
-        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAnnotationAxiom.class))
         .collect(ImmutableSet.toImmutableSet());
   }
 
@@ -229,11 +233,6 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                                   @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(superProperty, projectId, branchId, ontoDocId);
     var nodeIndex = graphReader.getNodeIndex(SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY, inputParams);
-    return collectSubAnnotationPropertyOfAxiomsFromIndex(nodeIndex);
-  }
-
-  @Nonnull
-  private ImmutableSet<OWLSubAnnotationPropertyOfAxiom> collectSubAnnotationPropertyOfAxiomsFromIndex(NodeIndex nodeIndex) {
     return nodeIndex.getNodes(SUB_ANNOTATION_PROPERTY_OF.getMainLabel())
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLSubAnnotationPropertyOfAxiom.class))
@@ -242,6 +241,11 @@ public class AxiomAccessorImpl implements AxiomAccessor {
 
   @Nonnull
   private static Value createInputParams(OWLEntity entity, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
-    return Parameters.forEntityIri(entity.getIRI(), projectId, branchId, ontoDocId);
+    return createInputParams(entity.getIRI(), projectId, branchId, ontoDocId);
+  }
+
+  @Nonnull
+  private static Value createInputParams(IRI entityIri, ProjectId projectId, BranchId branchId, OntologyDocumentId ontoDocId) {
+    return Parameters.forEntityIri(entityIri, projectId, branchId, ontoDocId);
   }
 }

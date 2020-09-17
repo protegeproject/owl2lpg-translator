@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationAxiomsByIriReferenceIndex;
-import edu.stanford.owl2lpg.client.read.axiom.AnnotationAxiomAccessor;
+import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -31,21 +31,21 @@ public class Neo4jAnnotationAxiomsByIriReferenceIndex implements AnnotationAxiom
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
-  private final AnnotationAxiomAccessor annotationAxiomAccessor;
+  private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jAnnotationAxiomsByIriReferenceIndex(@Nonnull ProjectId projectId,
                                                   @Nonnull BranchId branchId,
                                                   @Nonnull OntologyDocumentId ontoDocId,
-                                                  @Nonnull AnnotationAxiomAccessor annotationAxiomAccessor) {
+                                                  @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.ontoDocId = checkNotNull(ontoDocId);
-    this.annotationAxiomAccessor = checkNotNull(annotationAxiomAccessor);
+    this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Override
   public Stream<OWLAnnotationAxiom> getReferencingAxioms(@Nonnull IRI iri, @Nonnull OWLOntologyID owlOntologyID) {
-    return annotationAxiomAccessor.getAnnotationAxioms(iri, projectId, branchId, ontoDocId).stream();
+    return axiomAccessor.getAnnotationAxioms(iri, projectId, branchId, ontoDocId).stream();
   }
 }
