@@ -12,6 +12,8 @@ import edu.stanford.owl2lpg.client.read.axiom.impl.AssertionAxiomAccessorImpl;
 @Module(includes = {
     NodeMapperModule.class,
     ClassAssertionAxiomAccessorModule.class,
+    DataPropertyAssertionAxiomAccessorModule.class,
+    ObjectPropertyAssertionAxiomAccessorModule.class,
     AnnotationAssertionAxiomAccessorModule.class})
 public abstract class AssertionAxiomAccessorModule {
 
