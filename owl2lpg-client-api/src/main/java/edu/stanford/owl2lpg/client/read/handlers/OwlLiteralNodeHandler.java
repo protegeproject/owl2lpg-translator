@@ -7,7 +7,6 @@ import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -38,9 +37,10 @@ public class OwlLiteralNodeHandler implements NodeHandler<OWLLiteral> {
   public OWLLiteral handle(Node node, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var lexicalForm = node.get(PropertyFields.LEXICAL_FORM).asString();
     var languageTag = node.get(PropertyFields.LANGUAGE);
+    var datatype = node.get(PropertyFields.DATATYPE);
     if (languageTag.isNull()) {
-      var datatypeIri = IRI.create(node.get(PropertyFields.DATATYPE).asString());
-      return dataFactory.getOWLLiteral(lexicalForm, OWL2Datatype.getDatatype(datatypeIri));
+      var datatypeIri = IRI.create(datatype.asString());
+      return dataFactory.getOWLLiteral(lexicalForm, dataFactory.getOWLDatatype(datatypeIri));
     } else {
       return dataFactory.getOWLLiteral(lexicalForm, languageTag.asString());
     }
