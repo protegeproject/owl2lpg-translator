@@ -32,9 +32,9 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_ASSERTION;
  */
 public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAccessor {
 
-  private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE = "axioms/class-assertion-axioms-by-type.cpy";
-  private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE = "axioms/class-assertion-axiom-by-individual.cpy";
-  private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE = "axioms/class-assertion-axiom-by-anonymous-individual.cpy";
+  private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE = "read/axioms/class-assertion-axioms-by-type.cpy";
+  private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE = "read/axioms/class-assertion-axiom-by-individual.cpy";
+  private static final String CLASS_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE = "read/axioms/class-assertion-axiom-by-anonymous-individual.cpy";
 
   private static final String CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY = read(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY_FILE);
   private static final String CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY = read(CLASS_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);

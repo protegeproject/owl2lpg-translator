@@ -28,9 +28,9 @@ import static org.semanticweb.owlapi.model.AxiomType.OBJECT_PROPERTY_ASSERTION;
 public class ObjectPropertyAssertionAxiomAccessorImpl implements ObjectPropertyAssertionAxiomAccessor {
 
   private static final String OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE =
-      "axioms/object-property-assertion-axiom-by-individual.cpy";
+      "read/axioms/object-property-assertion-axiom-by-individual.cpy";
   private static final String OBJECT_PROPERTY_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE =
-      "axioms/object-property-assertion-axiom-by-anonymous-individual.cpy";
+      "read/axioms/object-property-assertion-axiom-by-anonymous-individual.cpy";
 
   private static final String OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY =
       read(OBJECT_PROPERTY_ASSERTION_AXIOM_BY_INDIVIDUAL_QUERY_FILE);

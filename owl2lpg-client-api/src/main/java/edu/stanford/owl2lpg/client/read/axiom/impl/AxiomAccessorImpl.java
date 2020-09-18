@@ -37,17 +37,17 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SUB_ANNOTATION_PR
  */
 public class AxiomAccessorImpl implements AxiomAccessor {
 
-  private static final String ALL_AXIOM_QUERY_FILE = "axioms/all-axioms.cpy";
-  private static final String AXIOM_BY_TYPE_QUERY_FILE = "axioms/axiom-by-type.cpy";
-  private static final String AXIOM_BY_SUBJECT_CLASS_QUERY_FILE = "axioms/axiom-by-subject-class.cpy";
-  private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE = "axioms/axiom-by-subject-data-property.cpy";
-  private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE = "axioms/axiom-by-subject-object-property.cpy";
-  private static final String AXIOM_BY_SUBJECT_ANNOTATION_PROPERTY_QUERY_FILE = "axioms/axiom-by-subject-annotation-property.cpy";
-  private static final String AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY_FILE = "axioms/axiom-by-subject-named-individual.cpy";
-  private static final String AXIOM_BY_SUBJECT_DATATYPE_QUERY_FILE = "axioms/axiom-by-subject-datatype.cpy";
-  private static final String ANNOTATION_AXIOM_BY_SUBJECT_IRI_QUERY_FILE = "axioms/annotation-axiom-by-subject-iri.cpy";
+  private static final String ALL_AXIOM_QUERY_FILE = "read/axioms/all-axioms.cpy";
+  private static final String AXIOM_BY_TYPE_QUERY_FILE = "read/axioms/axiom-by-type.cpy";
+  private static final String AXIOM_BY_SUBJECT_CLASS_QUERY_FILE = "read/axioms/axiom-by-subject-class.cpy";
+  private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-data-property.cpy";
+  private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-object-property.cpy";
+  private static final String AXIOM_BY_SUBJECT_ANNOTATION_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-annotation-property.cpy";
+  private static final String AXIOM_BY_SUBJECT_NAMED_INDIVIDUAL_QUERY_FILE = "read/axioms/axiom-by-subject-named-individual.cpy";
+  private static final String AXIOM_BY_SUBJECT_DATATYPE_QUERY_FILE = "read/axioms/axiom-by-subject-datatype.cpy";
+  private static final String ANNOTATION_AXIOM_BY_SUBJECT_IRI_QUERY_FILE = "read/axioms/annotation-axiom-by-subject-iri.cpy";
   private static final String SUB_ANNOTATION_PROPERTY_OF_AXIOMS_BY_SUPER_PROPERTY_QUERY_FILE =
-      "axioms/sub-annotation-property-of-axiom-by-super-property.cpy";
+      "read/axioms/sub-annotation-property-of-axiom-by-super-property.cpy";
 
   private static final String ALL_AXIOM_QUERY = read(ALL_AXIOM_QUERY_FILE);
   private static final String AXIOM_BY_TYPE_QUERY = read(AXIOM_BY_TYPE_QUERY_FILE);

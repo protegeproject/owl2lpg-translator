@@ -30,12 +30,12 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
 public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyAccessor {
 
   private static final String DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY_FILE =
-      "hierarchy/data-property-children-of-owl-top-data-property.cpy";
-  private static final String DATA_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/data-property-ancestor.cpy";
-  private static final String DATA_PROPERTY_PARENTS_QUERY_FILE = "hierarchy/data-property-parents.cpy";
-  private static final String DATA_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/data-property-descendant.cpy";
-  private static final String DATA_PROPERTY_CHILDREN_QUERY_FILE = "hierarchy/data-property-children.cpy";
-  private static final String DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/data-property-paths-to-ancestor.cpy";
+      "read/hierarchy/data-property-children-of-owl-top-data-property.cpy";
+  private static final String DATA_PROPERTY_ANCESTOR_QUERY_FILE = "read/hierarchy/data-property-ancestor.cpy";
+  private static final String DATA_PROPERTY_PARENTS_QUERY_FILE = "read/hierarchy/data-property-parents.cpy";
+  private static final String DATA_PROPERTY_DESCENDANT_QUERY_FILE = "read/hierarchy/data-property-descendant.cpy";
+  private static final String DATA_PROPERTY_CHILDREN_QUERY_FILE = "read/hierarchy/data-property-children.cpy";
+  private static final String DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/data-property-paths-to-ancestor.cpy";
 
   private static final String DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY =
       read(DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY_FILE);

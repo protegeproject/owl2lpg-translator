@@ -23,9 +23,9 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class EntityAccessorImpl implements EntityAccessor {
 
-  private static final String ALL_ENTITIES_QUERY_FILE = "entities/all-entities.cpy";
-  private static final String ENTITIES_BY_IRI_QUERY_FILE = "entities/entities-by-iri.cpy";
-  private static final String ENTITIES_BY_TYPE_QUERY_FILE = "entities/entities-by-type.cpy";
+  private static final String ALL_ENTITIES_QUERY_FILE = "read/entities/all-entities.cpy";
+  private static final String ENTITIES_BY_IRI_QUERY_FILE = "read/entities/entities-by-iri.cpy";
+  private static final String ENTITIES_BY_TYPE_QUERY_FILE = "read/entities/entities-by-type.cpy";
 
   private static final String ALL_ENTITIES_QUERY = read(ALL_ENTITIES_QUERY_FILE);
   private static final String ENTITIES_BY_IRI_QUERY = read(ENTITIES_BY_IRI_QUERY_FILE);

@@ -40,16 +40,16 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormAccessor {
 
-  private static final String SHORT_FORMS_DICTIONARY_QUERY_FILE = "shortforms/short-forms-dictionary.cpy";
-  private static final String SHORT_FORMS_INDEX_QUERY_FILE = "shortforms/short-forms-index.cpy";
+  private static final String SHORT_FORMS_DICTIONARY_QUERY_FILE = "read/shortforms/short-forms-dictionary.cpy";
+  private static final String SHORT_FORMS_INDEX_QUERY_FILE = "read/shortforms/short-forms-index.cpy";
   private static final String FULL_TEXT_SEARCH_BY_ANNOTATION_ASSERTION_QUERY_FILE =
-      "shortforms/full-text-search-by-annotation-assertion.cpy";
+      "read/shortforms/full-text-search-by-annotation-assertion.cpy";
   private static final String FULL_TEXT_SEARCH_BY_LOCAL_NAME_QUERY_FILE =
-      "shortforms/full-text-search-by-local-name.cpy";
+      "read/shortforms/full-text-search-by-local-name.cpy";
   private static final String FULL_TEXT_SEARCH_BY_PREFIXED_NAME_QUERY_FILE =
-      "shortforms/full-text-search-by-prefixed-name.cpy";
+      "read/shortforms/full-text-search-by-prefixed-name.cpy";
   private static final String FULL_TEXT_SEARCH_BY_OBO_ID_QUERY_FILE =
-      "shortforms/full-text-search-by-obo-id.cpy";
+      "read/shortforms/full-text-search-by-obo-id.cpy";
 
   private static final String SHORT_FORMS_DICTIONARY_QUERY = read(SHORT_FORMS_DICTIONARY_QUERY_FILE);
   private static final String SHORT_FORMS_INDEX_QUERY = read(SHORT_FORMS_INDEX_QUERY_FILE);

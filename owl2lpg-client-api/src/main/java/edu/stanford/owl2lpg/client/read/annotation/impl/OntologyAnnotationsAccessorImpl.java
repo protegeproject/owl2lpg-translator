@@ -24,7 +24,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION;
  */
 public class OntologyAnnotationsAccessorImpl implements OntologyAnnotationsAccessor {
 
-  private static final String ONTOLOGY_ANNOTATIONS_QUERY_FILE = "annotations/ontology-annotations.cpy";
+  private static final String ONTOLOGY_ANNOTATIONS_QUERY_FILE = "read/annotations/ontology-annotations.cpy";
 
   private static final String ONTOLOGY_ANNOTATIONS_QUERY = read(ONTOLOGY_ANNOTATIONS_QUERY_FILE);
 

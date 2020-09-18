@@ -31,15 +31,15 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_ASSERT
 public class AnnotationAssertionAxiomAccessorImpl implements AnnotationAssertionAxiomAccessor {
 
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-iri.cpy";
+      "read/axioms/annotation-assertion-axiom-by-iri.cpy";
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_ANONYMOUS_INDIVIDUAL_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-anonymous-individual.cpy";
+      "read/axioms/annotation-assertion-axiom-by-anonymous-individual.cpy";
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_VALUE_LITERAL_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-value-literal.cpy";
+      "read/axioms/annotation-assertion-axiom-by-value-literal.cpy";
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_VALUE_IRI_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-value-iri.cpy";
+      "read/axioms/annotation-assertion-axiom-by-value-iri.cpy";
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_VALUE_ANONYMOUS_INDIVIDUAL_QUERY_FILE =
-      "axioms/annotation-assertion-axiom-by-value-anonymous-individual.cpy";
+      "read/axioms/annotation-assertion-axiom-by-value-anonymous-individual.cpy";
 
   private static final String ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY =
       read(ANNOTATION_ASSERTION_AXIOM_BY_IRI_QUERY_FILE);

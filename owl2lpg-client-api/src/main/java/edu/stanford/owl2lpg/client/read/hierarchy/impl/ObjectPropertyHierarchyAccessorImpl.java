@@ -31,12 +31,12 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
 public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierarchyAccessor {
 
   private static final String OBJECT_PROPERTY_CHILDREN_OF_OWL_TOP_OBJECT_PROPERTY_QUERY_FILE =
-      "hierarchy/object-property-children-of-owl-top-object-property.cpy";
-  private static final String OBJECT_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/object-property-ancestor.cpy";
-  private static final String OBJECT_PROPERTY_PARENTS_QUERY_FILE = "hierarchy/object-property-parents.cpy";
-  private static final String OBJECT_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/object-property-descendant.cpy";
-  private static final String OBJECT_PROPERTY_CHILDREN_QUERY_FILE = "hierarchy/object-property-children.cpy";
-  private static final String OBJECT_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/object-property-paths-to-ancestor.cpy";
+      "read/hierarchy/object-property-children-of-owl-top-object-property.cpy";
+  private static final String OBJECT_PROPERTY_ANCESTOR_QUERY_FILE = "read/hierarchy/object-property-ancestor.cpy";
+  private static final String OBJECT_PROPERTY_PARENTS_QUERY_FILE = "read/hierarchy/object-property-parents.cpy";
+  private static final String OBJECT_PROPERTY_DESCENDANT_QUERY_FILE = "read/hierarchy/object-property-descendant.cpy";
+  private static final String OBJECT_PROPERTY_CHILDREN_QUERY_FILE = "read/hierarchy/object-property-children.cpy";
+  private static final String OBJECT_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/object-property-paths-to-ancestor.cpy";
 
   private static final String OBJECT_PROPERTY_CHILDREN_OF_OWL_TOP_OBJECT_PROPERTY_QUERY =
       read(OBJECT_PROPERTY_CHILDREN_OF_OWL_TOP_OBJECT_PROPERTY_QUERY_FILE);

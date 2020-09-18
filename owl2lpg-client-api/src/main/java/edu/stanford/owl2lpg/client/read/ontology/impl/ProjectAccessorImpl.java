@@ -29,7 +29,7 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ProjectAccessorImpl implements ProjectAccessor {
 
-  private static final String ONTOLOGY_IDS_QUERY_FILE = "ontology/ontology-ids.cpy";
+  private static final String ONTOLOGY_IDS_QUERY_FILE = "read/ontology/ontology-ids.cpy";
   private static final String ONTOLOGY_IDS_QUERY = read(ONTOLOGY_IDS_QUERY_FILE);
 
   @Nonnull

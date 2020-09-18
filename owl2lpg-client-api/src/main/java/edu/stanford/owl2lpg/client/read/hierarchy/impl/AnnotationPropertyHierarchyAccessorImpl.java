@@ -29,12 +29,12 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationPropertyHierarchyAccessor {
 
-  private static final String ANNOTATION_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE = "hierarchy/annotation-property-children-of-root.cpy";
-  private static final String ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE = "hierarchy/annotation-property-ancestor.cpy";
-  private static final String ANNOTATION_PROPERTY_PARENTS_QUERY_FILE = "hierarchy/annotation-property-parents.cpy";
-  private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE = "hierarchy/annotation-property-descendant.cpy";
-  private static final String ANNOTATION_PROPERTY_CHILDREN_QUERY_FILE = "hierarchy/annotation-property-children.cpy";
-  private static final String ANNOTATION_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/annotation-property-paths-to-ancestor.cpy";
+  private static final String ANNOTATION_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE = "read/hierarchy/annotation-property-children-of-root.cpy";
+  private static final String ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE = "read/hierarchy/annotation-property-ancestor.cpy";
+  private static final String ANNOTATION_PROPERTY_PARENTS_QUERY_FILE = "read/hierarchy/annotation-property-parents.cpy";
+  private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE = "read/hierarchy/annotation-property-descendant.cpy";
+  private static final String ANNOTATION_PROPERTY_CHILDREN_QUERY_FILE = "read/hierarchy/annotation-property-children.cpy";
+  private static final String ANNOTATION_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/annotation-property-paths-to-ancestor.cpy";
 
   private static final String PROPERTY_CHILDREN_OF_ROOT_QUERY = read(ANNOTATION_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE);
   private static final String PROPERTY_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE);

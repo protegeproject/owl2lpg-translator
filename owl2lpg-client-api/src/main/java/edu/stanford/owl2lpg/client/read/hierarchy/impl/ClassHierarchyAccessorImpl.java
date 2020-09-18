@@ -29,12 +29,12 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
 
-  private static final String CLASS_CHILDREN_OF_OWL_THING_QUERY_FILE = "hierarchy/class-children-of-owl-thing.cpy";
-  private static final String CLASS_ANCESTOR_QUERY_FILE = "hierarchy/class-ancestor.cpy";
-  private static final String CLASS_PARENTS_QUERY_FILE = "hierarchy/class-parents.cpy";
-  private static final String CLASS_DESCENDANT_QUERY_FILE = "hierarchy/class-descendant.cpy";
-  private static final String CLASS_CHILDREN_QUERY_FILE = "hierarchy/class-children.cpy";
-  private static final String CLASS_PATHS_TO_ANCESTOR_QUERY_FILE = "hierarchy/class-paths-to-ancestor.cpy";
+  private static final String CLASS_CHILDREN_OF_OWL_THING_QUERY_FILE = "read/hierarchy/class-children-of-owl-thing.cpy";
+  private static final String CLASS_ANCESTOR_QUERY_FILE = "read/hierarchy/class-ancestor.cpy";
+  private static final String CLASS_PARENTS_QUERY_FILE = "read/hierarchy/class-parents.cpy";
+  private static final String CLASS_DESCENDANT_QUERY_FILE = "read/hierarchy/class-descendant.cpy";
+  private static final String CLASS_CHILDREN_QUERY_FILE = "read/hierarchy/class-children.cpy";
+  private static final String CLASS_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/class-paths-to-ancestor.cpy";
 
   private static final String CLASS_CHILDREN_OF_OWL_THING_QUERY = read(CLASS_CHILDREN_OF_OWL_THING_QUERY_FILE);
   private static final String CLASS_ANCESTOR_QUERY = read(CLASS_ANCESTOR_QUERY_FILE);

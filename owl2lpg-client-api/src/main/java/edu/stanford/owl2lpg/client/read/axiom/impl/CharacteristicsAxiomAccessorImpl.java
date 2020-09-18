@@ -32,8 +32,8 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.TRANSITIVE_OBJECT
  */
 public class CharacteristicsAxiomAccessorImpl implements CharacteristicsAxiomAccessor {
 
-  private static final String OBJECT_PROPERTY_CHARACTERISTICS_QUERY_FILE = "axioms/object-property-characteristics-axiom.cpy";
-  private static final String DATA_PROPERTY_CHARACTERISTICS_QUERY_FILE = "axioms/data-property-characteristics-axiom.cpy";
+  private static final String OBJECT_PROPERTY_CHARACTERISTICS_QUERY_FILE = "read/axioms/object-property-characteristics-axiom.cpy";
+  private static final String DATA_PROPERTY_CHARACTERISTICS_QUERY_FILE = "read/axioms/data-property-characteristics-axiom.cpy";
 
   private static final String OBJECT_PROPERTY_CHARACTERISTICS_QUERY = read(OBJECT_PROPERTY_CHARACTERISTICS_QUERY_FILE);
   private static final String DATA_PROPERTY_CHARACTERISTICS_QUERY = read(DATA_PROPERTY_CHARACTERISTICS_QUERY_FILE);
