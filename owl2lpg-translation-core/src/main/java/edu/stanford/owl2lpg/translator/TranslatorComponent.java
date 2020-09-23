@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
 import dagger.Component;
-import edu.stanford.owl2lpg.translator.visitors.BuiltInPrefixDeclarationsModule;
+import edu.stanford.owl2lpg.translator.util.OntologyObjectSerializerModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -9,7 +9,8 @@ import edu.stanford.owl2lpg.translator.visitors.BuiltInPrefixDeclarationsModule;
  */
 @Component(modules = {
     TranslatorModule.class,
-    OntologyContextModule.class})
+    OntologyContextModule.class,
+    OntologyObjectSerializerModule.class})
 @TranslationSessionScope
 public interface TranslatorComponent {
 

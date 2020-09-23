@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationSubjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
@@ -18,6 +19,7 @@ import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import edu.stanford.owl2lpg.translator.util.OntologyObjectSerializer;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
@@ -62,6 +64,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SUB_CLASS_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SWRL_RULE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SYMMETRIC_OBJECT_PROPERTY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.TRANSITIVE_OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.HASH_CODE;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 axioms.
@@ -113,6 +116,9 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
 
+  @Nonnull
+  private final OntologyObjectSerializer ontologyObjectSerializer;
+
   @Inject
   public AxiomVisitor(@Nonnull OntologyDocumentId ontoDocId,
                       @Nonnull NodeFactory nodeFactory,
@@ -127,7 +133,8 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
                       @Nonnull IndividualTranslator individualTranslator,
                       @Nonnull AnnotationObjectTranslator annotationTranslator,
                       @Nonnull AnnotationSubjectTranslator annotationSubjectTranslator,
-                      @Nonnull AnnotationValueTranslator annotationValueTranslator) {
+                      @Nonnull AnnotationValueTranslator annotationValueTranslator,
+                      @Nonnull OntologyObjectSerializer ontologyObjectSerializer) {
     this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.ontologyContextNodeFactory = checkNotNull(ontologyContextNodeFactory);
@@ -142,6 +149,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     this.annotationTranslator = checkNotNull(annotationTranslator);
     this.annotationSubjectTranslator = checkNotNull(annotationSubjectTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
+    this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
   }
 
   @Nonnull
@@ -791,7 +799,8 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @Nonnull
   private Node createAxiomNode(OWLAxiom axiom, NodeLabels nodeLabels) {
-    return nodeFactory.createNode(axiom, nodeLabels);
+    return nodeFactory.createNode(axiom, nodeLabels,
+        Properties.of(HASH_CODE, ontologyObjectSerializer.getByteArray(axiom).flatten()));
   }
 
   @Nonnull
