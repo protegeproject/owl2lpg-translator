@@ -186,6 +186,11 @@ public class NodeToOwlMapper {
 
   public OWLAnnotationValue toAnnotationValue(Node mainNode, NodeIndex nodeIndex, NodeMapper nodeMapper) {
     var valueNode = nodeIndex.getEndNode(mainNode, ANNOTATION_VALUE.name());
+    if (valueNode == null) {
+      System.out.println("==========================================================================");
+      System.out.println("NULL NODE: " + mainNode);
+      System.out.println("--------------------------------------------------------------------------");
+    }
     return nodeMapper.toObject(valueNode, nodeIndex, OWLAnnotationValue.class);
   }
 

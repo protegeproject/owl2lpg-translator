@@ -37,6 +37,11 @@ public interface AxiomAccessor {
                                                        @Nonnull BranchId branchId,
                                                        @Nonnull OntologyDocumentId ontoDocId);
 
+  boolean containsAxiom(@Nonnull OWLAxiom owlAxiom,
+                        @Nonnull ProjectId projectId,
+                        @Nonnull BranchId branchId,
+                        @Nonnull OntologyDocumentId ontoDocId);
+
   @Nonnull
   ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLClass subject,
                                             @Nonnull ProjectId projectId,

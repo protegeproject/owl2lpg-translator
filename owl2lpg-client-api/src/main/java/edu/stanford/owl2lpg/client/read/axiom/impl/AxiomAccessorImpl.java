@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.util.OntologyObjectSerializer;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
@@ -39,6 +40,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
 
   private static final String ALL_AXIOM_QUERY_FILE = "read/axioms/all-axioms.cpy";
   private static final String AXIOM_BY_TYPE_QUERY_FILE = "read/axioms/axiom-by-type.cpy";
+  private static final String AXIOM_BY_HASH_CODE_QUERY_FILE = "read/axioms/axiom-by-hash-code.cpy";
   private static final String AXIOM_BY_SUBJECT_CLASS_QUERY_FILE = "read/axioms/axiom-by-subject-class.cpy";
   private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-data-property.cpy";
   private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-object-property.cpy";
@@ -51,6 +53,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
 
   private static final String ALL_AXIOM_QUERY = read(ALL_AXIOM_QUERY_FILE);
   private static final String AXIOM_BY_TYPE_QUERY = read(AXIOM_BY_TYPE_QUERY_FILE);
+  private static final String AXIOM_BY_HASH_CODE_QUERY = read(AXIOM_BY_HASH_CODE_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_CLASS_QUERY = read(AXIOM_BY_SUBJECT_CLASS_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE);
@@ -67,11 +70,16 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   @Nonnull
   private final NodeMapper nodeMapper;
 
+  @Nonnull
+  private final OntologyObjectSerializer ontologyObjectSerializer;
+
   @Inject
   public AxiomAccessorImpl(@Nonnull GraphReader graphReader,
-                           @Nonnull NodeMapper nodeMapper) {
+                           @Nonnull NodeMapper nodeMapper,
+                           @Nonnull OntologyObjectSerializer ontologyObjectSerializer) {
     this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
+    this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
   }
 
   @Nonnull
@@ -99,6 +107,17 @@ public class AxiomAccessorImpl implements AxiomAccessor {
         .stream()
         .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, axiomType.getActualClass()))
         .collect(ImmutableSet.toImmutableSet());
+  }
+
+  @Override
+  public boolean containsAxiom(@Nonnull OWLAxiom owlAxiom,
+                               @Nonnull ProjectId projectId,
+                               @Nonnull BranchId branchId,
+                               @Nonnull OntologyDocumentId ontoDocId) {
+    var hashCode = ontologyObjectSerializer.getByteArray(owlAxiom).asDigestString();
+    var inputParams = Parameters.forAxiomHashCode(hashCode, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_HASH_CODE_QUERY, inputParams);
+    return nodeIndex.getNodes(AXIOM.getMainLabel()).size() == 1;
   }
 
   @Nonnull

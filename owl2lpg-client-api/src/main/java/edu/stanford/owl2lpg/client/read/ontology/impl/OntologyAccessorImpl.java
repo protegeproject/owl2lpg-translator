@@ -84,6 +84,14 @@ public class OntologyAccessorImpl implements OntologyAccessor {
     return axiomAccessor.getAxiomsByType(axiomType, projectId, branchId, ontoDocId);
   }
 
+  @Override
+  public boolean containsAxiom(@Nonnull OWLAxiom owlAxiom,
+                               @Nonnull ProjectId projectId,
+                               @Nonnull BranchId branchId,
+                               @Nonnull OntologyDocumentId ontoDocId) {
+    return axiomAccessor.containsAxiom(owlAxiom, projectId, branchId, ontoDocId);
+  }
+
   @Nonnull
   @Override
   public ImmutableSet<OWLEntity> getAllEntities(@Nonnull ProjectId projectId,

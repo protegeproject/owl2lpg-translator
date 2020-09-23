@@ -51,9 +51,7 @@ public class Neo4jOntologyAxiomsIndex implements OntologyAxiomsIndex {
 
   @Override
   public boolean containsAxiom(@Nonnull OWLAxiom owlAxiom, @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.getAxiomsByType(owlAxiom.getAxiomType(), projectId, branchId, ontoDocId)
-        .stream()
-        .anyMatch(owlAxiom::equals);
+    return ontologyAccessor.containsAxiom(owlAxiom, projectId, branchId, ontoDocId);
   }
 
   @Override
