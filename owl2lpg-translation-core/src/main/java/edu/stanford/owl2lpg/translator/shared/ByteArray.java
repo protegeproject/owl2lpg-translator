@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,11 @@ public abstract class ByteArray {
   @Nonnull
   public String asDigestString() {
     return Hashing.sha256().hashBytes(asArray()).toString();
+  }
+
+  @Nonnull
+  public String asDigestString(HashFunction hashFunction) {
+    return hashFunction.hashBytes(asArray()).toString();
   }
 
   @Override
