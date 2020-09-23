@@ -800,7 +800,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   private Node createAxiomNode(OWLAxiom axiom, NodeLabels nodeLabels) {
     return nodeFactory.createNode(axiom, nodeLabels,
-        Properties.of(HASH_CODE, ontologyObjectSerializer.getByteArray(axiom).flatten()));
+        Properties.of(HASH_CODE, ontologyObjectSerializer.getByteArray(axiom).asDigestString()));
   }
 
   @Nonnull

@@ -22,12 +22,12 @@ public abstract class ByteArray {
   public abstract byte[] asArray();
 
   @Nonnull
-  public String flatten() {
+  public String asDigestString() {
     return Hashing.sha256().hashBytes(asArray()).toString();
   }
 
   @Override
   public String toString() {
-    return flatten();
+    return asDigestString();
   }
 }
