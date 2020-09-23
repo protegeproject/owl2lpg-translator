@@ -1,5 +1,6 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.internal;
 
+import edu.stanford.owl2lpg.model.IdFormatChecker;
 import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import edu.stanford.owl2lpg.translator.visitors.PropertyChain;
 import org.semanticweb.owlapi.model.IRI;

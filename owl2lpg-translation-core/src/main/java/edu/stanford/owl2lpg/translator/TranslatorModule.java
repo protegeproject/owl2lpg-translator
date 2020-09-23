@@ -4,7 +4,15 @@ import com.google.common.hash.Hashing;
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.model.EdgeIdProvider;
+import edu.stanford.owl2lpg.model.IdFormatChecker;
 import edu.stanford.owl2lpg.model.NodeIdProvider;
+import edu.stanford.owl2lpg.model.SingleEncounterNodeChecker;
+import edu.stanford.owl2lpg.translator.internal.AugmentedEdgeInclusionCheckerImpl;
+import edu.stanford.owl2lpg.translator.internal.DigestEdgeIdProvider;
+import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
+import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
+import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
+import edu.stanford.owl2lpg.translator.internal.SingleEncounterNodeCheckerImpl;
 import edu.stanford.owl2lpg.translator.visitors.BuiltInPrefixDeclarationsModule;
 
 import javax.inject.Named;
@@ -39,7 +47,7 @@ public class TranslatorModule {
 
   @Provides
   @TranslationSessionScope
-  IdFormatChecker provideNodeObjectCheckerForMultipleEncounters() {
+  IdFormatChecker provideIdFormatChecker() {
     return new IdFormatCheckerImpl();
   }
 

@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.model;
 
 public interface SingleEncounterNodeChecker {
 

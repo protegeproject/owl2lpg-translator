@@ -1,9 +1,9 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.internal;
 
 import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import edu.stanford.owl2lpg.model.NodeIdProvider;
+import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -39,8 +39,9 @@ public class DigestNodeIdProvider implements NodeIdProvider {
       var literal = (OWLLiteral2) o;
       var s = literal.getLiteral() + literal.getDatatype() + literal.getLanguage();
       return createNodeIdFromObjectString(s);
+    } else {
+      return createNodeIdFromObjectString(o.toString());
     }
-    return createNodeIdFromObjectString(o.toString());
   }
 
   private NodeId createNodeIdFromObjectString(String objectString) {

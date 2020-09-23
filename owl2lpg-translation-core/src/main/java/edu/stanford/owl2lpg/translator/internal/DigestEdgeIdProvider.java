@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.internal;
 
 import com.google.common.hash.HashFunction;
 import edu.stanford.owl2lpg.model.EdgeId;
@@ -7,7 +7,6 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
-
 import java.nio.charset.StandardCharsets;
 
 import static com.google.common.base.Preconditions.checkNotNull;

@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.internal;
 
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.NodeIdProvider;

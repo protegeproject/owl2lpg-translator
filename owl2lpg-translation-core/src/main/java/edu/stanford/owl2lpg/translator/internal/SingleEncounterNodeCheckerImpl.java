@@ -1,5 +1,6 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.translator.internal;
 
+import edu.stanford.owl2lpg.model.SingleEncounterNodeChecker;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 

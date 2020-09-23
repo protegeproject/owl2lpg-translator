@@ -1,8 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.common.collect.Maps;
-import edu.stanford.owl2lpg.translator.IdFormatChecker;
-import edu.stanford.owl2lpg.translator.SingleEncounterNodeChecker;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 
 import javax.annotation.Nonnull;

@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.model;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
