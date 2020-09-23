@@ -8,7 +8,7 @@ import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import edu.stanford.owl2lpg.translator.util.OntologyObjectSerializer;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;

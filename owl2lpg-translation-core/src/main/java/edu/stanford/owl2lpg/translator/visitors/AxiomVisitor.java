@@ -19,7 +19,7 @@ import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
-import edu.stanford.owl2lpg.translator.util.OntologyObjectSerializer;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 

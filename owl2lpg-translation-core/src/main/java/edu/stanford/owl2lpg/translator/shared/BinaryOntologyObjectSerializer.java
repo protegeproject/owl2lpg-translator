@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.util;
+package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.common.io.ByteStreams;
 import org.semanticweb.binaryowl.stream.BinaryOWLOutputStream;

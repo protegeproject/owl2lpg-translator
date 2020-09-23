@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.util;
+package edu.stanford.owl2lpg.translator.shared;
 
 import dagger.Binds;
 import dagger.Module;
