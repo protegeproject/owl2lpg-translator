@@ -1,9 +1,5 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.model;
 
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.EdgeFactory;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
@@ -11,7 +7,46 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.*;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_ANNOTATION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_SUBJECT;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ANNOTATION_VALUE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_ANNOTATION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.BRANCH;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CONSTRAINING_FACET;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATATYPE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DISJOINT_CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DOMAIN;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INVERSE_OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_ANNOTATION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_DOCUMENT;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_IRI;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RANGE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RESTRICTION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RESTRICTION_VALUE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SOURCE_INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_ANNOTATION_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_ANNOTATION_PROPERTY;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUPER_OBJECT_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TARGET_VALUE;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.VERSION_IRI;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

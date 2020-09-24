@@ -1,13 +1,8 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.EdgeFactory;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.Properties;
-import edu.stanford.owl2lpg.translator.AugmentedEdgeInclusionChecker;
 import edu.stanford.owl2lpg.translator.ClassExpressionTranslator;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;

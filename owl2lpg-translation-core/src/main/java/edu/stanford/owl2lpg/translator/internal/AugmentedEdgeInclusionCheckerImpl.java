@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.translator.internal;
 
-import edu.stanford.owl2lpg.translator.AugmentedEdgeInclusionChecker;
+import edu.stanford.owl2lpg.model.AugmentedEdgeInclusionChecker;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.translator.DataRangeTranslator;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;

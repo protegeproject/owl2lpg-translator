@@ -2,7 +2,9 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.OntologyContext;
+import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
 import edu.stanford.owl2lpg.model.OntologyContextVisitor;
+import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.translator.Translation;
 
 import javax.annotation.Nonnull;

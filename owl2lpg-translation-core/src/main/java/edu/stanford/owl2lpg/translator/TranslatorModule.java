@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.translator;
 import com.google.common.hash.Hashing;
 import dagger.Module;
 import dagger.Provides;
+import edu.stanford.owl2lpg.model.AugmentedEdgeInclusionChecker;
 import edu.stanford.owl2lpg.model.EdgeIdProvider;
 import edu.stanford.owl2lpg.model.IdFormatChecker;
 import edu.stanford.owl2lpg.model.NodeIdProvider;
