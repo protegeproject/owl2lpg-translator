@@ -1,13 +1,13 @@
 package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.common.io.ByteStreams;
-import org.semanticweb.binaryowl.stream.BinaryOWLOutputStream;
-import org.semanticweb.binaryowl.stream.TreeSetTransformer;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -15,18 +15,22 @@ import java.io.IOException;
  */
 public class BinaryOntologyObjectSerializer implements OntologyObjectSerializer {
 
+  @Nonnull
+  private final BinaryOwlOutputStreamFactory factory;
+
   @Inject
-  public BinaryOntologyObjectSerializer() {
+  public BinaryOntologyObjectSerializer(@Nonnull BinaryOwlOutputStreamFactory factory) {
+    this.factory = checkNotNull(factory);
   }
 
   @Nonnull
   @Override
-  public ByteArray getByteArray(@Nonnull OWLObject owlObject) {
+  public byte[] serialize(@Nonnull OWLObject owlObject) {
     try {
       var byteArrayDataOutput = ByteStreams.newDataOutput();
-      var outputStream = new BinaryOWLOutputStream(byteArrayDataOutput, new TreeSetTransformer());
+      var outputStream = factory.createOutputStream(byteArrayDataOutput);
       outputStream.writeOWLObject(owlObject);
-      return ByteArray.of(byteArrayDataOutput.toByteArray());
+      return byteArrayDataOutput.toByteArray();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

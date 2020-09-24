@@ -11,5 +11,5 @@ import javax.annotation.Nonnull;
 public interface OntologyObjectSerializer {
 
   @Nonnull
-  ByteArray getByteArray(@Nonnull OWLObject owlObject);
+  byte[] serialize(@Nonnull OWLObject owlObject);
 }

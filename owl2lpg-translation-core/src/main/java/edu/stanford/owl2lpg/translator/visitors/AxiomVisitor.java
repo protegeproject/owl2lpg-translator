@@ -22,6 +22,7 @@ import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import edu.stanford.owl2lpg.translator.shared.BytesDigester;
 import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
@@ -122,6 +123,9 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   private final OntologyObjectSerializer ontologyObjectSerializer;
 
+  @Nonnull
+  private final BytesDigester bytesDigester;
+
   @Inject
   public AxiomVisitor(@Nonnull OntologyDocumentId ontoDocId,
                       @Nonnull NodeFactory nodeFactory,
@@ -137,7 +141,8 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
                       @Nonnull AnnotationObjectTranslator annotationTranslator,
                       @Nonnull AnnotationSubjectTranslator annotationSubjectTranslator,
                       @Nonnull AnnotationValueTranslator annotationValueTranslator,
-                      @Nonnull OntologyObjectSerializer ontologyObjectSerializer) {
+                      @Nonnull OntologyObjectSerializer ontologyObjectSerializer,
+                      @Nonnull BytesDigester bytesDigester) {
     this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.ontologyContextNodeFactory = checkNotNull(ontologyContextNodeFactory);
@@ -153,6 +158,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     this.annotationSubjectTranslator = checkNotNull(annotationSubjectTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
+    this.bytesDigester = checkNotNull(bytesDigester);
   }
 
   @Nonnull
@@ -802,8 +808,8 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @Nonnull
   private Node createAxiomNode(OWLAxiom axiom, NodeLabels nodeLabels) {
-    return nodeFactory.createNode(axiom, nodeLabels,
-        Properties.of(HASH_CODE, ontologyObjectSerializer.getByteArray(axiom).asDigestString()));
+    var digestString = bytesDigester.getDigestString(ontologyObjectSerializer.serialize(axiom));
+    return nodeFactory.createNode(axiom, nodeLabels, Properties.of(HASH_CODE, digestString));
   }
 
   @Nonnull

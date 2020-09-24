@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BytesDigester;
 import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -73,13 +74,18 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   @Nonnull
   private final OntologyObjectSerializer ontologyObjectSerializer;
 
+  @Nonnull
+  private final BytesDigester bytesDigester;
+
   @Inject
   public AxiomAccessorImpl(@Nonnull GraphReader graphReader,
                            @Nonnull NodeMapper nodeMapper,
-                           @Nonnull OntologyObjectSerializer ontologyObjectSerializer) {
+                           @Nonnull OntologyObjectSerializer ontologyObjectSerializer,
+                           @Nonnull BytesDigester bytesDigester) {
     this.graphReader = checkNotNull(graphReader);
     this.nodeMapper = checkNotNull(nodeMapper);
     this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
+    this.bytesDigester = checkNotNull(bytesDigester);
   }
 
   @Nonnull
@@ -114,7 +120,8 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                @Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
                                @Nonnull OntologyDocumentId ontoDocId) {
-    var hashCode = ontologyObjectSerializer.getByteArray(owlAxiom).asDigestString();
+    var bytes = ontologyObjectSerializer.serialize(owlAxiom);
+    var hashCode = bytesDigester.getDigestString(bytes);
     var inputParams = Parameters.forAxiomHashCode(hashCode, projectId, branchId, ontoDocId);
     var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_HASH_CODE_QUERY, inputParams);
     return nodeIndex.getNodes(AXIOM.getMainLabel()).size() == 1;
