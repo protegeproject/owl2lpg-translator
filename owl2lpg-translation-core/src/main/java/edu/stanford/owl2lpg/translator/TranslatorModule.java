@@ -14,7 +14,7 @@ import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
 import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
 import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
 import edu.stanford.owl2lpg.translator.internal.SingleEncounterNodeCheckerImpl;
-import edu.stanford.owl2lpg.translator.visitors.BuiltInPrefixDeclarationsModule;
+import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
 
 import javax.inject.Named;
 

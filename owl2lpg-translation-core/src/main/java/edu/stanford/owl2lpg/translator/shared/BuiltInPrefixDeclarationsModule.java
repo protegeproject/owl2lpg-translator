@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.translator.shared;
 
 import dagger.Module;
 import dagger.Provides;

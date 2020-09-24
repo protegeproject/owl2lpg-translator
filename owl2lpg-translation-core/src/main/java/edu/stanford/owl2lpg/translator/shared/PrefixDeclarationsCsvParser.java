@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;

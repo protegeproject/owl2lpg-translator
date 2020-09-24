@@ -14,6 +14,7 @@ import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.Translation;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarations;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.jetbrains.annotations.NotNull;

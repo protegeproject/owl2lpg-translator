@@ -1,7 +1,8 @@
-package edu.stanford.owl2lpg.translator.visitors;
+package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
+import edu.stanford.owl2lpg.translator.visitors.AutoValue_BuiltInPrefixDeclarations;
 
 import javax.annotation.Nonnull;
 
