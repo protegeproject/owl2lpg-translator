@@ -634,7 +634,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SUB_PROPERTY_CHAIN_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyChain = PropertyChain.create(ImmutableList.copyOf(axiom.getPropertyChain()));
+    var propertyChain = OWLPropertyChain.create(ImmutableList.copyOf(axiom.getPropertyChain()));
     addSubObjectPropertyChainTranslationAndEdge(propertyChain,
         axiomNode, translations, edges);
     addSuperObjectPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
@@ -645,7 +645,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
-  private void addSubObjectPropertyChainTranslationAndEdge(@Nonnull PropertyChain propertyChain,
+  private void addSubObjectPropertyChainTranslationAndEdge(@Nonnull OWLPropertyChain propertyChain,
                                                            @Nonnull Node axiomNode,
                                                            @Nonnull Builder<Translation> translations,
                                                            @Nonnull Builder<Edge> edges) {
@@ -659,7 +659,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   }
 
   @Nonnull
-  private Node addPropertyChainTranslationAndEdge(@Nonnull PropertyChain propertyChain,
+  private Node addPropertyChainTranslationAndEdge(@Nonnull OWLPropertyChain propertyChain,
                                                   @Nonnull Builder<Translation> propertyChainTranslations,
                                                   @Nonnull Builder<Edge> propertyChainEdges) {
     var propertyChainNode = nodeFactory.createNode(propertyChain, PROPERTY_CHAIN);

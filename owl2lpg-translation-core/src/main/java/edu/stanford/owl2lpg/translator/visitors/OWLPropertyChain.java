@@ -12,11 +12,11 @@ import java.util.Iterator;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class PropertyChain implements Iterable<OWLObjectPropertyExpression> {
+public abstract class OWLPropertyChain implements Iterable<OWLObjectPropertyExpression> {
 
   @Nonnull
-  public static PropertyChain create(@Nonnull ImmutableList<OWLObjectPropertyExpression> listOfProperty) {
-    return new AutoValue_PropertyChain(listOfProperty);
+  public static OWLPropertyChain create(@Nonnull ImmutableList<OWLObjectPropertyExpression> listOfProperty) {
+    return new AutoValue_OWLPropertyChain(listOfProperty);
   }
 
   @Nonnull

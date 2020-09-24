@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.translator.internal;
 
 import edu.stanford.owl2lpg.model.IdFormatChecker;
 import edu.stanford.owl2lpg.translator.visitors.OWLLiteral2;
-import edu.stanford.owl2lpg.translator.visitors.PropertyChain;
+import edu.stanford.owl2lpg.translator.visitors.OWLPropertyChain;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -20,7 +20,7 @@ public class IdFormatCheckerImpl implements IdFormatChecker {
 
   @Override
   public IdFormat getIdFormatFor(Object o) {
-    if (o instanceof IRI || o instanceof OWLEntity || o instanceof OWLLiteral2 || o instanceof PropertyChain) {
+    if (o instanceof IRI || o instanceof OWLEntity || o instanceof OWLLiteral2 || o instanceof OWLPropertyChain) {
       return IdFormat.DIGEST;
     } else {
       return IdFormat.NUMBER;
