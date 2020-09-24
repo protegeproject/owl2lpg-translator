@@ -1,9 +1,16 @@
 package edu.stanford.owl2lpg.client.bind.shortform;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import edu.stanford.bmir.protege.web.server.shortform.*;
+import edu.stanford.bmir.protege.web.server.shortform.EntityShortFormMatches;
+import edu.stanford.bmir.protege.web.server.shortform.MultiLingualDictionary;
+import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormDictionary;
+import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormIndex;
+import edu.stanford.bmir.protege.web.server.shortform.SearchString;
+import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShortFormDictionary;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
+import edu.stanford.bmir.protege.web.shared.search.EntitySearchFilter;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -67,7 +74,8 @@ public class Neo4jMultiLingualDictionary implements MultiLingualDictionary {
   public Page<EntityShortFormMatches> getShortFormsContaining(@Nonnull List<SearchString> searchStrings,
                                                               @Nonnull Set<EntityType<?>> entityTypes,
                                                               @Nonnull List<DictionaryLanguage> languages,
+                                                              @Nonnull ImmutableList<EntitySearchFilter> searchFilters,
                                                               @Nonnull PageRequest pageRequest) {
-    return searchableMultiLingualShortFormDictionary.getShortFormsContaining(searchStrings, entityTypes, languages, pageRequest);
+    return searchableMultiLingualShortFormDictionary.getShortFormsContaining(searchStrings, entityTypes, languages, searchFilters, pageRequest);
   }
 }

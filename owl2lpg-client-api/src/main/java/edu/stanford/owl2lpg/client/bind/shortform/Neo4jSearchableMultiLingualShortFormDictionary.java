@@ -1,10 +1,12 @@
 package edu.stanford.owl2lpg.client.bind.shortform;
 
+import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.EntityShortFormMatches;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
 import edu.stanford.bmir.protege.web.server.shortform.SearchableMultiLingualShortFormDictionary;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
+import edu.stanford.bmir.protege.web.shared.search.EntitySearchFilter;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.shortform.MultiLingualShortFormAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -48,6 +50,7 @@ public class Neo4jSearchableMultiLingualShortFormDictionary implements Searchabl
   public Page<EntityShortFormMatches> getShortFormsContaining(@Nonnull List<SearchString> searchStrings,
                                                               @Nonnull Set<EntityType<?>> entityTypes,
                                                               @Nonnull List<DictionaryLanguage> languages,
+                                                              @Nonnull ImmutableList<EntitySearchFilter> searchFilters,
                                                               @Nonnull PageRequest pageRequest) {
     return multiLingualShortFormAccessor.getShortFormsContaining(
         searchStrings, entityTypes, languages, pageRequest, projectId, branchId);
