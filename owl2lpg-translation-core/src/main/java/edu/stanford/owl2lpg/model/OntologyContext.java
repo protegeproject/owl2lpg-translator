@@ -26,7 +26,7 @@ public abstract class OntologyContext {
   @Nonnull
   public abstract OntologyDocumentId getOntologyDocumentId();
 
-  public <O> O accept(OntologyContextVisitor<O> ontologyContextVisitor) {
-    return ontologyContextVisitor.visit(this);
+  public <O> O accept(OntologyContextVisitorEx<O> visitor) {
+    return visitor.visit(this);
   }
 }

@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.OntologyContext;
 import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
-import edu.stanford.owl2lpg.model.OntologyContextVisitor;
+import edu.stanford.owl2lpg.model.OntologyContextVisitorEx;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.translator.Translation;
 
@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologyContextVisitorImpl implements OntologyContextVisitor<Translation> {
+public class OntologyContextVisitor implements OntologyContextVisitorEx<Translation> {
 
   @Nonnull
   private final OntologyContextNodeFactory nodeFactory;
@@ -25,8 +25,8 @@ public class OntologyContextVisitorImpl implements OntologyContextVisitor<Transl
   private final StructuralEdgeFactory edgeFactory;
 
   @Inject
-  public OntologyContextVisitorImpl(@Nonnull OntologyContextNodeFactory nodeFactory,
-                                    @Nonnull StructuralEdgeFactory edgeFactory) {
+  public OntologyContextVisitor(@Nonnull OntologyContextNodeFactory nodeFactory,
+                                @Nonnull StructuralEdgeFactory edgeFactory) {
     this.nodeFactory = checkNotNull(nodeFactory);
     this.edgeFactory = checkNotNull(edgeFactory);
   }
