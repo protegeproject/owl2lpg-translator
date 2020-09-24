@@ -41,7 +41,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
 
   private static final String ALL_AXIOM_QUERY_FILE = "read/axioms/all-axioms.cpy";
   private static final String AXIOM_BY_TYPE_QUERY_FILE = "read/axioms/axiom-by-type.cpy";
-  private static final String AXIOM_BY_HASH_CODE_QUERY_FILE = "read/axioms/axiom-by-hash-code.cpy";
+  private static final String AXIOM_BY_DIGEST_QUERY_FILE = "read/axioms/axiom-by-digest.cpy";
   private static final String AXIOM_BY_SUBJECT_CLASS_QUERY_FILE = "read/axioms/axiom-by-subject-class.cpy";
   private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-data-property.cpy";
   private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-object-property.cpy";
@@ -54,7 +54,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
 
   private static final String ALL_AXIOM_QUERY = read(ALL_AXIOM_QUERY_FILE);
   private static final String AXIOM_BY_TYPE_QUERY = read(AXIOM_BY_TYPE_QUERY_FILE);
-  private static final String AXIOM_BY_HASH_CODE_QUERY = read(AXIOM_BY_HASH_CODE_QUERY_FILE);
+  private static final String AXIOM_BY_DIGEST_QUERY = read(AXIOM_BY_DIGEST_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_CLASS_QUERY = read(AXIOM_BY_SUBJECT_CLASS_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE);
@@ -121,9 +121,9 @@ public class AxiomAccessorImpl implements AxiomAccessor {
                                @Nonnull BranchId branchId,
                                @Nonnull OntologyDocumentId ontoDocId) {
     var bytes = ontologyObjectSerializer.serialize(owlAxiom);
-    var hashCode = bytesDigester.getDigestString(bytes);
-    var inputParams = Parameters.forAxiomHashCode(hashCode, projectId, branchId, ontoDocId);
-    var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_HASH_CODE_QUERY, inputParams);
+    var digest = bytesDigester.getDigestString(bytes);
+    var inputParams = Parameters.forNodeDigest(digest, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_DIGEST_QUERY, inputParams);
     return nodeIndex.getNodes(AXIOM.getMainLabel()).size() == 1;
   }
 

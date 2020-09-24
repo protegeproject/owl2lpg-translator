@@ -68,7 +68,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SUB_CLASS_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SWRL_RULE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SYMMETRIC_OBJECT_PROPERTY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.TRANSITIVE_OBJECT_PROPERTY;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.HASH_CODE;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 axioms.
@@ -809,7 +809,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   @Nonnull
   private Node createAxiomNode(OWLAxiom axiom, NodeLabels nodeLabels) {
     var digestString = bytesDigester.getDigestString(ontologyObjectSerializer.serialize(axiom));
-    return nodeFactory.createNode(axiom, nodeLabels, Properties.of(HASH_CODE, digestString));
+    return nodeFactory.createNode(axiom, nodeLabels, Properties.of(DIGEST, digestString));
   }
 
   @Nonnull

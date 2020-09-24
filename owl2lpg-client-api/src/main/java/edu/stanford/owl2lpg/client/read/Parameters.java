@@ -38,7 +38,7 @@ public class Parameters {
   private static final String LEXICAL_FORM = "lexicalForm";
   private static final String DATATYPE = "datatype";
   private static final String IRI = "iri";
-  private static final String HASH_CODE = "hashCode";
+  private static final String DIGEST = "digest";
 
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId) {
@@ -129,17 +129,6 @@ public class Parameters {
         AXIOM_TYPE, new StringValue(axiomType.getName())));
   }
 
-  public static Value forAxiomHashCode(@Nonnull String hashCode,
-                                       @Nonnull ProjectId projectId,
-                                       @Nonnull BranchId branchId,
-                                       @Nonnull OntologyDocumentId ontoDocId) {
-    return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
-        HASH_CODE, new StringValue(hashCode)));
-  }
-
   public static Value forPropertyWithCharacteristicType(@Nonnull IRI propertyIri,
                                                         @Nonnull String characteristicType,
                                                         @Nonnull ProjectId projectId,
@@ -186,5 +175,16 @@ public class Parameters {
             .map(SearchString::getSearchString)
             .map(s -> s + "*")
             .collect(joining(" AND ")))));
+  }
+
+  public static Value forNodeDigest(@Nonnull String digest,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        DIGEST, new StringValue(digest)));
   }
 }
