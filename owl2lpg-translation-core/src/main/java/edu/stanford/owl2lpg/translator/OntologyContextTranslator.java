@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.model.OntologyContext;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.visitors.OntologyContextVisitor;
 
 import javax.annotation.Nonnull;

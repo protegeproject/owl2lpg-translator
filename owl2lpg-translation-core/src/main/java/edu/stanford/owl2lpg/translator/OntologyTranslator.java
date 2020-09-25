@@ -1,8 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.translator.visitors.EntityVisitor;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.visitors.OntologyVisitor;
-import org.semanticweb.owlapi.model.OWLNamedObjectVisitorEx;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;

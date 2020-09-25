@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.visitors.PropertyExpressionVisitor;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

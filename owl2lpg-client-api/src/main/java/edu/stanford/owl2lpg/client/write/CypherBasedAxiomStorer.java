@@ -6,8 +6,8 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 

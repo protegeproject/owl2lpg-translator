@@ -5,7 +5,7 @@ import edu.stanford.owl2lpg.model.OntologyContext;
 import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
 import edu.stanford.owl2lpg.model.OntologyContextVisitorEx;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
-import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.model.Translation;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

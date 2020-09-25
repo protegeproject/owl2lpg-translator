@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.visitors.ClassExpressionVisitor;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 

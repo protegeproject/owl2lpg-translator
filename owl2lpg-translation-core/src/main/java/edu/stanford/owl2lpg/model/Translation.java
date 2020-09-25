@@ -1,9 +1,8 @@
-package edu.stanford.owl2lpg.translator;
+package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.AutoValue_Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 

@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.exporter.csv;
 import com.google.common.collect.ImmutableMultiset;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
