@@ -79,6 +79,7 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 @TranslationSessionScope
 public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
+  @Nonnull
   private final OntologyDocumentId ontoDocId;
 
   @Nonnull
