@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.model;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.translator.AutoValue_Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
@@ -117,5 +116,9 @@ public abstract class Translation {
     var s1 = getEdges().stream();
     var s2 = getNestedTranslations().stream().flatMap(Translation::edges);
     return Stream.concat(s1, s2);
+  }
+
+  public void accept(TranslationVisitor visitor) {
+    visitor.visit(this);
   }
 }
