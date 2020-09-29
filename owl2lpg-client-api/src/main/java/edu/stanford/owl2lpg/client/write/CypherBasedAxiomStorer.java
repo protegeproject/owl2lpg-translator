@@ -49,14 +49,14 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     if (isReusableNode(node)) {
       stringBuilder.append("MERGE (")
           .append(printNodeId(node.getNodeId()))
-          .append(node.getNeo4jName())
+          .append(node.printLabels())
           .append(" ")
           .append(node.printProperties())
           .append(")");
     } else {
       stringBuilder.append("CREATE (")
           .append(printNodeId(node.getNodeId()))
-          .append(node.getNeo4jName())
+          .append(node.printLabels())
           .append(" ")
           .append(node.printProperties())
           .append(")");
@@ -68,7 +68,7 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     stringBuilder.append("MERGE (")
         .append(printNodeId(edge.getFromNode().getNodeId()))
         .append(")-[")
-        .append(edge.getNeo4jName())
+        .append(edge.printLabel())
         .append(" ")
         .append(edge.printProperties())
         .append("]->(")
