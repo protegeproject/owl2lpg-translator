@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.write.handlers;
 
-import org.semanticweb.owlapi.model.OWLAxiom;
+import edu.stanford.bmir.protege.web.server.change.AddAxiomChange;
+import edu.stanford.bmir.protege.web.server.change.RemoveAxiomChange;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -27,12 +28,14 @@ public class AxiomChangeHandlerImpl implements AxiomChangeHandler {
   }
 
   @Override
-  public void handleAdd(@Nonnull OWLAxiom axiom) {
+  public void handle(@Nonnull AddAxiomChange addAxiomChange) {
+    var axiom = addAxiomChange.getAxiom();
     addAxiomHandler.handle(axiom);
   }
 
   @Override
-  public void handleRemove(@Nonnull OWLAxiom axiom) {
+  public void handle(@Nonnull RemoveAxiomChange removeAxiomChange) {
+    var axiom = removeAxiomChange.getAxiom();
     removeAxiomHandler.handle(axiom);
   }
 }
