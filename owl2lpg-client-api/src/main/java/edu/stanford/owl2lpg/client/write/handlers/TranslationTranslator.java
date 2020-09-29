@@ -13,29 +13,41 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TranslationTranslator {
 
-  @Nonnull
-  private final CreateQueryBuilderFactory createQueryBuilderFactory;
-
-  @Inject
-  public TranslationTranslator(@Nonnull CreateQueryBuilderFactory createQueryBuilderFactory) {
-    this.createQueryBuilderFactory = checkNotNull(createQueryBuilderFactory);
+  public enum QueryType {
+    CREATE, DELETE
   }
 
-//  @Nonnull
-//  private final DeleteQueryBuilderFactory deleteQueryBuilderFactory;
+  @Nonnull
+  private final QueryBuilderFactory queryBuilderFactory;
+
+  @Inject
+  public TranslationTranslator(@Nonnull QueryBuilderFactory queryBuilderFactory) {
+    this.queryBuilderFactory = checkNotNull(queryBuilderFactory);
+  }
 
   @Nonnull
-  public String translateToCypherCreateQuery(@Nonnull Translation translation) {
-    var createQueryBuilder = createQueryBuilderFactory.getBuilder();
+  public String translateToCypher(@Nonnull Translation translation, @Nonnull QueryType queryType) {
+    switch (queryType) {
+      case CREATE:
+        return translateToCypherCreateQuery(translation);
+      case DELETE:
+        return translateToCypherDeleteQuery(translation);
+      default:
+        return "";
+    }
+  }
+
+  @Nonnull
+  private String translateToCypherCreateQuery(@Nonnull Translation translation) {
+    var createQueryBuilder = queryBuilderFactory.getCreateQueryBuilder();
     translation.accept(createQueryBuilder);
     return createQueryBuilder.build();
   }
 
   @Nonnull
-  public String translateToCypherDeleteQuery(@Nonnull Translation translation) {
-//    var deleteQueryBuilder = deleteQueryBuilderFactory.getBuilder();
-//    translation.accept(deleteQueryBuilder);
-//    return deleteQueryBuilder.build();
-    return "";
+  private String translateToCypherDeleteQuery(@Nonnull Translation translation) {
+    var deleteQueryBuilder = queryBuilderFactory.getDeleteQueryBuilder();
+    translation.accept(deleteQueryBuilder);
+    return deleteQueryBuilder.build();
   }
 }

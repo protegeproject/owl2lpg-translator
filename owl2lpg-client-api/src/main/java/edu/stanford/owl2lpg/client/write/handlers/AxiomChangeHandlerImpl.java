@@ -16,9 +16,14 @@ public class AxiomChangeHandlerImpl implements AxiomChangeHandler {
   @Nonnull
   private final AddAxiomHandler addAxiomHandler;
 
+  @Nonnull
+  private final RemoveAxiomHandler removeAxiomHandler;
+
   @Inject
-  public AxiomChangeHandlerImpl(@Nonnull AddAxiomHandler addAxiomHandler) {
+  public AxiomChangeHandlerImpl(@Nonnull AddAxiomHandler addAxiomHandler,
+                                @Nonnull RemoveAxiomHandler removeAxiomHandler) {
     this.addAxiomHandler = checkNotNull(addAxiomHandler);
+    this.removeAxiomHandler = checkNotNull(removeAxiomHandler);
   }
 
   @Override
@@ -28,6 +33,6 @@ public class AxiomChangeHandlerImpl implements AxiomChangeHandler {
 
   @Override
   public void handleRemove(@Nonnull OWLAxiom axiom) {
-
+    removeAxiomHandler.handle(axiom);
   }
 }
