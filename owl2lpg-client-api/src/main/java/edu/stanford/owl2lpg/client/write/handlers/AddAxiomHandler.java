@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.client.write.handlers.TranslationTranslator.QueryType.CREATE;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -35,7 +36,7 @@ public class AddAxiomHandler {
 
   public void handle(@Nonnull OWLAxiom axiom) {
     var axiomTranslation = axiomTranslator.translate(axiom);
-    var queryString = translationTranslator.translateToCypherCreateQuery(axiomTranslation);
+    var queryString = translationTranslator.translateToCypher(axiomTranslation, CREATE);
     graphWriter.execute(queryString);
   }
 }
