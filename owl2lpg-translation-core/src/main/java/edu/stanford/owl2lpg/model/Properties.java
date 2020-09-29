@@ -46,6 +46,10 @@ public abstract class Properties {
     return create(ImmutableMap.of(property1, value1, property2, value2, property3, value3));
   }
 
+  public boolean isEmpty() {
+    return getMap().isEmpty();
+  }
+
   private static String escape(String value) {
     return value.replace("\\", "\\\\")
         .replace("\"", "\\\"")
@@ -94,16 +98,19 @@ public abstract class Properties {
     var sb = new StringBuilder();
     sb.append("{");
     forEach((key, value) -> {
-          if (sb.length() > 1) {
-            sb.append(",");
-          }
           if (value instanceof String) {
-            sb.append(key)
-                .append(": \"")
-                .append(escape((String) value))
-                .append("\"");
+            var s = (String) value;
+            if (!s.isEmpty()) {
+              if (sb.length() > 1) {
+                sb.append(",");
+              }
+              sb.append(key).append(":\"").append(escape(s)).append("\"");
+            }
           } else {
-            sb.append(key).append(": ").append(value);
+            if (sb.length() > 1) {
+              sb.append(",");
+            }
+            sb.append(key).append(":").append(value);
           }
         }
     );
