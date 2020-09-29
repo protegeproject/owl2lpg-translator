@@ -30,4 +30,12 @@ public class GraphWriter {
           tx.run(queryString, inputParams).consume().counters());
     }
   }
+
+  @Nonnull
+  public SummaryCounters execute(@Nonnull String queryString) {
+    try (var session = driver.session()) {
+      return session.writeTransaction(tx ->
+          tx.run(queryString).consume().counters());
+    }
+  }
 }
