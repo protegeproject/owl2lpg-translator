@@ -5,7 +5,6 @@ import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.IRI;
@@ -18,7 +17,12 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@TranslationSessionScope
+/**
+ * A visitor that contains the implementation to translate the OWL 2 annotation values.
+ *
+ * @author Josef Hardi <josef.hardi@stanford.edu> <br>
+ * Stanford Center for Biomedical Informatics Research
+ */
 public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Translation> {
 
   @Nonnull

@@ -21,7 +21,6 @@ import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.shared.BytesDigester;
 import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -76,7 +75,6 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @Nonnull

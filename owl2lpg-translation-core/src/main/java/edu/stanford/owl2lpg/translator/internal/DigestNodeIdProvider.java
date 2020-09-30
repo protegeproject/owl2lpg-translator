@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,6 +23,7 @@ public class DigestNodeIdProvider implements NodeIdProvider {
   @Nonnull
   private final HashFunction hashFunction;
 
+  @Inject
   public DigestNodeIdProvider(@Nonnull HashFunction hashFunction) {
     this.hashFunction = checkNotNull(hashFunction);
   }

@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
 import com.google.common.collect.Maps;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -14,7 +13,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class NodeIdMapper {
 
   @Nonnull

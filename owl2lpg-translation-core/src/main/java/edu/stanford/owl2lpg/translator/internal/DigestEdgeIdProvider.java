@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -20,6 +21,7 @@ public class DigestEdgeIdProvider implements EdgeIdProvider {
   @Nonnull
   private final HashFunction hashFunction;
 
+  @Inject
   public DigestEdgeIdProvider(@Nonnull HashFunction hashFunction) {
     this.hashFunction = checkNotNull(hashFunction);
   }

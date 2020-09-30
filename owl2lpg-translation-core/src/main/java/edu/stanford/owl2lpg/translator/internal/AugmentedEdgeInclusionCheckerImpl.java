@@ -3,6 +3,8 @@ package edu.stanford.owl2lpg.translator.internal;
 import edu.stanford.owl2lpg.model.AugmentedEdgeInclusionChecker;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
+import javax.inject.Inject;
+
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
@@ -22,6 +24,10 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.TYPE;
  * Stanford Center for Biomedical Informatics Research
  */
 public class AugmentedEdgeInclusionCheckerImpl implements AugmentedEdgeInclusionChecker {
+
+  @Inject
+  public AugmentedEdgeInclusionCheckerImpl() {
+  }
 
   @Override
   public boolean allows(EdgeLabel edgeLabel) {

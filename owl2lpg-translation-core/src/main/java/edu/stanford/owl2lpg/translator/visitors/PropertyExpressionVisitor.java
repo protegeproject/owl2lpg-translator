@@ -6,7 +6,6 @@ import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
@@ -25,7 +24,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_INVERSE_OF
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class PropertyExpressionVisitor implements OWLPropertyExpressionVisitorEx<Translation> {
 
   @Nonnull

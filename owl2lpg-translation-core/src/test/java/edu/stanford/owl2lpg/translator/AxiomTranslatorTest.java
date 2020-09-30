@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import javax.inject.Provider;
@@ -28,7 +29,7 @@ public class AxiomTranslatorTest {
       Class(IRI("http://example.org/B")));
 
   @Mock
-  private Provider<AxiomVisitor> axiomVisitorProvider;
+  private Provider<OWLAxiomVisitorEx<Translation>> axiomVisitorProvider;
 
   @Mock
   private AxiomVisitor axiomVisitor;

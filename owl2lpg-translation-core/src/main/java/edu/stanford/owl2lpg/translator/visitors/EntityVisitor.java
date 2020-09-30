@@ -13,7 +13,6 @@ import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarations;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
@@ -47,7 +46,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @Nonnull

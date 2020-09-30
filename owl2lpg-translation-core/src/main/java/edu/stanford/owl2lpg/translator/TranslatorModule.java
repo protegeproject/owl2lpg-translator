@@ -1,66 +1,82 @@
 package edu.stanford.owl2lpg.translator;
 
-import com.google.common.hash.Hashing;
+import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
-import edu.stanford.owl2lpg.model.AugmentedEdgeInclusionChecker;
-import edu.stanford.owl2lpg.model.EdgeIdProvider;
-import edu.stanford.owl2lpg.model.IdFormatChecker;
-import edu.stanford.owl2lpg.model.NodeIdProvider;
-import edu.stanford.owl2lpg.model.SingleEncounterNodeChecker;
-import edu.stanford.owl2lpg.translator.internal.AugmentedEdgeInclusionCheckerImpl;
-import edu.stanford.owl2lpg.translator.internal.DigestEdgeIdProvider;
-import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
-import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
-import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
-import edu.stanford.owl2lpg.translator.internal.SingleEncounterNodeCheckerImpl;
+import edu.stanford.owl2lpg.model.AugmentedEdgeFactoryModule;
+import edu.stanford.owl2lpg.model.EdgeFactoryModule;
+import edu.stanford.owl2lpg.model.NodeFactoryModule;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
-
-import javax.inject.Named;
+import edu.stanford.owl2lpg.translator.visitors.AnnotationObjectVisitor;
+import edu.stanford.owl2lpg.translator.visitors.AnnotationSubjectVisitor;
+import edu.stanford.owl2lpg.translator.visitors.AnnotationValueVisitor;
+import edu.stanford.owl2lpg.translator.visitors.AxiomVisitor;
+import edu.stanford.owl2lpg.translator.visitors.ClassExpressionVisitor;
+import edu.stanford.owl2lpg.translator.visitors.DataVisitor;
+import edu.stanford.owl2lpg.translator.visitors.EntityVisitor;
+import edu.stanford.owl2lpg.translator.visitors.IndividualVisitor;
+import edu.stanford.owl2lpg.translator.visitors.OntologyVisitor;
+import edu.stanford.owl2lpg.translator.visitors.PropertyExpressionVisitor;
+import org.semanticweb.owlapi.model.OWLAnnotationObjectVisitorEx;
+import org.semanticweb.owlapi.model.OWLAnnotationSubjectVisitorEx;
+import org.semanticweb.owlapi.model.OWLAnnotationValueVisitorEx;
+import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
+import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
+import org.semanticweb.owlapi.model.OWLDataVisitorEx;
+import org.semanticweb.owlapi.model.OWLEntityVisitorEx;
+import org.semanticweb.owlapi.model.OWLIndividualVisitorEx;
+import org.semanticweb.owlapi.model.OWLNamedObjectVisitorEx;
+import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@SuppressWarnings("UnstableApiUsage")
-@Module(includes = BuiltInPrefixDeclarationsModule.class)
-public class TranslatorModule {
+@Module(includes = {
+    NodeFactoryModule.class,
+    EdgeFactoryModule.class,
+    AugmentedEdgeFactoryModule.class,
+    BuiltInPrefixDeclarationsModule.class
+})
+public abstract class TranslatorModule {
 
-  @Provides
-  @Named("number")
-  @TranslationSessionScope
-  NodeIdProvider provideNodeIdProvider() {
-    return new NumberIncrementIdProvider();
-  }
+  @Binds
+  public abstract OWLAnnotationObjectVisitorEx<Translation>
+  provideAnnotationObjectVisitor(AnnotationObjectVisitor impl);
 
-  @Provides
-  @Named("digest")
-  @TranslationSessionScope
-  NodeIdProvider provideDigestNodeIdProvider() {
-    return new DigestNodeIdProvider(Hashing.md5());
-  }
+  @Binds
+  public abstract OWLAnnotationSubjectVisitorEx<Translation>
+  provideAnnotationSubjectVisitor(AnnotationSubjectVisitor impl);
 
-  @Provides
-  @TranslationSessionScope
-  EdgeIdProvider provideEdgeIdProvider() {
-    return new DigestEdgeIdProvider(Hashing.md5());
-  }
+  @Binds
+  public abstract OWLAnnotationValueVisitorEx<Translation>
+  provideAnnotationValueVisitor(AnnotationValueVisitor impl);
 
-  @Provides
-  @TranslationSessionScope
-  IdFormatChecker provideIdFormatChecker() {
-    return new IdFormatCheckerImpl();
-  }
+  @Binds
+  public abstract OWLAxiomVisitorEx<Translation>
+  provideAxiomVisitor(AxiomVisitor impl);
 
-  @Provides
-  @TranslationSessionScope
-  SingleEncounterNodeChecker provideNodeObjectCheckerForSingleEncounter() {
-    return new SingleEncounterNodeCheckerImpl();
-  }
+  @Binds
+  public abstract OWLClassExpressionVisitorEx<Translation>
+  provideClassExpressionVisitor(ClassExpressionVisitor impl);
 
-  @Provides
-  @TranslationSessionScope
-  AugmentedEdgeInclusionChecker provideAugmentedEdgeInclusionChecker() {
-    return new AugmentedEdgeInclusionCheckerImpl();
-  }
+  @Binds
+  public abstract OWLPropertyExpressionVisitorEx<Translation>
+  providePropertyExpressionVisitor(PropertyExpressionVisitor impl);
+
+  @Binds
+  public abstract OWLDataVisitorEx<Translation>
+  provideDataVisitor(DataVisitor impl);
+
+  @Binds
+  public abstract OWLEntityVisitorEx<Translation>
+  provideEntityVisitor(EntityVisitor impl);
+
+  @Binds
+  public abstract OWLIndividualVisitorEx<Translation>
+  provideIndividualVisitor(IndividualVisitor impl);
+
+  @Binds
+  public abstract OWLNamedObjectVisitorEx<Translation>
+  provideOntologyVisitor(OntologyVisitor impl);
 }

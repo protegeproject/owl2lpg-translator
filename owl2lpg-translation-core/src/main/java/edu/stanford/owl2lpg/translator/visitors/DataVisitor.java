@@ -10,7 +10,6 @@ import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.DataRangeTranslator;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.OWLDataComplementOf;
@@ -42,7 +41,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FACET_RESTRICTION
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class DataVisitor implements OWLDataVisitorEx<Translation> {
 
   @Nonnull
