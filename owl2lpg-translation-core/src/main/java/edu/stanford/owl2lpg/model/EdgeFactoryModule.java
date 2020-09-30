@@ -2,6 +2,7 @@ package edu.stanford.owl2lpg.model;
 
 import dagger.Binds;
 import dagger.Module;
+import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.internal.DigestEdgeIdProvider;
 
 /**
@@ -12,6 +13,7 @@ import edu.stanford.owl2lpg.translator.internal.DigestEdgeIdProvider;
 public abstract class EdgeFactoryModule {
 
   @Binds
+  @TranslationSessionScope
   public abstract EdgeIdProvider
   provideEdgeIdProvider(DigestEdgeIdProvider impl);
 }

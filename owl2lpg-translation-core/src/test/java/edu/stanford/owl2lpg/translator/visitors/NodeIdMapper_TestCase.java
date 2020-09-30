@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.hash.Hashing;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.NodeIdMapper;
+import edu.stanford.owl2lpg.model.NodeIdMapperImpl;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
@@ -31,7 +32,7 @@ public class NodeIdMapper_TestCase {
 
   @Before
   public void setUp() throws Exception {
-    nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider(),
+    nodeIdMapper = new NodeIdMapperImpl(new NumberIncrementIdProvider(),
         new DigestNodeIdProvider(Hashing.sha256()),
         new IdFormatCheckerImpl(),
         new SingleEncounterNodeCheckerImpl());
