@@ -7,6 +7,7 @@ import edu.stanford.bmir.protege.web.server.change.OntologyChangeVisitor;
 import edu.stanford.bmir.protege.web.server.change.RemoveAxiomChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveImportChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveOntologyAnnotationChange;
+import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandler;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -20,24 +21,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Neo4jChangeVisitor implements OntologyChangeVisitor {
 
   @Nonnull
-  private final Neo4jAddAxiomChangeVisitor addAxiomChangeVisitor;
-
-  @Nonnull
-  private final Neo4jRemoveAxiomChangeVisitor removeAxiomChangeVisitor;
+  private final AxiomChangeHandler axiomChangeHandler;
 
   @Inject
-  public Neo4jChangeVisitor(@Nonnull Neo4jAddAxiomChangeVisitor addAxiomChangeVisitor,
-                            @Nonnull Neo4jRemoveAxiomChangeVisitor removeAxiomChangeVisitor) {
-    this.addAxiomChangeVisitor = checkNotNull(addAxiomChangeVisitor);
-    this.removeAxiomChangeVisitor = checkNotNull(removeAxiomChangeVisitor);
+  public Neo4jChangeVisitor(@Nonnull AxiomChangeHandler axiomChangeHandler) {
+    this.axiomChangeHandler = checkNotNull(axiomChangeHandler);
   }
 
   public void visit(@Nonnull AddAxiomChange addAxiomChange) {
-    addAxiomChangeVisitor.visit(addAxiomChange);
+    axiomChangeHandler.handle(addAxiomChange);
   }
 
   public void visit(@Nonnull RemoveAxiomChange removeAxiomChange) {
-    removeAxiomChangeVisitor.visit(removeAxiomChange);
+    axiomChangeHandler.handle(removeAxiomChange);
   }
 
   public void visit(@Nonnull AddOntologyAnnotationChange addOntologyAnnotationChange) {
