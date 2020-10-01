@@ -36,14 +36,17 @@ public class CreateQueryBuilder implements TranslationVisitor {
     translation.edges()
         .forEach(edge -> {
           var fromNode = edge.getFromNode();
-          translate(fromNode);
+          appendCreateNode(fromNode);
           var toNode = edge.getToNode();
-          translate(toNode);
-          translate(edge);
+          appendCreateNode(toNode);
+          appendCreateEdge(edge);
+          if (edge.isTypeOf(AXIOM_OF)) {
+            appendCreateAxiomEdge(edge);
+          }
         });
   }
 
-  private void translate(Node node) {
+  private void appendCreateNode(Node node) {
     if (!nodeVariableNameMapping.containsKey(node)) {
       if (isAxiom(node) || isAnnotation(node)) {
         stringBuilder.append("CREATE ");
@@ -76,17 +79,14 @@ public class CreateQueryBuilder implements TranslationVisitor {
     return variableName;
   }
 
-  private void translate(Edge edge) {
+  private void appendCreateEdge(Edge edge) {
     stringBuilder.append("MERGE ")
         .append("(").append(getVariableName(edge.getFromNode())).append(")")
         .append("-[").append(edge.printLabel()).append(" ").append(edge.printProperties()).append("]->")
         .append("(").append(getVariableName(edge.getToNode())).append(")\n");
-    if (edge.isTypeOf(AXIOM_OF)) {
-      addAdditionalAxiomOfMergeQuery(edge);
-    }
   }
 
-  private void addAdditionalAxiomOfMergeQuery(Edge edge) {
+  private void appendCreateAxiomEdge(Edge edge) {
     stringBuilder.append("MERGE ")
         .append("(").append(getVariableName(edge.getFromNode())).append(")")
         .append("<-[:AXIOM {structuralSpec:true}]-")
