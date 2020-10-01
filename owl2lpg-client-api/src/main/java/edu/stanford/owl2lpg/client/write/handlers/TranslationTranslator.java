@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.write.handlers;
 
+import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Translation;
 
 import javax.annotation.Nonnull;
@@ -13,10 +14,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TranslationTranslator {
 
-  public enum QueryType {
-    CREATE, DELETE
-  }
-
   @Nonnull
   private final QueryBuilderFactory queryBuilderFactory;
 
@@ -26,26 +23,14 @@ public class TranslationTranslator {
   }
 
   @Nonnull
-  public String translateToCypher(@Nonnull Translation translation, @Nonnull QueryType queryType) {
-    switch (queryType) {
-      case CREATE:
-        return translateToCypherCreateQuery(translation);
-      case DELETE:
-        return translateToCypherDeleteQuery(translation);
-      default:
-        return "";
-    }
-  }
-
-  @Nonnull
-  private String translateToCypherCreateQuery(@Nonnull Translation translation) {
+  public String translateToCypherCreateQuery(@Nonnull Translation translation) {
     var createQueryBuilder = queryBuilderFactory.getCreateQueryBuilder();
     translation.accept(createQueryBuilder);
     return createQueryBuilder.build();
   }
 
   @Nonnull
-  private String translateToCypherDeleteQuery(@Nonnull Translation translation) {
+  public ImmutableList<String> translateToCypherDeleteQuery(@Nonnull Translation translation) {
     var deleteQueryBuilder = queryBuilderFactory.getDeleteQueryBuilder();
     translation.accept(deleteQueryBuilder);
     return deleteQueryBuilder.build();
