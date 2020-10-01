@@ -12,7 +12,7 @@ import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandle
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = TranslatorModule.class)
+@Module(includes = OntologyObjectTranslatorModule.class)
 public abstract class OntologyChangeHandlerModule {
 
   @Binds
