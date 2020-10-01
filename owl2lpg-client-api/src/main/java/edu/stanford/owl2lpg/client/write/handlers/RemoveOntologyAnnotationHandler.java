@@ -5,6 +5,7 @@ import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -23,6 +24,7 @@ public class RemoveOntologyAnnotationHandler {
   @Nonnull
   private final TranslationTranslator translationTranslator;
 
+  @Inject
   public RemoveOntologyAnnotationHandler(@Nonnull GraphWriter graphWriter,
                                          @Nonnull AnnotationObjectTranslator annotationTranslator,
                                          @Nonnull TranslationTranslator translationTranslator) {
