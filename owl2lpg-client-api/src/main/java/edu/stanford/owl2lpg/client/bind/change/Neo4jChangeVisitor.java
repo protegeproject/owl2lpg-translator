@@ -8,6 +8,7 @@ import edu.stanford.bmir.protege.web.server.change.RemoveAxiomChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveImportChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveOntologyAnnotationChange;
 import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandler;
+import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandler;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -23,9 +24,14 @@ public class Neo4jChangeVisitor implements OntologyChangeVisitor {
   @Nonnull
   private final AxiomChangeHandler axiomChangeHandler;
 
+  @Nonnull
+  private final OntologyAnnotationChangeHandler ontologyAnnotationChangeHandler;
+
   @Inject
-  public Neo4jChangeVisitor(@Nonnull AxiomChangeHandler axiomChangeHandler) {
+  public Neo4jChangeVisitor(@Nonnull AxiomChangeHandler axiomChangeHandler,
+                            @Nonnull OntologyAnnotationChangeHandler ontologyAnnotationChangeHandler) {
     this.axiomChangeHandler = checkNotNull(axiomChangeHandler);
+    this.ontologyAnnotationChangeHandler = checkNotNull(ontologyAnnotationChangeHandler);
   }
 
   public void visit(@Nonnull AddAxiomChange addAxiomChange) {
@@ -37,9 +43,11 @@ public class Neo4jChangeVisitor implements OntologyChangeVisitor {
   }
 
   public void visit(@Nonnull AddOntologyAnnotationChange addOntologyAnnotationChange) {
+    ontologyAnnotationChangeHandler.handle(addOntologyAnnotationChange);
   }
 
   public void visit(@Nonnull RemoveOntologyAnnotationChange removeOntologyAnnotationChange) {
+    ontologyAnnotationChangeHandler.handle(removeOntologyAnnotationChange);
   }
 
   public void visit(@Nonnull AddImportChange addImportChange) {
