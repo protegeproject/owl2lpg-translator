@@ -17,4 +17,9 @@ public class VariableNameGenerator {
   public String generate() {
     return VARIABLE_SYMBOL + counter.getAndIncrement();
   }
+
+  @Nonnull
+  public String generate(@Nonnull String prefix) {
+    return prefix + counter.getAndIncrement();
+  }
 }
