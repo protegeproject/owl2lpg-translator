@@ -18,6 +18,7 @@ import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
 import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
 import edu.stanford.owl2lpg.translator.internal.SingleEncounterNodeCheckerImpl;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
+import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
 import edu.stanford.owl2lpg.translator.visitors.AnnotationObjectVisitor;
 import edu.stanford.owl2lpg.translator.visitors.AnnotationSubjectVisitor;
 import edu.stanford.owl2lpg.translator.visitors.AnnotationValueVisitor;
@@ -45,7 +46,9 @@ import javax.inject.Named;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = BuiltInPrefixDeclarationsModule.class)
+@Module(includes = {
+    DigestFunctionModule.class,
+    BuiltInPrefixDeclarationsModule.class})
 public abstract class OntologyObjectTranslatorModule {
 
   @Binds

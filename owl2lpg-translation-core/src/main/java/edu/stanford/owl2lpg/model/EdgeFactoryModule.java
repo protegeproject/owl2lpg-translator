@@ -4,6 +4,7 @@ import dagger.Binds;
 import dagger.Module;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import edu.stanford.owl2lpg.translator.internal.DigestEdgeIdProvider;
+import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

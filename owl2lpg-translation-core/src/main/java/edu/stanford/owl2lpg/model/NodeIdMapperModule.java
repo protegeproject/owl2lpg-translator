@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
 import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
 import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
 import edu.stanford.owl2lpg.translator.internal.SingleEncounterNodeCheckerImpl;
+import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
 
 import javax.inject.Named;
 
@@ -16,7 +17,7 @@ import javax.inject.Named;
  */
 @Module(includes = DigestFunctionModule.class)
 public abstract class NodeIdMapperModule {
-  
+
   @Binds
   @Named("number")
   @TranslationSessionScope
