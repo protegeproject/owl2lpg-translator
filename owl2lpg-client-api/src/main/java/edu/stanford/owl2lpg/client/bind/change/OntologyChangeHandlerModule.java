@@ -5,6 +5,8 @@ import dagger.Module;
 import edu.stanford.bmir.protege.web.shared.inject.ProjectSingleton;
 import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandler;
 import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandlerImpl;
+import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandler;
+import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandlerImpl;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -12,6 +14,11 @@ import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandlerImpl;
  */
 @Module(includes = TranslatorModule.class)
 public abstract class OntologyChangeHandlerModule {
+
+  @Binds
+  @ProjectSingleton
+  public abstract OntologyAnnotationChangeHandler
+  provideOntologyAnnotationChangeHandler(OntologyAnnotationChangeHandlerImpl impl);
 
   @Binds
   @ProjectSingleton
