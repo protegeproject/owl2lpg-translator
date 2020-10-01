@@ -10,8 +10,8 @@ import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandlerImpl;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@Module(includes = AxiomTranslatorModule.class)
-public abstract class AxiomChangeHandlerModule {
+@Module(includes = TranslatorModule.class)
+public abstract class OntologyChangeHandlerModule {
 
   @Binds
   @ProjectSingleton

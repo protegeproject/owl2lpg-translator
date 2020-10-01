@@ -33,7 +33,7 @@ import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 @Module(includes = {
     FactoriesModule.class,
     BuiltInPrefixDeclarationsModule.class})
-public abstract class AxiomTranslatorModule {
+public abstract class TranslatorModule {
 
   @Binds
   @ProjectSingleton
