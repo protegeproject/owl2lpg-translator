@@ -34,9 +34,8 @@ public class RemoveAxiomHandler {
   }
 
   public void handle(@Nonnull OWLAxiom axiom) {
-    var axiomTranslation = axiomTranslator.translate(axiom);
-    translationTranslator.translateToCypherDeleteQuery(axiomTranslation)
-        .stream()
-        .forEach(graphWriter::execute);
+    var translation = axiomTranslator.translate(axiom);
+    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(translation);
+    deleteQuery.forEach(graphWriter::execute);
   }
 }
