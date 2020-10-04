@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,16 +49,6 @@ public abstract class Properties {
     return getMap().isEmpty();
   }
 
-  private static String escape(String value) {
-    return value.replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("\b", "\\b")
-        .replace("\f", "\\f")
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
-        .replace("\t", "\\t");
-  }
-
   @JsonValue
   public abstract ImmutableMap<String, Object> getMap();
 
@@ -69,12 +58,13 @@ public abstract class Properties {
     return (obj != null) ? (E) obj.getClass().cast(obj) : null;
   }
 
+  @Nonnull
   public Map<String, Object> neoProperties() {
     return getMap().entrySet().stream()
         .collect(collectToTypedNeoMap());
   }
 
-  @NotNull
+  @Nonnull
   private static Collector<Map.Entry<String, Object>, ?, Map<String, Object>> collectToTypedNeoMap() {
     return Collectors.toMap(Properties::toTypedNeoKey, Map.Entry::getValue);
   }
@@ -91,6 +81,15 @@ public abstract class Properties {
 
   public void forEach(@Nonnull BiConsumer<String, Object> consumer) {
     getMap().forEach(consumer);
+  }
+
+  @Nonnull
+  public Properties extend(Properties otherProperties) {
+    var extendedMap = ImmutableMap.<String, Object>builder()
+        .putAll(this.getMap())
+        .putAll(otherProperties.getMap())
+        .build();
+    return Properties.create(extendedMap);
   }
 
   @Nonnull
@@ -116,5 +115,15 @@ public abstract class Properties {
     );
     sb.append("}");
     return sb.toString();
+  }
+
+  private static String escape(String value) {
+    return value.replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\b", "\\b")
+        .replace("\f", "\\f")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t");
   }
 }
