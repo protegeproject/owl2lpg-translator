@@ -5,12 +5,16 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
 
@@ -33,20 +37,35 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   @Override
   public void visit(@Nonnull Translation translation) {
-    translation.edges()
-        .forEach(edge -> {
-          var fromNode = edge.getFromNode();
-          appendCreateNode(fromNode);
-          var toNode = edge.getToNode();
-          appendCreateNode(toNode);
-          appendCreateEdge(edge);
-          if (edge.isTypeOf(AXIOM_OF)) {
-            appendCreateAxiomEdge(edge);
-          }
-        });
+    if (isDeclarationAxiomTranslation(translation)) {
+      translation.edges().forEach(translateToCypher());
+    } else {
+      translation.edges()
+          .filter(this::excludeEntityIriOrEntitySignatureOfEdge)
+          .forEach(translateToCypher());
+    }
   }
 
-  private void appendCreateNode(Node node) {
+  private static boolean isDeclarationAxiomTranslation(Translation translation) {
+    return translation.getTranslatedObject() instanceof OWLDeclarationAxiom;
+  }
+
+  private boolean excludeEntityIriOrEntitySignatureOfEdge(Edge edge) {
+    return !(edge.isTypeOf(ENTITY_IRI) || edge.isTypeOf(ENTITY_SIGNATURE_OF));
+  }
+
+  @Nonnull
+  private Consumer<Edge> translateToCypher() {
+    return edge -> {
+      var fromNode = edge.getFromNode();
+      translateNodeToCypher(fromNode);
+      var toNode = edge.getToNode();
+      translateNodeToCypher(toNode);
+      translateEdgeToCypher(edge);
+    };
+  }
+
+  private void translateNodeToCypher(Node node) {
     if (!nodeVariableNameMapping.containsKey(node)) {
       if (isAxiom(node) || isAnnotation(node)) {
         stringBuilder.append("CREATE ");
@@ -79,18 +98,17 @@ public class CreateQueryBuilder implements TranslationVisitor {
     return variableName;
   }
 
-  private void appendCreateEdge(Edge edge) {
+  private void translateEdgeToCypher(Edge edge) {
     stringBuilder.append("MERGE ")
         .append("(").append(getVariableName(edge.getFromNode())).append(")")
         .append("-[").append(edge.printLabel()).append(" ").append(edge.printProperties()).append("]->")
         .append("(").append(getVariableName(edge.getToNode())).append(")\n");
-  }
-
-  private void appendCreateAxiomEdge(Edge edge) {
-    stringBuilder.append("MERGE ")
-        .append("(").append(getVariableName(edge.getFromNode())).append(")")
-        .append("<-[:AXIOM {structuralSpec:true}]-")
-        .append("(").append(getVariableName(edge.getToNode())).append(")\n");
+    if (edge.isTypeOf(AXIOM_OF)) {
+      stringBuilder.append("MERGE ")
+          .append("(").append(getVariableName(edge.getFromNode())).append(")")
+          .append("<-[:AXIOM {structuralSpec:true}]-")
+          .append("(").append(getVariableName(edge.getToNode())).append(")\n");
+    }
   }
 
   public String build() {
