@@ -29,7 +29,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   private final Map<Node, String> nodeVariableNameMapping = Maps.newHashMap();
 
-  private final StringBuilder stringBuilder = new StringBuilder();
+  private final StringBuilder cypherString = new StringBuilder();
 
   public CreateQueryBuilder(@Nonnull VariableNameGenerator variableNameGenerator) {
     this.variableNameGenerator = checkNotNull(variableNameGenerator);
@@ -58,26 +58,31 @@ public class CreateQueryBuilder implements TranslationVisitor {
   private Consumer<Edge> translateToCypher() {
     return edge -> {
       var fromNode = edge.getFromNode();
-      translateNodeToCypher(fromNode);
+      var createQueryForFromNode = translateNodeToCypher(fromNode);
       var toNode = edge.getToNode();
-      translateNodeToCypher(toNode);
-      translateEdgeToCypher(edge);
+      var createQueryForToNode = translateNodeToCypher(toNode);
+      var createQueryForConnectingEdge = translateEdgeToCypher(edge);
+      cypherString.append(createQueryForFromNode)
+          .append(createQueryForToNode)
+          .append(createQueryForConnectingEdge);
     };
   }
 
-  private void translateNodeToCypher(Node node) {
+  private String translateNodeToCypher(Node node) {
+    var sb = new StringBuilder();
     if (!nodeVariableNameMapping.containsKey(node)) {
       if (isAxiom(node) || isAnnotation(node)) {
-        stringBuilder.append("CREATE ");
+        sb.append("CREATE ");
       } else {
-        stringBuilder.append("MERGE ");
+        sb.append("MERGE ");
       }
       var variableName = getVariableName(node);
-      stringBuilder.append("(")
+      sb.append("(")
           .append(variableName)
           .append(node.printLabels()).append(" ").append(node.printProperties())
           .append(")\n");
     }
+    return sb.toString();
   }
 
   private static boolean isAxiom(Node node) {
@@ -98,20 +103,22 @@ public class CreateQueryBuilder implements TranslationVisitor {
     return variableName;
   }
 
-  private void translateEdgeToCypher(Edge edge) {
-    stringBuilder.append("MERGE ")
+  private String translateEdgeToCypher(Edge edge) {
+    var sb = new StringBuilder();
+    sb.append("MERGE ")
         .append("(").append(getVariableName(edge.getFromNode())).append(")")
         .append("-[").append(edge.printLabel()).append(" ").append(edge.printProperties()).append("]->")
         .append("(").append(getVariableName(edge.getToNode())).append(")\n");
     if (edge.isTypeOf(AXIOM_OF)) {
-      stringBuilder.append("MERGE ")
+      sb.append("MERGE ")
           .append("(").append(getVariableName(edge.getFromNode())).append(")")
           .append("<-[:AXIOM {structuralSpec:true}]-")
           .append("(").append(getVariableName(edge.getToNode())).append(")\n");
     }
+    return sb.toString();
   }
 
   public String build() {
-    return stringBuilder.toString();
+    return cypherString.toString();
   }
 }

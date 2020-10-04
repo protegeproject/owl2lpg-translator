@@ -24,8 +24,8 @@ public class DeleteQueryBuilder implements TranslationVisitor {
   private final VariableNameGenerator variableNameGenerator;
 
   private final Map<Edge, String> edgeVariableNameMapping = Maps.newHashMap();
-  
-  private final ImmutableList.Builder listBuilder = new ImmutableList.Builder();
+
+  private final ImmutableList.Builder cypherStrings = new ImmutableList.Builder();
 
   public DeleteQueryBuilder(@Nonnull VariableNameGenerator variableNameGenerator) {
     this.variableNameGenerator = checkNotNull(variableNameGenerator);
@@ -34,13 +34,16 @@ public class DeleteQueryBuilder implements TranslationVisitor {
   @Override
   public void visit(@Nonnull Translation translation) {
     if (isDeclarationAxiomTranslation(translation)) {
-      translation.edges().forEach(this::addDeleteEdge);
+      translation.edges()
+          .map(this::translateToCypher)
+          .forEach(cypherStrings::add);
     } else {
       translation.edges()
           .filter(this::excludeEntityIriOrEntitySignatureOfEdge)
-          .forEach(this::addDeleteEdge);
+          .map(this::translateToCypher)
+          .forEach(cypherStrings::add);
     }
-    addDeleteOrphanNodes();
+    cypherStrings.add(cypherQueryToDeleteOrphanNodes());
   }
 
   private static boolean isDeclarationAxiomTranslation(Translation translation) {
@@ -51,20 +54,21 @@ public class DeleteQueryBuilder implements TranslationVisitor {
     return !(edge.isTypeOf(ENTITY_IRI) || edge.isTypeOf(ENTITY_SIGNATURE_OF));
   }
 
-  private void addDeleteEdge(Edge edge) {
+  @Nonnull
+  private String translateToCypher(Edge edge) {
     var fromNode = edge.getFromNode();
     var toNode = edge.getToNode();
-    var stringBuilder = new StringBuilder();
-    stringBuilder.append("MATCH ")
+    var sb = new StringBuilder();
+    sb.append("MATCH ")
         .append("(").append(fromNode.printLabels()).append(" ").append(fromNode.printProperties()).append(")")
         .append("-[").append(getVariableName(edge)).append(edge.printLabel()).append(" ").append(edge.printProperties()).append("]->")
         .append("(").append(toNode.printLabels()).append(" ").append(toNode.printProperties()).append(")\n")
         .append("DELETE ").append(getVariableName(edge));
-    listBuilder.add(stringBuilder.toString());
+    return sb.toString();
   }
 
-  private void addDeleteOrphanNodes() {
-    listBuilder.add("MATCH (n) WHERE NOT (n)--() DELETE n");
+  private String cypherQueryToDeleteOrphanNodes() {
+    return "MATCH (n) WHERE NOT (n)--() DELETE n";
   }
 
   @Nonnull
@@ -79,6 +83,6 @@ public class DeleteQueryBuilder implements TranslationVisitor {
 
   @Nonnull
   public ImmutableList<String> build() {
-    return listBuilder.build();
+    return cypherStrings.build();
   }
 }
