@@ -37,7 +37,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MIN_CARDIN
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_SOME_VALUES_FROM;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_UNION_OF;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -301,14 +300,11 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Nonnull
   private Node createClassExprNode(OWLClassExpression ce, NodeLabels nodeLabels) {
-    var digestString = bytesDigester.getDigestString(ontologyObjectSerializer.serialize(ce));
-    return nodeFactory.createNode(ce, nodeLabels, Properties.of(DIGEST, digestString));
+    return nodeFactory.createNode(ce, nodeLabels);
   }
 
   @Nonnull
   private Node createClassExprNode(OWLClassExpression ce, NodeLabels nodeLabels, Properties properties) {
-    var digestString = bytesDigester.getDigestString(ontologyObjectSerializer.serialize(ce));
-    var newProperties = properties.extend(Properties.of(DIGEST, digestString));
-    return nodeFactory.createNode(ce, nodeLabels, newProperties);
+    return nodeFactory.createNode(ce, nodeLabels, properties);
   }
 }
