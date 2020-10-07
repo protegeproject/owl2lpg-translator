@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.client.write.handlers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import edu.stanford.owl2lpg.model.Edge;
+import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
@@ -23,6 +24,8 @@ public class DeleteQueryBuilder implements TranslationVisitor {
   @Nonnull
   private final VariableNameGenerator variableNameGenerator;
 
+  private final Map<Node, String> nodeVariableNameMapping = Maps.newHashMap();
+
   private final Map<Edge, String> edgeVariableNameMapping = Maps.newHashMap();
 
   private final ImmutableList.Builder cypherStrings = new ImmutableList.Builder();
@@ -33,17 +36,28 @@ public class DeleteQueryBuilder implements TranslationVisitor {
 
   @Override
   public void visit(@Nonnull Translation translation) {
+    cypherStrings.add(cypherQueryToDeleteAllEdges(translation));
+    cypherStrings.add(cypherQueryToDeleteOrphanNodes());
+  }
+
+  @Nonnull
+  private String cypherQueryToDeleteAllEdges(Translation translation) {
+    var sb = new StringBuilder();
     if (isDeclarationAxiomTranslation(translation)) {
       translation.edges()
           .map(this::translateToCypher)
-          .forEach(cypherStrings::add);
+          .forEach(sb::append);
     } else {
       translation.edges()
           .filter(this::excludeEntityIriOrEntitySignatureOfEdge)
           .map(this::translateToCypher)
-          .forEach(cypherStrings::add);
+          .forEach(sb::append);
     }
-    cypherStrings.add(cypherQueryToDeleteOrphanNodes());
+    var edgeVariables = edgeVariableNameMapping.values();
+    sb.append("DELETE ")
+        .append(String.join(",", edgeVariables))
+        .append("\n");
+    return sb.toString();
   }
 
   private static boolean isDeclarationAxiomTranslation(Translation translation) {
@@ -56,19 +70,46 @@ public class DeleteQueryBuilder implements TranslationVisitor {
 
   @Nonnull
   private String translateToCypher(Edge edge) {
-    var fromNode = edge.getFromNode();
-    var toNode = edge.getToNode();
     var sb = new StringBuilder();
-    sb.append("MATCH ")
-        .append("(").append(fromNode.printLabels()).append(" ").append(fromNode.printProperties()).append(")")
-        .append("-[").append(getVariableName(edge)).append(edge.printLabel()).append(" ").append(edge.printProperties()).append("]->")
-        .append("(").append(toNode.printLabels()).append(" ").append(toNode.printProperties()).append(")\n")
-        .append("DELETE ").append(getVariableName(edge));
+    sb.append("MATCH ");
+    appendTranslation(edge.getFromNode(), sb);
+    appendTranslation(edge, sb);
+    appendTranslation(edge.getToNode(), sb);
+    sb.append("\n");
     return sb.toString();
   }
 
+  private void appendTranslation(Node node, StringBuilder sb) {
+    sb.append("(");
+    if (nodeVariableNameMapping.containsKey(node)) {
+      sb.append(getVariableName(node));
+    } else {
+      sb.append(getVariableName(node)).append(node.printLabels()).append(" ").append(node.printProperties());
+    }
+    sb.append(")");
+  }
+
+  private void appendTranslation(Edge edge, StringBuilder sb) {
+    sb.append("-[")
+        .append(getVariableName(edge))
+        .append(edge.printLabel()).append(" ")
+        .append(edge.printProperties())
+        .append("]->");
+  }
+
+  @Nonnull
   private String cypherQueryToDeleteOrphanNodes() {
     return "MATCH (n) WHERE NOT (n)--() DELETE n";
+  }
+
+  @Nonnull
+  private String getVariableName(Node node) {
+    var variableName = nodeVariableNameMapping.get(node);
+    if (variableName == null) {
+      variableName = variableNameGenerator.generate();
+      nodeVariableNameMapping.put(node, variableName);
+    }
+    return variableName;
   }
 
   @Nonnull
