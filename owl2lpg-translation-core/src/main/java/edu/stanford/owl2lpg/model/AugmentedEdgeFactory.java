@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
@@ -80,14 +79,6 @@ public class AugmentedEdgeFactory {
                                                  @Nonnull Node ontoDocNode) {
     return (augmentedEdgeInclusionChecker.allows(ENTITY_SIGNATURE_OF))
         ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, ENTITY_SIGNATURE_OF))
-        : Optional.empty();
-  }
-
-  @Nonnull
-  public Optional<Edge> getAxiomOfEdge(@Nonnull Node entityNode,
-                                       @Nonnull Node ontoDocNode) {
-    return (augmentedEdgeInclusionChecker.allows(AXIOM_OF))
-        ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, AXIOM_OF))
         : Optional.empty();
   }
 

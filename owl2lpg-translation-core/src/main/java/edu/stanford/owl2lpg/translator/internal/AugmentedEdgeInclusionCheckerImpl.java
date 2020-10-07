@@ -5,7 +5,6 @@ import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
 import javax.inject.Inject;
 
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_DOMAIN;
@@ -31,8 +30,7 @@ public class AugmentedEdgeInclusionCheckerImpl implements AugmentedEdgeInclusion
 
   @Override
   public boolean allows(EdgeLabel edgeLabel) {
-    return AXIOM_OF.equals(edgeLabel)
-        || ENTITY_SIGNATURE_OF.equals(edgeLabel)
+    return ENTITY_SIGNATURE_OF.equals(edgeLabel)
         || AXIOM_SUBJECT.equals(edgeLabel)
         || RELATED_TO.equals(edgeLabel)
         || SUB_CLASS_OF.equals(edgeLabel)

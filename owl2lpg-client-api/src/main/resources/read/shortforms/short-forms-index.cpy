@@ -1,6 +1,6 @@
 MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
 CALL {
-    MATCH (o)<-[:AXIOM_OF]-(:AnnotationAssertion)-[:ANNOTATION_SUBJECT]->(subject:IRI)-[relatedTo:RELATED_TO]->(value:Literal {lexicalForm:$entityName})
+    MATCH (o)-[:AXIOM]->(:AnnotationAssertion)-[:ANNOTATION_SUBJECT]->(subject:IRI)-[relatedTo:RELATED_TO]->(value:Literal {lexicalForm:$entityName})
     MATCH (subject)<-[:ENTITY_IRI]-(entity:Entity)
     RETURN DISTINCT { type: "AnnotationAssertion",
          	 propertyIri: relatedTo.iri,
