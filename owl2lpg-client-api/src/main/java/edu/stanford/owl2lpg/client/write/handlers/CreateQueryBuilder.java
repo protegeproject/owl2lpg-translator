@@ -17,6 +17,10 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.AXIOM;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_EXPRESSION;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_EXPRESSION;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -71,18 +75,41 @@ public class CreateQueryBuilder implements TranslationVisitor {
   private String translateNodeToCypher(Node node) {
     var sb = new StringBuilder();
     if (!nodeVariableNameMapping.containsKey(node)) {
-      if (isAxiom(node) || isAnnotation(node)) {
-        sb.append("CREATE ");
-      } else {
-        sb.append("MERGE ");
-      }
-      var variableName = getVariableName(node);
-      sb.append("(")
-          .append(variableName)
-          .append(node.printLabels()).append(" ").append(node.printProperties())
-          .append(")\n");
+      var createKeyword = getCreateKeyword(node);
+      sb.append(createKeyword).append(" ");
+      appendTranslation(node, sb);
+      sb.append("\n");
     }
     return sb.toString();
+  }
+
+  @Nonnull
+  private String getCreateKeyword(Node node) {
+    var createKeyword = "MERGE";
+    if (isAxiom(node) || isAnnotation(node)) {
+      createKeyword = "CREATE";
+    } else if (isClassExpression(node)
+        || isObjectPropertyExpression(node)
+        || isDataPropertyExpression(node)) {
+      createKeyword = isEntity(node) ? "MERGE" : "CREATE";
+    }
+    return createKeyword;
+  }
+
+  private static boolean isClassExpression(Node node) {
+    return node.getLabels().isa(CLASS_EXPRESSION);
+  }
+
+  private static boolean isObjectPropertyExpression(Node node) {
+    return node.getLabels().isa(OBJECT_PROPERTY_EXPRESSION);
+  }
+
+  private static boolean isDataPropertyExpression(Node node) {
+    return node.getLabels().isa(DATA_PROPERTY_EXPRESSION);
+  }
+
+  private static boolean isEntity(Node node) {
+    return node.getLabels().isa(ENTITY);
   }
 
   private static boolean isAxiom(Node node) {
@@ -105,17 +132,38 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   private String translateEdgeToCypher(Edge edge) {
     var sb = new StringBuilder();
-    sb.append("MERGE ")
-        .append("(").append(getVariableName(edge.getFromNode())).append(")")
-        .append("-[").append(edge.printLabel()).append(" ").append(edge.printProperties()).append("]->")
-        .append("(").append(getVariableName(edge.getToNode())).append(")\n");
+    sb.append("MERGE ");
+    appendTranslation(edge.getFromNode(), sb);
+    appendTranslation(edge, sb);
+    appendTranslation(edge.getToNode(), sb);
+    sb.append("\n");
+
+    // Append an additional AXIOM edge if the method is currently processing the AXIOM_OF edge.
     if (edge.isTypeOf(AXIOM_OF)) {
-      sb.append("MERGE ")
-          .append("(").append(getVariableName(edge.getFromNode())).append(")")
-          .append("<-[:AXIOM {structuralSpec:true}]-")
-          .append("(").append(getVariableName(edge.getToNode())).append(")\n");
+      sb.append("MERGE ");
+      appendTranslation(edge.getFromNode(), sb);
+      sb.append("<-[:AXIOM {structuralSpec:true}]-");
+      appendTranslation(edge.getToNode(), sb);
+      sb.append("\n");
     }
     return sb.toString();
+  }
+
+  private void appendTranslation(Node node, StringBuilder sb) {
+    sb.append("(");
+    if (nodeVariableNameMapping.containsKey(node)) {
+      sb.append(getVariableName(node));
+    } else {
+      sb.append(getVariableName(node)).append(node.printLabels()).append(" ").append(node.printProperties());
+    }
+    sb.append(")");
+  }
+
+  private void appendTranslation(Edge edge, StringBuilder sb) {
+    sb.append("-[")
+        .append(edge.printLabel()).append(" ")
+        .append(edge.printProperties())
+        .append("]->");
   }
 
   public String build() {
