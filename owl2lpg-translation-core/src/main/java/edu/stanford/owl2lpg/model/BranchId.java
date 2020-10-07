@@ -27,6 +27,11 @@ public abstract class BranchId {
   @Nonnull
   public abstract String getIdentifier();
 
+  @Nonnull
+  public String printAsString() {
+    return "\"" + getIdentifier() + "\"";
+  }
+
   @Override
   public int hashCode() {
     return getIdentifier().hashCode();

@@ -23,7 +23,7 @@ public class TranslationTranslator {
   }
 
   @Nonnull
-  public String translateToCypherCreateQuery(@Nonnull Translation translation) {
+  public ImmutableList<String> translateToCypherCreateQuery(@Nonnull Translation translation) {
     var createQueryBuilder = queryBuilderFactory.getCreateQueryBuilder();
     translation.accept(createQueryBuilder);
     return createQueryBuilder.build();

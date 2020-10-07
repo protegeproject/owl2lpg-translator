@@ -36,6 +36,6 @@ public class AddOntologyAnnotationHandler {
   public void handle(@Nonnull OWLAnnotation annotation) {
     var translation = annotationTranslator.translate(annotation);
     var createQuery = translationTranslator.translateToCypherCreateQuery(translation);
-    graphWriter.execute(createQuery);
+    createQuery.forEach(graphWriter::execute);
   }
 }
