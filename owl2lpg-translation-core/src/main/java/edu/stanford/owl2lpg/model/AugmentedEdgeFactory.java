@@ -39,6 +39,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_DOMAIN;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INVERSE_OF;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_AXIOM_SIGNATURE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
@@ -83,6 +84,14 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
+  public Optional<Edge> getInAxiomSignatureEdge(@Nonnull Node entityNode,
+                                                @Nonnull Node axiomNode) {
+    return (augmentedEdgeInclusionChecker.allows(IN_AXIOM_SIGNATURE))
+        ? Optional.of(getAugmentedEdge(entityNode, axiomNode, IN_AXIOM_SIGNATURE))
+        : Optional.empty();
+  }
+
+  @Nonnull
   public Optional<Edge> getAxiomSubjectEdge(@Nonnull Node axiomNode,
                                             @Nonnull Node subjectNode) {
     return (augmentedEdgeInclusionChecker.allows(AXIOM_SUBJECT))
@@ -119,9 +128,9 @@ public class AugmentedEdgeFactory {
 
   @Nonnull
   public Optional<Edge> getSubObjectPropertyOfEdge(@Nonnull Node subPropertyNode,
-                                                   @Nonnull Node superPropertyOf) {
+                                                   @Nonnull Node superPropertyNode) {
     return (augmentedEdgeInclusionChecker.allows(SUB_OBJECT_PROPERTY_OF))
-        ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyOf, SUB_OBJECT_PROPERTY_OF))
+        ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyNode, SUB_OBJECT_PROPERTY_OF))
         : Optional.empty();
   }
 
@@ -134,9 +143,9 @@ public class AugmentedEdgeFactory {
 
   @Nonnull
   public Optional<Edge> getSubDataPropertyOfEdge(@Nonnull Node subPropertyNode,
-                                                 @Nonnull Node superPropertyOf) {
+                                                 @Nonnull Node superPropertyNode) {
     return (augmentedEdgeInclusionChecker.allows(SUB_DATA_PROPERTY_OF))
-        ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyOf, SUB_DATA_PROPERTY_OF))
+        ? Optional.of(getAugmentedEdge(subPropertyNode, superPropertyNode, SUB_DATA_PROPERTY_OF))
         : Optional.empty();
   }
 
