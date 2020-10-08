@@ -53,7 +53,7 @@ public class NamedIndividualAccessorImpl implements NamedIndividualAccessor {
                                                                @Nonnull ProjectId projectId,
                                                                @Nonnull BranchId branchId,
                                                                @Nonnull OntologyDocumentId ontoDocId) {
-    return classAssertionAxiomAccessor.getAxiomsByType(owlClass, projectId, branchId, ontoDocId)
+    return classAssertionAxiomAccessor.getAxiomsByClass(owlClass, projectId, branchId, ontoDocId)
         .stream()
         .map(OWLClassAssertionAxiom::getIndividual)
         .filter(OWLIndividual::isNamed)

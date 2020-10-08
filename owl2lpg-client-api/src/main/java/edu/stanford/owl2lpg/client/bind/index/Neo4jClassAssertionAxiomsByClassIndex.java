@@ -57,7 +57,7 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return classAssertionAxiomAccessor.getAllAxioms(projectId, branchId, ontoDocId).stream();
     } else {
-      return classAssertionAxiomAccessor.getAxiomsByType(owlClass, projectId, branchId, ontoDocId).stream();
+      return classAssertionAxiomAccessor.getAxiomsByClass(owlClass, projectId, branchId, ontoDocId).stream();
     }
   }
 }

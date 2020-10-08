@@ -68,10 +68,10 @@ public class ClassAssertionAxiomAccessorImpl implements ClassAssertionAxiomAcces
 
   @Nonnull
   @Override
-  public ImmutableSet<OWLClassAssertionAxiom> getAxiomsByType(@Nonnull OWLClass owlClass,
-                                                              @Nonnull ProjectId projectId,
-                                                              @Nonnull BranchId branchId,
-                                                              @Nonnull OntologyDocumentId ontoDocId) {
+  public ImmutableSet<OWLClassAssertionAxiom> getAxiomsByClass(@Nonnull OWLClass owlClass,
+                                                               @Nonnull ProjectId projectId,
+                                                               @Nonnull BranchId branchId,
+                                                               @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = createInputParams(owlClass, projectId, branchId, ontoDocId);
     var nodeIndex = graphReader.getNodeIndex(CLASS_ASSERTION_AXIOMS_BY_TYPE_QUERY, inputParams);
     return collectClassAssertionAxiomsFromIndex(nodeIndex);

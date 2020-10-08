@@ -15,17 +15,17 @@ import javax.annotation.Nonnull;
  * Stanford Center for Biomedical Informatics Research
  */
 public interface ClassAssertionAxiomAccessor {
-  
+
   @Nonnull
   ImmutableSet<OWLClassAssertionAxiom> getAllAxioms(@Nonnull ProjectId projectId,
                                                     @Nonnull BranchId branchId,
                                                     @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
-  ImmutableSet<OWLClassAssertionAxiom> getAxiomsByType(@Nonnull OWLClass owlClass,
-                                                       @Nonnull ProjectId projectId,
-                                                       @Nonnull BranchId branchId,
-                                                       @Nonnull OntologyDocumentId ontoDocId);
+  ImmutableSet<OWLClassAssertionAxiom> getAxiomsByClass(@Nonnull OWLClass owlClass,
+                                                        @Nonnull ProjectId projectId,
+                                                        @Nonnull BranchId branchId,
+                                                        @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
   ImmutableSet<OWLClassAssertionAxiom> getAxiomsBySubject(@Nonnull OWLIndividual owlIndividual,
