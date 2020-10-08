@@ -159,7 +159,7 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
         ontologyContextNodeFactory.createOntologyDocumentNode(ontoDocId),
         ImmutableList.of(),
         ImmutableList.of());
-    var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfEdge(entityNode, ontologyDocumentTranslation.getMainNode());
+    var entitySignatureOfEdge = augmentedEdgeFactory.getInOntologySignatureEdge(entityNode, ontologyDocumentTranslation.getMainNode());
     translations.add(ontologyDocumentTranslation);
     entitySignatureOfEdge.ifPresent(edges::add);
   }

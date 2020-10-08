@@ -18,7 +18,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_EXPRESSION;
@@ -78,7 +78,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
           .forEach(sb::append);
     } else {
       translation.edges()
-          .filter(this::excludeEntityIriOrEntitySignatureOfEdge)
+          .filter(this::excludeEntityIriOrInOntologySignatureEdge)
           .map(this::translateToCypher)
           .forEach(sb::append);
     }
@@ -90,8 +90,8 @@ public class CreateQueryBuilder implements TranslationVisitor {
     return translation.getTranslatedObject() instanceof OWLDeclarationAxiom;
   }
 
-  private boolean excludeEntityIriOrEntitySignatureOfEdge(Edge edge) {
-    return !(edge.isTypeOf(ENTITY_IRI) || edge.isTypeOf(ENTITY_SIGNATURE_OF));
+  private boolean excludeEntityIriOrInOntologySignatureEdge(Edge edge) {
+    return !(edge.isTypeOf(ENTITY_IRI) || edge.isTypeOf(IN_ONTOLOGY_SIGNATURE));
   }
 
   @Nonnull

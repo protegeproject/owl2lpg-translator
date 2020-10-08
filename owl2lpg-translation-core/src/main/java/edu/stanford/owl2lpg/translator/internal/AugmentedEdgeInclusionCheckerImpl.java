@@ -6,10 +6,10 @@ import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import javax.inject.Inject;
 
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_DOMAIN;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INVERSE_OF;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RELATED_TO;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SAME_INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.SUB_ANNOTATION_PROPERTY_OF;
@@ -30,7 +30,7 @@ public class AugmentedEdgeInclusionCheckerImpl implements AugmentedEdgeInclusion
 
   @Override
   public boolean allows(EdgeLabel edgeLabel) {
-    return ENTITY_SIGNATURE_OF.equals(edgeLabel)
+    return IN_ONTOLOGY_SIGNATURE.equals(edgeLabel)
         || AXIOM_SUBJECT.equals(edgeLabel)
         || RELATED_TO.equals(edgeLabel)
         || SUB_CLASS_OF.equals(edgeLabel)

@@ -35,11 +35,11 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.AXIOM_SUBJECT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.CLASS_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.DATA_RANGE;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_SIGNATURE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_DOMAIN;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.HAS_RANGE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INVERSE_OF;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.RELATED_TO;
@@ -75,10 +75,10 @@ public class AugmentedEdgeFactory {
   }
 
   @Nonnull
-  public Optional<Edge> getEntitySignatureOfEdge(@Nonnull Node entityNode,
-                                                 @Nonnull Node ontoDocNode) {
-    return (augmentedEdgeInclusionChecker.allows(ENTITY_SIGNATURE_OF))
-        ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, ENTITY_SIGNATURE_OF))
+  public Optional<Edge> getInOntologySignatureEdge(@Nonnull Node entityNode,
+                                                   @Nonnull Node ontoDocNode) {
+    return (augmentedEdgeInclusionChecker.allows(IN_ONTOLOGY_SIGNATURE))
+        ? Optional.of(getAugmentedEdge(entityNode, ontoDocNode, IN_ONTOLOGY_SIGNATURE))
         : Optional.empty();
   }
 
