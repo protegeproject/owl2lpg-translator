@@ -36,6 +36,6 @@ public class AddAxiomHandler {
   public void handle(@Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(axiom);
     var createQuery = translationTranslator.translateToCypherCreateQuery(translation);
-    graphWriter.execute(createQuery);
+    createQuery.forEach(graphWriter::execute);
   }
 }
