@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
+import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.index.AxiomsByEntityReferenceIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -47,6 +48,9 @@ public class Neo4jAxiomsByEntityReferenceIndex implements AxiomsByEntityReferenc
   @Override
   public Stream<OWLAxiom> getReferencingAxioms(@Nonnull OWLEntity owlEntity,
                                                @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomAccessor.getAxiomsBySubject(owlEntity, projectId, branchId, ontoDocId).stream();
+    return Streams.concat(
+        axiomAccessor.getAxiomsBySignature(owlEntity, projectId, branchId, ontoDocId).stream(),
+        axiomAccessor.getAnnotationAxioms(owlEntity.getIRI(), projectId, branchId, ontoDocId).stream())
+        .distinct();
   }
 }
