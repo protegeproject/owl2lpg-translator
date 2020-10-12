@@ -43,6 +43,12 @@ public interface AxiomAccessor {
                         @Nonnull OntologyDocumentId ontoDocId);
 
   @Nonnull
+  ImmutableSet<OWLAxiom> getAxiomsBySignature(@Nonnull OWLEntity entitySignature,
+                                              @Nonnull ProjectId projectId,
+                                              @Nonnull BranchId branchId,
+                                              @Nonnull OntologyDocumentId ontoDocId);
+  
+  @Nonnull
   ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLClass subject,
                                             @Nonnull ProjectId projectId,
                                             @Nonnull BranchId branchId,

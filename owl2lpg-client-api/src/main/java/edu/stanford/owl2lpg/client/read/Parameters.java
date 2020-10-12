@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.NodeID;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
@@ -54,6 +55,19 @@ public class Parameters {
         PROJECT_ID, new StringValue(projectId.getIdentifier()),
         BRANCH_ID, new StringValue(branchId.getIdentifier()),
         ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier())));
+  }
+
+  public static Value forEntity(@Nonnull OWLEntity entity,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId) {
+    return forEntityIri(entity.getIRI(), projectId, branchId);
+  }
+
+  public static Value forEntity(@Nonnull OWLEntity entity,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontologyDocumentId) {
+    return forEntityIri(entity.getIRI(), projectId, branchId, ontologyDocumentId);
   }
 
   public static Value forEntityIri(@Nonnull IRI entityIri,

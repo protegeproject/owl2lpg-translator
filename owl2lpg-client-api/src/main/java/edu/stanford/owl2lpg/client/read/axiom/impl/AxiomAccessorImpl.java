@@ -42,6 +42,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   private static final String ALL_AXIOM_QUERY_FILE = "read/axioms/all-axioms.cpy";
   private static final String AXIOM_BY_TYPE_QUERY_FILE = "read/axioms/axiom-by-type.cpy";
   private static final String AXIOM_BY_DIGEST_QUERY_FILE = "read/axioms/axiom-by-digest.cpy";
+  private static final String AXIOM_BY_SIGNATURE_QUERY_FILE = "read/axioms/axiom-by-signature.cpy";
   private static final String AXIOM_BY_SUBJECT_CLASS_QUERY_FILE = "read/axioms/axiom-by-subject-class.cpy";
   private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-data-property.cpy";
   private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE = "read/axioms/axiom-by-subject-object-property.cpy";
@@ -55,6 +56,7 @@ public class AxiomAccessorImpl implements AxiomAccessor {
   private static final String ALL_AXIOM_QUERY = read(ALL_AXIOM_QUERY_FILE);
   private static final String AXIOM_BY_TYPE_QUERY = read(AXIOM_BY_TYPE_QUERY_FILE);
   private static final String AXIOM_BY_DIGEST_QUERY = read(AXIOM_BY_DIGEST_QUERY_FILE);
+  private static final String AXIOM_BY_SIGNATURE_QUERY = read(AXIOM_BY_SIGNATURE_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_CLASS_QUERY = read(AXIOM_BY_SUBJECT_CLASS_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_DATA_PROPERTY_QUERY_FILE);
   private static final String AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY = read(AXIOM_BY_SUBJECT_OBJECT_PROPERTY_QUERY_FILE);
@@ -125,6 +127,20 @@ public class AxiomAccessorImpl implements AxiomAccessor {
     var inputParams = Parameters.forNodeDigest(digest, projectId, branchId, ontoDocId);
     var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_DIGEST_QUERY, inputParams);
     return nodeIndex.getNodes(AXIOM.getMainLabel()).size() == 1;
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<OWLAxiom> getAxiomsBySignature(@Nonnull OWLEntity entitySignature,
+                                                     @Nonnull ProjectId projectId,
+                                                     @Nonnull BranchId branchId,
+                                                     @Nonnull OntologyDocumentId ontoDocId) {
+    var inputParams = Parameters.forEntity(entitySignature, projectId, branchId, ontoDocId);
+    var nodeIndex = graphReader.getNodeIndex(AXIOM_BY_SIGNATURE_QUERY, inputParams);
+    return nodeIndex.getNodes(AXIOM.getMainLabel())
+        .stream()
+        .map(axiomNode -> nodeMapper.toObject(axiomNode, nodeIndex, OWLAxiom.class))
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Nonnull
