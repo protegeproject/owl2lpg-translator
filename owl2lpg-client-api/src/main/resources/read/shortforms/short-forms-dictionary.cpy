@@ -6,13 +6,13 @@ CALL {
              lang: value.lang
        	   } AS dictionaryLanguage, value.lexicalForm AS shortForm
     UNION
-    MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {iri:$entityIri})
+    MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(entity:Entity {iri:$entityIri})
     RETURN DISTINCT { type: "LocalName" } AS dictionaryLanguage, entity.localName AS shortForm
     UNION
-    MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {iri:$entityIri})
+    MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(entity:Entity {iri:$entityIri})
     RETURN DISTINCT { type: "PrefixedName" } AS dictionaryLanguage, entity.prefixedName AS shortForm
     UNION
-    MATCH (o)<-[:ENTITY_SIGNATURE_OF]-(entity:Entity {iri:$entityIri})
+    MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(entity:Entity {iri:$entityIri})
     RETURN DISTINCT { type: "OboId" } AS dictionaryLanguage, entity.oboId AS shortForm
 }
 RETURN dictionaryLanguage, shortForm
