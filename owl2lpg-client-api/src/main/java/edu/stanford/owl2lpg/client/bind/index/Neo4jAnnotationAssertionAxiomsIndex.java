@@ -48,7 +48,7 @@ public class Neo4jAnnotationAssertionAxiomsIndex implements AnnotationAssertionA
   @Override
   @Nonnull
   public Stream<OWLAnnotationAssertionAxiom> getAnnotationAssertionAxioms() {
-    return Stream.empty();
+    throw new UnsupportedOperationException();
   }
 
   @Override
