@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.hierarchy;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyProvider;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
@@ -116,5 +117,10 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   @Override
   public boolean isAncestor(OWLObjectProperty parent, OWLObjectProperty child) {
     return hierarchyAccessor.isAncestor(parent, child, projectId, branchId, ontoDocId);
+  }
+
+  @Override
+  public void handleChanges(List<OntologyChange> list) {
+    // Do nothing
   }
 }

@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client.bind.hierarchy;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyProvider;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
@@ -111,5 +112,10 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
   @Override
   public boolean isAncestor(OWLClass parent, OWLClass child) {
     return hierarchyAccessor.isAncestor(parent, child, projectId, branchId, ontoDocId);
+  }
+
+  @Override
+  public void handleChanges(List<OntologyChange> list) {
+    // Do nothing
   }
 }

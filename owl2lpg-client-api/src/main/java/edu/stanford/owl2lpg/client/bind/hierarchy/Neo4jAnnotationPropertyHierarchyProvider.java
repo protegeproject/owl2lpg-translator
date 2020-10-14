@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.client.bind.hierarchy;
 
+import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.AnnotationPropertyHierarchyProvider;
 import edu.stanford.owl2lpg.client.read.hierarchy.AnnotationPropertyHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
@@ -83,5 +84,10 @@ public class Neo4jAnnotationPropertyHierarchyProvider implements AnnotationPrope
   @Override
   public boolean isAncestor(OWLAnnotationProperty parent, OWLAnnotationProperty child) {
     return hierarchyAccessor.isAncestor(parent, child, projectId, branchId, ontoDocId);
+  }
+
+  @Override
+  public void handleChanges(List<OntologyChange> list) {
+    // Do nothing
   }
 }
