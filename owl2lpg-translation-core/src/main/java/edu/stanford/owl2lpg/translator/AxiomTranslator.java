@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.translator;
 
-import edu.stanford.owl2lpg.translator.visitors.AxiomVisitor;
+import edu.stanford.owl2lpg.model.Translation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 
@@ -19,10 +19,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AxiomTranslator {
 
   @Nonnull
-  private final Provider<AxiomVisitor> visitor;
+  private final Provider<OWLAxiomVisitorEx<Translation>> visitor;
 
   @Inject
-  public AxiomTranslator(@Nonnull Provider<AxiomVisitor> visitor) {
+  public AxiomTranslator(@Nonnull Provider<OWLAxiomVisitorEx<Translation>> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 

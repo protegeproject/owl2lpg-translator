@@ -3,14 +3,17 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarations;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +30,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.net.URLDecoder;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION_PROPERTY;
@@ -42,7 +46,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @Nonnull
@@ -63,19 +66,24 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
 
+  @Nonnull
+  private final BuiltInPrefixDeclarations builtInPrefixDeclarations;
+
   @Inject
   public EntityVisitor(@Nonnull OntologyDocumentId ontoDocId,
                        @Nonnull NodeFactory nodeFactory,
                        @Nonnull OntologyContextNodeFactory ontologyContextNodeFactory,
                        @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                        @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
-                       @Nonnull AnnotationValueTranslator annotationValueTranslator) {
+                       @Nonnull AnnotationValueTranslator annotationValueTranslator,
+                       @Nonnull BuiltInPrefixDeclarations builtInPrefixDeclarations) {
     this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.ontologyContextNodeFactory = checkNotNull(ontologyContextNodeFactory);
     this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
+    this.builtInPrefixDeclarations = checkNotNull(builtInPrefixDeclarations);
   }
 
   @Nonnull
@@ -128,10 +136,13 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @NotNull
   private Node createEntityNode(OWLEntity entity, NodeLabels nodeLabels) {
+    IRI entityIRI = entity.getIRI();
     return nodeFactory.createNode(entity, nodeLabels,
         Properties.create(ImmutableMap.of(
-            PropertyFields.IRI, getIriString(entity.getIRI()),
-            PropertyFields.IRI_SUFFIX, getLocalName(entity.getIRI()))));
+            PropertyFields.IRI, getIriString(entityIRI),
+            PropertyFields.LOCAL_NAME, getLocalName(entityIRI),
+            PropertyFields.PREFIXED_NAME, getPrefixedName(entityIRI),
+            PropertyFields.OBO_ID, getOboId(entityIRI))));
   }
 
   private void translateEntityIri(IRI entityIri, Node entityNode,
@@ -148,11 +159,12 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
         ontologyContextNodeFactory.createOntologyDocumentNode(ontoDocId),
         ImmutableList.of(),
         ImmutableList.of());
-    var entitySignatureOfEdge = augmentedEdgeFactory.getEntitySignatureOfEdge(entityNode, ontologyDocumentTranslation.getMainNode());
+    var entitySignatureOfEdge = augmentedEdgeFactory.getInOntologySignatureEdge(entityNode, ontologyDocumentTranslation.getMainNode());
     translations.add(ontologyDocumentTranslation);
     entitySignatureOfEdge.ifPresent(edges::add);
   }
 
+  @Nonnull
   private static String getLocalName(@Nonnull IRI iri) {
     String iriString = getIriString(iri);
     int hashIndex = iriString.lastIndexOf("#");
@@ -164,6 +176,21 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
       return decode(iriString.substring(slashIndex + 1));
     }
     return "";
+  }
+
+  @Nonnull
+  private static String getOboId(@Nonnull IRI iri) {
+    var oboIdPattern = Pattern.compile("/([A-Z|a-z]+(_[A-Z|a-z]+)?)_([0-9]+)$");
+    var iriString = getIriString(iri);
+    var matcher = oboIdPattern.matcher(iriString);
+    return (matcher.find()) ? matcher.group(1) + ":" + matcher.group(3) : "";
+  }
+
+  @Nonnull
+  private String getPrefixedName(@Nonnull IRI iri) {
+    var iriPrefix = iri.getNamespace();
+    var prefixName = builtInPrefixDeclarations.getPrefixName(iriPrefix);
+    return (prefixName != null) ? prefixName + getLocalName(iri) : "";
   }
 
   private static String getIriString(IRI iri) {

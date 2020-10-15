@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.exporter.csv;
 import com.google.common.collect.ImmutableMultiset;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.Translation;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 
@@ -75,13 +75,14 @@ public class Neo4jCsvWriter {
         NodeLabels.DATA_RANGE,
         NodeLabels.FACET_RESTRICTION,
         NodeLabels.LITERAL,
-        NodeLabels.ONTOLOGY_DOCUMENT).anyMatch(nodeLabels::isa);
+        NodeLabels.ONTOLOGY_DOCUMENT,
+        NodeLabels.PROPERTY_CHAIN).anyMatch(nodeLabels::isa);
   }
 
   private static boolean canPotentiallyHaveDuplicates(Edge edge) {
     var edgeLabel = edge.getLabel();
     return Stream.of(EdgeLabel.ENTITY_IRI,
-        EdgeLabel.ENTITY_SIGNATURE_OF,
+        EdgeLabel.IN_ONTOLOGY_SIGNATURE,
         EdgeLabel.CLASS_EXPRESSION,
         EdgeLabel.OBJECT_PROPERTY_EXPRESSION,
         EdgeLabel.DATA_PROPERTY_EXPRESSION,

@@ -5,14 +5,15 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -37,7 +38,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Nonnull

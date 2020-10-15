@@ -1,6 +1,8 @@
 package edu.stanford.owl2lpg.client.write;
 
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -13,5 +15,8 @@ import java.util.Collection;
 public interface AxiomStorer {
 
   @Nonnull
-  boolean add(@Nonnull AxiomContext context, @Nonnull Collection<OWLAxiom> axioms);
+  boolean add(@Nonnull Collection<OWLAxiom> axioms,
+              @Nonnull ProjectId projectId,
+              @Nonnull BranchId branchId,
+              @Nonnull OntologyDocumentId ontoDocId);
 }

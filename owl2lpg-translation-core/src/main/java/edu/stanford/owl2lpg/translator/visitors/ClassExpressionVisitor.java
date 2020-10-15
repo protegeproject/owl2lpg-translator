@@ -5,16 +5,17 @@ import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.ClassExpressionTranslator;
 import edu.stanford.owl2lpg.translator.DataRangeTranslator;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
-import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import edu.stanford.owl2lpg.translator.shared.BytesDigester;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
@@ -27,6 +28,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_MAX_CARDINAL
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_MIN_CARDINALITY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_SOME_VALUES_FROM;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_ALL_VALUES_FROM;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_COMPLEMENT_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_EXACT_CARDINALITY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_HAS_VALUE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_INTERSECTION_OF;
@@ -34,6 +36,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MAX_CARDIN
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MIN_CARDINALITY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_SOME_VALUES_FROM;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_UNION_OF;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -41,7 +44,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_UNION_OF;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-@TranslationSessionScope
 public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Translation> {
 
   @Nonnull
@@ -68,6 +70,12 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   private final IndividualTranslator individualTranslator;
 
+  @Nonnull
+  private final OntologyObjectSerializer ontologyObjectSerializer;
+
+  @Nonnull
+  private final BytesDigester bytesDigester;
+
   @Inject
   public ClassExpressionVisitor(@Nonnull NodeFactory nodeFactory,
                                 @Nonnull StructuralEdgeFactory structuralEdgeFactory,
@@ -76,7 +84,9 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
                                 @Nonnull PropertyExpressionTranslator propertyExprTranslator,
                                 @Nonnull DataRangeTranslator dataRangeTranslator,
                                 @Nonnull LiteralTranslator literalTranslator,
-                                @Nonnull IndividualTranslator individualTranslator) {
+                                @Nonnull IndividualTranslator individualTranslator,
+                                @Nonnull OntologyObjectSerializer ontologyObjectSerializer,
+                                @Nonnull BytesDigester bytesDigester) {
     this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
@@ -85,6 +95,8 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     this.dataRangeTranslator = checkNotNull(dataRangeTranslator);
     this.literalTranslator = checkNotNull(literalTranslator);
     this.individualTranslator = checkNotNull(individualTranslator);
+    this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
+    this.bytesDigester = checkNotNull(bytesDigester);
   }
 
   @Nonnull
@@ -108,7 +120,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectComplementOf ce) {
-    var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_COMPLEMENT_OF);
+    var mainNode = createClassExprNode(ce, OBJECT_COMPLEMENT_OF);
     var classExprTranslation = classExprTranslator.translate(ce.getOperand());
     var classExprEdge = structuralEdgeFactory.getClassExpressionEdge(mainNode, classExprTranslation.getMainNode());
     return Translation.create(ce, mainNode,
@@ -131,7 +143,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectHasValue ce) {
-    var mainNode = nodeFactory.createNode(ce, OBJECT_HAS_VALUE);
+    var mainNode = createClassExprNode(ce, OBJECT_HAS_VALUE);
     var propertyTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = individualTranslator.translate(ce.getFiller());
     var edges = ImmutableList.<Edge>builder();
@@ -164,7 +176,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectHasSelf ce) {
-    var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_HAS_SELF);
+    var mainNode = createClassExprNode(ce, NodeLabels.OBJECT_HAS_SELF);
     var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
     var propertyExprEdge = structuralEdgeFactory.getObjectPropertyExpressionEdge(mainNode, propertyExprTranslation.getMainNode());
     return Translation.create(ce, mainNode,
@@ -175,7 +187,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLObjectOneOf ce) {
-    var mainNode = nodeFactory.createNode(ce, NodeLabels.OBJECT_ONE_OF);
+    var mainNode = createClassExprNode(ce, NodeLabels.OBJECT_ONE_OF);
     var translations = ImmutableList.<Translation>builder();
     var edges = ImmutableList.<Edge>builder();
     var individuals = ce.getIndividuals();
@@ -204,7 +216,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   @Nonnull
   @Override
   public Translation visit(@Nonnull OWLDataHasValue ce) {
-    var mainNode = nodeFactory.createNode(ce, NodeLabels.DATA_HAS_VALUE);
+    var mainNode = createClassExprNode(ce, NodeLabels.DATA_HAS_VALUE);
     var propertyExprTranslation = propertyExprTranslator.translate(ce.getProperty());
     var fillerTranslation = literalTranslator.translate(ce.getFiller());
     var edges = ImmutableList.<Edge>builder();
@@ -235,7 +247,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   private Translation translateNaryClassExpression(@Nonnull OWLNaryBooleanClassExpression ce,
                                                    @Nonnull NodeLabels labels) {
-    var mainNode = nodeFactory.createNode(ce, labels);
+    var mainNode = createClassExprNode(ce, labels);
     var translations = ImmutableList.<Translation>builder();
     var edges = ImmutableList.<Edge>builder();
     var operands = ce.getOperands();
@@ -275,14 +287,24 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
         ImmutableList.of(propertyExprTranslation, fillerTranslation));
   }
 
+  @Nonnull
   private Node getMainNode(@Nonnull OWLRestriction restriction,
                            @Nonnull NodeLabels labels) {
     if (restriction instanceof HasCardinality) {
       var cardinality = ((HasCardinality) restriction).getCardinality();
-      return nodeFactory.createNode(restriction, labels,
-          Properties.of(PropertyFields.CARDINALITY, cardinality));
+      return createClassExprNode(restriction, labels, Properties.of(CARDINALITY, cardinality));
     } else {
-      return nodeFactory.createNode(restriction, labels);
+      return createClassExprNode(restriction, labels);
     }
+  }
+
+  @Nonnull
+  private Node createClassExprNode(OWLClassExpression ce, NodeLabels nodeLabels) {
+    return nodeFactory.createNode(ce, nodeLabels);
+  }
+
+  @Nonnull
+  private Node createClassExprNode(OWLClassExpression ce, NodeLabels nodeLabels, Properties properties) {
+    return nodeFactory.createNode(ce, nodeLabels, properties);
   }
 }

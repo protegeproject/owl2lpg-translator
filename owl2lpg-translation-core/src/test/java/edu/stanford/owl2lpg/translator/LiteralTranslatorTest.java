@@ -1,11 +1,13 @@
 package edu.stanford.owl2lpg.translator;
 
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.visitors.DataVisitor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.semanticweb.owlapi.model.OWLDataVisitorEx;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.inject.Provider;
@@ -23,7 +25,7 @@ public class LiteralTranslatorTest {
   private OWLLiteral literal = Literal("abc");
 
   @Mock
-  private Provider<DataVisitor> dataVisitorProvider;
+  private Provider<OWLDataVisitorEx<Translation>> dataVisitorProvider;
 
   @Mock
   private DataVisitor dataVisitor;

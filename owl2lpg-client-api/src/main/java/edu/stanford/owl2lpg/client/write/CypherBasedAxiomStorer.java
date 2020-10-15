@@ -1,11 +1,13 @@
 package edu.stanford.owl2lpg.client.write;
 
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
+import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import edu.stanford.owl2lpg.translator.Translation;
 import org.neo4j.driver.Session;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -47,14 +49,14 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     if (isReusableNode(node)) {
       stringBuilder.append("MERGE (")
           .append(printNodeId(node.getNodeId()))
-          .append(node.getNeo4jName())
+          .append(node.printLabels())
           .append(" ")
           .append(node.printProperties())
           .append(")");
     } else {
       stringBuilder.append("CREATE (")
           .append(printNodeId(node.getNodeId()))
-          .append(node.getNeo4jName())
+          .append(node.printLabels())
           .append(" ")
           .append(node.printProperties())
           .append(")");
@@ -66,7 +68,7 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     stringBuilder.append("MERGE (")
         .append(printNodeId(edge.getFromNode().getNodeId()))
         .append(")-[")
-        .append(edge.getNeo4jName())
+        .append(edge.printLabel())
         .append(" ")
         .append(edge.printProperties())
         .append("]->(")
@@ -88,8 +90,12 @@ public class CypherBasedAxiomStorer implements AxiomStorer, AutoCloseable {
     return nodeId.toString().replace("-", "");
   }
 
+  @Nonnull
   @Override
-  public boolean add(@Nonnull AxiomContext context, @Nonnull Collection<OWLAxiom> axioms) {
+  public boolean add(@Nonnull Collection<OWLAxiom> axioms,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontoDocId) {
     return axioms
         .stream()
         .map(axiom -> axiomTranslator.translate(axiom))

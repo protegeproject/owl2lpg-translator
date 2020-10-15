@@ -1,7 +1,8 @@
 package edu.stanford.owl2lpg.translator;
 
 import edu.stanford.owl2lpg.model.OntologyContext;
-import edu.stanford.owl2lpg.translator.visitors.OntologyContextVisitorImpl;
+import edu.stanford.owl2lpg.model.OntologyContextVisitorEx;
+import edu.stanford.owl2lpg.model.Translation;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -16,10 +17,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OntologyContextTranslator {
 
   @Nonnull
-  private final Provider<OntologyContextVisitorImpl> visitor;
+  private final Provider<OntologyContextVisitorEx<Translation>> visitor;
 
   @Inject
-  public OntologyContextTranslator(@Nonnull Provider<OntologyContextVisitorImpl> visitor) {
+  public OntologyContextTranslator(@Nonnull Provider<OntologyContextVisitorEx<Translation>> visitor) {
     this.visitor = checkNotNull(visitor);
   }
 

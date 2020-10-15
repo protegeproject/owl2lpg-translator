@@ -27,6 +27,11 @@ public abstract class OntologyDocumentId {
   @Nonnull
   public abstract String getIdentifier();
 
+  @Nonnull
+  public String printAsString() {
+    return "\"" + getIdentifier() + "\"";
+  }
+
   /**
    * Faster implementation of hashcode.  The identifier uniquely determines the hashcode
    * and this is cached by the JVM.

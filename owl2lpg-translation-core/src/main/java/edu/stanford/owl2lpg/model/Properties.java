@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,14 +35,18 @@ public abstract class Properties {
     return create(ImmutableMap.of(property, value));
   }
 
-  private static String escape(String value) {
-    return value.replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("\b", "\\b")
-        .replace("\f", "\\f")
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
-        .replace("\t", "\\t");
+  @Nonnull
+  public static Properties of(@Nonnull String property1, @Nonnull Object value1, @Nonnull String property2, @Nonnull Object value2) {
+    return create(ImmutableMap.of(property1, value1, property2, value2));
+  }
+
+  @Nonnull
+  public static Properties of(@Nonnull String property1, @Nonnull Object value1, @Nonnull String property2, @Nonnull Object value2, @Nonnull String property3, @Nonnull Object value3) {
+    return create(ImmutableMap.of(property1, value1, property2, value2, property3, value3));
+  }
+
+  public boolean isEmpty() {
+    return getMap().isEmpty();
   }
 
   @JsonValue
@@ -55,12 +58,13 @@ public abstract class Properties {
     return (obj != null) ? (E) obj.getClass().cast(obj) : null;
   }
 
+  @Nonnull
   public Map<String, Object> neoProperties() {
     return getMap().entrySet().stream()
         .collect(collectToTypedNeoMap());
   }
 
-  @NotNull
+  @Nonnull
   private static Collector<Map.Entry<String, Object>, ?, Map<String, Object>> collectToTypedNeoMap() {
     return Collectors.toMap(Properties::toTypedNeoKey, Map.Entry::getValue);
   }
@@ -68,11 +72,9 @@ public abstract class Properties {
   private static String toTypedNeoKey(Map.Entry<String, Object> e) {
     if (e.getValue() instanceof Integer) {
       return e.getKey() + ":int";
-    }
-    else if (e.getValue() instanceof Boolean) {
+    } else if (e.getValue() instanceof Boolean) {
       return e.getKey() + ":boolean";
-    }
-    else {
+    } else {
       return e.getKey();
     }
   }
@@ -82,24 +84,46 @@ public abstract class Properties {
   }
 
   @Nonnull
+  public Properties extend(Properties otherProperties) {
+    var extendedMap = ImmutableMap.<String, Object>builder()
+        .putAll(this.getMap())
+        .putAll(otherProperties.getMap())
+        .build();
+    return Properties.create(extendedMap);
+  }
+
+  @Nonnull
   public String printProperties() {
     var sb = new StringBuilder();
     sb.append("{");
     forEach((key, value) -> {
-          if (sb.length() > 1) {
-            sb.append(",");
-          }
           if (value instanceof String) {
-            sb.append(key)
-                .append(": \"")
-                .append(escape((String) value))
-                .append("\"");
+            var s = (String) value;
+            if (!s.isEmpty()) {
+              if (sb.length() > 1) {
+                sb.append(",");
+              }
+              sb.append(key).append(":\"").append(escape(s)).append("\"");
+            }
           } else {
-            sb.append(key).append(": ").append(value);
+            if (sb.length() > 1) {
+              sb.append(",");
+            }
+            sb.append(key).append(":").append(value);
           }
         }
     );
     sb.append("}");
     return sb.toString();
+  }
+
+  private static String escape(String value) {
+    return value.replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\b", "\\b")
+        .replace("\f", "\\f")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t");
   }
 }

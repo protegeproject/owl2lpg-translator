@@ -1,6 +1,10 @@
 package edu.stanford.owl2lpg.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
@@ -42,6 +46,10 @@ public abstract class Node {
     return getLabels().isa(nodeLabels);
   }
 
+  public boolean hasProperties() {
+    return getProperties().isEmpty();
+  }
+
   @Nullable
   public <E> E getProperty(String key) {
     return getProperties().get(key);
@@ -65,7 +73,7 @@ public abstract class Node {
 
   @JsonIgnore
   @Nonnull
-  public String getNeo4jName() {
+  public String printLabels() {
     return getLabels().getNeo4jName();
   }
 

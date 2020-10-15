@@ -1,6 +1,10 @@
 package edu.stanford.owl2lpg.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.google.auto.value.AutoValue;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
 
@@ -78,7 +82,7 @@ public abstract class Edge {
   public abstract EdgeLabel getLabel();
 
   @JsonIgnore
-  public String getNeo4jName() {
+  public String printLabel() {
     return getLabel().getNeo4jName();
   }
 

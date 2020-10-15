@@ -1,17 +1,18 @@
 package edu.stanford.owl2lpg.client.read;
 
-import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.owl2lpg.client.read.axiom.AxiomContext;
-import edu.stanford.owl2lpg.client.read.shortform.Neo4jFullTextIndexName;
 import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.internal.value.ListValue;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.NodeID;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -25,67 +26,179 @@ import static java.util.stream.Collectors.joining;
  */
 public class Parameters {
 
-  public static Value forShortFormsDictionary(@Nonnull ProjectId projectId,
-                                              @Nonnull BranchId branchId,
-                                              @Nonnull IRI entityIri) {
+  private static final String PROJECT_ID = "projectId";
+  private static final String BRANCH_ID = "branchId";
+  private static final String ONTO_DOC_ID = "ontoDocId";
+  private static final String ENTITY_IRI = "entityIri";
+  private static final String ENTITY_NAME = "entityName";
+  private static final String NODE_ID = "nodeId";
+  private static final String SEARCH_STRING = "searchString";
+  private static final String ENTITY_TYPE = "entityType";
+  private static final String AXIOM_TYPE = "axiomType";
+  private static final String CHARACTERISTIC_TYPE = "characteristicType";
+  private static final String LEXICAL_FORM = "lexicalForm";
+  private static final String DATATYPE = "datatype";
+  private static final String IRI = "iri";
+  private static final String DIGEST = "digest";
+
+  public static Value forContext(@Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId) {
     return new MapValue(Map.of(
-        "projectId", new StringValue(projectId.getIdentifier()),
-        "branchId", new StringValue(branchId.getIdentifier()),
-        "entityIri", new StringValue(entityIri.toString())));
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier())));
   }
 
-  public static Value forShortFormsIndex(@Nonnull ProjectId projectId,
-                                         @Nonnull BranchId branchId,
-                                         @Nonnull String entityName) {
+  public static Value forContext(@Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId,
+                                 @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        "projectId", new StringValue(projectId.getIdentifier()),
-        "branchId", new StringValue(branchId.getIdentifier()),
-        "entityName", new StringValue(entityName)));
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier())));
   }
 
-  public static Value forShortFormsContaining(ProjectId projectId,
-                                              BranchId branchId,
-                                              Neo4jFullTextIndexName fullTextIndexName,
-                                              List<SearchString> searchStrings) {
+  public static Value forEntity(@Nonnull OWLEntity entity,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId) {
+    return forEntityIri(entity.getIRI(), projectId, branchId);
+  }
+
+  public static Value forEntity(@Nonnull OWLEntity entity,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontologyDocumentId) {
+    return forEntityIri(entity.getIRI(), projectId, branchId, ontologyDocumentId);
+  }
+
+  public static Value forEntityIri(@Nonnull IRI entityIri,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontologyDocumentId) {
     return new MapValue(Map.of(
-        "projectId", new StringValue(projectId.getIdentifier()),
-        "branchId", new StringValue(branchId.getIdentifier()),
-        "fullTextIndexName", new StringValue(fullTextIndexName.getName()),
-        "searchString", new StringValue(searchStrings.stream()
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontologyDocumentId.getIdentifier()),
+        ENTITY_IRI, new StringValue(entityIri.toString())));
+  }
+
+  public static Value forEntityIri(@Nonnull IRI entityIri,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ENTITY_IRI, new StringValue(entityIri.toString())));
+  }
+
+  public static Value forEntityName(@Nonnull String entityName,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        ENTITY_NAME, new StringValue(entityName)));
+  }
+
+  public static Value forEntityName(@Nonnull String entityName,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ENTITY_NAME, new StringValue(entityName)));
+  }
+
+  public static Value forEntityType(@Nonnull EntityType entityType,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        ENTITY_TYPE, new StringValue(entityType.getName())));
+  }
+
+  public static Value forNodeId(@Nonnull NodeID nodeId,
+                                @Nonnull ProjectId projectId,
+                                @Nonnull BranchId branchId,
+                                @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        NODE_ID, new StringValue(nodeId.getID())));
+  }
+
+  public static Value forAxiomType(@Nonnull AxiomType axiomType,
+                                   @Nonnull ProjectId projectId,
+                                   @Nonnull BranchId branchId,
+                                   @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        AXIOM_TYPE, new StringValue(axiomType.getName())));
+  }
+
+  public static Value forPropertyWithCharacteristicType(@Nonnull IRI propertyIri,
+                                                        @Nonnull String characteristicType,
+                                                        @Nonnull ProjectId projectId,
+                                                        @Nonnull BranchId branchId,
+                                                        @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        ENTITY_IRI, new StringValue(propertyIri.toString()),
+        CHARACTERISTIC_TYPE, new StringValue(characteristicType)));
+  }
+
+  public static Value forLiteral(@Nonnull OWLLiteral literal,
+                                 @Nonnull ProjectId projectId,
+                                 @Nonnull BranchId branchId,
+                                 @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        LEXICAL_FORM, new StringValue(literal.getLiteral()),
+        DATATYPE, new StringValue(literal.getDatatype().getIRI().toString())));
+  }
+
+  public static Value forValueIri(IRI iri,
+                                  ProjectId projectId,
+                                  BranchId branchId,
+                                  OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        IRI, new StringValue(iri.toString())));
+  }
+
+  public static Value forSearchStrings(@Nonnull List<SearchString> searchStrings,
+                                       @Nonnull ProjectId projectId,
+                                       @Nonnull BranchId branchId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        SEARCH_STRING, new StringValue(searchStrings.stream()
             .map(SearchString::getSearchString)
+            .map(s -> s + "*")
             .collect(joining(" AND ")))));
   }
 
-  public static Value forEntityIri(@Nonnull AxiomContext context, @Nonnull IRI entityIri) {
+  public static Value forNodeDigest(@Nonnull String digest,
+                                    @Nonnull ProjectId projectId,
+                                    @Nonnull BranchId branchId,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        "entityIri", new StringValue(entityIri.toString()),
-        "projectId", new StringValue(context.getProjectId().getIdentifier()),
-        "branchId", new StringValue(context.getBranchId().getIdentifier()),
-        "ontoDocId", new StringValue(context.getOntologyDocumentId().getIdentifier())));
-  }
-
-  public static Value forEntity(@Nonnull AxiomContext context, @Nonnull OWLEntity entity) {
-    return forEntityIri(context, entity.getIRI());
-  }
-
-  public static MapValue forShortForm(@Nonnull ImmutableList<IRI> entities,
-                                      @Nonnull ImmutableList<IRI> annotationProperties) {
-    return new MapValue(Map.of(
-        "entityIriList", toListValue(entities),
-        "annotationPropertyIriList", toListValue(annotationProperties)));
-  }
-
-  public static MapValue forShortForm(@Nonnull IRI entity,
-                                      @Nonnull ImmutableList<IRI> annotationProperties) {
-    return forShortForm(ImmutableList.of(entity), annotationProperties);
-  }
-
-  private static ListValue toListValue(ImmutableList<IRI> list) {
-    var values = list
-        .stream()
-        .map(IRI::toString)
-        .map(StringValue::new)
-        .toArray(Value[]::new);
-    return new ListValue(values);
+        PROJECT_ID, new StringValue(projectId.getIdentifier()),
+        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        DIGEST, new StringValue(digest)));
   }
 }

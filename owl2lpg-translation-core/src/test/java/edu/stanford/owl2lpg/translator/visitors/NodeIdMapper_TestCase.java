@@ -3,12 +3,13 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.hash.Hashing;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.NodeIdMapper;
+import edu.stanford.owl2lpg.model.NodeIdMapperImpl;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
-import edu.stanford.owl2lpg.translator.DigestNodeIdProvider;
-import edu.stanford.owl2lpg.translator.IdFormatCheckerImpl;
-import edu.stanford.owl2lpg.translator.NumberIncrementIdProvider;
-import edu.stanford.owl2lpg.translator.SingleEncounterNodeCheckerImpl;
+import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
+import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
+import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
+import edu.stanford.owl2lpg.translator.internal.SingleEncounterNodeCheckerImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.IRI;
@@ -21,7 +22,9 @@ import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class NodeIdMapper_TestCase {
 
@@ -29,7 +32,7 @@ public class NodeIdMapper_TestCase {
 
   @Before
   public void setUp() throws Exception {
-    nodeIdMapper = new NodeIdMapper(new NumberIncrementIdProvider(),
+    nodeIdMapper = new NodeIdMapperImpl(new NumberIncrementIdProvider(),
         new DigestNodeIdProvider(Hashing.sha256()),
         new IdFormatCheckerImpl(),
         new SingleEncounterNodeCheckerImpl());

@@ -21,7 +21,8 @@ public class Neo4jRelationshipsCsvSchema implements Neo4jCsvSchema {
         .addColumn(N4J_JSON_END_ID)
         .addColumn(TYPE)
         .addColumn(IRI)
-        .addColumn(STRUCTURAL_SPEC + ":boolean");
+        .addColumn(STRUCTURAL_SPEC + ":boolean")
+        .addColumn(POS + ":int");
   }
 
   @Override

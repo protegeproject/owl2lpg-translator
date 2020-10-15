@@ -19,8 +19,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <jackson.version>2.9.10</jackson.version>
-    <webprotege-server-core.version>5.0.0-SNAPSHOT</webprotege-server-core.version>
+    <jackson.version>2.11.1</jackson.version>
   </properties>
 
   <dependencies>
@@ -28,11 +27,6 @@
       <groupId>edu.stanford.owl2lpg</groupId>
       <artifactId>owl2lpg-translation-core</artifactId>
       <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.stanford.protege</groupId>
-      <artifactId>webprotege-server-core</artifactId>
-      <version>${webprotege-server-core.version}</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.owlapi</groupId>
@@ -95,7 +89,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>edu.stanford.owl2lpg.exporter.Scratch</mainClass>
+              <mainClass>edu.stanford.owl2lpg.exporter.Main</mainClass>
             </manifest>
           </archive>
         </configuration>

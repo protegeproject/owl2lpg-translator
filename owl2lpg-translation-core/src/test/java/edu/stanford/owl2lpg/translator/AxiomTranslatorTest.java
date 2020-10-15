@@ -1,12 +1,13 @@
 package edu.stanford.owl2lpg.translator;
 
-import dagger.Module;
+import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.visitors.AxiomVisitor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import javax.inject.Provider;
@@ -15,7 +16,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Class;
-import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.*;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.IRI;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.SubClassOf;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AxiomTranslatorTest {
@@ -27,7 +29,7 @@ public class AxiomTranslatorTest {
       Class(IRI("http://example.org/B")));
 
   @Mock
-  private Provider<AxiomVisitor> axiomVisitorProvider;
+  private Provider<OWLAxiomVisitorEx<Translation>> axiomVisitorProvider;
 
   @Mock
   private AxiomVisitor axiomVisitor;

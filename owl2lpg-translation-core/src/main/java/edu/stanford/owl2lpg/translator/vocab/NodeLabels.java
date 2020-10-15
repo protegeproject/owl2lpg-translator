@@ -27,6 +27,8 @@ public enum NodeLabels {
   ONTOLOGY_ID("OntologyID"),
   IRI("IRI"),
 
+  PROPERTY_CHAIN("PropertyChain"),
+
   ENTITY("Entity"),
   CLASS_EXPRESSION_ENTITY("ClassExpression", ENTITY),
   DATA_RANGE_ENTITY("DataRange", ENTITY),
@@ -90,6 +92,7 @@ public enum NodeLabels {
 
   OBJECT_PROPERTY_AXIOM("ObjectPropertyAxiom", AXIOM),
   SUB_OBJECT_PROPERTY_OF("SubObjectPropertyOf", OBJECT_PROPERTY_AXIOM),
+  SUB_PROPERTY_CHAIN_OF("SubPropertyChainOf", OBJECT_PROPERTY_AXIOM),
   EQUIVALENT_OBJECT_PROPERTIES("EquivalentObjectProperties", OBJECT_PROPERTY_AXIOM),
   DISJOINT_OBJECT_PROPERTIES("DisjointObjectProperties", OBJECT_PROPERTY_AXIOM),
   OBJECT_PROPERTY_DOMAIN("ObjectPropertyDomain", OBJECT_PROPERTY_AXIOM),
