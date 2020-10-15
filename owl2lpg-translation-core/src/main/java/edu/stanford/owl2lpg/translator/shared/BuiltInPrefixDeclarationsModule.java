@@ -12,7 +12,7 @@ public class BuiltInPrefixDeclarationsModule {
 
   @Provides
   public BuiltInPrefixDeclarations provideBuiltInPrefixDeclarations() {
-    var prefixMap = PrefixDeclarationsCsvParser.getBuiltInPrefixes("built-in-prefixes.csv");
+    var prefixMap = new PrefixDeclarationsCsvParser().getBuiltInPrefixes("built-in-prefixes.csv");
     return BuiltInPrefixDeclarations.get(prefixMap);
   }
 }

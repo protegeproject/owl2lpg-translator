@@ -1,13 +1,11 @@
 package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -17,9 +15,10 @@ public class PrefixDeclarationsCsvParser {
 
   private static final Logger logger = LoggerFactory.getLogger(PrefixDeclarationsCsvParser.class);
 
-  public static ImmutableMap<String, String> getBuiltInPrefixes(String relativePathName) {
-    var resource = Resources.getResource(relativePathName);
-    try (var in = new BufferedReader(new FileReader((new File(resource.toURI()))))) {
+  public ImmutableMap<String, String> getBuiltInPrefixes(String relativePathName) {
+    var classLoader = getClass().getClassLoader();
+    var inputStream = classLoader.getResourceAsStream(relativePathName);
+    try (var in = new BufferedReader(new InputStreamReader(inputStream))) {
       return in.lines()
           .map(line -> line.split(","))
           .collect(ImmutableMap.toImmutableMap(
