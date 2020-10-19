@@ -20,7 +20,6 @@ import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatParser;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,9 +141,7 @@ public class Main {
       counter.incrementAndGet();
       logParsed();
       try {
-        if (!(axiom instanceof OWLAnnotationAssertionAxiom)) {
-          csvExporter.export(axiom);
-        }
+        csvExporter.export(axiom);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
