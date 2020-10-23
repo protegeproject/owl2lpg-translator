@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.client.write.handlers;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.client.OntologyIdToDocumentIdMap;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
@@ -28,23 +28,23 @@ public class TranslationTranslator {
   private final QueryBuilderFactory queryBuilderFactory;
 
   @Nonnull
-  private final OntologyIdToDocumentIdMap ontologyIdToDocumentIdMap;
+  private final DocumentIdMap documentIdMap;
 
   @Inject
   public TranslationTranslator(@Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
                                @Nonnull QueryBuilderFactory queryBuilderFactory,
-                               @Nonnull OntologyIdToDocumentIdMap ontologyIdToDocumentIdMap) {
+                               @Nonnull DocumentIdMap documentIdMap) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.queryBuilderFactory = checkNotNull(queryBuilderFactory);
-    this.ontologyIdToDocumentIdMap = checkNotNull(ontologyIdToDocumentIdMap);
+    this.documentIdMap = checkNotNull(documentIdMap);
   }
 
   @Nonnull
   public ImmutableList<String> translateToCypherCreateQuery(@Nonnull OWLOntologyID ontologyId,
                                                             @Nonnull Translation translation) {
-    var documentId = ontologyIdToDocumentIdMap.get(projectId, ontologyId);
+    var documentId = documentIdMap.get(projectId, ontologyId);
     var createQueryBuilder = queryBuilderFactory.getCreateQueryBuilder(projectId, branchId, documentId, ontologyId);
     translation.accept(createQueryBuilder);
     return createQueryBuilder.build();
@@ -53,7 +53,7 @@ public class TranslationTranslator {
   @Nonnull
   public ImmutableList<String> translateToCypherDeleteQuery(@Nonnull OWLOntologyID ontologyId,
                                                             @Nonnull Translation translation) {
-    var documentId = ontologyIdToDocumentIdMap.get(projectId, ontologyId);
+    var documentId = documentIdMap.get(projectId, ontologyId);
     var deleteQueryBuilder = queryBuilderFactory.getDeleteQueryBuilder(projectId, branchId, documentId, ontologyId);
     translation.accept(deleteQueryBuilder);
     return deleteQueryBuilder.build();

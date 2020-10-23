@@ -1,9 +1,7 @@
 package edu.stanford.owl2lpg.client;
 
-import com.google.auto.value.AutoValue;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import edu.stanford.bmir.protege.web.shared.inject.ProjectSingleton;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
@@ -17,7 +15,6 @@ import org.semanticweb.owlapi.model.OWLOntologyID;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,35 +23,33 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @ProjectSingleton
-public class OntologyIdToDocumentIdMap {
+public class DocumentIdMap {
 
   @Nonnull
   private final Driver driver;
 
-  private Map<Key, OntologyDocumentId> documentIdMap = Maps.newHashMap();
-
-  private Set<ProjectId> projectIds = Sets.newHashSet();
+  private final Map<ProjectId, Map<OWLOntologyID, OntologyDocumentId>> documentIdMap = Maps.newHashMap();
 
   @Inject
-  public OntologyIdToDocumentIdMap(@Nonnull Driver driver) {
+  public DocumentIdMap(@Nonnull Driver driver) {
     this.driver = checkNotNull(driver);
   }
 
   @Nonnull
   public synchronized OntologyDocumentId get(@Nonnull ProjectId projectId,
-                                             @Nonnull OWLOntologyID ontologyID) {
+                                             @Nonnull OWLOntologyID ontologyId) {
     ensureLoaded(projectId);
-    var key = Key.get(projectId, ontologyID);
-    var documentId = documentIdMap.get(key);
+    var innerMap = documentIdMap.computeIfAbsent(projectId, k -> Maps.newHashMap());
+    var documentId = innerMap.get(ontologyId);
     if (documentId == null) {
       documentId = OntologyDocumentId.create();
-      documentIdMap.put(key, documentId);
+      innerMap.put(ontologyId, documentId);
     }
     return documentId;
   }
 
   private void ensureLoaded(ProjectId projectId) {
-    if (projectIds.contains(projectId)) {
+    if (documentIdMap.containsKey(projectId)) {
       return;
     }
     load(projectId);
@@ -76,7 +71,8 @@ public class OntologyIdToDocumentIdMap {
           var versionIri = getIri(record, "versionIri");
           var documentId = getDocumentId(record);
           var ontologyId = new OWLOntologyID(ontologyIri, versionIri);
-          documentIdMap.put(Key.get(projectId, ontologyId), documentId);
+          var innerMap = documentIdMap.computeIfAbsent(projectId, k -> Maps.newHashMap());
+          innerMap.put(ontologyId, documentId);
         }
         return 1;
       });
@@ -94,20 +90,5 @@ public class OntologyIdToDocumentIdMap {
   private OntologyDocumentId getDocumentId(Record record) {
     var documentId = record.get("documentId").asString();
     return OntologyDocumentId.create(documentId);
-  }
-
-  @AutoValue
-  public abstract static class Key {
-
-    @Nonnull
-    public static Key get(ProjectId projectId, OWLOntologyID ontologyId) {
-      return new AutoValue_OntologyIdToDocumentIdMap_Key(projectId, ontologyId);
-    }
-
-    @Nonnull
-    public abstract ProjectId getProjectId();
-
-    @Nonnull
-    public abstract OWLOntologyID getOntologyId();
   }
 }

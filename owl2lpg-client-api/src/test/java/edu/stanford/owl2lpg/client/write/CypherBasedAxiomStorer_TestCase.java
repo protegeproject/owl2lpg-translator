@@ -2,7 +2,7 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.base.Optional;
 import edu.stanford.owl2lpg.client.DatabaseModule;
-import edu.stanford.owl2lpg.client.OntologyIdToDocumentIdMap;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.NodeMapperModule;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.DaggerAxiomAccessorComponent;
@@ -40,7 +40,7 @@ public class CypherBasedAxiomStorer_TestCase {
 
     private final BranchId branchId = BranchId.create();
 
-    private OntologyIdToDocumentIdMap ontologyIdToDocumentIdMap;
+    private DocumentIdMap documentIdMap;
 
     private AxiomAccessor axiomAccessor;
 
@@ -58,8 +58,8 @@ public class CypherBasedAxiomStorer_TestCase {
         var boltUri = neo4j.boltURI();
         var driver = GraphDatabase.driver(boltUri);
 
-        ontologyIdToDocumentIdMap = new OntologyIdToDocumentIdMap(driver);
-        var documentId = ontologyIdToDocumentIdMap.get(projectId, ontologyId);
+        documentIdMap = new DocumentIdMap(driver);
+        var documentId = documentIdMap.get(projectId, ontologyId);
 
         // Translator from OWLObject to Translation
         var translatorComponent = DaggerTranslatorComponent.builder()
@@ -72,7 +72,7 @@ public class CypherBasedAxiomStorer_TestCase {
         axiomTranslator = translatorComponent.getAxiomTranslator();
 
         // Translator from Translation to Cypher string
-        translationTranslator = new TranslationTranslator(projectId, branchId, new QueryBuilderFactory(), ontologyIdToDocumentIdMap);
+        translationTranslator = new TranslationTranslator(projectId, branchId, new QueryBuilderFactory(), documentIdMap);
 
         // The writer to execute Cypher query
         graphWriter = new GraphWriter(driver);
@@ -107,7 +107,7 @@ public class CypherBasedAxiomStorer_TestCase {
 
     private void storeAndRetrieveAxiom(@Nonnull OWLAxiom axiom) {
         storeAxiom(axiom);
-        var documentId = ontologyIdToDocumentIdMap.get(projectId, ontologyId);
+        var documentId = documentIdMap.get(projectId, ontologyId);
         var storedAxioms = axiomAccessor.getAllAxioms(projectId, branchId, documentId);
         assertTrue(storedAxioms.contains(axiom));
     }

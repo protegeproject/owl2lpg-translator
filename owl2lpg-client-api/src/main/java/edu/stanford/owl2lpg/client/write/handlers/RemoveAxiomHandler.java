@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.client.write.handlers;
 
-import edu.stanford.owl2lpg.client.OntologyIdToDocumentIdMap;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
@@ -32,7 +32,7 @@ public class RemoveAxiomHandler {
                             @Nonnull GraphWriter graphWriter,
                             @Nonnull AxiomTranslator axiomTranslator,
                             @Nonnull TranslationTranslator translationTranslator,
-                            @Nonnull OntologyIdToDocumentIdMap ontologyIdToDocumentIdMap) {
+                            @Nonnull DocumentIdMap documentIdMap) {
     this.graphWriter = checkNotNull(graphWriter);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.translationTranslator = checkNotNull(translationTranslator);
