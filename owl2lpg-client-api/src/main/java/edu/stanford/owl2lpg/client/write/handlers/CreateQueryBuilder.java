@@ -150,17 +150,27 @@ public class CreateQueryBuilder implements TranslationVisitor {
     var ontoDocVariable = "o";
     var axiomNode = translation.getMainNode();
     var axiomVariable = getVariableName(axiomNode);
-    sb.append(cypherQueryMatchOntologyDocument(ontoDocVariable));
     sb.append(cypherQueryMatchAxiom(axiomNode, axiomVariable));
+    sb.append(cypherQueryMergeOntologyDocument(ontoDocVariable));
     sb.append(cypherQueryMergeAxiomEdge(ontoDocVariable, axiomVariable));
     return sb.toString();
   }
 
   @Nonnull
-  private String cypherQueryMatchOntologyDocument(String ontoDocVariable) {
-    return "MATCH (" + PROJECT.getNeo4jName() + " {" + PROJECT_ID + ":" + projectId.printAsString() + "})-[" + EdgeLabel.BRANCH.getNeo4jName() + "]->" +
-        "(" + BRANCH.getNeo4jName() + " {" + BRANCH_ID + ":" + branchId.printAsString() + "})-[" + EdgeLabel.ONTOLOGY_DOCUMENT.getNeo4jName() + "]->" +
-        "(" + ontoDocVariable + ONTOLOGY_DOCUMENT.getNeo4jName() + " {" + ONTOLOGY_DOCUMENT_ID + ":" + ontoDocId.printAsString() + "})\n";
+  private String cypherQueryMergeOntologyDocument(String ontoDocVariable) {
+    var sb = new StringBuilder();
+    var projectVariable = "p";
+    var branchVariable = "b";
+    sb.append("MERGE (").append(projectVariable).append(PROJECT.getNeo4jName())
+        .append(" {").append(PROJECT_ID).append(":").append(projectId.printAsString()).append("})\n");
+    sb.append("MERGE (").append(branchVariable).append(BRANCH.getNeo4jName())
+        .append(" {").append(BRANCH_ID).append(":").append(branchId.printAsString()).append("})\n");
+    sb.append("MERGE (").append(ontoDocVariable).append(ONTOLOGY_DOCUMENT.getNeo4jName())
+        .append(" {").append(ONTOLOGY_DOCUMENT_ID).append(":").append(ontoDocId.printAsString()).append("})\n");
+    sb.append("MERGE (").append(projectVariable).append(")-[").append(EdgeLabel.BRANCH.getNeo4jName()).append("]->")
+        .append("(").append(branchVariable).append(")-[").append(EdgeLabel.ONTOLOGY_DOCUMENT.getNeo4jName()).append("]->")
+        .append("(").append(ontoDocVariable).append(")\n");
+    return sb.toString();
   }
 
   @Nonnull
