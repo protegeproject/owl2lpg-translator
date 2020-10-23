@@ -1,8 +1,11 @@
 package edu.stanford.owl2lpg.client.write.handlers;
 
+import edu.stanford.owl2lpg.client.OntologyIdToDocumentIdMap;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
+import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -25,17 +28,19 @@ public class RemoveAxiomHandler {
   private final TranslationTranslator translationTranslator;
 
   @Inject
-  public RemoveAxiomHandler(@Nonnull GraphWriter graphWriter,
+  public RemoveAxiomHandler(@Nonnull ProjectId projectId,
+                            @Nonnull GraphWriter graphWriter,
                             @Nonnull AxiomTranslator axiomTranslator,
-                            @Nonnull TranslationTranslator translationTranslator) {
+                            @Nonnull TranslationTranslator translationTranslator,
+                            @Nonnull OntologyIdToDocumentIdMap ontologyIdToDocumentIdMap) {
     this.graphWriter = checkNotNull(graphWriter);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.translationTranslator = checkNotNull(translationTranslator);
   }
 
-  public void handle(@Nonnull OWLAxiom axiom) {
+  public void handle(@Nonnull OWLOntologyID ontologyId, @Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(axiom);
-    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(translation);
+    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(ontologyId, translation);
     deleteQuery.forEach(graphWriter::execute);
   }
 }

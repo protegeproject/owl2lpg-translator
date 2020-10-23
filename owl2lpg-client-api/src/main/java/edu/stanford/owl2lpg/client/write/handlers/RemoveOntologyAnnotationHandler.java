@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.client.write.handlers;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -33,9 +34,9 @@ public class RemoveOntologyAnnotationHandler {
     this.translationTranslator = checkNotNull(translationTranslator);
   }
 
-  public void handle(@Nonnull OWLAnnotation annotation) {
+  public void handle(@Nonnull OWLOntologyID ontologyId, @Nonnull OWLAnnotation annotation) {
     var translation = annotationTranslator.translate(annotation);
-    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(translation);
+    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(ontologyId, translation);
     deleteQuery.forEach(graphWriter::execute);
   }
 }

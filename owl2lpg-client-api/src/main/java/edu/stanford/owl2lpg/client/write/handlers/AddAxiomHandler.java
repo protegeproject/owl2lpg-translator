@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.client.write.handlers;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -33,9 +34,9 @@ public class AddAxiomHandler {
     this.translationTranslator = checkNotNull(translationTranslator);
   }
 
-  public void handle(@Nonnull OWLAxiom axiom) {
+  public void handle(@Nonnull OWLOntologyID ontologyId, @Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(axiom);
-    var createQuery = translationTranslator.translateToCypherCreateQuery(translation);
+    var createQuery = translationTranslator.translateToCypherCreateQuery(ontologyId, translation);
     createQuery.forEach(graphWriter::execute);
   }
 }

@@ -10,12 +10,17 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_IRI;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.VERSION_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.IRI;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
@@ -36,7 +41,10 @@ public class CreateQueryBuilder implements TranslationVisitor {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final OntologyDocumentId documentId;
+
+  @Nonnull
+  private final OWLOntologyID ontologyId;
 
   @Nonnull
   private final VariableNameGenerator variableNameGenerator;
@@ -47,11 +55,13 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   public CreateQueryBuilder(@Nonnull ProjectId projectId,
                             @Nonnull BranchId branchId,
-                            @Nonnull OntologyDocumentId ontoDocId,
+                            @Nonnull OntologyDocumentId documentId,
+                            @Nonnull OWLOntologyID ontologyId,
                             @Nonnull VariableNameGenerator variableNameGenerator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentId = checkNotNull(documentId);
+    this.ontologyId = checkNotNull(ontologyId);
     this.variableNameGenerator = checkNotNull(variableNameGenerator);
   }
 
@@ -138,19 +148,39 @@ public class CreateQueryBuilder implements TranslationVisitor {
   }
 
   @Nonnull
-  private String cypherQueryMergeOntologyDocument(String ontoDocVariable) {
+  private String cypherQueryMergeOntologyDocument(String documentVariable) {
     var sb = new StringBuilder();
+
     var projectVariable = "p";
     var branchVariable = "b";
-    sb.append("MERGE (").append(projectVariable).append(PROJECT.getNeo4jName())
-        .append(" {").append(PROJECT_ID).append(":").append(projectId.printAsString()).append("})\n");
-    sb.append("MERGE (").append(branchVariable).append(BRANCH.getNeo4jName())
-        .append(" {").append(BRANCH_ID).append(":").append(branchId.printAsString()).append("})\n");
-    sb.append("MERGE (").append(ontoDocVariable).append(ONTOLOGY_DOCUMENT.getNeo4jName())
-        .append(" {").append(ONTOLOGY_DOCUMENT_ID).append(":").append(ontoDocId.printAsString()).append("})\n");
-    sb.append("MERGE (").append(projectVariable).append(")-[").append(EdgeLabel.BRANCH.getNeo4jName()).append("]->")
-        .append("(").append(branchVariable).append(")-[").append(EdgeLabel.ONTOLOGY_DOCUMENT.getNeo4jName()).append("]->")
-        .append("(").append(ontoDocVariable).append(")\n");
+    sb.append("MERGE (").append(projectVariable).append(PROJECT.toNeo4jLabel())
+        .append(" {").append(PROJECT_ID).append(":").append(projectId.toQuotedString()).append("})\n");
+    sb.append("MERGE (").append(branchVariable).append(BRANCH.toNeo4jLabel())
+        .append(" {").append(BRANCH_ID).append(":").append(branchId.toQuotedString()).append("})\n");
+    sb.append("MERGE (").append(documentVariable).append(ONTOLOGY_DOCUMENT.toNeo4jLabel())
+        .append(" {").append(ONTOLOGY_DOCUMENT_ID).append(":").append(documentId.toQuotedString()).append("})\n");
+    sb.append("MERGE (").append(projectVariable).append(")-[").append(EdgeLabel.BRANCH.toNeo4jLabel()).append("]->")
+        .append("(").append(branchVariable).append(")-[").append(EdgeLabel.ONTOLOGY_DOCUMENT.toNeo4jLabel()).append("]->")
+        .append("(").append(documentVariable).append(")\n");
+
+    var ontologyIriVariable = "i";
+    var ontologyIri = ontologyId.getOntologyIRI();
+    if (ontologyIri.isPresent()) {
+      sb.append("MERGE (").append(ontologyIriVariable).append(IRI.toNeo4jLabel())
+          .append(" {").append(PropertyFields.IRI).append(":\"").append(ontologyIri.get().toString()).append("\"})\n");
+      sb.append("MERGE (").append(documentVariable).append(")-[").append(ONTOLOGY_IRI.toNeo4jLabel()).append("]->")
+          .append("(").append(ontologyIriVariable).append(")\n");
+    }
+
+    var versionIriVariable = "v";
+    var versionIri = ontologyId.getVersionIRI();
+    if (versionIri.isPresent()) {
+      sb.append("MERGE (").append(versionIriVariable).append(IRI.toNeo4jLabel())
+          .append(" {").append(PropertyFields.IRI).append(":\"").append(versionIri.get().toString()).append("\"})\n");
+      sb.append("MERGE (").append(documentVariable).append(")-[").append(VERSION_IRI.toNeo4jLabel()).append("]->")
+          .append("(").append(versionIriVariable).append(")\n");
+    }
+
     return sb.toString();
   }
 
@@ -161,7 +191,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   @Nonnull
   private String cypherQueryMergeAxiomEdge(String ontoDocVariable, String axiomVariable) {
-    return "MERGE (" + ontoDocVariable + ")-[" + EdgeLabel.AXIOM.getNeo4jName() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")";
+    return "MERGE (" + ontoDocVariable + ")-[" + EdgeLabel.AXIOM.toNeo4jLabel() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")";
   }
 
   public ImmutableList build() {

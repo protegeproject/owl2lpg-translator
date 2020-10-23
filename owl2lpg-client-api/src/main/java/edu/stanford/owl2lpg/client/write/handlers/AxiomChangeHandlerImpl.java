@@ -29,13 +29,15 @@ public class AxiomChangeHandlerImpl implements AxiomChangeHandler {
 
   @Override
   public void handle(@Nonnull AddAxiomChange addAxiomChange) {
+    var ontologyId = addAxiomChange.getOntologyId();
     var axiom = addAxiomChange.getAxiom();
-    addAxiomHandler.handle(axiom);
+    addAxiomHandler.handle(ontologyId, axiom);
   }
 
   @Override
   public void handle(@Nonnull RemoveAxiomChange removeAxiomChange) {
+    var ontologyId = removeAxiomChange.getOntologyId();
     var axiom = removeAxiomChange.getAxiom();
-    removeAxiomHandler.handle(axiom);
+    removeAxiomHandler.handle(ontologyId, axiom);
   }
 }

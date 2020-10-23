@@ -29,13 +29,15 @@ public class OntologyAnnotationChangeHandlerImpl implements OntologyAnnotationCh
 
   @Override
   public void handle(@Nonnull AddOntologyAnnotationChange addOntologyAnnotationChange) {
+    var ontologyId = addOntologyAnnotationChange.getOntologyId();
     var annotation = addOntologyAnnotationChange.getAnnotation();
-    addOntologyAnnotationHandler.handle(annotation);
+    addOntologyAnnotationHandler.handle(ontologyId, annotation);
   }
 
   @Override
   public void handle(@Nonnull RemoveOntologyAnnotationChange removeOntologyAnnotationChange) {
+    var ontologyId = removeOntologyAnnotationChange.getOntologyId();
     var annotation = removeOntologyAnnotationChange.getAnnotation();
-    removeOntologyAnnotationHandler.handle(annotation);
+    removeOntologyAnnotationHandler.handle(ontologyId, annotation);
   }
 }
