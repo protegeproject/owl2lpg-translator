@@ -105,7 +105,7 @@ public enum EdgeLabel {
    * The Neo4J name prefixed with a colon
    */
   @Nonnull
-  public String getNeo4jName() {
+  public String toNeo4jLabel() {
     return printLabel;
   }
 }

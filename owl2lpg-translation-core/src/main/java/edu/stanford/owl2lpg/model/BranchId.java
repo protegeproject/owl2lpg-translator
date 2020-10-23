@@ -28,7 +28,7 @@ public abstract class BranchId {
   public abstract String getIdentifier();
 
   @Nonnull
-  public String printAsString() {
+  public String toQuotedString() {
     return "\"" + getIdentifier() + "\"";
   }
 

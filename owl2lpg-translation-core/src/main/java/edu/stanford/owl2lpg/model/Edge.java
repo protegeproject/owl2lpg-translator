@@ -83,7 +83,7 @@ public abstract class Edge {
 
   @JsonIgnore
   public String printLabel() {
-    return getLabel().getNeo4jName();
+    return getLabel().toNeo4jLabel();
   }
 
   @JsonIgnore

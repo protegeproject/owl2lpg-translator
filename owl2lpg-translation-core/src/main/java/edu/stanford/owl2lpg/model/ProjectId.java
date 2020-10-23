@@ -28,7 +28,7 @@ public abstract class ProjectId {
   public abstract String getIdentifier();
 
   @Nonnull
-  public String printAsString() {
+  public String toQuotedString() {
     return "\"" + getIdentifier() + "\"";
   }
 

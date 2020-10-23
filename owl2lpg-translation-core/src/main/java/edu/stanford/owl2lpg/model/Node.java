@@ -74,7 +74,7 @@ public abstract class Node {
   @JsonIgnore
   @Nonnull
   public String printLabels() {
-    return getLabels().getNeo4jName();
+    return getLabels().toNeo4jLabel();
   }
 
   @JsonProperty(N4J_JSON_LABELS)

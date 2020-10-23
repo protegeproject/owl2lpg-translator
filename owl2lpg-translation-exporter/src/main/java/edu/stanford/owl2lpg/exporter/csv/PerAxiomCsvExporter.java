@@ -39,12 +39,12 @@ public class PerAxiomCsvExporter {
     console.printf("\nNodes: %,d\n\n", csvWriter.getNodeCount());
     csvWriter.getNodeLabelsMultiset()
         .forEachEntry((nodeLabels, count) ->
-            console.printf("    Node   %-60s %,10d\n", nodeLabels.getNeo4jName(), count));
+            console.printf("    Node   %-60s %,10d\n", nodeLabels.toNeo4jLabel(), count));
 
     console.printf("\nRelationships: %,d\n\n", csvWriter.getEdgeCount());
     csvWriter.getEdgeLabelMultiset()
         .forEachEntry((edgeLabel, count) ->
-            console.printf("    Rel    %-36s %,10d\n", edgeLabel.getNeo4jName(), count));
+            console.printf("    Rel    %-36s %,10d\n", edgeLabel.toNeo4jLabel(), count));
 
     console.flush();
   }
