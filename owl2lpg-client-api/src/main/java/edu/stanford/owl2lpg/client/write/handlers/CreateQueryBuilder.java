@@ -10,7 +10,6 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 
 import javax.annotation.Nonnull;
@@ -19,12 +18,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANNOTATION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.CLASS_EXPRESSION;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_PROPERTY_EXPRESSION;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
@@ -106,49 +100,11 @@ public class CreateQueryBuilder implements TranslationVisitor {
   private String translateNodeToCypher(Node node) {
     var sb = new StringBuilder();
     if (!nodeVariableNameMapping.containsKey(node)) {
-      var createKeyword = getCreateKeyword(node);
-      sb.append(createKeyword).append(" ");
+      sb.append("MERGE ");
       appendTranslation(node, sb);
       sb.append("\n");
     }
     return sb.toString();
-  }
-
-  @Nonnull
-  private String getCreateKeyword(Node node) {
-    var createKeyword = "MERGE";
-    if (isAxiom(node) || isAnnotation(node)) {
-      createKeyword = "CREATE";
-    } else if (isClassExpression(node)
-        || isObjectPropertyExpression(node)
-        || isDataPropertyExpression(node)) {
-      createKeyword = isEntity(node) ? "MERGE" : "CREATE";
-    }
-    return createKeyword;
-  }
-
-  private static boolean isClassExpression(Node node) {
-    return node.getLabels().isa(CLASS_EXPRESSION);
-  }
-
-  private static boolean isObjectPropertyExpression(Node node) {
-    return node.getLabels().isa(OBJECT_PROPERTY_EXPRESSION);
-  }
-
-  private static boolean isDataPropertyExpression(Node node) {
-    return node.getLabels().isa(DATA_PROPERTY_EXPRESSION);
-  }
-
-  private static boolean isEntity(Node node) {
-    return node.getLabels().isa(ENTITY);
-  }
-
-  private static boolean isAxiom(Node node) {
-    return node.getLabels().isa(NodeLabels.AXIOM);
-  }
-
-  private static boolean isAnnotation(Node node) {
-    return node.getLabels().isa(ANNOTATION);
   }
 
   @Nonnull
@@ -217,7 +173,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
     return "MERGE (" + ontoDocVariable + ")-[" + EdgeLabel.AXIOM.getNeo4jName() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")";
   }
 
-  public ImmutableList<String> build() {
+  public ImmutableList build() {
     return cypherStrings.build();
   }
 }
