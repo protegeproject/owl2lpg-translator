@@ -10,14 +10,11 @@ import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
@@ -66,26 +63,10 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   private String cypherQueryToCreateAxiom(@Nonnull Translation translation) {
     var sb = new StringBuilder();
-    if (isDeclarationAxiomTranslation(translation)) {
-      translation.edges()
-          .map(this::translateToCypher)
-          .forEach(sb::append);
-    } else {
-      translation.edges()
-          .filter(this::excludeEntityIriOrInOntologySignatureEdge)
-          .map(this::translateToCypher)
-          .forEach(sb::append);
-    }
+    translation.edges()
+        .map(this::translateToCypher)
+        .forEach(sb::append);
     return sb.toString();
-  }
-
-
-  private static boolean isDeclarationAxiomTranslation(Translation translation) {
-    return translation.getTranslatedObject() instanceof OWLDeclarationAxiom;
-  }
-
-  private boolean excludeEntityIriOrInOntologySignatureEdge(Edge edge) {
-    return !(edge.isTypeOf(ENTITY_IRI) || edge.isTypeOf(IN_ONTOLOGY_SIGNATURE));
   }
 
   @Nonnull
