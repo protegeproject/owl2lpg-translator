@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologySignatureByTypeIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -28,7 +28,7 @@ public class Neo4jOntologySignatureByTypeIndex implements OntologySignatureByTyp
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final OntologyAccessor ontologyAccessor;
@@ -36,18 +36,19 @@ public class Neo4jOntologySignatureByTypeIndex implements OntologySignatureByTyp
   @Inject
   public Neo4jOntologySignatureByTypeIndex(@Nonnull ProjectId projectId,
                                            @Nonnull BranchId branchId,
-                                           @Nonnull OntologyDocumentId ontoDocId,
+                                           @Nonnull DocumentIdMap documentIdMap,
                                            @Nonnull OntologyAccessor ontologyAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.ontologyAccessor = checkNotNull(ontologyAccessor);
   }
 
   @Nonnull
   @Override
   public <E extends OWLEntity> Stream<E> getSignature(@Nonnull EntityType<E> entityType,
-                                                      @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.getEntitiesByType(entityType, projectId, branchId, ontoDocId).stream();
+                                                      @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAccessor.getEntitiesByType(entityType, projectId, branchId, documentId).stream();
   }
 }

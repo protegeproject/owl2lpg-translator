@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AxiomsByTypeIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -28,7 +28,7 @@ public class Neo4jAxiomsByTypeIndex implements AxiomsByTypeIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,17 +36,18 @@ public class Neo4jAxiomsByTypeIndex implements AxiomsByTypeIndex {
   @Inject
   public Neo4jAxiomsByTypeIndex(@Nonnull ProjectId projectId,
                                 @Nonnull BranchId branchId,
-                                @Nonnull OntologyDocumentId ontoDocId,
+                                @Nonnull DocumentIdMap documentIdMap,
                                 @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Override
   public <T extends OWLAxiom> Stream<T> getAxiomsByType(@Nonnull AxiomType<T> axiomType,
                                                         @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomAccessor.getAxiomsByType(axiomType, projectId, branchId, ontoDocId).stream();
+    var documentId = documentIdMap.get(projectId, owlOntologyID);
+    return axiomAccessor.getAxiomsByType(axiomType, projectId, branchId, documentId).stream();
   }
 }

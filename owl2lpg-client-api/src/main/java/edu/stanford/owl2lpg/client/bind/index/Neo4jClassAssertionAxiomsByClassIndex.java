@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ClassAssertionAxiomsByClassIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -32,7 +32,7 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final ClassAssertionAxiomAccessor classAssertionAxiomAccessor;
@@ -41,23 +41,24 @@ public class Neo4jClassAssertionAxiomsByClassIndex implements ClassAssertionAxio
   public Neo4jClassAssertionAxiomsByClassIndex(@Nonnull OWLClass root,
                                                @Nonnull ProjectId projectId,
                                                @Nonnull BranchId branchId,
-                                               @Nonnull OntologyDocumentId ontoDocId,
+                                               @Nonnull DocumentIdMap documentIdMap,
                                                @Nonnull ClassAssertionAxiomAccessor classAssertionAxiomAccessor) {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.classAssertionAxiomAccessor = checkNotNull(classAssertionAxiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLClass owlClass,
-                                                                @Nonnull OWLOntologyID owlOntologyID) {
+                                                                @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
-      return classAssertionAxiomAccessor.getAllAxioms(projectId, branchId, ontoDocId).stream();
+      return classAssertionAxiomAccessor.getAllAxioms(projectId, branchId, documentId).stream();
     } else {
-      return classAssertionAxiomAccessor.getAxiomsByClass(owlClass, projectId, branchId, ontoDocId).stream();
+      return classAssertionAxiomAccessor.getAxiomsByClass(owlClass, projectId, branchId, documentId).stream();
     }
   }
 }

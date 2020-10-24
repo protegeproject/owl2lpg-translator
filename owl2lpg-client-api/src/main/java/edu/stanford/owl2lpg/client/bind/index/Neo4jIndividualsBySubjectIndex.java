@@ -5,11 +5,11 @@ import edu.stanford.bmir.protege.web.server.index.IndividualsQueryResult;
 import edu.stanford.bmir.protege.web.shared.DataFactory;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -39,7 +39,7 @@ public class Neo4jIndividualsBySubjectIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final ProjectAccessor projectAccessor;
@@ -56,14 +56,14 @@ public class Neo4jIndividualsBySubjectIndex {
   @Inject
   public Neo4jIndividualsBySubjectIndex(@Nonnull ProjectId projectId,
                                         @Nonnull BranchId branchId,
-                                        @Nonnull OntologyDocumentId ontoDocId,
+                                        @Nonnull DocumentIdMap documentIdMap,
                                         @Nonnull ProjectAccessor projectAccessor,
                                         @Nonnull AssertionAxiomAccessor assertionAxiomAccessor,
                                         @Nonnull ClassHierarchyAccessor classHierarchyAccessor,
                                         @Nonnull Neo4jIndividualsByTypeIndex individualsByTypeIndex) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.projectAccessor = checkNotNull(projectAccessor);
     this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
     this.classHierarchyAccessor = checkNotNull(classHierarchyAccessor);
@@ -93,7 +93,7 @@ public class Neo4jIndividualsBySubjectIndex {
         for (OWLClass type : types) {
           if (type.equals(thePreferredType)) {
             matchingDirectType = Optional.of(type);
-          } else if (classHierarchyAccessor.getAncestors(thePreferredType, projectId, branchId, ontoDocId).contains(type)) {
+          } else if (containsIndirectType(thePreferredType, type)) {
             matchingIndirectType = Optional.of(type);
           }
         }
@@ -106,11 +106,10 @@ public class Neo4jIndividualsBySubjectIndex {
     }
     if (actualType == null) {
       // No preferred type or preferred type not found. Try for a specific type
-      actualType = projectAccessor.getOntologyDocumentIds(projectId, branchId)
+      actualType = documentIdMap.get(projectId)
           .stream()
-          .flatMap(ontoDoId -> assertionAxiomAccessor
-              .getClassAssertionsBySubject(individual, projectId, branchId, ontoDocId)
-              .stream())
+          .flatMap(documentId -> assertionAxiomAccessor.getClassAssertionsBySubject(
+              individual, projectId, branchId, documentId).stream())
           .map(OWLClassAssertionAxiom::getClassExpression)
           .filter(OWLClassExpression::isNamed)
           .map(OWLClassExpression::asOWLClass)
@@ -123,6 +122,12 @@ public class Neo4jIndividualsBySubjectIndex {
       actualMode = DIRECT_INSTANCES;
     }
     return getIndividualsQueryResult(individual, actualType, actualMode, pageSize);
+  }
+
+  private boolean containsIndirectType(OWLClass thePreferredType, OWLClass type) {
+    return documentIdMap.get(projectId)
+        .stream()
+        .anyMatch(documentId -> classHierarchyAccessor.getAncestors(thePreferredType, projectId, branchId, documentId).contains(type));
   }
 
   @NotNull

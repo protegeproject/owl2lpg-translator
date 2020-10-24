@@ -10,10 +10,10 @@ import edu.stanford.bmir.protege.web.server.util.Counter;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -46,7 +46,7 @@ public class Neo4jIndividualsByNameIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final LanguageManager languageManager;
@@ -64,7 +64,7 @@ public class Neo4jIndividualsByNameIndex {
   public Neo4jIndividualsByNameIndex(@Nonnull OWLClass root,
                                      @Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
-                                     @Nonnull OntologyDocumentId ontoDocId,
+                                     @Nonnull DocumentIdMap documentIdMap,
                                      @Nonnull LanguageManager languageManager,
                                      @Nonnull NamedIndividualAccessor namedIndividualAccessor,
                                      @Nonnull ClassHierarchyAccessor classHierarchyAccessor,
@@ -72,7 +72,7 @@ public class Neo4jIndividualsByNameIndex {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.languageManager = checkNotNull(languageManager);
     this.namedIndividualAccessor = checkNotNull(namedIndividualAccessor);
     this.classHierarchyAccessor = checkNotNull(classHierarchyAccessor);
@@ -122,8 +122,9 @@ public class Neo4jIndividualsByNameIndex {
 
   @Nonnull
   private Stream<OWLNamedIndividual> getAllInstances(List<SearchString> searchStrings) {
-    return namedIndividualAccessor.getAllIndividuals(projectId, branchId, ontoDocId)
+    return documentIdMap.get(projectId)
         .stream()
+        .flatMap(documentId -> namedIndividualAccessor.getAllIndividuals(projectId, branchId, documentId).stream())
         .filter(individual -> matchesSearchStrings(individual, searchStrings));
   }
 
@@ -142,20 +143,20 @@ public class Neo4jIndividualsByNameIndex {
   @Nonnull
   private Stream<OWLNamedIndividual> getDirectInstances(OWLClass owlClass, List<SearchString> searchStrings) {
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
-      return namedIndividualAccessor.getAllIndividuals(projectId, branchId, ontoDocId)
-          .stream()
-          .filter(individual -> matchesSearchStrings(individual, searchStrings));
+      return getAllInstances(searchStrings);
     } else {
-      return namedIndividualAccessor.getIndividualsByType(owlClass, projectId, branchId, ontoDocId)
+      return documentIdMap.get(projectId)
           .stream()
+          .flatMap(documentId -> namedIndividualAccessor.getIndividualsByType(owlClass, projectId, branchId, documentId).stream())
           .filter(individual -> matchesSearchStrings(individual, searchStrings));
     }
   }
 
   @Nonnull
   private Stream<OWLNamedIndividual> getIndirectInstances(OWLClass owlClass, List<SearchString> searchStrings) {
-    return classHierarchyAccessor.getDescendants(owlClass, projectId, branchId, ontoDocId)
+    return documentIdMap.get(projectId)
         .stream()
+        .flatMap(documentId -> classHierarchyAccessor.getDescendants(owlClass, projectId, branchId, documentId).stream())
         .flatMap(cls -> getDirectInstances(cls, searchStrings))
         .distinct();
   }

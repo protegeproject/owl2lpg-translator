@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologyAnnotationsSignatureIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -29,7 +29,7 @@ public class Neo4jOntologyAnnotationsSignatureIndex implements OntologyAnnotatio
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final OntologyAnnotationsAccessor ontologyAnnotationsAccessor;
@@ -37,24 +37,26 @@ public class Neo4jOntologyAnnotationsSignatureIndex implements OntologyAnnotatio
   @Inject
   public Neo4jOntologyAnnotationsSignatureIndex(@Nonnull ProjectId projectId,
                                                 @Nonnull BranchId branchId,
-                                                @Nonnull OntologyDocumentId ontoDocId,
+                                                @Nonnull DocumentIdMap documentIdMap,
                                                 @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.ontologyAnnotationsAccessor = checkNotNull(ontologyAnnotationsAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLAnnotationProperty> getOntologyAnnotationsSignature(@Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAnnotationsAccessor.getOntologyAnnotationProperties(projectId, branchId, ontoDocId).stream();
+  public Stream<OWLAnnotationProperty> getOntologyAnnotationsSignature(@Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAnnotationsAccessor.getOntologyAnnotationProperties(projectId, branchId, documentId).stream();
   }
 
   @Override
   public boolean containsEntityInOntologyAnnotationsSignature(@Nonnull OWLEntity owlEntity,
-                                                              @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, ontoDocId)
+                                                              @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, documentId)
         .stream()
         .map(OWLAnnotation::getSignature)
         .anyMatch(annotationSignature -> annotationSignature.contains(owlEntity));

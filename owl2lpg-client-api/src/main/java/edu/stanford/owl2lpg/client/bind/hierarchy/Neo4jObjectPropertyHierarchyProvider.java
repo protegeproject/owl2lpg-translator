@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyProvider;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoot;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ObjectPropertyHierarchyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -36,7 +36,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final EntityAccessor entityAccessor;
@@ -51,14 +51,14 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   public Neo4jObjectPropertyHierarchyProvider(@Nonnull @ObjectPropertyHierarchyRoot OWLObjectProperty root,
                                               @Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull OntologyDocumentId ontoDocId,
+                                              @Nonnull DocumentIdMap documentIdMap,
                                               @Nonnull EntityAccessor entityAccessor,
                                               @Nonnull ObjectPropertyHierarchyAccessor hierarchyAccessor,
                                               @Nonnull OWLDataFactory dataFactory) {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
     this.dataFactory = checkNotNull(dataFactory);
@@ -72,15 +72,23 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   @Override
   public Collection<OWLObjectProperty> getChildren(OWLObjectProperty owlObjectProperty) {
     if (root.equals(dataFactory.getOWLTopObjectProperty()) && root.equals(owlObjectProperty)) {
-      return hierarchyAccessor.getTopChildren(projectId, branchId, ontoDocId);
+      return documentIdMap.get(projectId)
+          .stream()
+          .flatMap(documentId -> hierarchyAccessor.getTopChildren(projectId, branchId, documentId).stream())
+          .collect(ImmutableSet.toImmutableSet());
     } else {
-      return hierarchyAccessor.getChildren(owlObjectProperty, projectId, branchId, ontoDocId);
+      return documentIdMap.get(projectId)
+          .stream()
+          .flatMap(documentId -> hierarchyAccessor.getChildren(owlObjectProperty, projectId, branchId, documentId).stream())
+          .collect(ImmutableSet.toImmutableSet());
     }
   }
 
   @Override
   public boolean isLeaf(OWLObjectProperty owlObjectProperty) {
-    return hierarchyAccessor.isLeaf(owlObjectProperty, projectId, branchId, ontoDocId);
+    return documentIdMap.get(projectId)
+        .stream()
+        .anyMatch(documentId -> hierarchyAccessor.isLeaf(owlObjectProperty, projectId, branchId, documentId));
   }
 
   @Override
@@ -88,35 +96,50 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
     if (root.equals(dataFactory.getOWLTopObjectProperty()) && root.equals(owlObjectProperty)) {
       return getAllObjectProperties();
     } else {
-      return hierarchyAccessor.getDescendants(owlObjectProperty, projectId, branchId, ontoDocId);
+      return documentIdMap.get(projectId)
+          .stream()
+          .flatMap(documentId -> hierarchyAccessor.getDescendants(owlObjectProperty, projectId, branchId, documentId).stream())
+          .collect(ImmutableSet.toImmutableSet());
     }
   }
 
   @Nonnull
   private ImmutableSet<OWLObjectProperty> getAllObjectProperties() {
-    return entityAccessor.getEntitiesByType(EntityType.OBJECT_PROPERTY, projectId, branchId, ontoDocId)
+    return documentIdMap.get(projectId)
         .stream()
+        .flatMap(documentId -> entityAccessor.getEntitiesByType(EntityType.OBJECT_PROPERTY, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<OWLObjectProperty> getParents(OWLObjectProperty owlObjectProperty) {
-    return hierarchyAccessor.getParents(owlObjectProperty, projectId, branchId, ontoDocId);
+    return documentIdMap.get(projectId)
+        .stream()
+        .flatMap(documentId -> hierarchyAccessor.getParents(owlObjectProperty, projectId, branchId, documentId).stream())
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<OWLObjectProperty> getAncestors(OWLObjectProperty owlObjectProperty) {
-    return hierarchyAccessor.getAncestors(owlObjectProperty, projectId, branchId, ontoDocId);
+    return documentIdMap.get(projectId)
+        .stream()
+        .flatMap(documentId -> hierarchyAccessor.getAncestors(owlObjectProperty, projectId, branchId, documentId).stream())
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<List<OWLObjectProperty>> getPathsToRoot(OWLObjectProperty owlObjectProperty) {
-    return hierarchyAccessor.getPathsToRoot(owlObjectProperty, projectId, branchId, ontoDocId);
+    return documentIdMap.get(projectId)
+        .stream()
+        .flatMap(documentId -> hierarchyAccessor.getPathsToRoot(owlObjectProperty, projectId, branchId, documentId).stream())
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public boolean isAncestor(OWLObjectProperty parent, OWLObjectProperty child) {
-    return hierarchyAccessor.isAncestor(parent, child, projectId, branchId, ontoDocId);
+    return documentIdMap.get(projectId)
+        .stream()
+        .anyMatch(documentId -> hierarchyAccessor.isAncestor(parent, child, projectId, branchId, documentId));
   }
 
   @Override

@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.DataPropertyDomainAxiomsIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
@@ -28,7 +28,7 @@ public class Neo4jDataPropertyDomainAxiomsIndex implements DataPropertyDomainAxi
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,19 +36,20 @@ public class Neo4jDataPropertyDomainAxiomsIndex implements DataPropertyDomainAxi
   @Inject
   public Neo4jDataPropertyDomainAxiomsIndex(@Nonnull ProjectId projectId,
                                             @Nonnull BranchId branchId,
-                                            @Nonnull OntologyDocumentId ontoDocId,
+                                            @Nonnull DocumentIdMap documentIdMap,
                                             @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLDataPropertyDomainAxiom> getDataPropertyDomainAxioms(@Nonnull OWLDataProperty owlDataProperty,
-                                                                        @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomAccessor.getAxiomsBySubject(owlDataProperty, projectId, branchId, ontoDocId)
+                                                                        @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return axiomAccessor.getAxiomsBySubject(owlDataProperty, projectId, branchId, documentId)
         .stream()
         .filter(OWLDataPropertyDomainAxiom.class::isInstance)
         .map(OWLDataPropertyDomainAxiom.class::cast);

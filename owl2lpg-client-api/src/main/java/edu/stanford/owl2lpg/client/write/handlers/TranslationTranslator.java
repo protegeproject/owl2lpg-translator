@@ -25,7 +25,7 @@ public class TranslationTranslator {
   private final BranchId branchId;
 
   @Nonnull
-  private final QueryBuilderFactory queryBuilderFactory;
+  private final QueryBuilder queryBuilder;
 
   @Nonnull
   private final DocumentIdMap documentIdMap;
@@ -33,11 +33,11 @@ public class TranslationTranslator {
   @Inject
   public TranslationTranslator(@Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
-                               @Nonnull QueryBuilderFactory queryBuilderFactory,
+                               @Nonnull QueryBuilder queryBuilder,
                                @Nonnull DocumentIdMap documentIdMap) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.queryBuilderFactory = checkNotNull(queryBuilderFactory);
+    this.queryBuilder = checkNotNull(queryBuilder);
     this.documentIdMap = checkNotNull(documentIdMap);
   }
 
@@ -45,7 +45,7 @@ public class TranslationTranslator {
   public ImmutableList<String> translateToCypherCreateQuery(@Nonnull OWLOntologyID ontologyId,
                                                             @Nonnull Translation translation) {
     var documentId = documentIdMap.get(projectId, ontologyId);
-    var createQueryBuilder = queryBuilderFactory.getCreateQueryBuilder(projectId, branchId, documentId, ontologyId);
+    var createQueryBuilder = queryBuilder.getCreateQueryBuilder(projectId, branchId, documentId, ontologyId);
     translation.accept(createQueryBuilder);
     return createQueryBuilder.build();
   }
@@ -54,7 +54,7 @@ public class TranslationTranslator {
   public ImmutableList<String> translateToCypherDeleteQuery(@Nonnull OWLOntologyID ontologyId,
                                                             @Nonnull Translation translation) {
     var documentId = documentIdMap.get(projectId, ontologyId);
-    var deleteQueryBuilder = queryBuilderFactory.getDeleteQueryBuilder(projectId, branchId, documentId, ontologyId);
+    var deleteQueryBuilder = queryBuilder.getDeleteQueryBuilder(projectId, branchId, documentId, ontologyId);
     translation.accept(deleteQueryBuilder);
     return deleteQueryBuilder.build();
   }

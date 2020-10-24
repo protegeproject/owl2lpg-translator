@@ -56,7 +56,7 @@ public class DeleteQueryBuilder implements TranslationVisitor {
 
   private final Map<Edge, String> edgeVariableNameMapping = Maps.newHashMap();
 
-  private final ImmutableList.Builder cypherStrings = new ImmutableList.Builder();
+  private final ImmutableList.Builder<String> cypherStrings = new ImmutableList.Builder<String>();
 
   public DeleteQueryBuilder(@Nonnull ProjectId projectId,
                             @Nonnull BranchId branchId,

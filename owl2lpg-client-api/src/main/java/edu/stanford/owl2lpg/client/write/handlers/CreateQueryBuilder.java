@@ -51,7 +51,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   private final Map<Node, String> nodeVariableNameMapping = Maps.newHashMap();
 
-  private final ImmutableList.Builder cypherStrings = new ImmutableList.Builder();
+  private final ImmutableList.Builder<String> cypherStrings = new ImmutableList.Builder<String>();
 
   public CreateQueryBuilder(@Nonnull ProjectId projectId,
                             @Nonnull BranchId branchId,
@@ -194,7 +194,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
     return "MERGE (" + ontoDocVariable + ")-[" + EdgeLabel.AXIOM.toNeo4jLabel() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")";
   }
 
-  public ImmutableList build() {
+  public ImmutableList<String> build() {
     return cypherStrings.build();
   }
 }

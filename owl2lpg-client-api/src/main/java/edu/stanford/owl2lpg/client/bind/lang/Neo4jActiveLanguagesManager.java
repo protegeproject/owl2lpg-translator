@@ -5,9 +5,9 @@ import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.lang.ActiveLanguagesManager;
 import edu.stanford.bmir.protege.web.shared.lang.DictionaryLanguageUsage;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.lang.DictionaryLanguageAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 
 import javax.annotation.Nonnull;
@@ -31,7 +31,7 @@ public class Neo4jActiveLanguagesManager implements ActiveLanguagesManager {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final DictionaryLanguageAccessor dictionaryLanguageAccessor;
@@ -39,11 +39,11 @@ public class Neo4jActiveLanguagesManager implements ActiveLanguagesManager {
   @Inject
   public Neo4jActiveLanguagesManager(@Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
-                                     @Nonnull OntologyDocumentId ontoDocId,
+                                     @Nonnull DocumentIdMap documentIdMap,
                                      @Nonnull DictionaryLanguageAccessor dictionaryLanguageAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.dictionaryLanguageAccessor = checkNotNull(dictionaryLanguageAccessor);
   }
 
@@ -59,8 +59,9 @@ public class Neo4jActiveLanguagesManager implements ActiveLanguagesManager {
   @Nonnull
   @Override
   public ImmutableList<DictionaryLanguageUsage> getLanguageUsage() {
-    return dictionaryLanguageAccessor.getUsageSummary(projectId, branchId, ontoDocId)
+    return documentIdMap.get(projectId)
         .stream()
+        .flatMap(documentId -> dictionaryLanguageAccessor.getUsageSummary(projectId, branchId, documentId).stream())
         .sorted(Collections.reverseOrder(comparingByValue()))
         .map(entry -> DictionaryLanguageUsage.get(entry.getKey(), entry.getValue()))
         .collect(ImmutableList.toImmutableList());

@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.ClassAssertionAxiomsByIndividualIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -28,7 +28,7 @@ public class Neo4jClassAssertionAxiomsByIndividualIndex implements ClassAssertio
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AssertionAxiomAccessor assertionAxiomAccessor;
@@ -36,19 +36,20 @@ public class Neo4jClassAssertionAxiomsByIndividualIndex implements ClassAssertio
   @Inject
   public Neo4jClassAssertionAxiomsByIndividualIndex(@Nonnull ProjectId projectId,
                                                     @Nonnull BranchId branchId,
-                                                    @Nonnull OntologyDocumentId ontoDocId,
+                                                    @Nonnull DocumentIdMap documentIdMap,
                                                     @Nonnull AssertionAxiomAccessor assertionAxiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
   }
 
   @Override
   public Stream<OWLClassAssertionAxiom> getClassAssertionAxioms(@Nonnull OWLIndividual owlIndividual,
-                                                                @Nonnull OWLOntologyID owlOntologyID) {
+                                                                @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
     return assertionAxiomAccessor
-        .getClassAssertionsBySubject(owlIndividual, projectId, branchId, ontoDocId)
+        .getClassAssertionsBySubject(owlIndividual, projectId, branchId, documentId)
         .stream();
   }
 }

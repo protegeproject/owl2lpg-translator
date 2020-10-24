@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologyAnnotationsIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -27,7 +27,7 @@ public class Neo4jOntologyAnnotationsIndex implements OntologyAnnotationsIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final OntologyAnnotationsAccessor ontologyAnnotationsAccessor;
@@ -35,18 +35,19 @@ public class Neo4jOntologyAnnotationsIndex implements OntologyAnnotationsIndex {
   @Inject
   public Neo4jOntologyAnnotationsIndex(@Nonnull ProjectId projectId,
                                        @Nonnull BranchId branchId,
-                                       @Nonnull OntologyDocumentId ontoDocId,
+                                       @Nonnull DocumentIdMap documentIdMap,
                                        @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.ontologyAnnotationsAccessor = checkNotNull(ontologyAnnotationsAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLAnnotation> getOntologyAnnotations(@Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, ontoDocId).stream();
+  public Stream<OWLAnnotation> getOntologyAnnotations(@Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, documentId).stream();
   }
 
   @Override

@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologyAxiomsSignatureIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -28,7 +28,7 @@ public class Neo4jOntologyAxiomsSignatureIndex implements OntologyAxiomsSignatur
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final OntologyAccessor ontologyAccessor;
@@ -36,24 +36,26 @@ public class Neo4jOntologyAxiomsSignatureIndex implements OntologyAxiomsSignatur
   @Inject
   public Neo4jOntologyAxiomsSignatureIndex(@Nonnull ProjectId projectId,
                                            @Nonnull BranchId branchId,
-                                           @Nonnull OntologyDocumentId ontoDocId,
+                                           @Nonnull DocumentIdMap documentIdMap,
                                            @Nonnull OntologyAccessor ontologyAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.ontologyAccessor = checkNotNull(ontologyAccessor);
   }
 
   @Override
   public <E extends OWLEntity> Stream<E> getOntologyAxiomsSignature(@Nonnull EntityType<E> entityType,
-                                                                    @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.getEntitiesByType(entityType, projectId, branchId, ontoDocId).stream();
+                                                                    @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAccessor.getEntitiesByType(entityType, projectId, branchId, documentId).stream();
   }
 
   @Override
   public boolean containsEntityInOntologyAxiomsSignature(@Nonnull OWLEntity owlEntity,
-                                                         @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.getEntitiesByIri(owlEntity.getIRI(), projectId, branchId, ontoDocId)
+                                                         @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAccessor.getEntitiesByIri(owlEntity.getIRI(), projectId, branchId, documentId)
         .stream()
         .anyMatch(owlEntity::equals);
   }

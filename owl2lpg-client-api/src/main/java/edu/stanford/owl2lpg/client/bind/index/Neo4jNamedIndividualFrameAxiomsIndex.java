@@ -1,9 +1,10 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.NamedIndividualFrameAxiomIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -27,7 +28,7 @@ public class Neo4jNamedIndividualFrameAxiomsIndex implements NamedIndividualFram
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -35,17 +36,20 @@ public class Neo4jNamedIndividualFrameAxiomsIndex implements NamedIndividualFram
   @Inject
   public Neo4jNamedIndividualFrameAxiomsIndex(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull OntologyDocumentId ontoDocId,
+                                              @Nonnull DocumentIdMap documentIdMap,
                                               @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Set<OWLAxiom> getNamedIndividualFrameAxioms(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return axiomAccessor.getAxiomsBySubject(owlNamedIndividual, projectId, branchId, ontoDocId);
+    return documentIdMap.get(projectId)
+        .stream()
+        .flatMap(documentId -> axiomAccessor.getAxiomsBySubject(owlNamedIndividual, projectId, branchId, documentId).stream())
+        .collect(ImmutableSet.toImmutableSet());
   }
 }

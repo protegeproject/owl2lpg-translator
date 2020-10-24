@@ -8,14 +8,20 @@ import org.semanticweb.owlapi.model.OWLOntologyID;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class QueryBuilderFactory {
+public class QueryBuilder {
+
+  @Nonnull
+  private final VariableNameGenerator variableNameGenerator;
 
   @Inject
-  public QueryBuilderFactory() {
+  public QueryBuilder(@Nonnull VariableNameGenerator variableNameGenerator) {
+    this.variableNameGenerator = checkNotNull(variableNameGenerator);
   }
 
   @Nonnull
@@ -23,7 +29,7 @@ public class QueryBuilderFactory {
                                                   @Nonnull BranchId branchId,
                                                   @Nonnull OntologyDocumentId documentId,
                                                   @Nonnull OWLOntologyID ontologyId) {
-    return new CreateQueryBuilder(projectId, branchId, documentId, ontologyId, new VariableNameGenerator());
+    return new CreateQueryBuilder(projectId, branchId, documentId, ontologyId, variableNameGenerator);
   }
 
   @Nonnull
@@ -31,6 +37,6 @@ public class QueryBuilderFactory {
                                                   @Nonnull BranchId branchId,
                                                   @Nonnull OntologyDocumentId documentId,
                                                   @Nonnull OWLOntologyID ontologyId) {
-    return new DeleteQueryBuilder(projectId, branchId, documentId, ontologyId, new VariableNameGenerator());
+    return new DeleteQueryBuilder(projectId, branchId, documentId, ontologyId, variableNameGenerator);
   }
 }

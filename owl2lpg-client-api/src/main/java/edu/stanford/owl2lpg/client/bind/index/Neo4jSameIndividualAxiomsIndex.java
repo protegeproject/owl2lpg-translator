@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.SameIndividualAxiomsIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -28,7 +28,7 @@ public class Neo4jSameIndividualAxiomsIndex implements SameIndividualAxiomsIndex
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,21 +36,22 @@ public class Neo4jSameIndividualAxiomsIndex implements SameIndividualAxiomsIndex
   @Inject
   public Neo4jSameIndividualAxiomsIndex(@Nonnull ProjectId projectId,
                                         @Nonnull BranchId branchId,
-                                        @Nonnull OntologyDocumentId ontoDocId,
+                                        @Nonnull DocumentIdMap documentIdMap,
                                         @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLSameIndividualAxiom> getSameIndividualAxioms(@Nonnull OWLIndividual owlIndividual,
-                                                                @Nonnull OWLOntologyID owlOntologyID) {
+                                                                @Nonnull OWLOntologyID ontologyId) {
     // TODO Handle the case when the instance is anonymous
+    var documentId = documentIdMap.get(projectId, ontologyId);
     return (owlIndividual.isNamed()) ?
-        axiomAccessor.getAxiomsBySubject(owlIndividual.asOWLNamedIndividual(), projectId, branchId, ontoDocId)
+        axiomAccessor.getAxiomsBySubject(owlIndividual.asOWLNamedIndividual(), projectId, branchId, documentId)
             .stream()
             .filter(OWLSameIndividualAxiom.class::isInstance)
             .map(OWLSameIndividualAxiom.class::cast) :

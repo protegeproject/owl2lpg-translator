@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationAssertionAxiomsByValueIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AnnotationAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
@@ -28,7 +28,7 @@ public class Neo4jAnnotationAssertionAxiomsByValueIndex implements AnnotationAss
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor;
@@ -36,18 +36,19 @@ public class Neo4jAnnotationAssertionAxiomsByValueIndex implements AnnotationAss
   @Inject
   public Neo4jAnnotationAssertionAxiomsByValueIndex(@Nonnull ProjectId projectId,
                                                     @Nonnull BranchId branchId,
-                                                    @Nonnull OntologyDocumentId ontoDocId,
+                                                    @Nonnull DocumentIdMap documentIdMap,
                                                     @Nonnull AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.annotationAssertionAxiomAccessor = checkNotNull(annotationAssertionAxiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLAnnotationAssertionAxiom> getAxiomsByValue(@Nonnull OWLAnnotationValue owlAnnotationValue,
-                                                              @Nonnull OWLOntologyID owlOntologyID) {
-    return annotationAssertionAxiomAccessor.getAxiomsByValue(owlAnnotationValue, projectId, branchId, ontoDocId).stream();
+                                                              @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return annotationAssertionAxiomAccessor.getAxiomsByValue(owlAnnotationValue, projectId, branchId, documentId).stream();
   }
 }

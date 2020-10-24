@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationPropertyRangeAxiomsIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
@@ -28,7 +28,7 @@ public class Neo4jAnnotationPropertyRangeAxiomsIndex implements AnnotationProper
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,19 +36,20 @@ public class Neo4jAnnotationPropertyRangeAxiomsIndex implements AnnotationProper
   @Inject
   public Neo4jAnnotationPropertyRangeAxiomsIndex(@Nonnull ProjectId projectId,
                                                  @Nonnull BranchId branchId,
-                                                 @Nonnull OntologyDocumentId ontoDocId,
+                                                 @Nonnull DocumentIdMap documentIdMap,
                                                  @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLAnnotationPropertyRangeAxiom> getAnnotationPropertyRangeAxioms(@Nonnull OWLAnnotationProperty owlAnnotationProperty,
-                                                                                  @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomAccessor.getAxiomsBySubject(owlAnnotationProperty, projectId, branchId, ontoDocId)
+                                                                                  @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return axiomAccessor.getAxiomsBySubject(owlAnnotationProperty, projectId, branchId, documentId)
         .stream()
         .filter(OWLAnnotationPropertyRangeAxiom.class::isInstance)
         .map(OWLAnnotationPropertyRangeAxiom.class::cast);

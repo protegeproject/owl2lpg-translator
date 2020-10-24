@@ -14,7 +14,8 @@ import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializerModule;
     DatabaseModule.class,
     OntologyContextModule.class,
     OntologyObjectSerializerModule.class,
-    OntologyChangeHandlerModule.class
+    OntologyChangeHandlerModule.class,
+    VariableNameGeneratorModule.class
 })
 @ProjectSingleton
 public interface OntologyChangeHandlerComponent {

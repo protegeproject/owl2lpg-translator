@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologyAxiomsIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -27,7 +27,7 @@ public class Neo4jOntologyAxiomsIndex implements OntologyAxiomsIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final OntologyAccessor ontologyAccessor;
@@ -35,23 +35,25 @@ public class Neo4jOntologyAxiomsIndex implements OntologyAxiomsIndex {
   @Inject
   public Neo4jOntologyAxiomsIndex(@Nonnull ProjectId projectId,
                                   @Nonnull BranchId branchId,
-                                  @Nonnull OntologyDocumentId ontoDocId,
+                                  @Nonnull DocumentIdMap documentIdMap,
                                   @Nonnull OntologyAccessor ontologyAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.ontologyAccessor = checkNotNull(ontologyAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLAxiom> getAxioms(@Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.getAllAxioms(projectId, branchId, ontoDocId).stream();
+  public Stream<OWLAxiom> getAxioms(@Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAccessor.getAllAxioms(projectId, branchId, documentId).stream();
   }
 
   @Override
-  public boolean containsAxiom(@Nonnull OWLAxiom owlAxiom, @Nonnull OWLOntologyID owlOntologyID) {
-    return ontologyAccessor.containsAxiom(owlAxiom, projectId, branchId, ontoDocId);
+  public boolean containsAxiom(@Nonnull OWLAxiom owlAxiom, @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return ontologyAccessor.containsAxiom(owlAxiom, projectId, branchId, documentId);
   }
 
   @Override

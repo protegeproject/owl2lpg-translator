@@ -1,8 +1,6 @@
 package edu.stanford.owl2lpg.client.write.handlers;
 
-import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
-import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -28,11 +26,9 @@ public class RemoveAxiomHandler {
   private final TranslationTranslator translationTranslator;
 
   @Inject
-  public RemoveAxiomHandler(@Nonnull ProjectId projectId,
-                            @Nonnull GraphWriter graphWriter,
+  public RemoveAxiomHandler(@Nonnull GraphWriter graphWriter,
                             @Nonnull AxiomTranslator axiomTranslator,
-                            @Nonnull TranslationTranslator translationTranslator,
-                            @Nonnull DocumentIdMap documentIdMap) {
+                            @Nonnull TranslationTranslator translationTranslator) {
     this.graphWriter = checkNotNull(graphWriter);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.translationTranslator = checkNotNull(translationTranslator);

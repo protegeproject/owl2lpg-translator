@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.DisjointDataPropertiesAxiomsIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
@@ -28,7 +28,7 @@ public class Neo4jDisjointDataPropertiesAxiomsIndex implements DisjointDataPrope
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,19 +36,20 @@ public class Neo4jDisjointDataPropertiesAxiomsIndex implements DisjointDataPrope
   @Inject
   public Neo4jDisjointDataPropertiesAxiomsIndex(@Nonnull ProjectId projectId,
                                                 @Nonnull BranchId branchId,
-                                                @Nonnull OntologyDocumentId ontoDocId,
+                                                @Nonnull DocumentIdMap documentIdMap,
                                                 @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLDisjointDataPropertiesAxiom> getDisjointDataPropertiesAxioms(@Nonnull OWLDataProperty owlDataProperty,
-                                                                                @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomAccessor.getAxiomsBySubject(owlDataProperty, projectId, branchId, ontoDocId)
+                                                                                @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return axiomAccessor.getAxiomsBySubject(owlDataProperty, projectId, branchId, documentId)
         .stream()
         .filter(OWLDisjointDataPropertiesAxiom.class::isInstance)
         .map(OWLDisjointDataPropertiesAxiom.class::cast);

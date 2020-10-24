@@ -1,6 +1,7 @@
 package edu.stanford.owl2lpg.client;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import edu.stanford.bmir.protege.web.shared.inject.ProjectSingleton;
 import edu.stanford.owl2lpg.model.OntologyDocumentId;
@@ -38,14 +39,24 @@ public class DocumentIdMap {
   @Nonnull
   public synchronized OntologyDocumentId get(@Nonnull ProjectId projectId,
                                              @Nonnull OWLOntologyID ontologyId) {
-    ensureLoaded(projectId);
-    var innerMap = documentIdMap.computeIfAbsent(projectId, k -> Maps.newHashMap());
+    var innerMap = getDocumentIdInnerMap(projectId);
     var documentId = innerMap.get(ontologyId);
     if (documentId == null) {
       documentId = OntologyDocumentId.create();
       innerMap.put(ontologyId, documentId);
     }
     return documentId;
+  }
+
+  @Nonnull
+  public synchronized ImmutableSet<OntologyDocumentId> get(@Nonnull ProjectId projectId) {
+    return ImmutableSet.copyOf(getDocumentIdInnerMap(projectId).values());
+  }
+
+  @Nonnull
+  private Map<OWLOntologyID, OntologyDocumentId> getDocumentIdInnerMap(@Nonnull ProjectId projectId) {
+    ensureLoaded(projectId);
+    return documentIdMap.computeIfAbsent(projectId, k -> Maps.newHashMap());
   }
 
   private void ensureLoaded(ProjectId projectId) {

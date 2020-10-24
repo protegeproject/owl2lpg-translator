@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.AnnotationAxiomsByIriReferenceIndex;
+import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
@@ -28,7 +28,7 @@ public class Neo4jAnnotationAxiomsByIriReferenceIndex implements AnnotationAxiom
   private final BranchId branchId;
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,16 +36,17 @@ public class Neo4jAnnotationAxiomsByIriReferenceIndex implements AnnotationAxiom
   @Inject
   public Neo4jAnnotationAxiomsByIriReferenceIndex(@Nonnull ProjectId projectId,
                                                   @Nonnull BranchId branchId,
-                                                  @Nonnull OntologyDocumentId ontoDocId,
+                                                  @Nonnull DocumentIdMap documentIdMap,
                                                   @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
+    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Override
-  public Stream<OWLAnnotationAxiom> getReferencingAxioms(@Nonnull IRI iri, @Nonnull OWLOntologyID owlOntologyID) {
-    return axiomAccessor.getAnnotationAxioms(iri, projectId, branchId, ontoDocId).stream();
+  public Stream<OWLAnnotationAxiom> getReferencingAxioms(@Nonnull IRI iri, @Nonnull OWLOntologyID ontologyId) {
+    var documentId = documentIdMap.get(projectId, ontologyId);
+    return axiomAccessor.getAnnotationAxioms(iri, projectId, branchId, documentId).stream();
   }
 }
