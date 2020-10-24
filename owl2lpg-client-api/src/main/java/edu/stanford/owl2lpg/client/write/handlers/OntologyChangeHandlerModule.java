@@ -12,6 +12,10 @@ import edu.stanford.bmir.protege.web.shared.inject.ProjectSingleton;
 public abstract class OntologyChangeHandlerModule {
 
   @Binds
+  public abstract VariableNameGenerator
+  provideVariableNameGenerator(VariableNameGeneratorImpl impl);
+
+  @Binds
   @ProjectSingleton
   public abstract OntologyAnnotationChangeHandler
   provideOntologyAnnotationChangeHandler(OntologyAnnotationChangeHandlerImpl impl);
