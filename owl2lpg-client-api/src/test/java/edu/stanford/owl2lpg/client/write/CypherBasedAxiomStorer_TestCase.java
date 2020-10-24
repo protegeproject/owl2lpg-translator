@@ -7,8 +7,9 @@ import edu.stanford.owl2lpg.client.read.NodeMapperModule;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.DaggerAxiomAccessorComponent;
 import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
-import edu.stanford.owl2lpg.client.write.handlers.QueryBuilderFactory;
+import edu.stanford.owl2lpg.client.write.handlers.QueryBuilder;
 import edu.stanford.owl2lpg.client.write.handlers.TranslationTranslator;
+import edu.stanford.owl2lpg.client.write.handlers.VariableNameGeneratorImpl;
 import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
@@ -72,7 +73,9 @@ public class CypherBasedAxiomStorer_TestCase {
         axiomTranslator = translatorComponent.getAxiomTranslator();
 
         // Translator from Translation to Cypher string
-        translationTranslator = new TranslationTranslator(projectId, branchId, new QueryBuilderFactory(), documentIdMap);
+        var variableNameGenerator = new VariableNameGeneratorImpl();
+        var queryBuilder = new QueryBuilder(variableNameGenerator);
+        translationTranslator = new TranslationTranslator(projectId, branchId, queryBuilder, documentIdMap);
 
         // The writer to execute Cypher query
         graphWriter = new GraphWriter(driver);
