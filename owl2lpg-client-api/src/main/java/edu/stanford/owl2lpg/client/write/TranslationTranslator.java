@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write.handlers;
+package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.client.DocumentIdMap;

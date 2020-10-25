@@ -1,6 +1,7 @@
-package edu.stanford.owl2lpg.client.write.handlers;
+package edu.stanford.owl2lpg.client.write.handlers.impl;
 
 import edu.stanford.owl2lpg.client.write.GraphWriter;
+import edu.stanford.owl2lpg.client.write.TranslationTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLOntologyID;
