@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv;
+package edu.stanford.owl2lpg.exporter.csv.writer;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import dagger.Module;
@@ -28,12 +28,6 @@ public class CsvWriterModule {
 
   public CsvWriterModule(@Nonnull Path outputPath) {
     this.outputPath = checkNotNull(outputPath);
-  }
-
-  @Provides
-  @TranslationSessionScope
-  public Neo4jRelationshipsCsvSchema provideEdgeCsvSchema() {
-    return new Neo4jRelationshipsCsvSchema();
   }
 
   @Provides
