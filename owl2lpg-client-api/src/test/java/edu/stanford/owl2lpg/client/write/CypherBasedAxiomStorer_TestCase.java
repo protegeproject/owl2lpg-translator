@@ -70,8 +70,8 @@ public class CypherBasedAxiomStorer_TestCase {
     axiomTranslator = translatorComponent.getAxiomTranslator();
 
     // Translator from Translation to Cypher string
-    var queryBuilder = new QueryBuilder();
-    translationTranslator = new TranslationTranslator(projectId, branchId, queryBuilder, documentIdMap);
+    var queryBuilderFactory = new QueryBuilderFactory();
+    translationTranslator = new TranslationTranslator(projectId, branchId, queryBuilderFactory, documentIdMap);
 
     // The writer to execute Cypher query
     graphWriter = new GraphWriter(driver);
