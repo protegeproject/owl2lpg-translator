@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -20,7 +21,7 @@ public abstract class BuiltInPrefixDeclarations {
   @Nonnull
   public abstract ImmutableMap<String, String> asMap();
 
-  @Nonnull
+  @Nullable
   public String getPrefixName(String iriPrefix) {
     return asMap().get(iriPrefix);
   }
