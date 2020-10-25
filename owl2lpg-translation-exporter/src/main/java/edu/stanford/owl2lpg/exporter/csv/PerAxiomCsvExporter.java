@@ -1,13 +1,16 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import edu.stanford.owl2lpg.exporter.csv.internal.ProjectTranslator;
 import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,35 +21,36 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PerAxiomCsvExporter {
 
   @Nonnull
+  private final ProjectTranslator projectTranslator;
+
+  @Nonnull
   private final AxiomTranslator axiomTranslator;
 
   @Nonnull
   private final Neo4jCsvWriter csvWriter;
 
   @Inject
-  public PerAxiomCsvExporter(@Nonnull AxiomTranslator axiomTranslator,
+  public PerAxiomCsvExporter(@Nonnull ProjectTranslator projectTranslator,
+                             @Nonnull AxiomTranslator axiomTranslator,
                              @Nonnull Neo4jCsvWriter csvWriter) {
+    this.projectTranslator = checkNotNull(projectTranslator);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.csvWriter = checkNotNull(csvWriter);
+  }
+
+  public void export(@Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId documentId) throws IOException {
+    var translation = projectTranslator.translate(projectId, branchId, documentId);
+    csvWriter.writeTranslation(translation);
   }
 
   public void export(@Nonnull OWLAxiom axiom) throws IOException {
     var translation = axiomTranslator.translate(axiom);
     csvWriter.writeTranslation(translation);
-    csvWriter.flush();
+  }
 
-    var console = new PrintWriter(System.out);
-
-    console.printf("\nNodes: %,d\n\n", csvWriter.getNodeCount());
-    csvWriter.getNodeLabelsMultiset()
-        .forEachEntry((nodeLabels, count) ->
-            console.printf("    Node   %-60s %,10d\n", nodeLabels.toNeo4jLabel(), count));
-
-    console.printf("\nRelationships: %,d\n\n", csvWriter.getEdgeCount());
-    csvWriter.getEdgeLabelMultiset()
-        .forEachEntry((edgeLabel, count) ->
-            console.printf("    Rel    %-36s %,10d\n", edgeLabel.toNeo4jLabel(), count));
-
-    console.flush();
+  public void printReport() {
+    csvWriter.printReport();
   }
 }

@@ -1,13 +1,16 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import edu.stanford.owl2lpg.exporter.csv.internal.ProjectTranslator;
 import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
-import edu.stanford.owl2lpg.translator.OntologyTranslator;
+import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.OntologyDocumentId;
+import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,37 +21,37 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OntologyCsvExporter {
 
   @Nonnull
-  private final OntologyTranslator ontologyProjectTranslator;
+  private final ProjectTranslator projectTranslator;
+
+  @Nonnull
+  private final AxiomTranslator axiomTranslator;
 
   @Nonnull
   private final Neo4jCsvWriter csvWriter;
 
   @Inject
-  public OntologyCsvExporter(@Nonnull OntologyTranslator ontologyProjectTranslator,
+  public OntologyCsvExporter(@Nonnull ProjectTranslator projectTranslator,
+                             @Nonnull AxiomTranslator axiomTranslator,
                              @Nonnull Neo4jCsvWriter csvWriter) {
-    this.ontologyProjectTranslator = checkNotNull(ontologyProjectTranslator);
+    this.projectTranslator = checkNotNull(projectTranslator);
+    this.axiomTranslator = checkNotNull(axiomTranslator);
     this.csvWriter = checkNotNull(csvWriter);
   }
 
   public void export(@Nonnull OWLOntology ontology) throws IOException {
-    var translation = ontologyProjectTranslator.translate(ontology);
-    csvWriter.writeTranslation(translation);
-    csvWriter.flush();
-
-    var console = new PrintWriter(System.out);
-
-    console.printf("\nNodes: %,d\n\n", csvWriter.getNodeCount());
-    csvWriter.getNodeLabelsMultiset()
-        .forEachEntry((nodeLabels, count) ->
-            console.printf("    Node   %-60s %,10d\n", nodeLabels.toNeo4jLabel(), count));
-
-    console.printf("\nRelationships: %,d\n\n", csvWriter.getEdgeCount());
-    csvWriter.getEdgeLabelMultiset()
-        .forEachEntry((edgeLabel, count) ->
-            console.printf("    Rel    %-36s %,10d\n", edgeLabel.toNeo4jLabel(), count));
-
-    console.flush();
+    export(ontology, ProjectId.create(), BranchId.create(), OntologyDocumentId.create());
   }
 
-
+  public void export(@Nonnull OWLOntology ontology,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId documentId) throws IOException {
+    var projectTranslation = projectTranslator.translate(ontology.getOntologyID(), projectId, branchId, documentId);
+    csvWriter.writeTranslation(projectTranslation);
+    ontology.getAxioms()
+        .stream()
+        .map(axiomTranslator::translate)
+        .forEach(csvWriter::writeTranslation);
+    csvWriter.printReport();
+  }
 }

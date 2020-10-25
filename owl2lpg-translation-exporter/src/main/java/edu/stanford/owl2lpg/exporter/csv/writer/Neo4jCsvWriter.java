@@ -10,6 +10,7 @@ import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.EnumMap;
 import java.util.stream.Stream;
 
@@ -109,6 +110,7 @@ public class Neo4jCsvWriter {
       nodeCount++;
       nodesCsvWriter.write(node);
       nodeLabelsMultiset.get(node.getLabels()).increment();
+      nodesCsvWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -127,6 +129,7 @@ public class Neo4jCsvWriter {
       edgeCount++;
       relationshipsCsvWriter.write(edge);
       edgeLabelMultiset.get(edge.getLabel()).increment();
+      relationshipsCsvWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -163,6 +166,17 @@ public class Neo4jCsvWriter {
   public void flush() throws IOException {
     nodesCsvWriter.flush();
     relationshipsCsvWriter.flush();
+  }
+
+  public void printReport() {
+    var console = new PrintWriter(System.out);
+    console.printf("\nNodes: %,d\n\n", getNodeCount());
+    getNodeLabelsMultiset().forEachEntry((nodeLabels, count) ->
+        console.printf("    Node   %-60s %,10d\n", nodeLabels.toNeo4jLabel(), count));
+    console.printf("\nRelationships: %,d\n\n", getEdgeCount());
+    getEdgeLabelMultiset().forEachEntry((edgeLabel, count) ->
+        console.printf("    Rel    %-36s %,10d\n", edgeLabel.toNeo4jLabel(), count));
+    console.flush();
   }
 
   /* A static utility class to do the counting for each translation per node and edge labels */
