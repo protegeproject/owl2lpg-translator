@@ -25,16 +25,16 @@ public class TranslationTranslator {
   private final BranchId branchId;
 
   @Nonnull
-  private final QueryBuilderFactory queryBuilderFactory;
+  private final DocumentIdMap documentIdMap;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final QueryBuilderFactory queryBuilderFactory;
 
   @Inject
   public TranslationTranslator(@Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
-                               @Nonnull QueryBuilderFactory queryBuilderFactory,
-                               @Nonnull DocumentIdMap documentIdMap) {
+                               @Nonnull DocumentIdMap documentIdMap,
+                               @Nonnull QueryBuilderFactory queryBuilderFactory) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.queryBuilderFactory = checkNotNull(queryBuilderFactory);

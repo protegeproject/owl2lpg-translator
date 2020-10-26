@@ -66,7 +66,7 @@ public class CypherBasedAxiomStorer_TestCase {
 
     // Translator from Translation to Cypher string
     var queryBuilderFactory = new QueryBuilderFactory();
-    translationTranslator = new TranslationTranslator(projectId, branchId, queryBuilderFactory, documentIdMap);
+    translationTranslator = new TranslationTranslator(projectId, branchId, documentIdMap, queryBuilderFactory);
 
     // The writer to execute Cypher query
     graphWriter = new GraphWriter(driver);
