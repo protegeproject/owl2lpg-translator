@@ -1,11 +1,11 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.hash.Hashing;
-import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.NodeIdMapper;
 import edu.stanford.owl2lpg.model.NodeIdMapperImpl;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
 import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
 import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;

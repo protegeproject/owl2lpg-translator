@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.client.read.lang;
 
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 
 import javax.annotation.Nonnull;
 

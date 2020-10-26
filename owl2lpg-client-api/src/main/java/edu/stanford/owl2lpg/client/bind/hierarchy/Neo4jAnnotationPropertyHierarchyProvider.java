@@ -5,8 +5,8 @@ import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.AnnotationPropertyHierarchyProvider;
 import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.hierarchy.AnnotationPropertyHierarchyAccessor;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 
 import javax.annotation.Nonnull;

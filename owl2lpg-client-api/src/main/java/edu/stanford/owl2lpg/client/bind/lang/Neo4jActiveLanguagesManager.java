@@ -7,8 +7,8 @@ import edu.stanford.bmir.protege.web.shared.lang.DictionaryLanguageUsage;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.lang.DictionaryLanguageAccessor;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

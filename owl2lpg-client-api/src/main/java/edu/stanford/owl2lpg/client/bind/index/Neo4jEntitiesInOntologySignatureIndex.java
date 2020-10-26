@@ -3,8 +3,8 @@ package edu.stanford.owl2lpg.client.bind.index;
 import edu.stanford.bmir.protege.web.server.index.EntitiesInOntologySignatureIndex;
 import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 

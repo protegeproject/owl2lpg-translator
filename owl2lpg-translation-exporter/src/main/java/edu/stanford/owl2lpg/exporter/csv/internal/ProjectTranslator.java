@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.exporter.csv.internal;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;

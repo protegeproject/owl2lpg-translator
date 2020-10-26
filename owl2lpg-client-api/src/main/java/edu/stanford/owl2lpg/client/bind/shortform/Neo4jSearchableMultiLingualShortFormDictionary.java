@@ -9,8 +9,8 @@ import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
 import edu.stanford.bmir.protege.web.shared.search.EntitySearchFilter;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.shortform.MultiLingualShortFormAccessor;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 
 import javax.annotation.Nonnull;

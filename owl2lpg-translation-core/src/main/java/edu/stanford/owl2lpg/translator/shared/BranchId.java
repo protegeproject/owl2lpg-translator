@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.model;
+package edu.stanford.owl2lpg.translator.shared;
 
 import com.google.auto.value.AutoValue;
 

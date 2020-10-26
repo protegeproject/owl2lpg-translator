@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 
 import javax.annotation.Nonnull;
 

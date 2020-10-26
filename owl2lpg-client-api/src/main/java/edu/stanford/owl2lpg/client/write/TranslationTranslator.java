@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.client.DocumentIdMap;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 

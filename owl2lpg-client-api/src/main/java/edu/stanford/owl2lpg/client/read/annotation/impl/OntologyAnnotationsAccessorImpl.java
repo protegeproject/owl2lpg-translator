@@ -5,9 +5,9 @@ import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.NodeMapper;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 

@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.read;
 
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;

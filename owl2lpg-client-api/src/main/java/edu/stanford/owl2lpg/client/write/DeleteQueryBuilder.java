@@ -2,11 +2,11 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;

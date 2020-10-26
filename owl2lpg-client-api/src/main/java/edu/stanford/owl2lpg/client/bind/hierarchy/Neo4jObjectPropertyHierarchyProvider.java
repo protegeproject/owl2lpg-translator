@@ -7,8 +7,8 @@ import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoo
 import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ObjectPropertyHierarchyAccessor;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
