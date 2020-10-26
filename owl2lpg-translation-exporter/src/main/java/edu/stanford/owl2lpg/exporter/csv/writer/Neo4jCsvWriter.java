@@ -57,12 +57,20 @@ public class Neo4jCsvWriter {
 
   public void writeTranslation(Translation translation) {
     var node = translation.getMainNode();
-    writeNode(node, canPotentiallyHaveDuplicates(node));
+    writeNode(node);
     for (var edge : translation.getEdges()) {
-      writeEdge(edge, canPotentiallyHaveDuplicates(edge));
+      writeEdge(edge);
     }
     for (var nestedTranslation : translation.getNestedTranslations()) {
       writeTranslation(nestedTranslation);
+    }
+  }
+
+  public void writeNode(Node node) {
+    if (canPotentiallyHaveDuplicates(node)) {
+      nodeTracker.add(node, this::write);
+    } else {
+      write(node);
     }
   }
 
@@ -78,6 +86,25 @@ public class Neo4jCsvWriter {
         NodeLabels.LITERAL,
         NodeLabels.ONTOLOGY_DOCUMENT,
         NodeLabels.PROPERTY_CHAIN).anyMatch(nodeLabels::isa);
+  }
+
+  public void writeEdge(Edge edge) {
+    if (canPotentiallyHaveDuplicates(edge)) {
+      edgeTracker.add(edge, this::write);
+    } else {
+      write(edge);
+    }
+  }
+
+  private void write(Node node) {
+    try {
+      nodeCount++;
+      nodesCsvWriter.write(node);
+      nodeLabelsMultiset.get(node.getLabels()).increment();
+      nodesCsvWriter.flush();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private static boolean canPotentiallyHaveDuplicates(Edge edge) {
@@ -97,34 +124,7 @@ public class Neo4jCsvWriter {
         EdgeLabel.LITERAL).anyMatch(edgeLabel::isa);
   }
 
-  private void writeNode(Node node, boolean potentialDuplicate) {
-    if (potentialDuplicate) {
-      nodeTracker.add(node, this::writeNode);
-    } else {
-      writeNode(node);
-    }
-  }
-
-  private void writeNode(Node node) {
-    try {
-      nodeCount++;
-      nodesCsvWriter.write(node);
-      nodeLabelsMultiset.get(node.getLabels()).increment();
-      nodesCsvWriter.flush();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void writeEdge(Edge edge, boolean potentialDuplicate) {
-    if (potentialDuplicate) {
-      edgeTracker.add(edge, this::writeEdge);
-    } else {
-      writeEdge(edge);
-    }
-  }
-
-  private void writeEdge(Edge edge) {
+  private void write(Edge edge) {
     try {
       edgeCount++;
       relationshipsCsvWriter.write(edge);
