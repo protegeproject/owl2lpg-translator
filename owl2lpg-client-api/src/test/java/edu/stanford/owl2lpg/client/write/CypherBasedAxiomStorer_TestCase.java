@@ -11,7 +11,6 @@ import edu.stanford.owl2lpg.model.BranchId;
 import edu.stanford.owl2lpg.model.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
-import edu.stanford.owl2lpg.translator.OntologyContextModule;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
 import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,13 +56,9 @@ public class CypherBasedAxiomStorer_TestCase {
     var driver = GraphDatabase.driver(boltUri);
 
     documentIdMap = new DocumentIdMap(driver);
-    var documentId = documentIdMap.get(projectId, ontologyId);
 
     // Translator from OWLObject to Translation
     var translatorComponent = DaggerTranslatorComponent.builder()
-        .ontologyContextModule(new OntologyContextModule(projectId,
-            branchId,
-            documentId))
         .builtInPrefixDeclarationsModule(new BuiltInPrefixDeclarationsModule())
         .digestFunctionModule(new DigestFunctionModule())
         .build();

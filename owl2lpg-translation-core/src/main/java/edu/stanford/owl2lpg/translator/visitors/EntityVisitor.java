@@ -3,12 +3,9 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
-import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
@@ -49,19 +46,10 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
 public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @Nonnull
-  private final OntologyDocumentId ontoDocId;
-
-  @Nonnull
   private final NodeFactory nodeFactory;
 
   @Nonnull
-  private final OntologyContextNodeFactory ontologyContextNodeFactory;
-
-  @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
-
-  @Nonnull
-  private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
   private final AnnotationValueTranslator annotationValueTranslator;
@@ -70,18 +58,12 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   private final BuiltInPrefixDeclarations builtInPrefixDeclarations;
 
   @Inject
-  public EntityVisitor(@Nonnull OntologyDocumentId ontoDocId,
-                       @Nonnull NodeFactory nodeFactory,
-                       @Nonnull OntologyContextNodeFactory ontologyContextNodeFactory,
+  public EntityVisitor(@Nonnull NodeFactory nodeFactory,
                        @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                       @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
                        @Nonnull AnnotationValueTranslator annotationValueTranslator,
                        @Nonnull BuiltInPrefixDeclarations builtInPrefixDeclarations) {
-    this.ontoDocId = checkNotNull(ontoDocId);
     this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
-    this.ontologyContextNodeFactory = checkNotNull(ontologyContextNodeFactory);
-    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.builtInPrefixDeclarations = checkNotNull(builtInPrefixDeclarations);
   }
@@ -127,7 +109,6 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     var translations = new ImmutableList.Builder<Translation>();
     var edges = new ImmutableList.Builder<Edge>();
     translateEntityIri(entity.getIRI(), entityNode, translations, edges);
-    translateEntitySignatureOf(ontoDocId, entityNode, translations, edges);
     return Translation.create(entity,
         entityNode,
         edges.build(),
@@ -151,17 +132,6 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
     var entityIriEdge = structuralEdgeFactory.getEntityIriEdge(entityNode, iriTranslation.getMainNode());
     translations.add(iriTranslation);
     edges.add(entityIriEdge);
-  }
-
-  private void translateEntitySignatureOf(OntologyDocumentId ontoDocId, Node entityNode,
-                                          ImmutableList.Builder<Translation> translations, ImmutableList.Builder<Edge> edges) {
-    var ontologyDocumentTranslation = Translation.create(ontoDocId,
-        ontologyContextNodeFactory.createOntologyDocumentNode(ontoDocId),
-        ImmutableList.of(),
-        ImmutableList.of());
-    var entitySignatureOfEdge = augmentedEdgeFactory.getInOntologySignatureEdge(entityNode, ontologyDocumentTranslation.getMainNode());
-    translations.add(ontologyDocumentTranslation);
-    entitySignatureOfEdge.ifPresent(edges::add);
   }
 
   @Nonnull

@@ -9,7 +9,6 @@ import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializerModule;
  */
 @Component(modules = {
     TranslatorModule.class,
-    OntologyContextModule.class,
     OntologyObjectSerializerModule.class})
 @TranslationSessionScope
 public interface TranslatorComponent {

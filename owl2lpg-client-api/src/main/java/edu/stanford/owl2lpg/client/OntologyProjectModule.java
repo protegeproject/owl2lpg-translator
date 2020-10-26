@@ -3,7 +3,6 @@ package edu.stanford.owl2lpg.client;
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
 import edu.stanford.owl2lpg.model.ProjectId;
 
 import javax.annotation.Nonnull;
@@ -21,17 +20,10 @@ public class OntologyProjectModule {
   private final ProjectId projectId;
 
   @Nonnull
-  private final BranchId branchId;
+  private final BranchId branchId = BranchId.create();
 
-  @Nonnull
-  private final OntologyDocumentId ontologyDocumentId;
-
-  public OntologyProjectModule(@Nonnull ProjectId projectId,
-                               @Nonnull BranchId branchId,
-                               @Nonnull OntologyDocumentId ontologyDocumentId) {
+  public OntologyProjectModule(@Nonnull ProjectId projectId) {
     this.projectId = checkNotNull(projectId);
-    this.branchId = checkNotNull(branchId);
-    this.ontologyDocumentId = checkNotNull(ontologyDocumentId);
   }
 
   @Provides
@@ -42,10 +34,5 @@ public class OntologyProjectModule {
   @Provides
   public BranchId provideBranchId() {
     return branchId;
-  }
-
-  @Provides
-  public OntologyDocumentId provideOntologyDocumentId() {
-    return ontologyDocumentId;
   }
 }

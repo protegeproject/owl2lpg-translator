@@ -2,12 +2,11 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.BranchId;
+import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.OntologyContextNodeFactory;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
@@ -29,8 +28,11 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 ontology.
@@ -41,19 +43,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Nonnull
-  private final ProjectId projectId;
-
-  @Nonnull
-  private final BranchId branchId;
-
-  @Nonnull
-  private final OntologyDocumentId ontoDocId;
-
-  @Nonnull
-  private final OntologyContextNodeFactory ontologyContextNodeFactory;
+  private final NodeFactory nodeFactory;
 
   @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
+
+  @Nonnull
+  private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
   private final EntityTranslator entityTranslator;
@@ -68,20 +64,16 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
   private final AxiomTranslator axiomTranslator;
 
   @Inject
-  public OntologyVisitor(@Nonnull ProjectId projectId,
-                         @Nonnull BranchId branchId,
-                         @Nonnull OntologyDocumentId ontoDocId,
-                         @Nonnull OntologyContextNodeFactory ontologyContextNodeFactory,
+  public OntologyVisitor(@Nonnull NodeFactory nodeFactory,
                          @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                         @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
                          @Nonnull EntityTranslator entityTranslator,
                          @Nonnull AnnotationValueTranslator annotationValueTranslator,
                          @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
                          @Nonnull AxiomTranslator axiomTranslator) {
-    this.projectId = checkNotNull(projectId);
-    this.branchId = checkNotNull(branchId);
-    this.ontoDocId = checkNotNull(ontoDocId);
-    this.ontologyContextNodeFactory = checkNotNull(ontologyContextNodeFactory);
+    this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
+    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
@@ -91,68 +83,71 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
   @Nonnull
   @Override
   public Translation visit(OWLOntology ontology) {
-    var projectNode = ontologyContextNodeFactory.createProjectNode(projectId);
-    var branchNode = ontologyContextNodeFactory.createBranchNode(branchId);
-    var ontoDocNode = ontologyContextNodeFactory.createOntologyDocumentNode(ontoDocId);
-
     var translations = new ImmutableList.Builder<Translation>();
     var edges = new ImmutableList.Builder<Edge>();
-    translateOntologyIri(ontology.getOntologyID().getOntologyIRI(), ontoDocNode, translations, edges);
-    translateVersionIri(ontology.getOntologyID().getVersionIRI(), ontoDocNode, translations, edges);
-    translateOntologyAnnotations(ontology.getAnnotations(), ontoDocNode, translations, edges);
-    translateOntologyAxioms(ontology.getAxioms(), ontoDocNode, translations, edges);
 
-    return Translation.create(projectId,
-        projectNode,
-        ImmutableList.of(structuralEdgeFactory.getBranchEdge(projectNode, branchNode)),
-        ImmutableList.of(Translation.create(branchId,
-            branchNode,
-            ImmutableList.of(structuralEdgeFactory.getOntologyDocumentEdge(branchNode, ontoDocNode)),
-            ImmutableList.of(Translation.create(ontoDocId,
-                ontoDocNode,
-                edges.build(),
-                translations.build())))));
+    var documentId = UUID.randomUUID();
+    var documentNode = createDocumentNode(documentId);
+    translateOntologyIri(ontology.getOntologyID().getOntologyIRI(), documentNode, translations, edges);
+    translateVersionIri(ontology.getOntologyID().getVersionIRI(), documentNode, translations, edges);
+    translateOntologyAnnotations(ontology.getAnnotations(), documentNode, translations, edges);
+    translateOntologyAxioms(ontology.getAxioms(), documentNode, translations, edges);
+    
+    return Translation.create(documentId, documentNode, edges.build(), translations.build());
   }
 
-  private void translateOntologyIri(Optional<IRI> ontologyIri, Node ontoDocNode, ImmutableList.Builder<Translation> translations, ImmutableList.Builder<Edge> edges) {
+  @Nonnull
+  private Node createDocumentNode(UUID documentId) {
+    return nodeFactory.createNode(documentId, ONTOLOGY_DOCUMENT, Properties.of(ONTOLOGY_DOCUMENT_ID, String.valueOf(documentId)));
+  }
+
+  private void translateOntologyIri(Optional<IRI> ontologyIri, Node documentNode,
+                                    ImmutableList.Builder<Translation> translations,
+                                    ImmutableList.Builder<Edge> edges) {
     if (ontologyIri.isPresent()) {
       var ontologyIriTranslation = annotationValueTranslator.translate(ontologyIri.get());
-      var ontologyIriEdge = structuralEdgeFactory.getOntologyIriEdge(ontoDocNode, ontologyIriTranslation.getMainNode());
+      var ontologyIriEdge = structuralEdgeFactory.getOntologyIriEdge(documentNode, ontologyIriTranslation.getMainNode());
       translations.add(ontologyIriTranslation);
       edges.add(ontologyIriEdge);
     }
   }
 
-  private void translateVersionIri(Optional<IRI> versionIri, Node ontoDocNode, ImmutableList.Builder<Translation> translations, ImmutableList.Builder<Edge> edges) {
+  private void translateVersionIri(Optional<IRI> versionIri, Node documentNode,
+                                   ImmutableList.Builder<Translation> translations,
+                                   ImmutableList.Builder<Edge> edges) {
     if (versionIri.isPresent()) {
       var versionIriTranslation = annotationValueTranslator.translate(versionIri.get());
-      var versionIriEdge = structuralEdgeFactory.getVersionIriEdge(ontoDocNode, versionIriTranslation.getMainNode());
+      var versionIriEdge = structuralEdgeFactory.getVersionIriEdge(documentNode, versionIriTranslation.getMainNode());
       translations.add(versionIriTranslation);
       edges.add(versionIriEdge);
     }
   }
 
-  private void translateOntologyAnnotations(Set<OWLAnnotation> ontologyAnnotations, Node ontoDocNode, ImmutableList.Builder<Translation> translations, ImmutableList.Builder<Edge> edges) {
+  private void translateOntologyAnnotations(Set<OWLAnnotation> ontologyAnnotations, Node documentNode,
+                                            ImmutableList.Builder<Translation> translations,
+                                            ImmutableList.Builder<Edge> edges) {
     var ontologyAnnotationTranslations = ontologyAnnotations
         .stream()
         .map(annotationObjectTranslator::translate)
         .collect(ImmutableList.toImmutableList());
     var ontologyAnnotationEdges = ontologyAnnotationTranslations
         .stream()
-        .map(translation -> structuralEdgeFactory.getOntologyAnnotationEdge(ontoDocNode, translation.getMainNode()))
+        .map(translation -> structuralEdgeFactory.getOntologyAnnotationEdge(documentNode, translation.getMainNode()))
         .collect(ImmutableList.toImmutableList());
     translations.addAll(ontologyAnnotationTranslations);
     edges.addAll(ontologyAnnotationEdges);
   }
 
-  private void translateOntologyAxioms(Set<OWLAxiom> ontologyAxioms, Node ontoDocNode, ImmutableList.Builder<Translation> translations, ImmutableList.Builder<Edge> edges) {
+  private void translateOntologyAxioms(Set<OWLAxiom> ontologyAxioms, Node documentNode,
+                                       ImmutableList.Builder<Translation> translations,
+                                       ImmutableList.Builder<Edge> edges) {
     var ontologyAxiomTranslations = ontologyAxioms
         .stream()
         .map(axiomTranslator::translate)
         .collect(ImmutableList.toImmutableList());
     var ontologyAxiomEdges = ontologyAxiomTranslations
         .stream()
-        .map(translation -> structuralEdgeFactory.getAxiomEdge(ontoDocNode, translation.getMainNode()))
+        .map(translation -> structuralEdgeFactory.getAxiomEdge(documentNode, translation.getMainNode()))
         .collect(ImmutableList.toImmutableList());
     translations.addAll(ontologyAxiomTranslations);
     edges.addAll(ontologyAxiomEdges);
