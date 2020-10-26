@@ -51,11 +51,15 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   @Nonnull
   private final OWLDataFactory dataFactory;
 
+  @Nonnull
+  private OWLDataProperty root;
+
   @Inject
   public DataPropertyHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
                                            @Nonnull OWLDataFactory dataFactory) {
     this.graphReader = checkNotNull(graphReader);
     this.dataFactory = checkNotNull(dataFactory);
+    this.root = dataFactory.getOWLTopDataProperty();
   }
 
   @Override
@@ -92,6 +96,11 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                                                    @Nonnull BranchId branchId,
                                                    @Nonnull OntologyDocumentId ontoDocId) {
     return getProperties(DATA_PROPERTY_CHILDREN_QUERY, createInputParams(owlDataProperty, projectId, branchId, ontoDocId));
+  }
+
+  @Override
+  public void setRoot(@Nonnull OWLDataProperty root) {
+    this.root = root;
   }
 
   @Override
@@ -155,9 +164,20 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
             .map(IRI::create)
             .map(dataFactory::getOWLDataProperty)
             .collect(ImmutableList.toImmutableList()))
+        .map(this::insertRootToPathIfNecessary)
         .map(DataPropertyAncestorPath::get)
         .forEach(ancestorPaths::add);
     return ancestorPaths.build();
+  }
+
+  private ImmutableList<OWLDataProperty> insertRootToPathIfNecessary(ImmutableList<OWLDataProperty> path) {
+    var newPath = ImmutableList.<OWLDataProperty>builder();
+    newPath.addAll(path);
+    var topDataProperty = path.get(path.size() - 1);
+    if (!topDataProperty.equals(root)) {
+      newPath.add(root);
+    }
+    return newPath.build();
   }
 
   @Nonnull

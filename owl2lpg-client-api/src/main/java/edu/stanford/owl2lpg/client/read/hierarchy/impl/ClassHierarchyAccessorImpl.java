@@ -49,11 +49,20 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   @Nonnull
   private final OWLDataFactory dataFactory;
 
+  @Nonnull
+  private OWLClass root;
+
   @Inject
   public ClassHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
                                     @Nonnull OWLDataFactory dataFactory) {
     this.graphReader = checkNotNull(graphReader);
     this.dataFactory = checkNotNull(dataFactory);
+    this.root = dataFactory.getOWLThing();
+  }
+
+  @Override
+  public void setRoot(@Nonnull OWLClass root) {
+    this.root = root;
   }
 
   @Override
@@ -153,9 +162,20 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
             .map(IRI::create)
             .map(dataFactory::getOWLClass)
             .collect(ImmutableList.toImmutableList()))
+        .map(this::insertRootToPathIfNecessary)
         .map(ClassAncestorPath::get)
         .forEach(ancestorPaths::add);
     return ancestorPaths.build();
+  }
+
+  private ImmutableList<OWLClass> insertRootToPathIfNecessary(ImmutableList<OWLClass> path) {
+    var newPath = ImmutableList.<OWLClass>builder();
+    newPath.addAll(path);
+    var topClass = path.get(path.size() - 1);
+    if (!topClass.equals(root)) {
+      newPath.add(root);
+    }
+    return newPath.build();
   }
 
 

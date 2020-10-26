@@ -62,6 +62,7 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
     this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
     this.dataFactory = checkNotNull(dataFactory);
+    hierarchyAccessor.setRoot(root);
   }
 
   @Override
@@ -74,7 +75,7 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
     if (root.equals(dataFactory.getOWLTopDataProperty()) && root.equals(owlDataProperty)) {
       return documentIdMap.get(projectId)
           .stream()
-          .flatMap(documentId ->  hierarchyAccessor.getTopChildren(projectId, branchId, documentId).stream())
+          .flatMap(documentId -> hierarchyAccessor.getTopChildren(projectId, branchId, documentId).stream())
           .collect(ImmutableSet.toImmutableSet());
     } else {
       return documentIdMap.get(projectId)
@@ -98,7 +99,7 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
     } else {
       return documentIdMap.get(projectId)
           .stream()
-          .flatMap(documentId ->  hierarchyAccessor.getDescendants(owlDataProperty, projectId, branchId, documentId).stream())
+          .flatMap(documentId -> hierarchyAccessor.getDescendants(owlDataProperty, projectId, branchId, documentId).stream())
           .collect(ImmutableSet.toImmutableSet());
     }
   }
@@ -107,7 +108,7 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
   private ImmutableSet<OWLDataProperty> getAllDataProperties() {
     return documentIdMap.get(projectId)
         .stream()
-        .flatMap(documentId ->  entityAccessor.getEntitiesByType(DATA_PROPERTY, projectId, branchId, documentId).stream())
+        .flatMap(documentId -> entityAccessor.getEntitiesByType(DATA_PROPERTY, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
@@ -131,7 +132,7 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
   public Collection<List<OWLDataProperty>> getPathsToRoot(OWLDataProperty owlDataProperty) {
     return documentIdMap.get(projectId)
         .stream()
-        .flatMap(documentId ->  hierarchyAccessor.getPathsToRoot(owlDataProperty, projectId, branchId, documentId).stream())
+        .flatMap(documentId -> hierarchyAccessor.getPathsToRoot(owlDataProperty, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 

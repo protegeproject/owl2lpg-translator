@@ -57,6 +57,7 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
     this.documentIdMap = checkNotNull(documentIdMap);
     this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
+    hierarchyAccessor.setRoot(root);
   }
 
   @Override
@@ -110,7 +111,7 @@ public class Neo4jClassHierarchyProvider implements ClassHierarchyProvider {
   public Collection<OWLClass> getParents(OWLClass owlClass) {
     return documentIdMap.get(projectId)
         .stream()
-        .flatMap(documentId ->  hierarchyAccessor.getParents(owlClass, projectId, branchId, documentId).stream())
+        .flatMap(documentId -> hierarchyAccessor.getParents(owlClass, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 

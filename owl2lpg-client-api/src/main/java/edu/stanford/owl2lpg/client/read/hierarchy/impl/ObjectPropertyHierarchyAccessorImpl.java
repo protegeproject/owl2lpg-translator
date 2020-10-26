@@ -52,12 +52,21 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   @Nonnull
   private final OWLDataFactory dataFactory;
 
+  @Nonnull
+  private OWLObjectProperty root;
+
   @Inject
   public ObjectPropertyHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
                                              @Nonnull EntityAccessor entityAccessor,
                                              @Nonnull OWLDataFactory dataFactory) {
     this.graphReader = checkNotNull(graphReader);
     this.dataFactory = checkNotNull(dataFactory);
+    this.root = dataFactory.getOWLTopObjectProperty();
+  }
+
+  @Override
+  public void setRoot(OWLObjectProperty root) {
+
   }
 
   @Override
@@ -157,9 +166,20 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
             .map(IRI::create)
             .map(dataFactory::getOWLObjectProperty)
             .collect(ImmutableList.toImmutableList()))
+        .map(this::insertRootToPathIfNecessary)
         .map(ObjectPropertyAncestorPath::get)
         .forEach(ancestorPaths::add);
     return ancestorPaths.build();
+  }
+
+  private ImmutableList<OWLObjectProperty> insertRootToPathIfNecessary(ImmutableList<OWLObjectProperty> path) {
+    var newPath = ImmutableList.<OWLObjectProperty>builder();
+    newPath.addAll(path);
+    var topObjectProperty = path.get(path.size() - 1);
+    if (!topObjectProperty.equals(root)) {
+      newPath.add(root);
+    }
+    return newPath.build();
   }
 
   @Nonnull

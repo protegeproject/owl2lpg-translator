@@ -62,6 +62,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
     this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
     this.dataFactory = checkNotNull(dataFactory);
+    hierarchyAccessor.setRoot(root);
   }
 
   @Override

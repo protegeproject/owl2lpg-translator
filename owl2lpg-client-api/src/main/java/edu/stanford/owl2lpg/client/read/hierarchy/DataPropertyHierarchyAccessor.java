@@ -14,6 +14,8 @@ import javax.annotation.Nonnull;
  */
 public interface DataPropertyHierarchyAccessor extends HierarchyAccessor<OWLDataProperty> {
 
+  void setRoot(@Nonnull OWLDataProperty root);
+
   @Nonnull
   ImmutableSet<OWLDataProperty> getTopChildren(@Nonnull ProjectId projectId,
                                                @Nonnull BranchId branchId,
