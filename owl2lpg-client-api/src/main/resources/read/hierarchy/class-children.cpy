@@ -3,4 +3,3 @@ MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(n:Class)
 MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(parent:Class {iri:$entityIri})
 MATCH (n)-[:SUB_CLASS_OF]->(parent)
 RETURN DISTINCT n
-LIMIT 100
