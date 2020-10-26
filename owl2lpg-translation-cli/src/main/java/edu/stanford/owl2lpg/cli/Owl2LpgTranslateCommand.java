@@ -1,14 +1,9 @@
 package edu.stanford.owl2lpg.cli;
 
-import edu.stanford.owl2lpg.exporter.csv.CsvWriterModule;
 import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
-import edu.stanford.owl2lpg.exporter.cypher.CypherTranslationExporter;
-import edu.stanford.owl2lpg.model.BranchId;
-import edu.stanford.owl2lpg.model.OntologyDocumentId;
-import edu.stanford.owl2lpg.model.ProjectId;
+import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriterModule;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
@@ -19,10 +14,9 @@ import static picocli.CommandLine.Parameters;
 @Command(
     name = "translate"
 )
-// translate ontology.owl  cypher
 public class Owl2LpgTranslateCommand implements Callable<Integer> {
 
-  enum Format {cypher, csv}
+  enum Format {csv}
 
   @Parameters(
       index = "0",
@@ -34,7 +28,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   @Option(
       names = {"-f", "--format"},
       description = "Translation format: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})")
-  Format format = Format.cypher;
+  Format format = Format.csv;
 
   @Option(
       names = {"-o", "--output"},
@@ -52,27 +46,9 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   public Integer call() throws Exception {
     int exitCode = 0;
     switch (format) {
-      case cypher:
-        exitCode = translateOntologyToCypher();
-        break;
       case csv:
         exitCode = translateOntologyToCsv();
         break;
-    }
-    return exitCode;
-  }
-
-  private int translateOntologyToCypher() {
-    int exitCode = 0;
-    CypherTranslationExporter exporter = new CypherTranslationExporter();
-    try {
-      exporter.export(ProjectId.create(),
-          BranchId.create(),
-          OntologyDocumentId.create(),
-          ontologyFileLocation, outputDirectoryLocation);
-    } catch (IOException e) {
-      e.printStackTrace();
-      exitCode = 1;
     }
     return exitCode;
   }
