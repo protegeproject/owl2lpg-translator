@@ -57,6 +57,7 @@ public class DeleteQueryBuilder implements TranslationVisitor {
   private final Map<Edge, String> edgeVariableNameMapping = Maps.newHashMap();
 
   private final ImmutableList.Builder<String> cypherStrings = new ImmutableList.Builder<String>();
+  public static final String DOCUMENT_VARIABLE = "o";
 
   public DeleteQueryBuilder(@Nonnull ProjectId projectId,
                             @Nonnull BranchId branchId,
@@ -89,10 +90,9 @@ public class DeleteQueryBuilder implements TranslationVisitor {
           .map(this::translateToCypher)
           .forEach(sb::append);
     }
-    var documentVariable = "o";
     var axiomVariable = getVariableName(translation.getMainNode());
-    sb.append(cypherQueryMergeOntologyDocument(documentVariable));
-    sb.append(cypherQueryMatchAxiomEdge(documentVariable, axiomVariable));
+    sb.append(cypherQueryMergeOntologyDocument(DOCUMENT_VARIABLE));
+    sb.append(cypherQueryMatchAxiomEdge(DOCUMENT_VARIABLE, axiomVariable));
     var edgeVariables = edgeVariableNameMapping.values();
     sb.append("DELETE ")
         .append(String.join(",", edgeVariables))
