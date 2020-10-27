@@ -1,25 +1,23 @@
 package edu.stanford.owl2lpg.client.write;
 
-import com.google.common.base.Optional;
 import edu.stanford.owl2lpg.client.DatabaseModule;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.NodeMapperModule;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.DaggerAxiomAccessorComponent;
 import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
 import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.harness.Neo4jBuilders;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 
@@ -29,15 +27,11 @@ import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.SubCl
 
 public class CypherBasedAxiomStorer_TestCase {
 
-  private final OWLOntologyID ontologyId = new OWLOntologyID(
-      Optional.of(IRI.create("http://example.org/ontology")),
-      Optional.absent());
-
   private final ProjectId projectId = ProjectId.create();
 
   private final BranchId branchId = BranchId.create();
 
-  private DocumentIdMap documentIdMap;
+  private final OntologyDocumentId documentId = OntologyDocumentId.create();
 
   private AxiomAccessor axiomAccessor;
 
@@ -55,8 +49,6 @@ public class CypherBasedAxiomStorer_TestCase {
     var boltUri = neo4j.boltURI();
     var driver = GraphDatabase.driver(boltUri);
 
-    documentIdMap = new DocumentIdMap(driver);
-
     // Translator from OWLObject to Translation
     var translatorComponent = DaggerTranslatorComponent.builder()
         .builtInPrefixDeclarationsModule(new BuiltInPrefixDeclarationsModule())
@@ -66,7 +58,7 @@ public class CypherBasedAxiomStorer_TestCase {
 
     // Translator from Translation to Cypher string
     var queryBuilderFactory = new QueryBuilderFactory();
-    translationTranslator = new TranslationTranslator(projectId, branchId, documentIdMap, queryBuilderFactory);
+    translationTranslator = new TranslationTranslator(queryBuilderFactory);
 
     // The writer to execute Cypher query
     graphWriter = new GraphWriter(driver);
@@ -101,14 +93,13 @@ public class CypherBasedAxiomStorer_TestCase {
 
   private void storeAndRetrieveAxiom(@Nonnull OWLAxiom axiom) {
     storeAxiom(axiom);
-    var documentId = documentIdMap.get(projectId, ontologyId);
     var storedAxioms = axiomAccessor.getAllAxioms(projectId, branchId, documentId);
     assertTrue(storedAxioms.contains(axiom));
   }
 
   private void storeAxiom(@Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(axiom);
-    var queryStrings = translationTranslator.translateToCypherCreateQuery(ontologyId, translation);
+    var queryStrings = translationTranslator.translateToCypherCreateQuery(projectId, branchId, documentId, translation);
     queryStrings.forEach(graphWriter::execute);
   }
 

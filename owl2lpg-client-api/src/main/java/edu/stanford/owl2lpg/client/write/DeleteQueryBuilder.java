@@ -2,17 +2,15 @@ package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.model.TranslationVisitor;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -20,10 +18,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.IN_ONTOLOGY_SIGNATURE;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_IRI;
-import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.VERSION_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
-import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.IRI;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
@@ -37,6 +32,10 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.STRUCTURAL_SP
  */
 public class DeleteQueryBuilder implements TranslationVisitor {
 
+  public static final String DOCUMENT_VARIABLE = "o";
+  public static final String PROJECT_VARIABLE = "p";
+  public static final String BRANCH_VARIABLE = "b";
+
   @Nonnull
   private final ProjectId projectId;
 
@@ -47,27 +46,21 @@ public class DeleteQueryBuilder implements TranslationVisitor {
   private final OntologyDocumentId documentId;
 
   @Nonnull
-  private final OWLOntologyID ontologyId;
-
-  @Nonnull
   private final VariableNameGenerator variableNameGenerator;
 
   private final Map<Node, String> nodeVariableNameMapping = Maps.newHashMap();
 
   private final Map<Edge, String> edgeVariableNameMapping = Maps.newHashMap();
 
-  private final ImmutableList.Builder<String> cypherStrings = new ImmutableList.Builder<String>();
-  public static final String DOCUMENT_VARIABLE = "o";
+  private final ImmutableList.Builder<String> cypherStrings = ImmutableList.builder();
 
   public DeleteQueryBuilder(@Nonnull ProjectId projectId,
                             @Nonnull BranchId branchId,
                             @Nonnull OntologyDocumentId documentId,
-                            @Nonnull OWLOntologyID ontologyId,
                             @Nonnull VariableNameGenerator variableNameGenerator) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
     this.documentId = checkNotNull(documentId);
-    this.ontologyId = checkNotNull(ontologyId);
     this.variableNameGenerator = checkNotNull(variableNameGenerator);
   }
 
@@ -91,8 +84,8 @@ public class DeleteQueryBuilder implements TranslationVisitor {
           .forEach(sb::append);
     }
     var axiomVariable = getVariableName(translation.getMainNode());
-    sb.append(cypherQueryMergeOntologyDocument(DOCUMENT_VARIABLE));
-    sb.append(cypherQueryMatchAxiomEdge(DOCUMENT_VARIABLE, axiomVariable));
+    sb.append(cypherQueryMergeOntologyDocument());
+    sb.append(cypherQueryMatchAxiomEdge(axiomVariable));
     var edgeVariables = edgeVariableNameMapping.values();
     sb.append("DELETE ")
         .append(String.join(",", edgeVariables))
@@ -163,45 +156,21 @@ public class DeleteQueryBuilder implements TranslationVisitor {
   }
 
   @Nonnull
-  private String cypherQueryMergeOntologyDocument(String documentVariable) {
-    var sb = new StringBuilder();
-
-    var projectVariable = "p";
-    var branchVariable = "b";
-    sb.append("MERGE (").append(projectVariable).append(PROJECT.toNeo4jLabel())
-        .append(" {").append(PROJECT_ID).append(":").append(projectId.toQuotedString()).append("})\n");
-    sb.append("MERGE (").append(branchVariable).append(BRANCH.toNeo4jLabel())
-        .append(" {").append(BRANCH_ID).append(":").append(branchId.toQuotedString()).append("})\n");
-    sb.append("MERGE (").append(documentVariable).append(ONTOLOGY_DOCUMENT.toNeo4jLabel())
-        .append(" {").append(ONTOLOGY_DOCUMENT_ID).append(":").append(documentId.toQuotedString()).append("})\n");
-    sb.append("MERGE (").append(projectVariable).append(")-[").append(EdgeLabel.BRANCH.toNeo4jLabel()).append("]->")
-        .append("(").append(branchVariable).append(")-[").append(EdgeLabel.ONTOLOGY_DOCUMENT.toNeo4jLabel()).append("]->")
-        .append("(").append(documentVariable).append(")\n");
-
-    var ontologyIriVariable = "i";
-    var ontologyIri = ontologyId.getOntologyIRI();
-    if (ontologyIri.isPresent()) {
-      sb.append("MERGE (").append(ontologyIriVariable).append(IRI.toNeo4jLabel())
-          .append(" {").append(PropertyFields.IRI).append(":").append(ontologyIri.get().toQuotedString()).append("})\n");
-      sb.append("MERGE (").append(documentVariable).append(")-[").append(ONTOLOGY_IRI.toNeo4jLabel()).append("]->")
-          .append("(").append(ontologyIriVariable).append(")\n");
-    }
-
-    var versionIriVariable = "v";
-    var versionIri = ontologyId.getVersionIRI();
-    if (versionIri.isPresent()) {
-      sb.append("MERGE (").append(versionIriVariable).append(IRI.toNeo4jLabel())
-          .append(" {").append(PropertyFields.IRI).append(":").append(versionIri.get().toQuotedString()).append("})\n");
-      sb.append("MERGE (").append(documentVariable).append(")-[").append(VERSION_IRI.toNeo4jLabel()).append("]->")
-          .append("(").append(versionIriVariable).append(")\n");
-    }
-
-    return sb.toString();
+  private String cypherQueryMergeOntologyDocument() {
+    return "MERGE (" + PROJECT_VARIABLE + PROJECT.toNeo4jLabel() +
+        " {" + PROJECT_ID + ":" + projectId.toQuotedString() + "})\n" +
+        "MERGE (" + BRANCH_VARIABLE + BRANCH.toNeo4jLabel() +
+        " {" + BRANCH_ID + ":" + branchId.toQuotedString() + "})\n" +
+        "MERGE (" + DOCUMENT_VARIABLE + ONTOLOGY_DOCUMENT.toNeo4jLabel() +
+        " {" + ONTOLOGY_DOCUMENT_ID + ":" + documentId.toQuotedString() + "})\n" +
+        "MERGE (" + PROJECT_VARIABLE + ")-[" + EdgeLabel.BRANCH.toNeo4jLabel() + "]->" +
+        "(" + BRANCH_VARIABLE + ")-[" + EdgeLabel.ONTOLOGY_DOCUMENT.toNeo4jLabel() + "]->" +
+        "(" + DOCUMENT_VARIABLE + ")\n";
   }
 
   @Nonnull
-  private String cypherQueryMatchAxiomEdge(String documentVariable, String axiomVariable) {
-    return "MATCH (" + documentVariable + ")-[" + EdgeLabel.AXIOM.toNeo4jLabel() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")\n";
+  private String cypherQueryMatchAxiomEdge(String axiomVariable) {
+    return "MATCH (" + DOCUMENT_VARIABLE + ")-[" + EdgeLabel.AXIOM.toNeo4jLabel() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")\n";
   }
 
   @Nonnull

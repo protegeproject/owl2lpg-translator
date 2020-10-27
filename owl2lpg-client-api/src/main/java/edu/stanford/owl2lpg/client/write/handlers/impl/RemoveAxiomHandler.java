@@ -3,8 +3,10 @@ package edu.stanford.owl2lpg.client.write.handlers.impl;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
 import edu.stanford.owl2lpg.client.write.TranslationTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -35,9 +37,12 @@ public class RemoveAxiomHandler {
     this.translationTranslator = checkNotNull(translationTranslator);
   }
 
-  public void handle(@Nonnull OWLOntologyID ontologyId, @Nonnull OWLAxiom axiom) {
+  public void handle(@Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId documentId,
+                     @Nonnull OWLAxiom axiom) {
     var translation = axiomTranslator.translate(axiom);
-    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(ontologyId, translation);
+    var deleteQuery = translationTranslator.translateToCypherDeleteQuery(projectId, branchId, documentId, translation);
     deleteQuery.forEach(graphWriter::execute);
   }
 }
