@@ -1,6 +1,8 @@
 package edu.stanford.owl2lpg.client.write;
 
 import edu.stanford.owl2lpg.client.DatabaseModule;
+import edu.stanford.owl2lpg.client.bind.project.index.DefaultIndexLoader;
+import edu.stanford.owl2lpg.client.bind.project.index.IndexLoader;
 import edu.stanford.owl2lpg.client.read.NodeMapperModule;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.DaggerAxiomAccessorComponent;
@@ -32,6 +34,8 @@ public class CypherBasedAxiomStorer_TestCase {
   private final BranchId branchId = BranchId.create();
 
   private final OntologyDocumentId documentId = OntologyDocumentId.create();
+
+  private IndexLoader indexLoader;
 
   private AxiomAccessor axiomAccessor;
 
@@ -75,7 +79,8 @@ public class CypherBasedAxiomStorer_TestCase {
     var clsB = Class(IRI.create("http://example.org/B"));
     axiom = SubClassOf(clsA, clsB);
 
-    tempCreateIndexes();
+    indexLoader = new DefaultIndexLoader(driver);
+    indexLoader.createIndexes();
   }
 
 
@@ -101,14 +106,5 @@ public class CypherBasedAxiomStorer_TestCase {
     var translation = axiomTranslator.translate(axiom);
     var queryStrings = translationTranslator.translateToCypherCreateQuery(projectId, branchId, documentId, translation);
     queryStrings.forEach(graphWriter::execute);
-  }
-
-  private void tempCreateIndexes() {
-    // Temporary work around until indexes are ensured in the code base
-    var cypher = "CREATE CONSTRAINT unique_project_id ON (n:Project) ASSERT n.projectId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_branch_id ON (n:Branch) ASSERT n.branchId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_document_id ON (n:OntologyDocument) ASSERT n.ontologyDocumentId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_iri_iri ON (n:IRI) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_class_iri ON (n:Class) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_data_property_iri ON (n:DataProperty) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_object_property_iri ON (n:ObjectProperty) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_annotation_property_iri ON (n:AnnotationProperty) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_datatype_iri ON (n:Datatype) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_individual_iri ON (n:NamedIndividual) ASSERT n.iri IS UNIQUE;\n" + "CREATE CONSTRAINT unique_class_oboId ON (n:Class) ASSERT n.oboId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_data_property_oboId ON (n:DataProperty) ASSERT n.oboId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_object_property_oboId ON (n:ObjectProperty) ASSERT n.oboId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_annotation_property_oboId ON (n:AnnotationProperty) ASSERT n.oboId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_datatype_oboId ON (n:Datatype) ASSERT n.oboId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_individual_oboId ON (n:NamedIndividual) ASSERT n.oboId IS UNIQUE;\n" + "CREATE CONSTRAINT unique_axiom_digest ON (n:Axiom) ASSERT n.digest IS UNIQUE;\n" + "CREATE INDEX entity_iri_index FOR (n:Entity) ON (n.iri);\n" + "CREATE INDEX entity_iriSuffix_index FOR (n:Entity) ON (n.iriSuffix);\n" + "CREATE INDEX class_iriSuffix_index FOR (n:Class) ON (n.iriSuffix);\n" + "CREATE INDEX data_property_iriSuffix_index FOR (n:DataProperty) ON (n.iriSuffix);\n" + "CREATE INDEX object_property_iriSuffix_index FOR (n:ObjectProperty) ON (n.iriSuffix);\n" + "CREATE INDEX annotation_property_iriSuffix_index FOR (n:AnnotationProperty) ON (n.iriSuffix);\n" + "CREATE INDEX datatype_iriSuffix_index FOR (n:Datatype) ON (n.iriSuffix);\n" + "CREATE INDEX individual_iriSuffix_index FOR (n:NamedIndividual) ON (n.iriSuffix);\n" + "CREATE INDEX entity_oboId_index FOR (n:Entity) ON (n.oboId);\n" + "CREATE INDEX literal_lexicalForm_index FOR (n:Literal) ON (n.lexicalForm);\n" + "CREATE INDEX literal_datatype_index FOR (n:Literal) ON (n.datatype);\n" + "CREATE INDEX literal_language_index FOR (n:Literal) ON (n.language);";
-    var queries = cypher.split("\n");
-    for (var q : queries) {
-      graphWriter.execute(q);
-    }
   }
 }
