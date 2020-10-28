@@ -12,10 +12,8 @@ import edu.stanford.owl2lpg.client.write.QueryBuilderFactory;
 import edu.stanford.owl2lpg.client.write.TranslationTranslator;
 import edu.stanford.owl2lpg.client.write.handlers.impl.AddAxiomHandler;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
-import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.translator.shared.*;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.GraphDatabase;
@@ -25,7 +23,10 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Class;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.SubClassOf;
@@ -36,7 +37,9 @@ import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.SubCl
  */
 class Neo4jSubClassOfAxiomsBySubClassIndex_TestCase {
 
-  private final OWLOntologyID ontologyId = new OWLOntologyID(IRI.create("http://example.org/ontology"));
+  private final OWLOntologyID ontologyIdA = new OWLOntologyID(IRI.create("http://example.org/ontologyA"));
+
+  private final OWLOntologyID ontologyIdB = new OWLOntologyID(IRI.create("http://example.org/ontologyB"));
 
   private final ProjectId projectId = ProjectId.create();
 
@@ -50,6 +53,10 @@ class Neo4jSubClassOfAxiomsBySubClassIndex_TestCase {
 
   private OWLSubClassOfAxiom axiom2;
 
+  private AddAxiomHandler addAxiomHandler;
+
+  private OntologyDocumentId ontDocIdA, ontDocIdB;
+
   @BeforeEach
   void setUp() {
 
@@ -58,7 +65,8 @@ class Neo4jSubClassOfAxiomsBySubClassIndex_TestCase {
     var driver = GraphDatabase.driver(boltUri);
     
     var documentIdMap = new DocumentIdMap(driver);
-    var ontDocId = documentIdMap.get(projectId, ontologyId);
+    ontDocIdA = documentIdMap.get(projectId, ontologyIdA);
+    ontDocIdB = documentIdMap.get(projectId, ontologyIdB);
 
     var graphWriter = new GraphWriter(driver);
 
@@ -71,7 +79,7 @@ class Neo4jSubClassOfAxiomsBySubClassIndex_TestCase {
     var queryBuilderFactory = new QueryBuilderFactory();
     var translationTranslator = new TranslationTranslator(queryBuilderFactory);
 
-    var addAxiomHandler = new AddAxiomHandler(graphWriter, axiomTranslator, translationTranslator);
+    addAxiomHandler = new AddAxiomHandler(graphWriter, axiomTranslator, translationTranslator);
 
     var axiomAccessor = DaggerAxiomAccessorComponent.builder()
         .databaseModule(new DatabaseModule(driver))
@@ -88,18 +96,29 @@ class Neo4jSubClassOfAxiomsBySubClassIndex_TestCase {
     axiom1 = SubClassOf(clsA, clsB);
     axiom2 = SubClassOf(clsA, clsC);
 
-    addAxiomHandler.handle(projectId, branchId, ontDocId, axiom1);
-    addAxiomHandler.handle(projectId, branchId, ontDocId, axiom2);
-
     var indexLoader = new DefaultIndexLoader(driver);
     indexLoader.createIndexes();
   }
 
   @Test
-  void shouldGetSubClassOfAxioms() {
-    var subClassOfAxioms = axiomIndex.getSubClassOfAxiomsForSubClass(clsA, ontologyId).collect(ImmutableList.toImmutableList());
-    assertEquals(2, subClassOfAxioms.size());
-    assertTrue(subClassOfAxioms.contains(axiom1));
-    assertTrue(subClassOfAxioms.contains(axiom2));
+  void shouldGetAllSubClassOfAxiomsFromOntDoc() {
+    addAxiomHandler.handle(projectId, branchId, ontDocIdA, axiom1);
+    addAxiomHandler.handle(projectId, branchId, ontDocIdA, axiom2);
+
+    var subClassOfAxioms = axiomIndex.getSubClassOfAxiomsForSubClass(clsA, ontologyIdA)
+                                     .collect(ImmutableList.toImmutableList());
+
+    assertThat(subClassOfAxioms, containsInAnyOrder(axiom1, axiom2));
+  }
+
+  @Test
+  void shouldOnlyGetSubClassOfAxiomsFromSpecificOntDoc() {
+    addAxiomHandler.handle(projectId, branchId, ontDocIdA, axiom1);
+    addAxiomHandler.handle(projectId, branchId, ontDocIdB, axiom2);
+
+    var subClassOfAxioms = axiomIndex.getSubClassOfAxiomsForSubClass(clsA, ontologyIdA)
+                                     .collect(ImmutableList.toImmutableList());
+
+    assertThat(subClassOfAxioms, containsInAnyOrder(axiom1));
   }
 }
