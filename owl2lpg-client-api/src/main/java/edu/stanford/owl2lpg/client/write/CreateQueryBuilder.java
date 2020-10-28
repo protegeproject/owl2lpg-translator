@@ -140,11 +140,10 @@ public class CreateQueryBuilder implements TranslationVisitor {
         " {" + PROJECT_ID + ":" + projectId.toQuotedString() + "})\n" +
         "MERGE (" + BRANCH_VARIABLE + BRANCH.toNeo4jLabel() +
         " {" + BRANCH_ID + ":" + branchId.toQuotedString() + "})\n" +
+        "MERGE (" + PROJECT_VARIABLE + ")-[" + EdgeLabel.BRANCH.toNeo4jLabel() + "]->(" + BRANCH_VARIABLE + ")\n" +
         "MERGE (" + DOCUMENT_VARIABLE + ONTOLOGY_DOCUMENT.toNeo4jLabel() +
         " {" + ONTOLOGY_DOCUMENT_ID + ":" + documentId.toQuotedString() + "})\n" +
-        "MERGE (" + PROJECT_VARIABLE + ")-[" + EdgeLabel.BRANCH.toNeo4jLabel() + "]->" +
-        "(" + BRANCH_VARIABLE + ")-[" + EdgeLabel.ONTOLOGY_DOCUMENT.toNeo4jLabel() + "]->" +
-        "(" + DOCUMENT_VARIABLE + ")\n";
+        "MERGE (" + BRANCH_VARIABLE + ")-[" + EdgeLabel.ONTOLOGY_DOCUMENT.toNeo4jLabel() + "]->(" + DOCUMENT_VARIABLE + ")\n";
   }
 
   @Nonnull
