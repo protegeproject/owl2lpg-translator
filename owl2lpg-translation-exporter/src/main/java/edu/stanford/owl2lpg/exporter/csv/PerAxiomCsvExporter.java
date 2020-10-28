@@ -3,14 +3,14 @@ package edu.stanford.owl2lpg.exporter.csv;
 import edu.stanford.owl2lpg.exporter.csv.internal.ProjectTranslator;
 import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
@@ -88,6 +88,10 @@ public class PerAxiomCsvExporter {
     entityNodes.forEach(entityNode ->
         augmentedEdgeFactory.getInOntologySignatureEdge(entityNode, documentNode)
             .ifPresent(csvWriter::writeEdge));
+  }
+
+  public Neo4jCsvWriter getCsvWriter() {
+    return csvWriter;
   }
 
   public void printReport() {

@@ -16,4 +16,6 @@ public interface CsvExporterComponent {
   OntologyCsvExporter getOntologyCsvExporter();
 
   PerAxiomCsvExporter getPerAxiomCsvExporter();
+
+  OboCsvExporter getOboCsvExporter();
 }
