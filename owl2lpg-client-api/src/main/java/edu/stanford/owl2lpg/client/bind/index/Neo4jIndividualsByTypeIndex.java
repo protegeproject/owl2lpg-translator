@@ -3,11 +3,11 @@ package edu.stanford.owl2lpg.client.bind.index;
 import edu.stanford.bmir.protege.web.server.hierarchy.ClassHierarchyRoot;
 import edu.stanford.bmir.protege.web.server.index.IndividualsByTypeIndex;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -34,7 +34,7 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final ClassHierarchyAccessor classHierarchyAccessor;
@@ -46,13 +46,13 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
   public Neo4jIndividualsByTypeIndex(@Nonnull @ClassHierarchyRoot OWLClass root,
                                      @Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
-                                     @Nonnull DocumentIdMap documentIdMap,
+                                     @Nonnull ProjectAccessor projectAccessor,
                                      @Nonnull ClassHierarchyAccessor classHierarchyAccessor,
                                      @Nonnull NamedIndividualAccessor namedIndividualAccessor) {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.classHierarchyAccessor = checkNotNull(classHierarchyAccessor);
     this.namedIndividualAccessor = checkNotNull(namedIndividualAccessor);
   }
@@ -72,7 +72,7 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
   }
 
   private Stream<OWLNamedIndividual> getAllInstances() {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> namedIndividualAccessor.getAllIndividuals(projectId, branchId, documentId).stream());
   }
@@ -90,7 +90,7 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return getAllInstances();
     } else {
-      return documentIdMap.get(projectId)
+      return projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
           .flatMap(documentId -> namedIndividualAccessor.getIndividualsByType(owlClass, projectId, branchId, documentId).stream());
     }
@@ -98,7 +98,7 @@ public class Neo4jIndividualsByTypeIndex implements IndividualsByTypeIndex {
 
   @Nonnull
   private Stream<OWLNamedIndividual> getIndirectInstances(OWLClass owlClass) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> classHierarchyAccessor.getDescendants(owlClass, projectId, branchId, documentId).stream())
         .flatMap(this::getDirectInstances)

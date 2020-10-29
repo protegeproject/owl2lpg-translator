@@ -4,10 +4,10 @@ import edu.stanford.bmir.protege.web.server.index.IndividualsIndex;
 import edu.stanford.bmir.protege.web.server.index.IndividualsQueryResult;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -33,7 +33,7 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final AssertionAxiomAccessor assertionAxiomAccessor;
@@ -47,13 +47,13 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   @Inject
   public Neo4jIndividualsIndex(@Nonnull ProjectId projectId,
                                @Nonnull BranchId branchId,
-                               @Nonnull DocumentIdMap documentIdMap,
+                               @Nonnull ProjectAccessor projectAccessor,
                                @Nonnull Neo4jIndividualsByNameIndex individualsByNameIndex,
                                @Nonnull Neo4jIndividualsBySubjectIndex individualsBySubjectIndex,
                                @Nonnull AssertionAxiomAccessor assertionAxiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.individualsByNameIndex = checkNotNull(individualsByNameIndex);
     this.individualsBySubjectIndex = checkNotNull(individualsBySubjectIndex);
     this.assertionAxiomAccessor = checkNotNull(assertionAxiomAccessor);
@@ -87,7 +87,7 @@ public class Neo4jIndividualsIndex implements IndividualsIndex {
   @Nonnull
   @Override
   public Stream<OWLClass> getTypes(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> assertionAxiomAccessor.getClassAssertionsBySubject(owlNamedIndividual, projectId, branchId, documentId).stream())
         .map(OWLClassAssertionAxiom::getClassExpression)

@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.client.read.individual.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.axiom.ClassAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;

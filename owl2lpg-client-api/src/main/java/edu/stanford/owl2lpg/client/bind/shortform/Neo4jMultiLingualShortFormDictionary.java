@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import edu.stanford.bmir.protege.web.server.shortform.MultiLingualShortFormDictionary;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.shortform.MultiLingualShortFormAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;

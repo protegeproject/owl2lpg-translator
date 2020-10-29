@@ -3,8 +3,8 @@ package edu.stanford.owl2lpg.client.bind.index;
 import edu.stanford.bmir.protege.web.server.index.ProjectClassAssertionAxiomsByIndividualIndex;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 

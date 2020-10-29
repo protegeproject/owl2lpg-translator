@@ -3,10 +3,10 @@ package edu.stanford.owl2lpg.client.bind.hierarchy;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.AnnotationPropertyHierarchyProvider;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.hierarchy.AnnotationPropertyHierarchyAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ public class Neo4jAnnotationPropertyHierarchyProvider implements AnnotationPrope
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final AnnotationPropertyHierarchyAccessor hierarchyAccessor;
@@ -37,74 +37,74 @@ public class Neo4jAnnotationPropertyHierarchyProvider implements AnnotationPrope
   @Inject
   public Neo4jAnnotationPropertyHierarchyProvider(@Nonnull ProjectId projectId,
                                                   @Nonnull BranchId branchId,
-                                                  @Nonnull DocumentIdMap documentIdMap,
+                                                  @Nonnull ProjectAccessor projectAccessor,
                                                   @Nonnull AnnotationPropertyHierarchyAccessor hierarchyAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
   }
 
   @Override
   public Collection<OWLAnnotationProperty> getRoots() {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(documentId -> hierarchyAccessor.getRoots(projectId, branchId, documentId).stream())
+        .flatMap(ontDocId -> hierarchyAccessor.getRoots(projectId, branchId, ontDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<OWLAnnotationProperty> getChildren(OWLAnnotationProperty owlAnnotationProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(documentId -> hierarchyAccessor.getChildren(owlAnnotationProperty, projectId, branchId, documentId).stream())
+        .flatMap(ontDocId -> hierarchyAccessor.getChildren(owlAnnotationProperty, projectId, branchId, ontDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public boolean isLeaf(OWLAnnotationProperty owlAnnotationProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .anyMatch(documentId -> hierarchyAccessor.isLeaf(owlAnnotationProperty, projectId, branchId, documentId));
+        .anyMatch(ontDocId -> hierarchyAccessor.isLeaf(owlAnnotationProperty, projectId, branchId, ontDocId));
   }
 
   @Override
   public Collection<OWLAnnotationProperty> getDescendants(OWLAnnotationProperty owlAnnotationProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(documentId -> hierarchyAccessor.getDescendants(owlAnnotationProperty, projectId, branchId, documentId).stream())
+        .flatMap(ontDocId -> hierarchyAccessor.getDescendants(owlAnnotationProperty, projectId, branchId, ontDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<OWLAnnotationProperty> getParents(OWLAnnotationProperty owlAnnotationProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(documentId -> hierarchyAccessor.getParents(owlAnnotationProperty, projectId, branchId, documentId).stream())
+        .flatMap(ontDocId -> hierarchyAccessor.getParents(owlAnnotationProperty, projectId, branchId, ontDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<OWLAnnotationProperty> getAncestors(OWLAnnotationProperty owlAnnotationProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(documentId -> hierarchyAccessor.getAncestors(owlAnnotationProperty, projectId, branchId, documentId).stream())
+        .flatMap(ontDocId -> hierarchyAccessor.getAncestors(owlAnnotationProperty, projectId, branchId, ontDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public Collection<List<OWLAnnotationProperty>> getPathsToRoot(OWLAnnotationProperty owlAnnotationProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .flatMap(documentId -> hierarchyAccessor.getPathsToRoot(owlAnnotationProperty, projectId, branchId, documentId).stream())
+        .flatMap(ontDocId -> hierarchyAccessor.getPathsToRoot(owlAnnotationProperty, projectId, branchId, ontDocId).stream())
         .collect(ImmutableSet.toImmutableSet());
   }
 
   @Override
   public boolean isAncestor(OWLAnnotationProperty parent, OWLAnnotationProperty child) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
-        .anyMatch(documentId -> hierarchyAccessor.isAncestor(parent, child, projectId, branchId, documentId));
+        .anyMatch(ontDocId -> hierarchyAccessor.isAncestor(parent, child, projectId, branchId, ontDocId));
   }
 
   @Override

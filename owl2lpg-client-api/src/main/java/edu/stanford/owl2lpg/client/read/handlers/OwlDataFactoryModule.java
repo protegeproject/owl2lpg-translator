@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.client.read.handlers;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.stanford.owl2lpg.client.DatabaseSessionScope;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -14,7 +13,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 public class OwlDataFactoryModule {
 
   @Provides
-  @DatabaseSessionScope
   public OWLDataFactory provideOwlDataFactory() {
     return new OWLDataFactoryImpl();
   }

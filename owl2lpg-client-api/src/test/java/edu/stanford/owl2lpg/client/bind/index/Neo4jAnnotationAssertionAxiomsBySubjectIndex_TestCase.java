@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import static edu.stanford.owl2lpg.client.bind.index.OwlObjects.apP;
 import static edu.stanford.owl2lpg.client.bind.index.OwlObjects.apQ;
@@ -33,17 +33,18 @@ class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
 
   private AxiomIndexTestHarness testHarness;
 
-  private OWLOntologyID ontologyIdA;
+  private OntologyDocumentId ontDocIdA, ontDocIdB;
 
   @BeforeEach
   void setUp() {
     testHarness = AxiomIndexTestHarness.createAndSetUp();
-    ontologyIdA = testHarness.getOntologyIdA();
     axiomIndex = new Neo4jAnnotationAssertionAxiomsBySubjectIndex(
         testHarness.getProjectId(),
         testHarness.getBranchId(),
-        testHarness.getDocumentMap(),
         testHarness.getAssertionAxiomAccessor());
+
+    ontDocIdA = testHarness.getOntologyDocumentA();
+    ontDocIdB = testHarness.getOntologyDocumentB();
 
     axiom1 = AnnotationAssertion(apP, iriA, litStrA);
     axiom2 = AnnotationAssertion(apQ, iriA, litInt);
@@ -52,33 +53,33 @@ class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
 
   @Test
   void shouldNotGetAnyAxioms() {
-    var subClassOfAxioms = getAxioms(iriA, ontologyIdA);
+    var subClassOfAxioms = getAxioms(iriA, ontDocIdA);
     assertThat(subClassOfAxioms.isEmpty(), is(true));
   }
 
   @Test
   void shouldGetAllSubClassOfAxiomsFromOntDoc() {
-    testHarness.addAxiomToOntologyDocument_A(axiom1);
-    testHarness.addAxiomToOntologyDocument_A(axiom2);
-    testHarness.addAxiomToOntologyDocument_A(axiom3);
+    testHarness.addAxiomToOntologyDocument(axiom1, ontDocIdA);
+    testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdA);
+    testHarness.addAxiomToOntologyDocument(axiom3, ontDocIdA);
 
-    var assertionAxioms = getAxioms(iriA, ontologyIdA);
+    var assertionAxioms = getAxioms(iriA, ontDocIdA);
 
     assertThat(assertionAxioms, containsInAnyOrder(axiom1, axiom2));
   }
 
   @Test
   void shouldOnlyGetSubClassOfAxiomsFromSpecificOntDoc() {
-    testHarness.addAxiomToOntologyDocument_A(axiom1);
-    testHarness.addAxiomToOntologyDocument_B(axiom2);
+    testHarness.addAxiomToOntologyDocument(axiom1, ontDocIdA);
+    testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdB);
 
-    var assertionAxioms = getAxioms(iriA, ontologyIdA);
+    var assertionAxioms = getAxioms(iriA, ontDocIdA);
 
     assertThat(assertionAxioms, containsInAnyOrder(axiom1));
   }
 
-  private ImmutableList<OWLAnnotationAssertionAxiom> getAxioms(IRI subject, OWLOntologyID ontologyID) {
-    return axiomIndex.getAxiomsForSubject(subject, ontologyID).collect(ImmutableList.toImmutableList());
+  private ImmutableList<OWLAnnotationAssertionAxiom> getAxioms(IRI subject, OntologyDocumentId ontDocId) {
+    return axiomIndex.getAxiomsForSubject(subject, ontDocId).collect(ImmutableList.toImmutableList());
   }
 
   @AfterEach

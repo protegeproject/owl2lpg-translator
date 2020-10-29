@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyProvider;
 import edu.stanford.bmir.protege.web.server.hierarchy.ObjectPropertyHierarchyRoot;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.hierarchy.ObjectPropertyHierarchyAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -36,7 +36,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final EntityAccessor entityAccessor;
@@ -51,14 +51,14 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   public Neo4jObjectPropertyHierarchyProvider(@Nonnull @ObjectPropertyHierarchyRoot OWLObjectProperty root,
                                               @Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull DocumentIdMap documentIdMap,
+                                              @Nonnull ProjectAccessor projectAccessor,
                                               @Nonnull EntityAccessor entityAccessor,
                                               @Nonnull ObjectPropertyHierarchyAccessor hierarchyAccessor,
                                               @Nonnull OWLDataFactory dataFactory) {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.entityAccessor = checkNotNull(entityAccessor);
     this.hierarchyAccessor = checkNotNull(hierarchyAccessor);
     this.dataFactory = checkNotNull(dataFactory);
@@ -73,12 +73,12 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
   @Override
   public Collection<OWLObjectProperty> getChildren(OWLObjectProperty owlObjectProperty) {
     if (root.equals(dataFactory.getOWLTopObjectProperty()) && root.equals(owlObjectProperty)) {
-      return documentIdMap.get(projectId)
+      return projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
           .flatMap(documentId -> hierarchyAccessor.getTopChildren(projectId, branchId, documentId).stream())
           .collect(ImmutableSet.toImmutableSet());
     } else {
-      return documentIdMap.get(projectId)
+      return projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
           .flatMap(documentId -> hierarchyAccessor.getChildren(owlObjectProperty, projectId, branchId, documentId).stream())
           .collect(ImmutableSet.toImmutableSet());
@@ -87,7 +87,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Override
   public boolean isLeaf(OWLObjectProperty owlObjectProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .anyMatch(documentId -> hierarchyAccessor.isLeaf(owlObjectProperty, projectId, branchId, documentId));
   }
@@ -97,7 +97,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
     if (root.equals(dataFactory.getOWLTopObjectProperty()) && root.equals(owlObjectProperty)) {
       return getAllObjectProperties();
     } else {
-      return documentIdMap.get(projectId)
+      return projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
           .flatMap(documentId -> hierarchyAccessor.getDescendants(owlObjectProperty, projectId, branchId, documentId).stream())
           .collect(ImmutableSet.toImmutableSet());
@@ -106,7 +106,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Nonnull
   private ImmutableSet<OWLObjectProperty> getAllObjectProperties() {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> entityAccessor.getEntitiesByType(EntityType.OBJECT_PROPERTY, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
@@ -114,7 +114,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Override
   public Collection<OWLObjectProperty> getParents(OWLObjectProperty owlObjectProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> hierarchyAccessor.getParents(owlObjectProperty, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
@@ -122,7 +122,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Override
   public Collection<OWLObjectProperty> getAncestors(OWLObjectProperty owlObjectProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> hierarchyAccessor.getAncestors(owlObjectProperty, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
@@ -130,7 +130,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Override
   public Collection<List<OWLObjectProperty>> getPathsToRoot(OWLObjectProperty owlObjectProperty) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> hierarchyAccessor.getPathsToRoot(owlObjectProperty, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());
@@ -138,7 +138,7 @@ public class Neo4jObjectPropertyHierarchyProvider implements ObjectPropertyHiera
 
   @Override
   public boolean isAncestor(OWLObjectProperty parent, OWLObjectProperty child) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .anyMatch(documentId -> hierarchyAccessor.isAncestor(parent, child, projectId, branchId, documentId));
   }

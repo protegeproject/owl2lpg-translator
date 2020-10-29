@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.read.ontology;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public interface OntologyAccessor {
+public interface OntologyDocumentAccessor {
 
   @Nonnull
   OWLOntologyID getOntologyId(@Nonnull ProjectId projectId,

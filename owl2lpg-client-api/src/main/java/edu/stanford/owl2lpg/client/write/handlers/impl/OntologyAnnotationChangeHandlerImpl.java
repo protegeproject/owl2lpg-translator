@@ -1,13 +1,11 @@
 package edu.stanford.owl2lpg.client.write.handlers.impl;
 
 import edu.stanford.bmir.protege.web.server.change.AddOntologyAnnotationChange;
-import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveOntologyAnnotationChange;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandler;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -27,7 +25,7 @@ public class OntologyAnnotationChangeHandlerImpl implements OntologyAnnotationCh
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final AddOntologyAnnotationHandler addOntologyAnnotationHandler;
@@ -38,33 +36,27 @@ public class OntologyAnnotationChangeHandlerImpl implements OntologyAnnotationCh
   @Inject
   public OntologyAnnotationChangeHandlerImpl(@Nonnull ProjectId projectId,
                                              @Nonnull BranchId branchId,
-                                             @Nonnull DocumentIdMap documentIdMap,
+                                             @Nonnull ProjectAccessor projectAccessor,
                                              @Nonnull AddOntologyAnnotationHandler addOntologyAnnotationHandler,
                                              @Nonnull RemoveOntologyAnnotationHandler removeOntologyAnnotationHandler) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.addOntologyAnnotationHandler = checkNotNull(addOntologyAnnotationHandler);
     this.removeOntologyAnnotationHandler = checkNotNull(removeOntologyAnnotationHandler);
   }
 
   @Override
   public void handle(@Nonnull AddOntologyAnnotationChange addOntologyAnnotationChange) {
-    var documentId = getOntDocIdFromChange(addOntologyAnnotationChange);
+    var ontDocId = addOntologyAnnotationChange.getOntologyDocumentId();
     var annotation = addOntologyAnnotationChange.getAnnotation();
-    addOntologyAnnotationHandler.handle(projectId, branchId, documentId, annotation);
+    addOntologyAnnotationHandler.handle(projectId, branchId, ontDocId, annotation);
   }
 
   @Override
   public void handle(@Nonnull RemoveOntologyAnnotationChange removeOntologyAnnotationChange) {
-    var documentId = getOntDocIdFromChange(removeOntologyAnnotationChange);
+    var ontDocId = removeOntologyAnnotationChange.getOntologyDocumentId();
     var annotation = removeOntologyAnnotationChange.getAnnotation();
-    removeOntologyAnnotationHandler.handle(projectId, branchId, documentId, annotation);
-  }
-
-  @Nonnull
-  private OntologyDocumentId getOntDocIdFromChange(@Nonnull OntologyChange ontologyChange) {
-    var ontologyId = ontologyChange.getOntologyId();
-    return documentIdMap.get(projectId, ontologyId);
+    removeOntologyAnnotationHandler.handle(projectId, branchId, ontDocId, annotation);
   }
 }

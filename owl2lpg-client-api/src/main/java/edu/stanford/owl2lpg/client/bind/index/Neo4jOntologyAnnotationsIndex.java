@@ -1,12 +1,11 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologyAnnotationsIndex;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -27,32 +26,25 @@ public class Neo4jOntologyAnnotationsIndex implements OntologyAnnotationsIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
-
-  @Nonnull
   private final OntologyAnnotationsAccessor ontologyAnnotationsAccessor;
 
   @Inject
   public Neo4jOntologyAnnotationsIndex(@Nonnull ProjectId projectId,
                                        @Nonnull BranchId branchId,
-                                       @Nonnull DocumentIdMap documentIdMap,
                                        @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
     this.ontologyAnnotationsAccessor = checkNotNull(ontologyAnnotationsAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLAnnotation> getOntologyAnnotations(@Nonnull OWLOntologyID ontologyId) {
-    var documentId = documentIdMap.get(projectId, ontologyId);
-    return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, documentId).stream();
+  public Stream<OWLAnnotation> getOntologyAnnotations(@Nonnull OntologyDocumentId ontDocId) {
+    return ontologyAnnotationsAccessor.getOntologyAnnotations(projectId, branchId, ontDocId).stream();
   }
 
   @Override
-  public boolean containsAnnotation(@Nonnull OWLAnnotation owlAnnotation, @Nonnull OWLOntologyID owlOntologyID) {
-    return getOntologyAnnotations(owlOntologyID)
-        .anyMatch(owlAnnotation::equals);
+  public boolean containsAnnotation(@Nonnull OWLAnnotation owlAnnotation, @Nonnull OntologyDocumentId ontDocId) {
+    return getOntologyAnnotations(ontDocId).anyMatch(owlAnnotation::equals);
   }
 }

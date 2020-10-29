@@ -1,13 +1,13 @@
 package edu.stanford.owl2lpg.client.read.lang.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.lang.DictionaryLanguageAccessor;
 import edu.stanford.owl2lpg.client.read.lang.DictionaryLanguageUsageSummary;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 

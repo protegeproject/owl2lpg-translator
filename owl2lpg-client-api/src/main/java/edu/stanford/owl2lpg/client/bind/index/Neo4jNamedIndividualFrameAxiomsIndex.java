@@ -2,10 +2,10 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.server.index.NamedIndividualFrameAxiomIndex;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -28,7 +28,7 @@ public class Neo4jNamedIndividualFrameAxiomsIndex implements NamedIndividualFram
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -36,18 +36,18 @@ public class Neo4jNamedIndividualFrameAxiomsIndex implements NamedIndividualFram
   @Inject
   public Neo4jNamedIndividualFrameAxiomsIndex(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull DocumentIdMap documentIdMap,
+                                              @Nonnull ProjectAccessor projectAccessor,
                                               @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Set<OWLAxiom> getNamedIndividualFrameAxioms(@Nonnull OWLNamedIndividual owlNamedIndividual) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> axiomAccessor.getAxiomsBySubject(owlNamedIndividual, projectId, branchId, documentId).stream())
         .collect(ImmutableSet.toImmutableSet());

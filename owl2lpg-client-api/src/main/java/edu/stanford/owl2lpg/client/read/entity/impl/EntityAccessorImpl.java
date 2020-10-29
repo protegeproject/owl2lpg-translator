@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.client.read.entity.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -36,8 +36,7 @@ public class EntityAccessorImpl implements EntityAccessor {
 
   @Nonnull
   private final EntityNodeMapper entityNodeMapper;
-
-
+  
   @Inject
   public EntityAccessorImpl(@Nonnull GraphReader graphReader,
                             @Nonnull EntityNodeMapper entityNodeMapper) {

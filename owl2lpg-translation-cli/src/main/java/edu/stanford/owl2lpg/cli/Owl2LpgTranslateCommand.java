@@ -2,9 +2,6 @@ package edu.stanford.owl2lpg.cli;
 
 import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
 import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriterModule;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 
 import java.nio.file.FileSystems;
@@ -95,9 +92,9 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
           .build()
           .getOboCsvExporter();
       var ontologyFile = ontologyFileLocation.toFile();
-      exporter.export(ontologyFile, ProjectId.create(projectId),
-          BranchId.create(branchId),
-          OntologyDocumentId.create(ontDocId), true);
+      exporter.export(ontologyFile, UUID.fromString(projectId),
+          UUID.fromString(branchId),
+          UUID.fromString(ontDocId), true);
     } catch (Exception e) {
       e.printStackTrace();
       exitCode = 1;
@@ -116,9 +113,9 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
       var ontologyFile = ontologyFileLocation.toFile();
       var ontologyManager = OWLManager.createOWLOntologyManager();
       var ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
-      exporter.export(ontology, ProjectId.create(projectId),
-          BranchId.create(branchId),
-          OntologyDocumentId.create(ontDocId));
+      exporter.export(ontology, UUID.fromString(projectId),
+          UUID.fromString(branchId),
+          UUID.fromString(ontDocId));
     } catch (Exception e) {
       e.printStackTrace();
       exitCode = 1;

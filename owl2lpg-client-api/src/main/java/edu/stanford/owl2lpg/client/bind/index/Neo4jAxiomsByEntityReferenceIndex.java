@@ -2,13 +2,13 @@ package edu.stanford.owl2lpg.client.bind.index;
 
 import com.google.common.collect.Streams;
 import edu.stanford.bmir.protege.web.server.index.AxiomsByEntityReferenceIndex;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -29,7 +29,7 @@ public class Neo4jAxiomsByEntityReferenceIndex implements AxiomsByEntityReferenc
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final AxiomAccessor axiomAccessor;
@@ -37,21 +37,20 @@ public class Neo4jAxiomsByEntityReferenceIndex implements AxiomsByEntityReferenc
   @Inject
   public Neo4jAxiomsByEntityReferenceIndex(@Nonnull ProjectId projectId,
                                            @Nonnull BranchId branchId,
-                                           @Nonnull DocumentIdMap documentIdMap,
+                                           @Nonnull ProjectAccessor projectAccessor,
                                            @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Override
   public Stream<OWLAxiom> getReferencingAxioms(@Nonnull OWLEntity owlEntity,
-                                               @Nonnull OWLOntologyID ontologyId) {
-    var documentId = documentIdMap.get(projectId, ontologyId);
+                                               @Nonnull OntologyDocumentId ontDocId) {
     return Streams.concat(
-        axiomAccessor.getAxiomsBySignature(owlEntity, projectId, branchId, documentId).stream(),
-        axiomAccessor.getAnnotationAxioms(owlEntity.getIRI(), projectId, branchId, documentId).stream())
+        axiomAccessor.getAxiomsBySignature(owlEntity, projectId, branchId, ontDocId).stream(),
+        axiomAccessor.getAnnotationAxioms(owlEntity.getIRI(), projectId, branchId, ontDocId).stream())
         .distinct();
   }
 }

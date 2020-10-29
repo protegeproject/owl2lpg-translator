@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.exporter.csv.internal.ProjectTranslator;
 import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
@@ -64,7 +65,17 @@ public class OntologyCsvExporter {
   }
 
   public void export(@Nonnull OWLOntology ontology) throws IOException {
-    export(ontology, ProjectId.create(), BranchId.create(), OntologyDocumentId.create());
+    export(ontology, ProjectId.generate(), BranchId.generate(), OntologyDocumentId.generate());
+  }
+
+  public void export(@Nonnull OWLOntology ontology,
+                     @Nonnull UUID projectUuid,
+                     @Nonnull UUID branchUuid,
+                     @Nonnull UUID ontDocUuid) throws IOException {
+    export(ontology,
+        ProjectId.get(projectUuid.toString()),
+        BranchId.get(branchUuid.toString()),
+        OntologyDocumentId.get(ontDocUuid.toString()));
   }
 
   public void export(@Nonnull OWLOntology ontology,

@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.server.change.OntologyChange;
 import edu.stanford.bmir.protege.web.server.lang.ActiveLanguagesManager;
 import edu.stanford.bmir.protege.web.shared.lang.DictionaryLanguageUsage;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
 import edu.stanford.owl2lpg.client.read.lang.DictionaryLanguageAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -31,7 +31,7 @@ public class Neo4jActiveLanguagesManager implements ActiveLanguagesManager {
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final DictionaryLanguageAccessor dictionaryLanguageAccessor;
@@ -39,11 +39,11 @@ public class Neo4jActiveLanguagesManager implements ActiveLanguagesManager {
   @Inject
   public Neo4jActiveLanguagesManager(@Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
-                                     @Nonnull DocumentIdMap documentIdMap,
+                                     @Nonnull ProjectAccessor projectAccessor,
                                      @Nonnull DictionaryLanguageAccessor dictionaryLanguageAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.dictionaryLanguageAccessor = checkNotNull(dictionaryLanguageAccessor);
   }
 
@@ -59,7 +59,7 @@ public class Neo4jActiveLanguagesManager implements ActiveLanguagesManager {
   @Nonnull
   @Override
   public ImmutableList<DictionaryLanguageUsage> getLanguageUsage() {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> dictionaryLanguageAccessor.getUsageSummary(projectId, branchId, documentId).stream())
         .sorted(Collections.reverseOrder(comparingByValue()))

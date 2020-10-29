@@ -1,14 +1,14 @@
 package edu.stanford.owl2lpg.client.read.ontology.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.annotation.OntologyAnnotationsAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
-import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
+import edu.stanford.owl2lpg.client.read.ontology.OntologyDocumentAccessor;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologyAccessorImpl implements OntologyAccessor {
+public class OntologyDocumentAccessorImpl implements OntologyDocumentAccessor {
 
   @Nonnull
   private final ProjectAccessor projectAccessor;
@@ -41,10 +41,10 @@ public class OntologyAccessorImpl implements OntologyAccessor {
   private final EntityAccessor entityAccessor;
 
   @Inject
-  public OntologyAccessorImpl(@Nonnull ProjectAccessor projectAccessor,
-                              @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor,
-                              @Nonnull AxiomAccessor axiomAccessor,
-                              @Nonnull EntityAccessor entityAccessor) {
+  public OntologyDocumentAccessorImpl(@Nonnull ProjectAccessor projectAccessor,
+                                      @Nonnull OntologyAnnotationsAccessor ontologyAnnotationsAccessor,
+                                      @Nonnull AxiomAccessor axiomAccessor,
+                                      @Nonnull EntityAccessor entityAccessor) {
     this.projectAccessor = checkNotNull(projectAccessor);
     this.ontologyAnnotationsAccessor = checkNotNull(ontologyAnnotationsAccessor);
     this.axiomAccessor = checkNotNull(axiomAccessor);

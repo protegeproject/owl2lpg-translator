@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.client.write;
 
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
@@ -38,9 +38,9 @@ public class Parameters {
                                                   @Nonnull IRI annotationPropertyIri,
                                                   @Nonnull OWLLiteral literalValue) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         DIGEST, new StringValue(axiomDigest),
         ANNOTATION_SUBJECT_IRI, new StringValue(annotationSubjectIri.toString()),
         ANNOTATION_PROPERTY_IRI, new StringValue(annotationPropertyIri.toString()),
@@ -57,9 +57,9 @@ public class Parameters {
                                                                  @Nonnull IRI annotationPropertyIri,
                                                                  @Nonnull OWLLiteral literalValue) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         DIGEST, new StringValue(axiomDigest),
         ANNOTATION_SUBJECT_IRI, new StringValue(annotationSubjectIri.toString()),
         ANNOTATION_PROPERTY_IRI, new StringValue(annotationPropertyIri.toString()),
@@ -77,9 +77,9 @@ public class Parameters {
                                                   @Nonnull IRI annotationPropertyIri,
                                                   @Nonnull IRI iriValue) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         DIGEST, new StringValue(axiomDigest),
         ANNOTATION_SUBJECT_IRI, new StringValue(annotationSubjectIri.toString()),
         ANNOTATION_PROPERTY_IRI, new StringValue(annotationPropertyIri.toString()),

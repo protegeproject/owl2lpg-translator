@@ -1,13 +1,12 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.DifferentIndividualsAxiomsIndex;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -28,30 +27,24 @@ public class Neo4jDifferentIndividualsAxiomsIndex implements DifferentIndividual
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
-
-  @Nonnull
   private final AxiomAccessor axiomAccessor;
 
   @Inject
   public Neo4jDifferentIndividualsAxiomsIndex(@Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
-                                              @Nonnull DocumentIdMap documentIdMap,
                                               @Nonnull AxiomAccessor axiomAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
     this.axiomAccessor = checkNotNull(axiomAccessor);
   }
 
   @Nonnull
   @Override
   public Stream<OWLDifferentIndividualsAxiom> getDifferentIndividualsAxioms(@Nonnull OWLIndividual owlIndividual,
-                                                                            @Nonnull OWLOntologyID ontologyId) {
+                                                                            @Nonnull OntologyDocumentId ontDocId) {
     // TODO Handle the case when the instance is anonymous
-    var documentId = documentIdMap.get(projectId, ontologyId);
     return (owlIndividual.isNamed()) ?
-        axiomAccessor.getAxiomsBySubject(owlIndividual.asOWLNamedIndividual(), projectId, branchId, documentId)
+        axiomAccessor.getAxiomsBySubject(owlIndividual.asOWLNamedIndividual(), projectId, branchId, ontDocId)
             .stream()
             .filter(OWLDifferentIndividualsAxiom.class::isInstance)
             .map(OWLDifferentIndividualsAxiom.class::cast) :

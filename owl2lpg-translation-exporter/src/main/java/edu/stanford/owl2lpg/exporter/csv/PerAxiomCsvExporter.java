@@ -1,5 +1,8 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.exporter.csv.internal.ProjectTranslator;
 import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
@@ -8,14 +11,10 @@ import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -60,7 +59,7 @@ public class PerAxiomCsvExporter {
 
   public void export(@Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
-                     @Nonnull OntologyDocumentId documentId) throws IOException {
+                     @Nonnull OntologyDocumentId documentId) {
     var projectTranslation = projectTranslator.translate(projectId, branchId, documentId);
     writeTranslation(projectTranslation);
     documentNode = projectTranslation.nodes(ONTOLOGY_DOCUMENT).findFirst().get();
@@ -70,7 +69,7 @@ public class PerAxiomCsvExporter {
     csvWriter.writeTranslation(translation);
   }
 
-  public void export(@Nonnull OWLAxiom axiom) throws IOException {
+  public void export(@Nonnull OWLAxiom axiom) {
     var axiomTranslation = axiomTranslator.translate(axiom);
     writeTranslation(axiomTranslation);
     writeAxiomEdge(axiomTranslation);

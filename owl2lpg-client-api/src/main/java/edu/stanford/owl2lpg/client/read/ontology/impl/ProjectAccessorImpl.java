@@ -3,12 +3,12 @@ package edu.stanford.owl2lpg.client.read.ontology.impl;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.EntityType;
@@ -53,14 +53,6 @@ public class ProjectAccessorImpl implements ProjectAccessor {
 
   @Nonnull
   @Override
-  public ImmutableSet<OWLOntologyID> getOntologyIds(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
-    return getOntologyDocumentIdMap(projectId, branchId).values()
-        .stream()
-        .collect(ImmutableSet.toImmutableSet());
-  }
-
-  @Nonnull
-  @Override
   public ImmutableMap<OntologyDocumentId, OWLOntologyID> getOntologyDocumentIdMap(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
     var inputParams = Parameters.forContext(projectId, branchId);
     try (var session = driver.session()) {
@@ -69,7 +61,7 @@ public class ProjectAccessorImpl implements ProjectAccessor {
         var result = tx.run(ONTOLOGY_IDS_QUERY, inputParams);
         while (result.hasNext()) {
           var row = result.next();
-          var ontoDocId = OntologyDocumentId.create(row.get("ontoDocId").asString());
+          var ontoDocId = OntologyDocumentId.get(row.get("ontoDocId").asString());
           var ontologyIri = Optional.fromNullable(row.get("ontologyIri")).transform(Value::asString).transform(IRI::create);
           var versionIri = Optional.fromNullable(row.get("versionIri")).transform(Value::asString).transform(IRI::create);
           outputMap.put(ontoDocId, new OWLOntologyID(ontologyIri, versionIri));

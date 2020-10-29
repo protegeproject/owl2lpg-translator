@@ -1,10 +1,10 @@
 package edu.stanford.owl2lpg.client.write;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.model.Translation;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

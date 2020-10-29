@@ -10,11 +10,11 @@ import edu.stanford.bmir.protege.web.server.util.Counter;
 import edu.stanford.bmir.protege.web.shared.individuals.InstanceRetrievalMode;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.client.read.individual.NamedIndividualAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
@@ -46,7 +46,7 @@ public class Neo4jIndividualsByNameIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
+  private final ProjectAccessor projectAccessor;
 
   @Nonnull
   private final LanguageManager languageManager;
@@ -64,7 +64,7 @@ public class Neo4jIndividualsByNameIndex {
   public Neo4jIndividualsByNameIndex(@Nonnull OWLClass root,
                                      @Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
-                                     @Nonnull DocumentIdMap documentIdMap,
+                                     @Nonnull ProjectAccessor projectAccessor,
                                      @Nonnull LanguageManager languageManager,
                                      @Nonnull NamedIndividualAccessor namedIndividualAccessor,
                                      @Nonnull ClassHierarchyAccessor classHierarchyAccessor,
@@ -72,7 +72,7 @@ public class Neo4jIndividualsByNameIndex {
     this.root = checkNotNull(root);
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
+    this.projectAccessor = checkNotNull(projectAccessor);
     this.languageManager = checkNotNull(languageManager);
     this.namedIndividualAccessor = checkNotNull(namedIndividualAccessor);
     this.classHierarchyAccessor = checkNotNull(classHierarchyAccessor);
@@ -122,7 +122,7 @@ public class Neo4jIndividualsByNameIndex {
 
   @Nonnull
   private Stream<OWLNamedIndividual> getAllInstances(List<SearchString> searchStrings) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> namedIndividualAccessor.getAllIndividuals(projectId, branchId, documentId).stream())
         .filter(individual -> matchesSearchStrings(individual, searchStrings));
@@ -145,7 +145,7 @@ public class Neo4jIndividualsByNameIndex {
     if (root.equals(getOWLThing()) && root.equals(owlClass)) {
       return getAllInstances(searchStrings);
     } else {
-      return documentIdMap.get(projectId)
+      return projectAccessor.getOntologyDocumentIds(projectId, branchId)
           .stream()
           .flatMap(documentId -> namedIndividualAccessor.getIndividualsByType(owlClass, projectId, branchId, documentId).stream())
           .filter(individual -> matchesSearchStrings(individual, searchStrings));
@@ -154,7 +154,7 @@ public class Neo4jIndividualsByNameIndex {
 
   @Nonnull
   private Stream<OWLNamedIndividual> getIndirectInstances(OWLClass owlClass, List<SearchString> searchStrings) {
-    return documentIdMap.get(projectId)
+    return projectAccessor.getOntologyDocumentIds(projectId, branchId)
         .stream()
         .flatMap(documentId -> classHierarchyAccessor.getDescendants(owlClass, projectId, branchId, documentId).stream())
         .flatMap(cls -> getDirectInstances(cls, searchStrings))

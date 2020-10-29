@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.read;
 
 import edu.stanford.bmir.protege.web.server.shortform.SearchString;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.internal.value.MapValue;
 import org.neo4j.driver.internal.value.StringValue;
@@ -44,17 +44,17 @@ public class Parameters {
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier())));
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId())));
   }
 
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId,
                                  @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier())));
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId())));
   }
 
   public static Value forEntity(@Nonnull OWLEntity entity,
@@ -73,11 +73,11 @@ public class Parameters {
   public static Value forEntityIri(@Nonnull IRI entityIri,
                                    @Nonnull ProjectId projectId,
                                    @Nonnull BranchId branchId,
-                                   @Nonnull OntologyDocumentId ontologyDocumentId) {
+                                   @Nonnull OntologyDocumentId ontDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontologyDocumentId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontDocId.getId()),
         ENTITY_IRI, new StringValue(entityIri.toString())));
   }
 
@@ -85,8 +85,8 @@ public class Parameters {
                                    @Nonnull ProjectId projectId,
                                    @Nonnull BranchId branchId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
         ENTITY_IRI, new StringValue(entityIri.toString())));
   }
 
@@ -95,9 +95,9 @@ public class Parameters {
                                     @Nonnull BranchId branchId,
                                     @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         ENTITY_NAME, new StringValue(entityName)));
   }
 
@@ -105,8 +105,8 @@ public class Parameters {
                                     @Nonnull ProjectId projectId,
                                     @Nonnull BranchId branchId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
         ENTITY_NAME, new StringValue(entityName)));
   }
 
@@ -115,9 +115,9 @@ public class Parameters {
                                     @Nonnull BranchId branchId,
                                     @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         ENTITY_TYPE, new StringValue(entityType.getName())));
   }
 
@@ -126,9 +126,9 @@ public class Parameters {
                                 @Nonnull BranchId branchId,
                                 @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         NODE_ID, new StringValue(nodeId.getID())));
   }
 
@@ -137,9 +137,9 @@ public class Parameters {
                                    @Nonnull BranchId branchId,
                                    @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         AXIOM_TYPE, new StringValue(axiomType.getName())));
   }
 
@@ -149,9 +149,9 @@ public class Parameters {
                                                         @Nonnull BranchId branchId,
                                                         @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         ENTITY_IRI, new StringValue(propertyIri.toString()),
         CHARACTERISTIC_TYPE, new StringValue(characteristicType)));
   }
@@ -161,9 +161,9 @@ public class Parameters {
                                  @Nonnull BranchId branchId,
                                  @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         LEXICAL_FORM, new StringValue(literal.getLiteral()),
         DATATYPE, new StringValue(literal.getDatatype().getIRI().toString())));
   }
@@ -173,9 +173,9 @@ public class Parameters {
                                   BranchId branchId,
                                   OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         IRI, new StringValue(iri.toString())));
   }
 
@@ -183,8 +183,8 @@ public class Parameters {
                                        @Nonnull ProjectId projectId,
                                        @Nonnull BranchId branchId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
         SEARCH_STRING, new StringValue(searchStrings.stream()
             .map(SearchString::getSearchString)
             .map(s -> s + "*")
@@ -196,9 +196,9 @@ public class Parameters {
                                     @Nonnull BranchId branchId,
                                     @Nonnull OntologyDocumentId ontoDocId) {
     return new MapValue(Map.of(
-        PROJECT_ID, new StringValue(projectId.getIdentifier()),
-        BRANCH_ID, new StringValue(branchId.getIdentifier()),
-        ONTO_DOC_ID, new StringValue(ontoDocId.getIdentifier()),
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         DIGEST, new StringValue(digest)));
   }
 }

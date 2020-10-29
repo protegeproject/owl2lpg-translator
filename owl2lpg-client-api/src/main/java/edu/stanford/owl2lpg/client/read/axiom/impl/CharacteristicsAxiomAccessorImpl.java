@@ -1,11 +1,11 @@
 package edu.stanford.owl2lpg.client.read.axiom.impl;
 
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.axiom.CharacteristicsAxiomAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.neo4j.driver.Value;
 import org.semanticweb.owlapi.model.OWLDataProperty;

@@ -1,12 +1,12 @@
 package edu.stanford.owl2lpg.exporter.csv.internal;
 
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
@@ -86,20 +86,17 @@ public class ProjectTranslator {
 
   @Nonnull
   private Node createProjectNode(ProjectId projectId) {
-    return nodeFactory.createNode(projectId, PROJECT,
-        Properties.of(PROJECT_ID, projectId.getIdentifier()));
+    return nodeFactory.createNode(projectId, PROJECT, Properties.of(PROJECT_ID, projectId.getId()));
   }
 
   @Nonnull
   private Node createBranchNode(BranchId branchId) {
-    return nodeFactory.createNode(branchId, BRANCH,
-        Properties.of(BRANCH_ID, branchId.getIdentifier()));
+    return nodeFactory.createNode(branchId, BRANCH, Properties.of(BRANCH_ID, branchId.getId()));
   }
 
   @Nonnull
   private Node createDocumentNode(OntologyDocumentId documentId) {
-    return nodeFactory.createNode(documentId, ONTOLOGY_DOCUMENT,
-        Properties.of(ONTOLOGY_DOCUMENT_ID, documentId.getIdentifier()));
+    return nodeFactory.createNode(documentId, ONTOLOGY_DOCUMENT, Properties.of(ONTOLOGY_DOCUMENT_ID, documentId.getId()));
   }
 
   private void createOntologyIriTranslationAndEdge(IRI ontologyIri, Node documentNode,

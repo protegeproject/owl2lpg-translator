@@ -1,12 +1,11 @@
 package edu.stanford.owl2lpg.client.bind.index;
 
 import edu.stanford.bmir.protege.web.server.index.OntologySignatureIndex;
-import edu.stanford.owl2lpg.client.DocumentIdMap;
-import edu.stanford.owl2lpg.client.read.ontology.OntologyAccessor;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
+import edu.stanford.owl2lpg.client.read.ontology.OntologyDocumentAccessor;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -27,26 +26,20 @@ public class Neo4jOntologySignatureIndex implements OntologySignatureIndex {
   private final BranchId branchId;
 
   @Nonnull
-  private final DocumentIdMap documentIdMap;
-
-  @Nonnull
-  private final OntologyAccessor ontologyAccessor;
+  private final OntologyDocumentAccessor ontologyDocumentAccessor;
 
   @Inject
   public Neo4jOntologySignatureIndex(@Nonnull ProjectId projectId,
                                      @Nonnull BranchId branchId,
-                                     @Nonnull DocumentIdMap documentIdMap,
-                                     @Nonnull OntologyAccessor ontologyAccessor) {
+                                     @Nonnull OntologyDocumentAccessor ontologyDocumentAccessor) {
     this.projectId = checkNotNull(projectId);
     this.branchId = checkNotNull(branchId);
-    this.documentIdMap = checkNotNull(documentIdMap);
-    this.ontologyAccessor = checkNotNull(ontologyAccessor);
+    this.ontologyDocumentAccessor = checkNotNull(ontologyDocumentAccessor);
   }
 
   @Nonnull
   @Override
-  public Stream<OWLEntity> getEntitiesInSignature(@Nonnull OWLOntologyID ontologyId) {
-    var documentId = documentIdMap.get(projectId, ontologyId);
-    return ontologyAccessor.getAllEntities(projectId, branchId, documentId).stream();
+  public Stream<OWLEntity> getEntitiesInSignature(@Nonnull OntologyDocumentId ontDocId) {
+    return ontologyDocumentAccessor.getAllEntities(projectId, branchId, ontDocId).stream();
   }
 }

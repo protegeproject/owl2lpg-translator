@@ -1,9 +1,9 @@
 package edu.stanford.owl2lpg.client.read.axiom;
 
 import com.google.common.collect.ImmutableSet;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
@@ -47,7 +47,7 @@ public interface AxiomAccessor {
                                               @Nonnull ProjectId projectId,
                                               @Nonnull BranchId branchId,
                                               @Nonnull OntologyDocumentId ontoDocId);
-  
+
   @Nonnull
   ImmutableSet<OWLAxiom> getAxiomsBySubject(@Nonnull OWLClass subject,
                                             @Nonnull ProjectId projectId,

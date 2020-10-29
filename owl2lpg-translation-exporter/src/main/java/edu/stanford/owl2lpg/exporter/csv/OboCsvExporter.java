@@ -6,9 +6,9 @@ import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 import com.google.common.io.CountingInputStream;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.obolibrary.obo2owl.OWLAPIObo2Owl;
@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -52,6 +53,18 @@ public class OboCsvExporter {
   @Inject
   public OboCsvExporter(@Nonnull PerAxiomCsvExporter csvExporter) {
     this.csvExporter = checkNotNull(csvExporter);
+  }
+
+  public void export(@Nonnull File inputFile,
+                     @Nonnull UUID projectUuid,
+                     @Nonnull UUID branchUuid,
+                     @Nonnull UUID ontDocUuid,
+                     boolean isTrackingDeclaration) throws IOException {
+    export(inputFile,
+        ProjectId.get(projectUuid.toString()),
+        BranchId.get(branchUuid.toString()),
+        OntologyDocumentId.get(ontDocUuid.toString()),
+        isTrackingDeclaration);
   }
 
   public void export(@Nonnull File inputFile,
@@ -78,7 +91,7 @@ public class OboCsvExporter {
 
     System.out.printf("Time: %,dms\n", sw.elapsed().toMillis());
     System.out.printf("Axioms: %,d\n", +csvTranslator.getAxiomsCount());
-    
+
     csvExporter.printReport();
 
     bufferedReader.close();
@@ -124,11 +137,7 @@ public class OboCsvExporter {
     public void translateProject(ProjectId projectId,
                                  BranchId branchId,
                                  OntologyDocumentId ontDocId) {
-      try {
-        csvExporter.export(projectId, branchId, ontDocId);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      csvExporter.export(projectId, branchId, ontDocId);
     }
 
     @Override
@@ -154,13 +163,9 @@ public class OboCsvExporter {
     }
 
     private void addAxiom(OWLAxiom axiom) {
-      try {
-        counter.incrementAndGet();
-        printLog();
-        csvExporter.export(axiom);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      counter.incrementAndGet();
+      printLog();
+      csvExporter.export(axiom);
     }
 
     private void printLog() {
