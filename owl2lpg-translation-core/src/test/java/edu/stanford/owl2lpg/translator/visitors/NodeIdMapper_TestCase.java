@@ -1,11 +1,8 @@
 package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.hash.Hashing;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.NodeIdMapper;
 import edu.stanford.owl2lpg.model.NodeIdMapperImpl;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.translator.internal.DigestNodeIdProvider;
 import edu.stanford.owl2lpg.translator.internal.IdFormatCheckerImpl;
 import edu.stanford.owl2lpg.translator.internal.NumberIncrementIdProvider;
@@ -18,8 +15,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
-
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -36,36 +31,6 @@ public class NodeIdMapper_TestCase {
         new DigestNodeIdProvider(Hashing.sha256()),
         new IdFormatCheckerImpl(),
         new SingleEncounterNodeCheckerImpl());
-  }
-
-  @Test
-  public void shouldMapToSameNodeForOntologyDocumentId() {
-    var identifier = UUID.randomUUID().toString();
-    var ontologyDocumentIdA = OntologyDocumentId.create(identifier);
-    var ontologyDocumentIdB = OntologyDocumentId.create(identifier);
-    var nodeA = nodeIdMapper.get(ontologyDocumentIdA);
-    var nodeB = nodeIdMapper.get(ontologyDocumentIdB);
-    assertThat(nodeA, is(nodeB));
-  }
-
-  @Test
-  public void shouldMapToSameNodeForBranchId() {
-    var identifier = UUID.randomUUID().toString();
-    var branchIdA = BranchId.create(identifier);
-    var branchIdB = BranchId.create(identifier);
-    var nodeA = nodeIdMapper.get(branchIdA);
-    var nodeB = nodeIdMapper.get(branchIdB);
-    assertThat(nodeA, is(nodeB));
-  }
-
-  @Test
-  public void shouldMapToSameNodeForProjectId() {
-    var identifier = UUID.randomUUID().toString();
-    var projectIdA = ProjectId.create(identifier);
-    var projectIdB = ProjectId.create(identifier);
-    var nodeA = nodeIdMapper.get(projectIdA);
-    var nodeB = nodeIdMapper.get(projectIdB);
-    assertThat(nodeA, is(nodeB));
   }
 
   @Test
