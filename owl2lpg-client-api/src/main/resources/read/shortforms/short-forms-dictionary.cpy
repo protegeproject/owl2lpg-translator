@@ -1,8 +1,11 @@
 CALL {
   MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
-  MATCH (o)-[:AXIOM]->(:AnnotationAssertion)-[:ANNOTATION_SUBJECT]->(:IRI {iri:$entityIri})-[relatedTo:RELATED_TO]->(value:Literal)
+  MATCH (o)-[:AXIOM]->(n:AnnotationAssertion)
+  MATCH (n)-[:ANNOTATION_SUBJECT]->(:IRI {iri:$entityIri})
+  MATCH (n)-[:ANNOTATION_VALUE]->(value:Literal)
+  MATCH (n)-[:ANNOTATION_PROPERTY]->(property:AnnotationProperty)
   RETURN DISTINCT { type: "AnnotationAssertion",
-      	 propertyIri: relatedTo.iri,
+      	 propertyIri: property.iri,
          lang: value.lang
    	   } AS dictionaryLanguage, value.lexicalForm AS shortForm
   UNION
