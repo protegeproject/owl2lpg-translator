@@ -44,6 +44,8 @@
     <hamcrest.version>1.3</hamcrest.version>
     <mockito-core.version>3.3.3</mockito-core.version>
     <mockito-all.version>1.10.19</mockito-all.version>
+    <neo4j-driver.version>4.1.0</neo4j-driver.version>
+    <webprotege.version>5.0.0-SNAPSHOT</webprotege.version>
   </properties>
 
   <dependencyManagement>

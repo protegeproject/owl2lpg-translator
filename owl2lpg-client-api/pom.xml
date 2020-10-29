@@ -18,10 +18,6 @@
 
   <properties>
     <neo4j-driver.version>4.1.0</neo4j-driver.version>
-    <webprotege-shared.version>5.0.0-SNAPSHOT</webprotege-shared.version>
-    <webprotege-shared-core.version>5.0.0-SNAPSHOT</webprotege-shared-core.version>
-    <webprotege-server-api.version>5.0.0-SNAPSHOT</webprotege-server-api.version>
-    <webprotege-server-core.version>5.0.0-SNAPSHOT</webprotege-server-core.version>
   </properties>
 
   <dependencies>
@@ -32,23 +28,18 @@
     </dependency>
     <dependency>
       <groupId>edu.stanford.protege</groupId>
-      <artifactId>webprotege-shared</artifactId>
-      <version>${webprotege-shared.version}</version>
+      <artifactId>webprotege-server-api</artifactId>
+      <version>${webprotege.version}</version>
     </dependency>
     <dependency>
       <groupId>edu.stanford.protege</groupId>
       <artifactId>webprotege-shared-core</artifactId>
-      <version>${webprotege-shared-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.stanford.protege</groupId>
-      <artifactId>webprotege-server-api</artifactId>
-      <version>${webprotege-server-api.version}</version>
+      <version>${webprotege.version}</version>
     </dependency>
     <dependency>
       <groupId>edu.stanford.protege</groupId>
       <artifactId>webprotege-server-core</artifactId>
-      <version>${webprotege-server-core.version}</version>
+      <version>${webprotege.version}</version>
     </dependency>
     <dependency>
       <groupId>org.neo4j.driver</groupId>
