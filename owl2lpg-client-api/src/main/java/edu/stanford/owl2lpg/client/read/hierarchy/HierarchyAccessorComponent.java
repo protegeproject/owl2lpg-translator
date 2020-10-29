@@ -14,7 +14,6 @@ import edu.stanford.owl2lpg.client.read.handlers.OwlDataFactoryModule;
 @Component(modules = {
     DatabaseModule.class,
     OntologyProjectModule.class,
-    HierarchyRootProviderModule.class,
     HierarchyAccessorModule.class,
     EntityAccessorModule.class,
     OwlDataFactoryModule.class})
