@@ -5,12 +5,17 @@ import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -31,21 +36,61 @@ public class EntityNodeMapper {
   @Nonnull
   public OWLEntity toOwlEntity(Node node) {
     var nodeLabels = Lists.newArrayList(node.labels());
-    var iri = IRI.create(node.get(PropertyFields.IRI).asString());
-    var entity = Optional.<OWLEntity>empty();
     if (nodeLabels.contains(NodeLabels.CLASS.getMainLabel())) {
-      entity = Optional.of(dataFactory.getOWLClass(iri));
+      return toOwlClass(node);
     } else if (nodeLabels.contains(NodeLabels.OBJECT_PROPERTY.getMainLabel())) {
-      entity = Optional.of(dataFactory.getOWLObjectProperty(iri));
+      return toOwlObjectProperty(node);
     } else if (nodeLabels.contains(NodeLabels.DATA_PROPERTY.getMainLabel())) {
-      entity = Optional.of(dataFactory.getOWLDataProperty(iri));
+      return toOwlDataProperty(node);
     } else if (nodeLabels.contains(NodeLabels.ANNOTATION_PROPERTY.getMainLabel())) {
-      entity = Optional.of(dataFactory.getOWLAnnotationProperty(iri));
+      return toOwlAnnotationProperty(node);
     } else if (nodeLabels.contains(NodeLabels.DATATYPE.getMainLabel())) {
-      entity = Optional.of(dataFactory.getOWLDatatype(iri));
+      return toOwlDatatype(node);
     } else if (nodeLabels.contains(NodeLabels.NAMED_INDIVIDUAL.getMainLabel())) {
-      entity = Optional.of(dataFactory.getOWLNamedIndividual(iri));
+      return toOwlNamedIndividual(node);
+    } else {
+      throw new RuntimeException("Node " + node + " is not an OWL entity node");
     }
-    return entity.orElseThrow(() -> new RuntimeException("Node " + node + " is not an OWL entity"));
+  }
+
+  @Nonnull
+  public OWLClass toOwlClass(Node node) {
+    var iriString = getIriString(node);
+    return dataFactory.getOWLClass(IRI.create(iriString));
+  }
+
+  @Nonnull
+  public OWLObjectProperty toOwlObjectProperty(Node node) {
+    var iriString = getIriString(node);
+    return dataFactory.getOWLObjectProperty(IRI.create(iriString));
+  }
+
+  @Nonnull
+  public OWLDataProperty toOwlDataProperty(Node node) {
+    var iriString = getIriString(node);
+    return dataFactory.getOWLDataProperty(IRI.create(iriString));
+  }
+
+  @Nonnull
+  public OWLAnnotationProperty toOwlAnnotationProperty(Node node) {
+    var iriString = getIriString(node);
+    return dataFactory.getOWLAnnotationProperty(IRI.create(iriString));
+  }
+
+  @Nonnull
+  public OWLDatatype toOwlDatatype(Node node) {
+    var iriString = getIriString(node);
+    return dataFactory.getOWLDatatype(IRI.create(iriString));
+  }
+
+  @Nonnull
+  public OWLNamedIndividual toOwlNamedIndividual(Node node) {
+    var iriString = getIriString(node);
+    return dataFactory.getOWLNamedIndividual(IRI.create(iriString));
+  }
+
+  @Nonnull
+  private String getIriString(Node node) {
+    return node.get(PropertyFields.IRI).asString();
   }
 }

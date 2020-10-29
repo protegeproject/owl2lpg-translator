@@ -5,15 +5,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
 import edu.stanford.owl2lpg.client.read.hierarchy.ClassHierarchyAccessor;
 import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.shared.ProjectId;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Value;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -47,16 +47,17 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private final GraphReader graphReader;
 
   @Nonnull
-  private final OWLDataFactory dataFactory;
+  private final EntityNodeMapper entityNodeMapper;
 
   @Nonnull
   private OWLClass root;
 
   @Inject
   public ClassHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
+                                    @Nonnull EntityNodeMapper entityNodeMapper,
                                     @Nonnull OWLDataFactory dataFactory) {
     this.graphReader = checkNotNull(graphReader);
-    this.dataFactory = checkNotNull(dataFactory);
+    this.entityNodeMapper = checkNotNull(entityNodeMapper);
     this.root = dataFactory.getOWLThing();
   }
 
@@ -143,9 +144,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private ImmutableSet<OWLClass> getClasses(String queryString, Value inputParams) {
     return graphReader.getNodes(queryString, inputParams)
         .stream()
-        .map(node -> node.get(PropertyFields.IRI).asString())
-        .map(IRI::create)
-        .map(dataFactory::getOWLClass)
+        .map(entityNodeMapper::toOwlClass)
         .collect(ImmutableSet.toImmutableSet());
   }
 
@@ -158,9 +157,8 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
     graphReader.getPaths(PATHS_TO_ANCESTOR_QUERY, createInputParams(ancestor, projectId, branchId, ontoDocId))
         .stream()
         .map(path -> Streams.stream(path.nodes())
-            .map(node -> node.get(PropertyFields.IRI).asString())
-            .map(IRI::create)
-            .map(dataFactory::getOWLClass)
+            .map(entityNodeMapper::toOwlEntity)
+            .map(OWLEntity::asOWLClass)
             .collect(ImmutableList.toImmutableList()))
         .map(this::insertRootToPathIfNecessary)
         .map(ClassAncestorPath::get)

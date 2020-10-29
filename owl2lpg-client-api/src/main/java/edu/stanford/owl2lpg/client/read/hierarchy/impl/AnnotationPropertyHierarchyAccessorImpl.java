@@ -5,15 +5,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
 import edu.stanford.owl2lpg.client.read.hierarchy.AnnotationPropertyHierarchyAccessor;
 import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.shared.ProjectId;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Value;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -47,13 +45,13 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   private final GraphReader graphReader;
 
   @Nonnull
-  private final OWLDataFactory dataFactory;
+  private final EntityNodeMapper entityNodeMapper;
 
   @Inject
   public AnnotationPropertyHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
-                                                 @Nonnull OWLDataFactory dataFactory) {
+                                                 @Nonnull EntityNodeMapper entityNodeMapper) {
     this.graphReader = checkNotNull(graphReader);
-    this.dataFactory = checkNotNull(dataFactory);
+    this.entityNodeMapper = checkNotNull(entityNodeMapper);
   }
 
   @Override
@@ -134,9 +132,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   private ImmutableSet<OWLAnnotationProperty> getAnnotationProperties(String queryString, Value inputParams) {
     return graphReader.getNodes(queryString, inputParams)
         .stream()
-        .map(node -> node.get(PropertyFields.IRI).asString())
-        .map(IRI::create)
-        .map(dataFactory::getOWLAnnotationProperty)
+        .map(entityNodeMapper::toOwlAnnotationProperty)
         .collect(ImmutableSet.toImmutableSet());
   }
 
@@ -149,9 +145,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
     graphReader.getPaths(PATHS_TO_ANCESTOR_QUERY, createInputParams(ancestor, projectId, branchId, ontoDocId))
         .stream()
         .map(path -> Streams.stream(path.nodes())
-            .map(node -> node.get(PropertyFields.IRI).asString())
-            .map(IRI::create)
-            .map(dataFactory::getOWLAnnotationProperty)
+            .map(entityNodeMapper::toOwlAnnotationProperty)
             .collect(ImmutableList.toImmutableList()))
         .map(AnnotationPropertyAncestorPath::get)
         .forEach(ancestorPaths::add);

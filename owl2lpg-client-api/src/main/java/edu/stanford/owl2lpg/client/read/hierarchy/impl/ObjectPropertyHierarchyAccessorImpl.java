@@ -5,14 +5,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import edu.stanford.owl2lpg.client.read.GraphReader;
 import edu.stanford.owl2lpg.client.read.Parameters;
-import edu.stanford.owl2lpg.client.read.entity.EntityAccessor;
+import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
 import edu.stanford.owl2lpg.client.read.hierarchy.ObjectPropertyHierarchyAccessor;
 import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
 import edu.stanford.owl2lpg.translator.shared.ProjectId;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.neo4j.driver.Value;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
@@ -50,23 +48,23 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   private final GraphReader graphReader;
 
   @Nonnull
-  private final OWLDataFactory dataFactory;
+  private final EntityNodeMapper entityNodeMapper;
 
   @Nonnull
   private OWLObjectProperty root;
 
   @Inject
   public ObjectPropertyHierarchyAccessorImpl(@Nonnull GraphReader graphReader,
-                                             @Nonnull EntityAccessor entityAccessor,
+                                             @Nonnull EntityNodeMapper entityNodeMapper,
                                              @Nonnull OWLDataFactory dataFactory) {
     this.graphReader = checkNotNull(graphReader);
-    this.dataFactory = checkNotNull(dataFactory);
+    this.entityNodeMapper = checkNotNull(entityNodeMapper);
     this.root = dataFactory.getOWLTopObjectProperty();
   }
 
   @Override
   public void setRoot(OWLObjectProperty root) {
-
+    this.root = root;
   }
 
   @Override
@@ -147,9 +145,7 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   private ImmutableSet<OWLObjectProperty> getProperties(String queryString, Value inputParams) {
     return graphReader.getNodes(queryString, inputParams)
         .stream()
-        .map(node -> node.get(PropertyFields.IRI).asString())
-        .map(IRI::create)
-        .map(dataFactory::getOWLObjectProperty)
+        .map(entityNodeMapper::toOwlObjectProperty)
         .collect(ImmutableSet.toImmutableSet());
   }
 
@@ -162,9 +158,7 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
     graphReader.getPaths(PATHS_TO_ANCESTOR_QUERY, createInputParams(ancestor, projectId, branchId, ontoDocId))
         .stream()
         .map(path -> Streams.stream(path.nodes())
-            .map(node -> node.get(PropertyFields.IRI).asString())
-            .map(IRI::create)
-            .map(dataFactory::getOWLObjectProperty)
+            .map(entityNodeMapper::toOwlObjectProperty)
             .collect(ImmutableList.toImmutableList()))
         .map(this::insertRootToPathIfNecessary)
         .map(ObjectPropertyAncestorPath::get)
