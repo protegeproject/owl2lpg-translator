@@ -25,11 +25,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -55,7 +55,7 @@ public class OboCsvExporter {
     this.csvExporter = checkNotNull(csvExporter);
   }
 
-  public void export(@Nonnull File inputFile,
+  public void export(@Nonnull Path inputFile,
                      @Nonnull UUID projectUuid,
                      @Nonnull UUID branchUuid,
                      @Nonnull UUID ontDocUuid,
@@ -67,14 +67,14 @@ public class OboCsvExporter {
         isTrackingDeclaration);
   }
 
-  public void export(@Nonnull File inputFile,
+  public void export(@Nonnull Path inputFile,
                      @Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
                      @Nonnull OntologyDocumentId ontDocId,
                      boolean isTrackingDeclaration) throws IOException {
-    var in = new CountingInputStream(new FileInputStream(inputFile));
+    var in = new CountingInputStream(Files.newInputStream(inputFile));
 
-    var csvTranslator = new MinimalObo2Owl(in, csvExporter, inputFile.length(), isTrackingDeclaration);
+    var csvTranslator = new MinimalObo2Owl(in, csvExporter, Files.size(inputFile), isTrackingDeclaration);
     csvTranslator.translateProject(projectId, branchId, ontDocId);
 
     var sw = Stopwatch.createStarted();

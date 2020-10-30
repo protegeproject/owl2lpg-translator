@@ -4,7 +4,9 @@ import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
 import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriterModule;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 
+import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.UUID;
@@ -21,12 +23,14 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
 
   enum Format {csv}
 
+  private final static int MAX_FILE_SIZE = 600; // MB
+
   @Parameters(
       index = "0",
       paramLabel = "FILE",
       description = "Input OWL ontology file location",
       type = Path.class)
-  Path ontologyFileLocation;
+  Path ontologyFile;
 
   @Option(
       names = {"-f", "--format"},
@@ -70,9 +74,8 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     switch (format) {
       case csv:
-        var ontologyFile = ontologyFileLocation.getFileName();
-        if (oboExtMatcher.matches(ontologyFile)) {
-          System.out.println("Using OBO translator");
+        if (isLargeSize(ontologyFile) && isOboFormat(ontologyFile)) {
+          System.out.println("Using OBO Stream translator");
           exitCode = translateOboToCsv();
         } else {
           System.out.println("Using OWL translator");
@@ -83,6 +86,24 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     return exitCode;
   }
 
+  private boolean isLargeSize(Path ontologyFile) {
+    return sizeInMB(ontologyFile) > MAX_FILE_SIZE;
+  }
+
+  private long sizeInMB(Path filePath) {
+    try {
+      var sizeInBytes = Files.size(filePath);
+      return sizeInBytes / 1024 * 1024;
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Unable to get the file size");
+    }
+  }
+
+  private boolean isOboFormat(Path ontologyFile) {
+    return oboExtMatcher.matches(ontologyFile);
+  }
+
   private int translateOboToCsv() {
     int exitCode = 0;
     try {
@@ -91,10 +112,9 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
           .csvWriterModule(csvWriterModule)
           .build()
           .getOboCsvExporter();
-      var ontologyFile = ontologyFileLocation.toFile();
       exporter.export(ontologyFile, UUID.fromString(projectId),
           UUID.fromString(branchId),
-          UUID.fromString(ontDocId), true);
+          UUID.fromString(ontDocId), false);
     } catch (Exception e) {
       e.printStackTrace();
       exitCode = 1;
@@ -110,9 +130,9 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
           .csvWriterModule(csvWriterModule)
           .build()
           .getOntologyCsvExporter();
-      var ontologyFile = ontologyFileLocation.toFile();
       var ontologyManager = OWLManager.createOWLOntologyManager();
-      var ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
+      var inputStream = Files.newInputStream(ontologyFile);
+      var ontology = ontologyManager.loadOntologyFromOntologyDocument(inputStream);
       exporter.export(ontology, UUID.fromString(projectId),
           UUID.fromString(branchId),
           UUID.fromString(ontDocId));
