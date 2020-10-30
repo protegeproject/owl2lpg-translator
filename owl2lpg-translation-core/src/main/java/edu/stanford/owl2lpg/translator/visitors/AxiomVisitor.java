@@ -155,12 +155,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DECLARATION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var entityTranslation = addEntityTranslationAndStructuralEdge(axiom.getEntity(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, entityTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(entityTranslation, axiomNode, edges);
+//    var entityTranslation = addEntityTranslationAndStructuralEdge(axiom.getEntity(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, entityTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(entityTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -170,15 +170,15 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DATATYPE_DEFINITION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var dataTypeTranslation = addDataTypeTranslationAndStructuralEdge(axiom.getDatatype(),
-        axiomNode, translations, edges);
-    var dataRangeTranslation = addDataRangeTranslationAndStructuralEdge(axiom.getDataRange(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, dataTypeTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(dataTypeTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(dataRangeTranslation, axiomNode, edges);
+//    var dataTypeTranslation = addDataTypeTranslationAndStructuralEdge(axiom.getDatatype(),
+//        axiomNode, translations, edges);
+//    var dataRangeTranslation = addDataRangeTranslationAndStructuralEdge(axiom.getDataRange(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, dataTypeTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(dataTypeTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(dataRangeTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -188,17 +188,17 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, SUB_CLASS_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var subClassTranslation = addSubClassExprTranslationAndStructuralEdge(axiom.getSubClass(),
-        axiomNode, translations, edges);
-    var superClassTranslation = addSuperClassExprTranslationAndStructuralEdge(axiom.getSuperClass(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, subClassTranslation, edges);
-    addSubClassOfAugmentedEdge(subClassTranslation, superClassTranslation, edges);
-    addRelatedToAugmentedEdges(subClassTranslation, superClassTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(subClassTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(superClassTranslation, axiomNode, edges);
+//    var subClassTranslation = addSubClassExprTranslationAndStructuralEdge(axiom.getSubClass(),
+//        axiomNode, translations, edges);
+//    var superClassTranslation = addSuperClassExprTranslationAndStructuralEdge(axiom.getSuperClass(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, subClassTranslation, edges);
+//    addSubClassOfAugmentedEdge(subClassTranslation, superClassTranslation, edges);
+//    addRelatedToAugmentedEdges(subClassTranslation, superClassTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(subClassTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(superClassTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -208,18 +208,18 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NEGATIVE_OBJECT_PROPERTY_ASSERTION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var subjectTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
-        axiomNode, translations, edges);
-    var propertyExprTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var individualTranslation = addTargetIndividualTranslationAndStructuralEdge(axiom.getObject(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, subjectTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(subjectTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(individualTranslation, axiomNode, edges);
+//    var subjectTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
+//        axiomNode, translations, edges);
+//    var propertyExprTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var individualTranslation = addTargetIndividualTranslationAndStructuralEdge(axiom.getObject(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, subjectTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(subjectTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(individualTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -271,12 +271,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, nodeLabels);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
+//    var propertyTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -286,12 +286,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DISJOINT_CLASSES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var classExprTranslations = addClassExprTranslationsAndStructuralEdges(axiom.getClassExpressions(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, classExprTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(classExprTranslations, axiomNode, edges);
+//    var classExprTranslations = addClassExprTranslationsAndStructuralEdges(axiom.getClassExpressions(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, classExprTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(classExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -301,16 +301,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DATA_PROPERTY_DOMAIN);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var domainTranslation = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addHasDomainAugmentedEdge(propertyExprTranslation, domainTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(domainTranslation, axiomNode, edges);
+//    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var domainTranslation = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addHasDomainAugmentedEdge(propertyExprTranslation, domainTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(domainTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -320,16 +320,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, OBJECT_PROPERTY_DOMAIN);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var domainTranslation = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addHasDomainAugmentedEdge(propertyExprTranslation, domainTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(domainTranslation, axiomNode, edges);
+//    var propertyExprTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var domainTranslation = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addHasDomainAugmentedEdge(propertyExprTranslation, domainTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(domainTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -339,13 +339,13 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, EQUIVALENT_OBJECT_PROPERTIES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslations = addObjectPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
-    addSymmetricalSubObjectPropertyOfAugmentedEdges(propertyExprTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
+//    var propertyExprTranslations = addObjectPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
+//    addSymmetricalSubObjectPropertyOfAugmentedEdges(propertyExprTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -355,17 +355,17 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NEGATIVE_DATA_PROPERTY_ASSERTION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var subjectTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
-        axiomNode, translations, edges);
-    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    addTargetValueTranslationAndStructuralEdge(axiom.getObject(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, subjectTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(subjectTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    var subjectTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
+//        axiomNode, translations, edges);
+//    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    addTargetValueTranslationAndStructuralEdge(axiom.getObject(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, subjectTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(subjectTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -375,12 +375,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DIFFERENT_INDIVIDUALS);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var individualTranslations = addIndividualTranslationsAndStructuralEdges(axiom.getIndividuals(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, individualTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(individualTranslations, axiomNode, edges);
+//    var individualTranslations = addIndividualTranslationsAndStructuralEdges(axiom.getIndividuals(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, individualTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(individualTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -390,12 +390,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DISJOINT_DATA_PROPERTIES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslations = addDataPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
+//    var propertyExprTranslations = addDataPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -405,12 +405,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DISJOINT_OBJECT_PROPERTIES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslations = addObjectPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
+//    var propertyExprTranslations = addObjectPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -420,16 +420,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, OBJECT_PROPERTY_RANGE);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var rangeTranslation = addRangeTranslationAndStructuralEdge(axiom.getRange(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addRangeAugmentedEdge(propertyExprTranslation, rangeTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(rangeTranslation, axiomNode, edges);
+//    var propertyExprTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var rangeTranslation = addRangeTranslationAndStructuralEdge(axiom.getRange(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addRangeAugmentedEdge(propertyExprTranslation, rangeTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(rangeTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -439,19 +439,19 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, OBJECT_PROPERTY_ASSERTION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var individualSubjectTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
-        axiomNode, translations, edges);
-    var propertyTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var individualObjectTranslation = addTargetIndividualTranslationAndStructuralEdge(axiom.getObject(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addRelatedToAugmentedEdge(individualSubjectTranslation, individualObjectTranslation, propertyTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, individualSubjectTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(individualSubjectTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(individualObjectTranslation, axiomNode, edges);
+//    var individualSubjectTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
+//        axiomNode, translations, edges);
+//    var propertyTranslation = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var individualObjectTranslation = addTargetIndividualTranslationAndStructuralEdge(axiom.getObject(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addRelatedToAugmentedEdge(individualSubjectTranslation, individualObjectTranslation, propertyTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, individualSubjectTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(individualSubjectTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(individualObjectTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -461,16 +461,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SUB_OBJECT_PROPERTY_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var subPropertyTranslation = addSubObjectPropertyExprTranslationAndStructuralEdge(axiom.getSubProperty(),
-        axiomNode, translations, edges);
-    var superPropertyTranslation = addSuperObjectPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addSubObjectPropertyOfAugmentedEdge(subPropertyTranslation, superPropertyTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, subPropertyTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(subPropertyTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
+//    var subPropertyTranslation = addSubObjectPropertyExprTranslationAndStructuralEdge(axiom.getSubProperty(),
+//        axiomNode, translations, edges);
+//    var superPropertyTranslation = addSuperObjectPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addSubObjectPropertyOfAugmentedEdge(subPropertyTranslation, superPropertyTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, subPropertyTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(subPropertyTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -480,15 +480,15 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DISJOINT_UNION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var classTranslation = addClassTranslationAndStructuralEdge(axiom.getOWLClass(),
-        axiomNode, translations, edges);
-    var classExprTranslations = addDisjointClassExprTranslationsAndStructuralEdges(axiom.getClassExpressions(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, classExprTranslations, edges);
-    addInAxiomSignatureAugmentedEdge(classTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdges(classExprTranslations, axiomNode, edges);
+//    var classTranslation = addClassTranslationAndStructuralEdge(axiom.getOWLClass(),
+//        axiomNode, translations, edges);
+//    var classExprTranslations = addDisjointClassExprTranslationsAndStructuralEdges(axiom.getClassExpressions(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, classExprTranslations, edges);
+//    addInAxiomSignatureAugmentedEdge(classTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdges(classExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -498,16 +498,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DATA_PROPERTY_RANGE);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var rangeTranslation = addRangeTranslationAndStructuralEdge(axiom.getRange(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addRangeAugmentedEdge(propertyExprTranslation, rangeTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(rangeTranslation, axiomNode, edges);
+//    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var rangeTranslation = addRangeTranslationAndStructuralEdge(axiom.getRange(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addRangeAugmentedEdge(propertyExprTranslation, rangeTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(rangeTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -517,12 +517,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, FUNCTIONAL_DATA_PROPERTY);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -532,13 +532,13 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, EQUIVALENT_DATA_PROPERTIES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslations = addDataPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
-    addSymmetricalSubDataPropertyOfAugmentedEdges(propertyExprTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
+//    var propertyExprTranslations = addDataPropertyExprTranslationsAndStructuralEdges(axiom.getProperties(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, propertyExprTranslations, edges);
+//    addSymmetricalSubDataPropertyOfAugmentedEdges(propertyExprTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(propertyExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -548,16 +548,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, CLASS_ASSERTION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var individualTranslation = addIndividualTranslationAndStructuralEdge(axiom.getIndividual(),
-        axiomNode, translations, edges);
-    var classExprTranslation = addClassExprTranslationAndStructuralEdge(axiom.getClassExpression(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addTypeAugmentedEdge(individualTranslation, classExprTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, individualTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(individualTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(classExprTranslation, axiomNode, edges);
+//    var individualTranslation = addIndividualTranslationAndStructuralEdge(axiom.getIndividual(),
+//        axiomNode, translations, edges);
+//    var classExprTranslation = addClassExprTranslationAndStructuralEdge(axiom.getClassExpression(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addTypeAugmentedEdge(individualTranslation, classExprTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, individualTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(individualTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(classExprTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -567,13 +567,13 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, EQUIVALENT_CLASSES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var classTranslations = addClassExprTranslationsAndStructuralEdges(axiom.getClassExpressions(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, classTranslations, edges);
-    addSymmetricalSubClassOfAugmentedEdges(classTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(classTranslations, axiomNode, edges);
+//    var classTranslations = addClassExprTranslationsAndStructuralEdges(axiom.getClassExpressions(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, classTranslations, edges);
+//    addSymmetricalSubClassOfAugmentedEdges(classTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(classTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -583,18 +583,18 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, DATA_PROPERTY_ASSERTION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var individualTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
-        axiomNode, translations, edges);
-    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var literalTranslation = addTargetValueTranslationAndStructuralEdge(axiom.getObject(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addRelatedToAugmentedEdge(individualTranslation, literalTranslation, propertyExprTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, individualTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(individualTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
+//    var individualTranslation = addSourceIndividualTranslationAndStructuralEdge(axiom.getSubject(),
+//        axiomNode, translations, edges);
+//    var propertyExprTranslation = addDataPropertyExprTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var literalTranslation = addTargetValueTranslationAndStructuralEdge(axiom.getObject(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addRelatedToAugmentedEdge(individualTranslation, literalTranslation, propertyExprTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, individualTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(individualTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -604,16 +604,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SUB_DATA_PROPERTY_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var subPropertyTranslation = addSubDataPropertyExprTranslationAndStructuralEdge(axiom.getSubProperty(),
-        axiomNode, translations, edges);
-    var superPropertyTranslation = addSuperDataPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addSubDataPropertyOfAugmentedEdge(subPropertyTranslation, superPropertyTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, subPropertyTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(subPropertyTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
+//    var subPropertyTranslation = addSubDataPropertyExprTranslationAndStructuralEdge(axiom.getSubProperty(),
+//        axiomNode, translations, edges);
+//    var superPropertyTranslation = addSuperDataPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addSubDataPropertyOfAugmentedEdge(subPropertyTranslation, superPropertyTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, subPropertyTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(subPropertyTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -623,13 +623,13 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SAME_INDIVIDUAL);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var individualTranslations = addIndividualTranslationsAndStructuralEdges(axiom.getIndividuals(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdges(axiomNode, individualTranslations, edges);
-    addSameIndividualAugmentedEdges(individualTranslations, edges);
-    addInAxiomSignatureAugmentedEdges(individualTranslations, axiomNode, edges);
+//    var individualTranslations = addIndividualTranslationsAndStructuralEdges(axiom.getIndividuals(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdges(axiomNode, individualTranslations, edges);
+//    addSameIndividualAugmentedEdges(individualTranslations, edges);
+//    addInAxiomSignatureAugmentedEdges(individualTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -639,14 +639,14 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SUB_PROPERTY_CHAIN_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyChain = OWLPropertyChain.create(ImmutableList.copyOf(axiom.getPropertyChain()));
-    addSubObjectPropertyChainTranslationAndEdge(propertyChain,
-        axiomNode, translations, edges);
-    var superPropertyTranslation = addSuperObjectPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
+//    var propertyChain = OWLPropertyChain.create(ImmutableList.copyOf(axiom.getPropertyChain()));
+//    addSubObjectPropertyChainTranslationAndEdge(propertyChain,
+//        axiomNode, translations, edges);
+//    var superPropertyTranslation = addSuperObjectPropertyExprTranslationAndStructuralEdge(axiom.getSuperProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -684,17 +684,17 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, INVERSE_OBJECT_PROPERTIES);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyExprTranslation1 = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getFirstProperty(),
-        axiomNode, translations, edges);
-    var propertyExprTranslation2 = addInverseObjectPropertyExprTranslationAndStructuralEdge(axiom.getSecondProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addInverseOfAugmentedEdge(propertyExprTranslation1, propertyExprTranslation2, edges);
-    addInverseOfAugmentedEdge(propertyExprTranslation2, propertyExprTranslation1, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation1, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation1, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(propertyExprTranslation2, axiomNode, edges);
+//    var propertyExprTranslation1 = addObjectPropertyExprTranslationAndStructuralEdge(axiom.getFirstProperty(),
+//        axiomNode, translations, edges);
+//    var propertyExprTranslation2 = addInverseObjectPropertyExprTranslationAndStructuralEdge(axiom.getSecondProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addInverseOfAugmentedEdge(propertyExprTranslation1, propertyExprTranslation2, edges);
+//    addInverseOfAugmentedEdge(propertyExprTranslation2, propertyExprTranslation1, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyExprTranslation1, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation1, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyExprTranslation2, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -704,18 +704,18 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, HAS_KEY);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var classExprTranslation = addClassExprTranslationAndStructuralEdge(axiom.getClassExpression(),
-        axiomNode, translations, edges);
-    var objectPropertyExprTranslations = addObjectPropertyExprTranslationsAndStructuralEdges(axiom.getObjectPropertyExpressions(),
-        axiomNode, translations, edges);
-    var dataPropertyExprTranslations = addDataPropertyExprTranslationsAndStructuralEdges(axiom.getDataPropertyExpressions(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, classExprTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(classExprTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdges(objectPropertyExprTranslations, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdges(dataPropertyExprTranslations, axiomNode, edges);
+//    var classExprTranslation = addClassExprTranslationAndStructuralEdge(axiom.getClassExpression(),
+//        axiomNode, translations, edges);
+//    var objectPropertyExprTranslations = addObjectPropertyExprTranslationsAndStructuralEdges(axiom.getObjectPropertyExpressions(),
+//        axiomNode, translations, edges);
+//    var dataPropertyExprTranslations = addDataPropertyExprTranslationsAndStructuralEdges(axiom.getDataPropertyExpressions(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, classExprTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(classExprTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdges(objectPropertyExprTranslations, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdges(dataPropertyExprTranslations, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -725,17 +725,17 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, ANNOTATION_ASSERTION);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var annotationSubjectTranslation = addAnnotationSubjectTranslationAndStructuralEdge(axiom.getSubject(),
-        axiomNode, translations, edges);
-    var annotationPropertyTranslation = addAnnotationPropertyTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var annotationValueTranslation = addAnnotationValueTranslationAndStructuralEdge(axiom.getValue(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addRelatedToAugmentedEdge(annotationSubjectTranslation, annotationValueTranslation, annotationPropertyTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, annotationSubjectTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(annotationPropertyTranslation, axiomNode, edges);
+//    var annotationSubjectTranslation = addAnnotationSubjectTranslationAndStructuralEdge(axiom.getSubject(),
+//        axiomNode, translations, edges);
+//    var annotationPropertyTranslation = addAnnotationPropertyTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var annotationValueTranslation = addAnnotationValueTranslationAndStructuralEdge(axiom.getValue(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addRelatedToAugmentedEdge(annotationSubjectTranslation, annotationValueTranslation, annotationPropertyTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, annotationSubjectTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(annotationPropertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -745,16 +745,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, NodeLabels.SUB_ANNOTATION_PROPERTY_OF);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var subPropertyTranslation = addSubAnnotationPropertyTranslationAndStructuralEdge(axiom.getSubProperty(),
-        axiomNode, translations, edges);
-    var superPropertyTranslation = addSuperAnnotationPropertyTranslationAndStructuralEdge(axiom.getSuperProperty(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addSubAnnotationPropertyOfAugmentedEdge(subPropertyTranslation, superPropertyTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, subPropertyTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(subPropertyTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
+//    var subPropertyTranslation = addSubAnnotationPropertyTranslationAndStructuralEdge(axiom.getSubProperty(),
+//        axiomNode, translations, edges);
+//    var superPropertyTranslation = addSuperAnnotationPropertyTranslationAndStructuralEdge(axiom.getSuperProperty(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addSubAnnotationPropertyOfAugmentedEdge(subPropertyTranslation, superPropertyTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, subPropertyTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(subPropertyTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(superPropertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -764,16 +764,16 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, ANNOTATION_PROPERTY_DOMAIN);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyTranslation = addAnnotationPropertyTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var domainTranslation = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addHasDomainAugmentedEdge(propertyTranslation, domainTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
-    addInAxiomSignatureAugmentedEdge(domainTranslation, axiomNode, edges);
+//    var propertyTranslation = addAnnotationPropertyTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var domainTranslation = addDomainTranslationAndStructuralEdge(axiom.getDomain(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addHasDomainAugmentedEdge(propertyTranslation, domainTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
+//    addInAxiomSignatureAugmentedEdge(domainTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 
@@ -783,15 +783,15 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var axiomNode = createAxiomNode(axiom, ANNOTATION_PROPERTY_RANGE);
     var translations = newTranslationBuilder();
     var edges = newEdgesBuilder();
-    var propertyTranslation = addAnnotationPropertyTranslationAndStructuralEdge(axiom.getProperty(),
-        axiomNode, translations, edges);
-    var rangeTranslation = addRangeTranslationAndStructuralEdge(axiom.getRange(),
-        axiomNode, translations, edges);
-    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
-        axiomNode, translations, edges);
-    addRangeAugmentedEdge(propertyTranslation, rangeTranslation, edges);
-    addAxiomSubjectAugmentedEdge(axiomNode, propertyTranslation, edges);
-    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
+//    var propertyTranslation = addAnnotationPropertyTranslationAndStructuralEdge(axiom.getProperty(),
+//        axiomNode, translations, edges);
+//    var rangeTranslation = addRangeTranslationAndStructuralEdge(axiom.getRange(),
+//        axiomNode, translations, edges);
+//    addAxiomAnnotationTranslationsAndStructuralEdges(axiom.getAnnotations(),
+//        axiomNode, translations, edges);
+//    addRangeAugmentedEdge(propertyTranslation, rangeTranslation, edges);
+//    addAxiomSubjectAugmentedEdge(axiomNode, propertyTranslation, edges);
+//    addInAxiomSignatureAugmentedEdge(propertyTranslation, axiomNode, edges);
     return buildTranslation(axiom, axiomNode, translations, edges);
   }
 

@@ -93,7 +93,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   private long sizeInMB(Path filePath) {
     try {
       var sizeInBytes = Files.size(filePath);
-      return sizeInBytes / 1024 * 1024;
+      return sizeInBytes / (1024 * 1024);
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException("Unable to get the file size");
@@ -101,7 +101,7 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   }
 
   private boolean isOboFormat(Path ontologyFile) {
-    return oboExtMatcher.matches(ontologyFile);
+    return oboExtMatcher.matches(ontologyFile.getFileName());
   }
 
   private int translateOboToCsv() {

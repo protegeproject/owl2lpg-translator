@@ -57,13 +57,13 @@ public class Neo4jCsvWriter {
 
   public void writeTranslation(Translation translation) {
     var node = translation.getMainNode();
-    writeNode(node);
-    for (var edge : translation.getEdges()) {
-      writeEdge(edge);
-    }
-    for (var nestedTranslation : translation.getNestedTranslations()) {
-      writeTranslation(nestedTranslation);
-    }
+    write(node);
+//    for (var edge : translation.getEdges()) {
+//      writeEdge(edge);
+//    }
+//    for (var nestedTranslation : translation.getNestedTranslations()) {
+//      writeTranslation(nestedTranslation);
+//    }
   }
 
   public void writeNode(Node node) {

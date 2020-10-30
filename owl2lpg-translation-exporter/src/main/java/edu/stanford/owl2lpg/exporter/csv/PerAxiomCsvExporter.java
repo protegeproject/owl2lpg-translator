@@ -72,8 +72,8 @@ public class PerAxiomCsvExporter {
   public void export(@Nonnull OWLAxiom axiom) {
     var axiomTranslation = axiomTranslator.translate(axiom);
     writeTranslation(axiomTranslation);
-    writeAxiomEdge(axiomTranslation);
-    writeInOntologySignatureEdge(axiomTranslation);
+//    writeAxiomEdge(axiomTranslation);
+//    writeInOntologySignatureEdge(axiomTranslation);
   }
 
   private void writeAxiomEdge(Translation axiomTranslation) {

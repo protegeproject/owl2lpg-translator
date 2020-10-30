@@ -137,7 +137,7 @@ public class OboCsvExporter {
     public void translateProject(ProjectId projectId,
                                  BranchId branchId,
                                  OntologyDocumentId ontDocId) {
-      csvExporter.export(projectId, branchId, ontDocId);
+//      csvExporter.export(projectId, branchId, ontDocId);
     }
 
     @Override
