@@ -13,11 +13,12 @@ import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLImportsDeclaration;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,14 +65,14 @@ public class OntologyCsvExporter {
     this.csvWriter = checkNotNull(csvWriter);
   }
 
-  public void export(@Nonnull OWLOntology ontology) throws IOException {
+  public void export(@Nonnull OWLOntology ontology) {
     export(ontology, ProjectId.generate(), BranchId.generate(), OntologyDocumentId.generate());
   }
 
   public void export(@Nonnull OWLOntology ontology,
                      @Nonnull UUID projectUuid,
                      @Nonnull UUID branchUuid,
-                     @Nonnull UUID ontDocUuid) throws IOException {
+                     @Nonnull UUID ontDocUuid) {
     export(ontology,
         ProjectId.get(projectUuid.toString()),
         BranchId.get(branchUuid.toString()),
@@ -81,13 +82,25 @@ public class OntologyCsvExporter {
   public void export(@Nonnull OWLOntology ontology,
                      @Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
-                     @Nonnull OntologyDocumentId documentId) throws IOException {
-    var projectTranslation = projectTranslator.translate(ontology.getOntologyID(), projectId, branchId, documentId);
+                     @Nonnull OntologyDocumentId ontDocId) {
+    export(ontology.getOntologyID(), ontology.getAnnotations(), ontology.getAxioms(),
+        ontology.getImportsDeclarations(),
+        projectId, branchId, ontDocId);
+  }
+
+  public void export(@Nonnull OWLOntologyID ontologyId,
+                     @Nonnull Set<OWLAnnotation> ontologyAnnotations,
+                     @Nonnull Set<OWLAxiom> axioms,
+                     @Nonnull Set<OWLImportsDeclaration> importsDeclarations,
+                     @Nonnull ProjectId projectId,
+                     @Nonnull BranchId branchId,
+                     @Nonnull OntologyDocumentId ontDocId) {
+    var projectTranslation = projectTranslator.translate(ontologyId, projectId, branchId, ontDocId);
     writeTranslation(projectTranslation);
 
     var documentNode = projectTranslation.nodes(ONTOLOGY_DOCUMENT).findFirst().get();
-    writeOntologyAnnotations(ontology.getAnnotations(), documentNode);
-    writeOntologyAxioms(ontology.getAxioms(), documentNode);
+    writeOntologyAnnotations(ontologyAnnotations, documentNode);
+    writeOntologyAxioms(axioms, documentNode);
 
     csvWriter.printReport();
   }
