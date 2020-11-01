@@ -46,6 +46,7 @@ public abstract class Node {
     return getLabels().isa(nodeLabels);
   }
 
+  @JsonIgnore
   public boolean hasProperties() {
     return getProperties().isEmpty();
   }
@@ -55,10 +56,14 @@ public abstract class Node {
     return getProperties().get(key);
   }
 
+  @JsonIgnore
+  @Nonnull
   public String printNodeId() {
     return getNodeId().toString();
   }
 
+  @JsonIgnore
+  @Nonnull
   public String printProperties() {
     return getProperties().printProperties();
   }
