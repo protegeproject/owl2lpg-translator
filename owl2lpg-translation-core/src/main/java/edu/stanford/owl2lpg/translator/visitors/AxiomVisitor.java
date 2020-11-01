@@ -672,7 +672,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     var pos = 1;
     for (var propertyExpr : propertyChain) {
       var propertyExprTranslation = addObjectPropertyExpressionTranslation(propertyExpr, propertyChainTranslations);
-      addObjectPropertyExpressionStructuralEdge(propertyChainNode, propertyExprTranslation, pos, propertyChainEdges);
+      addNextObjectPropertyExpressionStructuralEdge(propertyChainNode, propertyExprTranslation, pos, propertyChainEdges);
       pos++;
     }
     return propertyChainNode;
@@ -1297,12 +1297,6 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     edges.add(edge);
   }
 
-  private void addObjectPropertyExpressionStructuralEdge(Node propertyChainNode, Translation propertyExprTranslation, int position, Builder<Edge> edges) {
-    var propertyExprNode = propertyExprTranslation.getMainNode();
-    var edge = structuralEdgeFactory.getObjectPropertyExpressionEdge(propertyChainNode, propertyExprNode, position);
-    edges.add(edge);
-  }
-
   private void addInverseObjectPropertyExprStructuralEdge(Node mainNode, Translation propertyExprTranslation, Builder<Edge> edges) {
     var propertyExprNode = propertyExprTranslation.getMainNode();
     var edge = structuralEdgeFactory.getInverseObjectPropertyExpressionEdge(mainNode, propertyExprNode);
@@ -1414,6 +1408,12 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   private void addAnnotationValueStructuralEdge(Node axiomNode, Translation annotationValueTranslation, Builder<Edge> edges) {
     var annotationValueNode = annotationValueTranslation.getMainNode();
     var edge = structuralEdgeFactory.getAnnotationValueEdge(axiomNode, annotationValueNode);
+    edges.add(edge);
+  }
+
+  private void addNextObjectPropertyExpressionStructuralEdge(Node propertyChainNode, Translation propertyExprTranslation, int position, Builder<Edge> edges) {
+    var propertyExprNode = propertyExprTranslation.getMainNode();
+    var edge = structuralEdgeFactory.getNextObjectPropertyExpressionEdge(propertyChainNode, propertyExprNode, position);
     edges.add(edge);
   }
 

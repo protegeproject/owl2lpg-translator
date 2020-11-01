@@ -27,6 +27,7 @@ import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ENTITY_IRI;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INDIVIDUAL;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.INVERSE_OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.LITERAL;
+import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.NEXT;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.OBJECT_PROPERTY_EXPRESSION;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.ONTOLOGY_ANNOTATION;
@@ -153,11 +154,6 @@ public class StructuralEdgeFactory {
   }
 
   @Nonnull
-  public Edge getObjectPropertyExpressionEdge(@Nonnull Node startNode, @Nonnull Node endNode, int orderPosition) {
-    return getStructuralEdge(startNode, endNode, OBJECT_PROPERTY_EXPRESSION, orderPosition);
-  }
-
-  @Nonnull
   public Edge getInverseObjectPropertyExpressionEdge(@Nonnull Node startNode, @Nonnull Node endNode) {
     return getStructuralEdge(startNode, endNode, INVERSE_OBJECT_PROPERTY_EXPRESSION);
   }
@@ -265,6 +261,11 @@ public class StructuralEdgeFactory {
   @Nonnull
   public Edge getAnnotationAnnotationEdge(@Nonnull Node startNode, @Nonnull Node annotationNode) {
     return getStructuralEdge(startNode, annotationNode, ANNOTATION_ANNOTATION);
+  }
+
+  @Nonnull
+  public Edge getNextObjectPropertyExpressionEdge(@Nonnull Node propertyChainNode, @Nonnull Node objectPropertyNode, int orderPosition) {
+    return getStructuralEdge(propertyChainNode, objectPropertyNode, NEXT, orderPosition);
   }
 
   @Nonnull
