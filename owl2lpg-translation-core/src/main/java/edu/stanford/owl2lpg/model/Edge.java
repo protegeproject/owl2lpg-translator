@@ -12,6 +12,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
+import static edu.stanford.owl2lpg.model.EdgeType.AUGMENTING;
+import static edu.stanford.owl2lpg.model.EdgeType.STRUCTURAL;
+
 /**
  * Represents a graph connector (or an edge) from one node to the other.
  * The edge can have a label and a set of key-value properties that
@@ -54,10 +57,12 @@ public abstract class Edge {
     return getProperties().get(key);
   }
 
+  @JsonIgnore
   public String printProperties() {
     return getProperties().printProperties();
   }
 
+  @JsonIgnore
   public boolean isTypeOf(EdgeLabel edgeLabel) {
     return getLabel().equals(edgeLabel);
   }
@@ -82,11 +87,23 @@ public abstract class Edge {
   public abstract EdgeLabel getLabel();
 
   @JsonIgnore
+  public boolean isStructuralEdge() {
+    return getLabel().getEdgeType().equals(STRUCTURAL);
+  }
+
+  @JsonIgnore
+  public boolean isAugmentingEdge() {
+    return getLabel().getEdgeType().equals(AUGMENTING);
+  }
+
+  @JsonIgnore
+  @Nonnull
   public String printLabel() {
     return getLabel().toNeo4jLabel();
   }
 
   @JsonIgnore
+  @Nonnull
   public abstract Properties getProperties();
 
   @JsonAnyGetter
