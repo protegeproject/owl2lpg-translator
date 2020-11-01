@@ -1,6 +1,7 @@
-package edu.stanford.owl2lpg.exporter.csv.writer;
+package edu.stanford.owl2lpg.exporter.csv.writer.bulk;
 
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import edu.stanford.owl2lpg.exporter.csv.writer.CsvSchema;
+import edu.stanford.owl2lpg.model.Node;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -25,26 +26,31 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.PROJECT_ID;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class Neo4jNodeCsvSchema implements Neo4jCsvSchema {
+public class AnyNodesCsvSchema implements CsvSchema<Node> {
 
   @Inject
-  public Neo4jNodeCsvSchema() {
+  public AnyNodesCsvSchema() {
   }
 
   @Override
   @Nonnull
-  public CsvSchema getCsvSchema() {
+  public com.fasterxml.jackson.dataformat.csv.CsvSchema getCsvSchema() {
     return getBuilder().build();
   }
 
   @Override
   @Nonnull
-  public CsvSchema getCsvSchemaWithHeader() {
+  public com.fasterxml.jackson.dataformat.csv.CsvSchema getCsvSchemaWithHeader() {
     return getBuilder().setUseHeader(true).build();
   }
 
-  private static CsvSchema.Builder getBuilder() {
-    return CsvSchema.builder()
+  @Override
+  public boolean isCompatible(Node node) {
+    return true;
+  }
+
+  private static com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder getBuilder() {
+    return com.fasterxml.jackson.dataformat.csv.CsvSchema.builder()
         .addColumn(N4J_JSON_ID)
         .addColumn(N4J_JSON_LABELS)
         .addColumn(PROJECT_ID)

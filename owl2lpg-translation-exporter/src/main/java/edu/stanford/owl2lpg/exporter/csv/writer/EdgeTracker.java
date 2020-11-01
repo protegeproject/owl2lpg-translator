@@ -10,8 +10,14 @@ import java.util.function.Consumer;
  */
 public interface EdgeTracker {
 
-  boolean contains(Edge edge);
-
+  /**
+   * Performs the callback function when the tracker doesn't contain
+   * the given edge.
+   *
+   * @param edge     The edge to check
+   * @param callback A callback function when the cache doesn't contain
+   *                 the given edge.
+   */
   void add(Edge edge, Consumer<Edge> callback);
 
   int size();

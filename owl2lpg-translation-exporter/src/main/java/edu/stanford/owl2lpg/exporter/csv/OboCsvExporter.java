@@ -171,7 +171,7 @@ public class OboCsvExporter {
     private void printLog() {
       var c = counter.get();
       if (c % 1_000_000 == 0) {
-        var csvWriter = csvExporter.getCsvWriter();
+        var csvExporterWriter = csvExporter.getWriter();
         long read = countingInputStream.getCount() / (1024 * 1024);
         long ts1 = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
         long delta = (ts1 - ts) / 1000_000;
@@ -182,10 +182,10 @@ public class OboCsvExporter {
         var totalMemory = runtime.totalMemory();
         var freeMemory = runtime.freeMemory();
         var consumedMemory = (totalMemory - freeMemory) / (1024 * 1024);
-        var trackedNodesPercent = (100.0 * csvWriter.getTrackedNodeCount()) / csvWriter.getNodeCount();
-        var trackedEdgesPercent = (100.0 * csvWriter.getTrackedEdgeCount()) / csvWriter.getEdgeCount();
+        var trackedNodesPercent = (100.0 * csvExporterWriter.getTrackedNodeCount()) / csvExporterWriter.getExportedNodeCount();
+        var trackedEdgesPercent = (100.0 * csvExporterWriter.getTrackedEdgeCount()) / csvExporterWriter.getExportedEdgeCount();
         System.out.printf("%,9d axioms (Read %,4d Mb [%3d%%]  Delta: %,5d ms) (Used memory: %,8d MB)  Nodes: %,8d  Edges: %,8d  Tracked nodes: %,8d (%,.2f%%)  Tracked edges: %,8d (%,.2f%%)\n",
-            c, read, percent, delta, consumedMemory, csvWriter.getNodeCount(), csvWriter.getEdgeCount(), csvWriter.getTrackedNodeCount(), trackedNodesPercent, csvWriter.getTrackedEdgeCount(), trackedEdgesPercent);
+            c, read, percent, delta, consumedMemory, csvExporterWriter.getExportedNodeCount(), csvExporterWriter.getExportedEdgeCount(), csvExporterWriter.getTrackedNodeCount(), trackedNodesPercent, csvExporterWriter.getTrackedEdgeCount(), trackedEdgesPercent);
       }
     }
 

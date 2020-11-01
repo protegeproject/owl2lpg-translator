@@ -4,7 +4,7 @@ import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.exporter.csv.internal.ProjectTranslator;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
+import edu.stanford.owl2lpg.exporter.csv.writer.CsvOutputWriter;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
@@ -48,7 +48,7 @@ public class OntologyCsvExporter {
   private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
-  private final Neo4jCsvWriter csvWriter;
+  private final CsvOutputWriter csvOutputWriter;
 
   @Inject
   public OntologyCsvExporter(@Nonnull ProjectTranslator projectTranslator,
@@ -56,13 +56,13 @@ public class OntologyCsvExporter {
                              @Nonnull AxiomTranslator axiomTranslator,
                              @Nonnull StructuralEdgeFactory structuralEdgeFactory,
                              @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
-                             @Nonnull Neo4jCsvWriter csvWriter) {
+                             @Nonnull CsvOutputWriter csvOutputWriter) {
     this.projectTranslator = checkNotNull(projectTranslator);
     this.annotationTranslator = checkNotNull(annotationTranslator);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
-    this.csvWriter = checkNotNull(csvWriter);
+    this.csvOutputWriter = checkNotNull(csvOutputWriter);
   }
 
   public void export(@Nonnull OWLOntology ontology) {
@@ -97,16 +97,16 @@ public class OntologyCsvExporter {
                      @Nonnull OntologyDocumentId ontDocId) {
     var projectTranslation = projectTranslator.translate(ontologyId, projectId, branchId, ontDocId);
     writeTranslation(projectTranslation);
-
-    var documentNode = projectTranslation.nodes(ONTOLOGY_DOCUMENT).findFirst().get();
-    writeOntologyAnnotations(ontologyAnnotations, documentNode);
-    writeOntologyAxioms(axioms, documentNode);
-
-    csvWriter.printReport();
+    projectTranslation.nodes(ONTOLOGY_DOCUMENT).findFirst()
+        .ifPresent(documentNode -> {
+          writeOntologyAnnotations(ontologyAnnotations, documentNode);
+          writeOntologyAxioms(axioms, documentNode);
+        });
+    csvOutputWriter.printReport();
   }
 
   private void writeTranslation(Translation translation) {
-    csvWriter.writeTranslation(translation);
+    csvOutputWriter.write(translation);
   }
 
   private void writeOntologyAnnotations(Set<OWLAnnotation> annotations, Node documentNode) {
@@ -120,7 +120,7 @@ public class OntologyCsvExporter {
   private void writeOntologyAnnotationEdge(Translation annotationTranslation, Node documentNode) {
     var annotationNode = annotationTranslation.getMainNode();
     var ontologyAnnotationEdge = structuralEdgeFactory.getOntologyAnnotationEdge(documentNode, annotationNode);
-    csvWriter.writeEdge(ontologyAnnotationEdge);
+    csvOutputWriter.write(ontologyAnnotationEdge);
   }
 
   private void writeOntologyAxioms(Set<OWLAxiom> axioms, Node documentNode) {
@@ -136,13 +136,13 @@ public class OntologyCsvExporter {
   private void writeAxiomEdge(Translation axiomTranslation, Node documentNode) {
     var axiomNode = axiomTranslation.getMainNode();
     var axiomEdge = structuralEdgeFactory.getAxiomEdge(documentNode, axiomNode);
-    csvWriter.writeEdge(axiomEdge);
+    csvOutputWriter.write(axiomEdge);
   }
 
   private void writeInOntologySignatureEdge(Translation axiomTranslation, Node documentNode) {
     var entityNodes = axiomTranslation.nodes(ENTITY);
     entityNodes.forEach(entityNode ->
         augmentedEdgeFactory.getInOntologySignatureEdge(entityNode, documentNode)
-            .ifPresent(csvWriter::writeEdge));
+            .ifPresent(csvOutputWriter::write));
   }
 }

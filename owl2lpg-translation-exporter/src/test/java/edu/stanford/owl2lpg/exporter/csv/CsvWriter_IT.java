@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriter;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jNodeCsvSchema;
+import edu.stanford.owl2lpg.exporter.csv.writer.bulk.AnyNodesCsvSchema;
 import edu.stanford.owl2lpg.model.Properties;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class CsvWriter_IT {
   @Before
   public void setUp() throws Exception {
     sw = new StringWriter();
-    writer = new CsvWriter<>(new CsvMapper(), new Neo4jNodeCsvSchema(), sw);
+    writer = new CsvWriter<>(new CsvMapper(), new AnyNodesCsvSchema(), sw);
   }
 
   @Test

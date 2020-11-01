@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.exporter.csv.writer.noop;
 import edu.stanford.owl2lpg.exporter.csv.writer.NodeTracker;
 import edu.stanford.owl2lpg.model.Node;
 
+import javax.inject.Inject;
 import java.util.function.Consumer;
 
 /**
@@ -11,14 +12,13 @@ import java.util.function.Consumer;
  */
 public class NoOpNodeTracker implements NodeTracker {
 
-  @Override
-  public boolean contains(Node node) {
-    return false;
+  @Inject
+  public NoOpNodeTracker() {
   }
 
   @Override
   public void add(Node node, Consumer<Node> callback) {
-    callback.accept(node);
+    // NO-OP
   }
 
   @Override

@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.exporter.csv.writer.noop;
 import edu.stanford.owl2lpg.exporter.csv.writer.EdgeTracker;
 import edu.stanford.owl2lpg.model.Edge;
 
+import javax.inject.Inject;
 import java.util.function.Consumer;
 
 /**
@@ -11,14 +12,13 @@ import java.util.function.Consumer;
  */
 public class NoOpEdgeTracker implements EdgeTracker {
 
-  @Override
-  public boolean contains(Edge edge) {
-    return false;
+  @Inject
+  public NoOpEdgeTracker() {
   }
 
   @Override
   public void add(Edge edge, Consumer<Edge> callback) {
-    callback.accept(edge);
+    // NO-OP
   }
 
   @Override

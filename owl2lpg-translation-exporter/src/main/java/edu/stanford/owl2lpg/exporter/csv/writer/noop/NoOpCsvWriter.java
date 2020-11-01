@@ -1,8 +1,8 @@
 package edu.stanford.owl2lpg.exporter.csv.writer.noop;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import edu.stanford.owl2lpg.exporter.csv.writer.CsvSchema;
 import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriter;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvSchema;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.io.Writer;
 public class NoOpCsvWriter<T> extends CsvWriter<T> {
 
   public NoOpCsvWriter(@Nonnull CsvMapper csvMapper,
-                       @Nonnull Neo4jCsvSchema schema,
+                       @Nonnull CsvSchema schema,
                        @Nonnull Writer output) {
     super(csvMapper, schema, output);
   }

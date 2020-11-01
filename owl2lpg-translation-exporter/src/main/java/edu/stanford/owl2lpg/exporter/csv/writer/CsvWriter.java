@@ -15,13 +15,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CsvWriter<T> {
 
   @Nonnull
-  private final Writer output;
-
-  @Nonnull
-  private Neo4jCsvSchema schema;
-
-  @Nonnull
   private final CsvMapper csvMapper;
+
+  @Nonnull
+  private CsvSchema csvSchema;
+
+  @Nonnull
+  private final Writer output;
 
   private boolean writtenHeader = false;
 
@@ -29,13 +29,14 @@ public class CsvWriter<T> {
 
   @Inject
   public CsvWriter(@Nonnull CsvMapper csvMapper,
-                   @Nonnull Neo4jCsvSchema schema,
+                   @Nonnull CsvSchema csvSchema,
                    @Nonnull Writer output) {
     this.csvMapper = checkNotNull(csvMapper);
+    this.csvSchema = checkNotNull(csvSchema);
     this.output = checkNotNull(output);
-    this.schema = checkNotNull(schema);
   }
 
+  @Nonnull
   public void write(@Nonnull T rowObject) throws IOException {
     if (writtenHeader) {
       writeRow(rowObject);
@@ -44,15 +45,23 @@ public class CsvWriter<T> {
     }
   }
 
-  private void writeFirstRow(@Nonnull T rowObject) throws IOException {
-    csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-    csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
-    csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
-    objectWriter = csvMapper.writer(schema.getCsvSchemaWithHeader()).writeValues(output);
-    objectWriter.write(rowObject);
-    objectWriter.flush();
-    objectWriter = csvMapper.writer(schema.getCsvSchema()).writeValues(output);
-    writtenHeader = true;
+  public boolean isCompatible(T object) {
+    return csvSchema.isCompatible(object);
+  }
+
+  private void writeFirstRow(@Nonnull T rowObject) {
+    try {
+      csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+      csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
+      csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
+      objectWriter = csvMapper.writer(csvSchema.getCsvSchemaWithHeader()).writeValues(output);
+      objectWriter.write(rowObject);
+      objectWriter.flush();
+      objectWriter = csvMapper.writer(csvSchema.getCsvSchema()).writeValues(output);
+      writtenHeader = true;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void writeRow(@Nonnull T rowObject) throws IOException {
