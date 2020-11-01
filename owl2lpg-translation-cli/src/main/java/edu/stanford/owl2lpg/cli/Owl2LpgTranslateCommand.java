@@ -1,8 +1,13 @@
 package edu.stanford.owl2lpg.cli;
 
-import edu.stanford.owl2lpg.exporter.csv.DaggerCsvExporterComponent;
-import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriterModule;
+import edu.stanford.owl2lpg.exporter.csv.DaggerApocCsvExporterComponent;
+import edu.stanford.owl2lpg.exporter.csv.DaggerBulkCsvExporterComponent;
+import edu.stanford.owl2lpg.exporter.csv.OboCsvExporter;
+import edu.stanford.owl2lpg.exporter.csv.OntologyCsvExporter;
+import edu.stanford.owl2lpg.exporter.csv.writer.apoc.ApocCsvWriterModule;
+import edu.stanford.owl2lpg.exporter.csv.writer.bulk.BulkCsvWriterModule;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -12,6 +17,7 @@ import java.nio.file.PathMatcher;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import static java.util.UUID.fromString;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 import static picocli.CommandLine.Parameters;
@@ -21,27 +27,28 @@ import static picocli.CommandLine.Parameters;
 )
 public class Owl2LpgTranslateCommand implements Callable<Integer> {
 
-  enum Format {csv}
+  enum Format {bulkcsv, csv}
 
   private final static int MAX_FILE_SIZE = 600; // MB
 
   @Parameters(
       index = "0",
-      paramLabel = "FILE",
+      paramLabel = "IN_FILE",
       description = "Input OWL ontology file location",
       type = Path.class)
   Path ontologyFile;
 
-  @Option(
-      names = {"-f", "--format"},
-      description = "Translation format: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})")
-  Format format = Format.csv;
-
-  @Option(
-      names = {"-o", "--output"},
+  @Parameters(
+      index = "1",
+      paramLabel = "OUT_DIR",
       description = "Output directory location",
       type = Path.class)
   Path outputDirectoryLocation;
+
+  @Option(
+      names = {"-f", "--format"},
+      description = "Translation format: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})")
+  Format format = Format.bulkcsv;
 
   @Option(
       names = {"-p", "--projectId"},
@@ -73,6 +80,15 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   public Integer call() {
     int exitCode = 0;
     switch (format) {
+      case bulkcsv:
+        if (isLargeSize(ontologyFile) && isOboFormat(ontologyFile)) {
+          System.out.println("Using OBO Stream translator");
+          exitCode = translateOboToBulkCsv();
+        } else {
+          System.out.println("Using OWL translator");
+          exitCode = translateOwlToBulkCsv();
+        }
+        break;
       case csv:
         if (isLargeSize(ontologyFile) && isOboFormat(ontologyFile)) {
           System.out.println("Using OBO Stream translator");
@@ -104,17 +120,47 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     return oboExtMatcher.matches(ontologyFile);
   }
 
+  private int translateOboToBulkCsv() {
+    int exitCode = 0;
+    try {
+      var csvWriterModule = new BulkCsvWriterModule(outputDirectoryLocation);
+      var exporter = DaggerBulkCsvExporterComponent.builder()
+          .bulkCsvWriterModule(csvWriterModule)
+          .build()
+          .getOboCsvExporter();
+      performExport(ontologyFile, exporter);
+    } catch (Exception e) {
+      e.printStackTrace();
+      exitCode = 1;
+    }
+    return exitCode;
+  }
+
+  private int translateOwlToBulkCsv() {
+    int exitCode = 0;
+    try {
+      var csvWriterModule = new BulkCsvWriterModule(outputDirectoryLocation);
+      var exporter = DaggerBulkCsvExporterComponent.builder()
+          .bulkCsvWriterModule(csvWriterModule)
+          .build()
+          .getOntologyCsvExporter();
+      performExport(ontologyFile, exporter);
+    } catch (Exception e) {
+      e.printStackTrace();
+      exitCode = 1;
+    }
+    return exitCode;
+  }
+
   private int translateOboToCsv() {
     int exitCode = 0;
     try {
-      var csvWriterModule = new CsvWriterModule(outputDirectoryLocation);
-      var exporter = DaggerCsvExporterComponent.builder()
-          .csvWriterModule(csvWriterModule)
+      var csvWriterModule = new ApocCsvWriterModule(outputDirectoryLocation);
+      var exporter = DaggerApocCsvExporterComponent.builder()
+          .apocCsvWriterModule(csvWriterModule)
           .build()
           .getOboCsvExporter();
-      exporter.export(ontologyFile, UUID.fromString(projectId),
-          UUID.fromString(branchId),
-          UUID.fromString(ontDocId), false);
+      performExport(ontologyFile, exporter);
     } catch (Exception e) {
       e.printStackTrace();
       exitCode = 1;
@@ -125,21 +171,27 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
   private int translateOwlToCsv() {
     int exitCode = 0;
     try {
-      var csvWriterModule = new CsvWriterModule(outputDirectoryLocation);
-      var exporter = DaggerCsvExporterComponent.builder()
-          .csvWriterModule(csvWriterModule)
+      var csvWriterModule = new ApocCsvWriterModule(outputDirectoryLocation);
+      var exporter = DaggerApocCsvExporterComponent.builder()
+          .apocCsvWriterModule(csvWriterModule)
           .build()
           .getOntologyCsvExporter();
-      var ontologyManager = OWLManager.createOWLOntologyManager();
-      var inputStream = Files.newInputStream(ontologyFile);
-      var ontology = ontologyManager.loadOntologyFromOntologyDocument(inputStream);
-      exporter.export(ontology, UUID.fromString(projectId),
-          UUID.fromString(branchId),
-          UUID.fromString(ontDocId));
+      performExport(ontologyFile, exporter);
     } catch (Exception e) {
       e.printStackTrace();
       exitCode = 1;
     }
     return exitCode;
+  }
+
+  private void performExport(Path ontologyFile, OboCsvExporter exporter) throws IOException {
+    exporter.export(ontologyFile, fromString(projectId), fromString(branchId), fromString(ontDocId), false);
+  }
+
+  private void performExport(Path ontologyFile, OntologyCsvExporter exporter) throws IOException, OWLOntologyCreationException {
+    var ontologyManager = OWLManager.createOWLOntologyManager();
+    var inputStream = Files.newInputStream(ontologyFile);
+    var ontology = ontologyManager.loadOntologyFromOntologyDocument(inputStream);
+    exporter.export(ontology, fromString(projectId), fromString(branchId), fromString(ontDocId));
   }
 }
