@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.exporter.csv.writer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SequenceWriter;
-import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 import javax.annotation.Nonnull;
@@ -43,7 +42,6 @@ public class CsvWriter<T> {
   private void initialize() {
     csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
     csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
-    csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
     writeCsvHeader();
   }
 
