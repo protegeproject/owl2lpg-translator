@@ -17,7 +17,7 @@ public class NoOpCsvWriter<T> extends CsvWriter<T> {
   public NoOpCsvWriter(@Nonnull CsvMapper csvMapper,
                        @Nonnull CsvSchema schema,
                        @Nonnull Writer output) {
-    super(csvMapper, schema, output);
+    super(csvMapper, schema, output, true);
   }
 
   @Override

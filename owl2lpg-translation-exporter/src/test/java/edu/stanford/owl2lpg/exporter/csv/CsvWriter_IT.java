@@ -30,7 +30,7 @@ public class CsvWriter_IT {
   @Before
   public void setUp() throws Exception {
     sw = new StringWriter();
-    writer = new CsvWriter<>(new CsvMapper(), new AnyNodesCsvSchema(), sw);
+    writer = new CsvWriter(new CsvMapper(), new AnyNodesCsvSchema(), sw, true);
   }
 
   @Test

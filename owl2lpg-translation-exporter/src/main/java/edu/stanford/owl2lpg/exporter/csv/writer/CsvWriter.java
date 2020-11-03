@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,55 +19,58 @@ public class CsvWriter<T> {
   private final CsvMapper csvMapper;
 
   @Nonnull
-  private CsvSchema csvSchema;
+  private final CsvSchema<T> csvSchema;
 
   @Nonnull
   private final Writer output;
 
-  private boolean writtenHeader = false;
+  private final boolean shouldWriteHeader;
 
   private SequenceWriter objectWriter;
 
   @Inject
   public CsvWriter(@Nonnull CsvMapper csvMapper,
-                   @Nonnull CsvSchema csvSchema,
-                   @Nonnull Writer output) {
+                   @Nonnull CsvSchema<T> csvSchema,
+                   @Nonnull Writer output,
+                   boolean shouldWriteHeader) {
     this.csvMapper = checkNotNull(csvMapper);
     this.csvSchema = checkNotNull(csvSchema);
     this.output = checkNotNull(output);
+    this.shouldWriteHeader = shouldWriteHeader;
+    initialize();
   }
 
-  @Nonnull
-  public void write(@Nonnull T rowObject) throws IOException {
-    if (writtenHeader) {
-      writeRow(rowObject);
-    } else {
-      writeFirstRow(rowObject);
-    }
+  private void initialize() {
+    csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+    csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
+    csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
+    writeCsvHeader();
   }
 
-  public boolean isCompatible(T object) {
-    return csvSchema.isCompatible(object);
-  }
-
-  private void writeFirstRow(@Nonnull T rowObject) {
+  private void writeCsvHeader() {
     try {
-      csvMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-      csvMapper.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
-      csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
-      objectWriter = csvMapper.writer(csvSchema.getCsvSchemaWithHeader()).writeValues(output);
-      objectWriter.write(rowObject);
-      objectWriter.flush();
-      objectWriter = csvMapper.writer(csvSchema.getCsvSchema()).writeValues(output);
-      writtenHeader = true;
+      if (shouldWriteHeader) {
+        objectWriter = csvMapper.writer(csvSchema.getCsvSchemaWithHeader()).writeValues(output);
+        writeHeader();
+      } else {
+        objectWriter = csvMapper.writer(csvSchema.getCsvSchema()).writeValues(output);
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private void writeRow(@Nonnull T rowObject) throws IOException {
+  private void writeHeader() throws IOException {
+    objectWriter.write(Collections.emptyList());
+    flush();
+  }
+
+  public void write(@Nonnull T rowObject) throws IOException {
     objectWriter.write(rowObject);
-    objectWriter.flush();
+  }
+
+  public boolean isCompatible(T object) {
+    return csvSchema.isCompatible(object);
   }
 
   public void flush() throws IOException {

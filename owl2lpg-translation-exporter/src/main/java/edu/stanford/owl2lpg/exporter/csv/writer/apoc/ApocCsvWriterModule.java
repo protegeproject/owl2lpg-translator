@@ -37,7 +37,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new ProjectNodeSchema(),
-        newBufferedWriter("project.csv"));
+        newBufferedWriter("project.csv"), true);
   }
 
   @Provides
@@ -46,7 +46,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new BranchNodeSchema(),
-        newBufferedWriter("branch.csv"));
+        newBufferedWriter("branch.csv"), true);
   }
 
   @Provides
@@ -55,7 +55,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new OntologyDocumentNodeSchema(),
-        newBufferedWriter("ontology-documents.csv"));
+        newBufferedWriter("ontology-documents.csv"), true);
   }
 
   @Provides
@@ -64,7 +64,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new AxiomNodeSchema(),
-        newBufferedWriter("axioms.csv"));
+        newBufferedWriter("axioms.csv"), true);
   }
 
   @Provides
@@ -73,7 +73,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new CardinalityNodeSchema(),
-        newBufferedWriter("cardinality-expressions.csv"));
+        newBufferedWriter("cardinality-expressions.csv"), true);
   }
 
   @Provides
@@ -82,7 +82,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new EntityNodeSchema(),
-        newBufferedWriter("entities.csv"));
+        newBufferedWriter("entities.csv"), true);
   }
 
   @Provides
@@ -91,7 +91,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new AnonymousIndividualNodeSchema(),
-        newBufferedWriter("anonymous-individuals.csv"));
+        newBufferedWriter("anonymous-individuals.csv"), true);
   }
 
   @Provides
@@ -100,7 +100,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new LiteralNodeSchema(),
-        newBufferedWriter("literals.csv"));
+        newBufferedWriter("literals.csv"), true);
   }
 
   @Provides
@@ -109,7 +109,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new IriNodeSchema(),
-        newBufferedWriter("iris.csv"));
+        newBufferedWriter("iris.csv"), true);
   }
 
   @Provides
@@ -118,7 +118,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Node>(
         new CsvMapper(),
         new DefaultNodeSchema(),
-        newBufferedWriter("other-nodes.csv"));
+        newBufferedWriter("other-nodes.csv"), true);
   }
 
   @Provides
@@ -127,7 +127,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Edge>(
         new CsvMapper(),
         new RelatedToEdgeSchema(),
-        newBufferedWriter("related-to-edges.csv"));
+        newBufferedWriter("related-to-edges.csv"), true);
   }
 
   @Provides
@@ -136,7 +136,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Edge>(
         new CsvMapper(),
         new NextEdgeSchema(),
-        newBufferedWriter("next-edges.csv"));
+        newBufferedWriter("next-edges.csv"), true);
   }
 
   @Provides
@@ -145,7 +145,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Edge>(
         new CsvMapper(),
         new StructuralEdgeSchema(),
-        newBufferedWriter("structural-edges.csv"));
+        newBufferedWriter("structural-edges.csv"), true);
   }
 
   @Provides
@@ -154,7 +154,7 @@ public class ApocCsvWriterModule {
     return new CsvWriter<Edge>(
         new CsvMapper(),
         new AugmentingEdgeSchema(),
-        newBufferedWriter("augmenting-edges.csv"));
+        newBufferedWriter("augmenting-edges.csv"), true);
   }
 
   @Nonnull

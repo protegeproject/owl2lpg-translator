@@ -38,7 +38,7 @@ public class BulkCsvWriterModule {
       return new CsvWriter<Node>(
           new CsvMapper(),
           new AnyNodesCsvSchema(),
-          new BufferedWriter(new FileWriter(outputFile)));
+          new BufferedWriter(new FileWriter(outputFile)), true);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -52,7 +52,7 @@ public class BulkCsvWriterModule {
       return new CsvWriter<Edge>(
           new CsvMapper(),
           new AnyEdgesCsvSchema(),
-          new BufferedWriter(new FileWriter(outputFile)));
+          new BufferedWriter(new FileWriter(outputFile)), true);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
