@@ -11,14 +11,17 @@ CALL {
   UNION
   MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
   MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(entity:Entity {iri:$entityIri})
+  WHERE entity.localName <> ""
   RETURN DISTINCT { type: "LocalName" } AS dictionaryLanguage, entity.localName AS shortForm
   UNION
   MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
   MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(entity:Entity {iri:$entityIri})
+  WHERE entity.prefixedName <> ""
   RETURN DISTINCT { type: "PrefixedName" } AS dictionaryLanguage, entity.prefixedName AS shortForm
   UNION
   MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId})-[:ONTOLOGY_DOCUMENT]->(o:OntologyDocument)
   MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(entity:Entity {iri:$entityIri})
+  WHERE entity.oboId <> ""
   RETURN DISTINCT { type: "OboId" } AS dictionaryLanguage, entity.oboId AS shortForm
 }
 RETURN dictionaryLanguage, shortForm
