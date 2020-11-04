@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.exporter.csv;
 
+import com.google.common.collect.Sets;
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
@@ -11,16 +12,21 @@ import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLImportsDeclaration;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
@@ -49,6 +55,8 @@ public class OntologyCsvExporter {
 
   @Nonnull
   private final CsvOutputWriter csvOutputWriter;
+
+  private final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
 
   @Inject
   public OntologyCsvExporter(@Nonnull ProjectTranslator projectTranslator,
@@ -124,13 +132,43 @@ public class OntologyCsvExporter {
   }
 
   private void writeOntologyAxioms(Set<OWLAxiom> axioms, Node documentNode) {
+    axioms.forEach(axiom -> writeOntologyAxiom(axiom, documentNode));
+    getSubClassOfOwlThingAxioms(axioms).forEach(axiom -> writeOntologyAxiom(axiom, documentNode));
+  }
+
+  @Nonnull
+  private Stream<OWLSubClassOfAxiom> getSubClassOfOwlThingAxioms(Set<OWLAxiom> axioms) {
+    return findRootClasses(axioms)
+        .stream()
+        .map(cls -> dataFactory.getOWLSubClassOfAxiom(cls, dataFactory.getOWLThing()));
+  }
+
+  @Nonnull
+  private Set<OWLClass> findRootClasses(Set<OWLAxiom> axioms) {
+    var removedClasses = Sets.<OWLClass>newHashSet();
+    var rootClasses = Sets.<OWLClass>newHashSet();
     axioms.stream()
-        .map(axiomTranslator::translate)
-        .forEach(axiomTranslation -> {
-          writeTranslation(axiomTranslation);
-          writeAxiomEdge(axiomTranslation, documentNode);
-          writeInOntologySignatureEdge(axiomTranslation, documentNode);
+        .filter(OWLSubClassOfAxiom.class::isInstance)
+        .map(OWLSubClassOfAxiom.class::cast)
+        .forEach(subClassOfAxiom -> {
+          var subClass = subClassOfAxiom.getSubClass();
+          if (!subClass.isAnonymous()) {
+            rootClasses.remove(subClass.asOWLClass());
+            removedClasses.add(subClass.asOWLClass());
+          }
+          var superClass = subClassOfAxiom.getSuperClass();
+          if (!superClass.isAnonymous() && !removedClasses.contains(superClass)) {
+            rootClasses.add(superClass.asOWLClass());
+          }
         });
+    return rootClasses;
+  }
+
+  private void writeOntologyAxiom(OWLAxiom axiom, Node documentNode) {
+    var axiomTranslation = axiomTranslator.translate(axiom);
+    writeTranslation(axiomTranslation);
+    writeAxiomEdge(axiomTranslation, documentNode);
+    writeInOntologySignatureEdge(axiomTranslation, documentNode);
   }
 
   private void writeAxiomEdge(Translation axiomTranslation, Node documentNode) {
