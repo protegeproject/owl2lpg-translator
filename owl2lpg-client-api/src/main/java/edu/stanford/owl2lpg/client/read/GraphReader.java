@@ -97,4 +97,14 @@ public class GraphReader {
       });
     }
   }
+
+  @Nonnull
+  public int getInteger(String queryString, Value inputParams, String outputVariable) {
+    try (var session = driver.session()) {
+      return session.readTransaction(tx -> {
+        var result = tx.run(queryString, inputParams).single();
+        return result.get(outputVariable).asInt();
+      });
+    }
+  }
 }

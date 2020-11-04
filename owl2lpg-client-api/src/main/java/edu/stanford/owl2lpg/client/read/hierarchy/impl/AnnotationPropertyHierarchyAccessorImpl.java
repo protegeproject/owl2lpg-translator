@@ -33,6 +33,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   private static final String ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE = "read/hierarchy/annotation-property-descendant.cpy";
   private static final String ANNOTATION_PROPERTY_CHILDREN_QUERY_FILE = "read/hierarchy/annotation-property-children.cpy";
   private static final String ANNOTATION_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/annotation-property-paths-to-ancestor.cpy";
+  private static final String ANNOTATION_PROPERTY_COUNT_CHILDREN_QUERY_FILE = "read/hierarchy/annotation-property-count-children.cpy";
 
   private static final String PROPERTY_CHILDREN_OF_ROOT_QUERY = read(ANNOTATION_PROPERTY_CHILDREN_OF_ROOT_QUERY_FILE);
   private static final String PROPERTY_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_ANCESTOR_QUERY_FILE);
@@ -40,6 +41,7 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
   private static final String PROPERTY_DESCENDANT_QUERY = read(ANNOTATION_PROPERTY_DESCENDANT_QUERY_FILE);
   private static final String PROPERTY_CHILDREN_QUERY = read(ANNOTATION_PROPERTY_CHILDREN_QUERY_FILE);
   private static final String PATHS_TO_ANCESTOR_QUERY = read(ANNOTATION_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
+  private static final String ANNOTATION_PROPERTY_COUNT_CHILDREN_QUERY = read(ANNOTATION_PROPERTY_COUNT_CHILDREN_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -125,7 +127,9 @@ public class AnnotationPropertyHierarchyAccessorImpl implements AnnotationProper
                         @Nonnull ProjectId projectId,
                         @Nonnull BranchId branchId,
                         @Nonnull OntologyDocumentId ontoDocId) {
-    return getChildren(owlAnnotationProperty, projectId, branchId, ontoDocId).size() == 0;
+    var inputParams = Parameters.forEntity(owlAnnotationProperty, projectId, branchId, ontoDocId);
+    var childrenCount = graphReader.getInteger(ANNOTATION_PROPERTY_COUNT_CHILDREN_QUERY, inputParams, "count");
+    return childrenCount == 0;
   }
 
   @Nonnull

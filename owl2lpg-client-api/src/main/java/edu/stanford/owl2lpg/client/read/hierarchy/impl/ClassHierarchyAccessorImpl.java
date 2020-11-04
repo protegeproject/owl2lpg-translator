@@ -35,6 +35,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String CLASS_DESCENDANT_QUERY_FILE = "read/hierarchy/class-descendant.cpy";
   private static final String CLASS_CHILDREN_QUERY_FILE = "read/hierarchy/class-children.cpy";
   private static final String CLASS_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/class-paths-to-ancestor.cpy";
+  private static final String CLASS_COUNT_CHILDREN_QUERY_FILE = "read/hierarchy/class-count-children.cpy";
 
   private static final String CLASS_CHILDREN_OF_OWL_THING_QUERY = read(CLASS_CHILDREN_OF_OWL_THING_QUERY_FILE);
   private static final String CLASS_ANCESTOR_QUERY = read(CLASS_ANCESTOR_QUERY_FILE);
@@ -42,6 +43,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String CLASS_DESCENDANT_QUERY = read(CLASS_DESCENDANT_QUERY_FILE);
   private static final String CLASS_CHILDREN_QUERY = read(CLASS_CHILDREN_QUERY_FILE);
   private static final String PATHS_TO_ANCESTOR_QUERY = read(CLASS_PATHS_TO_ANCESTOR_QUERY_FILE);
+  private static final String CLASS_COUNT_CHILDREN_QUERY = read(CLASS_COUNT_CHILDREN_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -137,7 +139,9 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                         @Nonnull ProjectId projectId,
                         @Nonnull BranchId branchId,
                         @Nonnull OntologyDocumentId ontoDocId) {
-    return getChildren(owlClass, projectId, branchId, ontoDocId).size() == 0;
+    var inputParams = Parameters.forEntity(owlClass, projectId, branchId, ontoDocId);
+    var childrenCount = graphReader.getInteger(CLASS_COUNT_CHILDREN_QUERY, inputParams, "count");
+    return childrenCount == 0;
   }
 
   @Nonnull

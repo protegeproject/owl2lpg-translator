@@ -35,6 +35,7 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   private static final String OBJECT_PROPERTY_DESCENDANT_QUERY_FILE = "read/hierarchy/object-property-descendant.cpy";
   private static final String OBJECT_PROPERTY_CHILDREN_QUERY_FILE = "read/hierarchy/object-property-children.cpy";
   private static final String OBJECT_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/object-property-paths-to-ancestor.cpy";
+  private static final String OBJECT_PROPERTY_COUNT_CHILDREN_QUERY_FILE = "read/hierarchy/object-property-count-children.cpy";
 
   private static final String OBJECT_PROPERTY_CHILDREN_OF_OWL_TOP_OBJECT_PROPERTY_QUERY =
       read(OBJECT_PROPERTY_CHILDREN_OF_OWL_TOP_OBJECT_PROPERTY_QUERY_FILE);
@@ -43,6 +44,7 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   private static final String OBJECT_PROPERTY_DESCENDANT_QUERY = read(OBJECT_PROPERTY_DESCENDANT_QUERY_FILE);
   private static final String OBJECT_PROPERTY_CHILDREN_QUERY = read(OBJECT_PROPERTY_CHILDREN_QUERY_FILE);
   private static final String PATHS_TO_ANCESTOR_QUERY = read(OBJECT_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
+  private static final String OBJECT_PROPERTY_COUNT_CHILDREN_QUERY = read(OBJECT_PROPERTY_COUNT_CHILDREN_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -63,7 +65,7 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
   }
 
   @Override
-  public void setRoot(OWLObjectProperty root) {
+  public void setRoot(@Nonnull OWLObjectProperty root) {
     this.root = root;
   }
 
@@ -138,7 +140,9 @@ public class ObjectPropertyHierarchyAccessorImpl implements ObjectPropertyHierar
                         @Nonnull ProjectId projectId,
                         @Nonnull BranchId branchId,
                         @Nonnull OntologyDocumentId ontoDocId) {
-    return getChildren(owlObjectProperty, projectId, branchId, ontoDocId).size() == 0;
+    var inputParams = Parameters.forEntity(owlObjectProperty, projectId, branchId, ontoDocId);
+    var childrenCount = graphReader.getInteger(OBJECT_PROPERTY_COUNT_CHILDREN_QUERY, inputParams, "count");
+    return childrenCount == 0;
   }
 
   @Nonnull

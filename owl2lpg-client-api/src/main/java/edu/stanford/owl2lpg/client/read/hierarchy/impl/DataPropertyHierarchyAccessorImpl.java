@@ -35,6 +35,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   private static final String DATA_PROPERTY_DESCENDANT_QUERY_FILE = "read/hierarchy/data-property-descendant.cpy";
   private static final String DATA_PROPERTY_CHILDREN_QUERY_FILE = "read/hierarchy/data-property-children.cpy";
   private static final String DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/data-property-paths-to-ancestor.cpy";
+  private static final String DATA_PROPERTY_COUNT_CHILDREN_QUERY_FILE = "read/hierarchy/data-property-count-children.cpy";
 
   private static final String DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY =
       read(DATA_PROPERTY_CHILDREN_OF_OWL_TOP_DATA_PROPERTY_QUERY_FILE);
@@ -43,6 +44,7 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
   private static final String DATA_PROPERTY_DESCENDANT_QUERY = read(DATA_PROPERTY_DESCENDANT_QUERY_FILE);
   private static final String DATA_PROPERTY_CHILDREN_QUERY = read(DATA_PROPERTY_CHILDREN_QUERY_FILE);
   private static final String PATHS_TO_ANCESTOR_QUERY = read(DATA_PROPERTY_PATHS_TO_ANCESTOR_QUERY_FILE);
+  private static final String DATA_PROPERTY_COUNT_CHILDREN_QUERY = read(DATA_PROPERTY_COUNT_CHILDREN_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -138,7 +140,9 @@ public class DataPropertyHierarchyAccessorImpl implements DataPropertyHierarchyA
                         @Nonnull ProjectId projectId,
                         @Nonnull BranchId branchId,
                         @Nonnull OntologyDocumentId ontoDocId) {
-    return getChildren(owlDataProperty, projectId, branchId, ontoDocId).size() == 0;
+    var inputParams = Parameters.forEntity(owlDataProperty, projectId, branchId, ontoDocId);
+    var childrenCount = graphReader.getInteger(DATA_PROPERTY_COUNT_CHILDREN_QUERY, inputParams, "count");
+    return childrenCount == 0;
   }
 
   @Nonnull
