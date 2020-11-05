@@ -14,12 +14,12 @@ import edu.stanford.bmir.protege.web.server.shortform.ShortFormMatch;
 import edu.stanford.bmir.protege.web.server.shortform.ShortFormMatchPosition;
 import edu.stanford.bmir.protege.web.shared.pagination.Page;
 import edu.stanford.bmir.protege.web.shared.pagination.PageRequest;
+import edu.stanford.bmir.protege.web.shared.project.BranchId;
+import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.bmir.protege.web.shared.shortform.DictionaryLanguage;
 import edu.stanford.owl2lpg.client.read.Parameters;
 import edu.stanford.owl2lpg.client.read.entity.impl.EntityNodeMapper;
 import edu.stanford.owl2lpg.client.read.shortform.MultiLingualShortFormAccessor;
-import edu.stanford.bmir.protege.web.shared.project.BranchId;
-import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.types.Node;
 import org.semanticweb.owlapi.model.EntityType;
@@ -102,13 +102,14 @@ public class MultiLingualShortFormAccessorImpl implements MultiLingualShortFormA
                              @Nonnull String defaultShortForm,
                              @Nonnull ProjectId projectId,
                              @Nonnull BranchId branchId) {
-    var dictionaryMap = getShortForms(owlEntity, projectId, branchId);
-    return languages
-        .stream()
-        .map(language -> dictionaryMap.getOrDefault(language, null))
-        .filter(Objects::nonNull)
-        .findFirst()
-        .orElse(defaultShortForm);
+    var visitor = new DictionaryLanguageVisitorImpl(driver, owlEntity, projectId, branchId);
+    for (var dictLang : languages) {
+      var shortForm = dictLang.accept(visitor);
+      if (shortForm.isPresent()) {
+        return shortForm.get();
+      }
+    }
+    return defaultShortForm;
   }
 
   @Nonnull

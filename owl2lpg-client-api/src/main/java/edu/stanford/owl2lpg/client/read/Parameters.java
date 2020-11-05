@@ -31,6 +31,7 @@ public class Parameters {
   private static final String ONTO_DOC_ID = "ontoDocId";
   private static final String ENTITY_IRI = "entityIri";
   private static final String ENTITY_NAME = "entityName";
+  private static final String PROPERTY_IRI = "propertyIri";
   private static final String NODE_ID = "nodeId";
   private static final String SEARCH_STRING = "searchString";
   private static final String ENTITY_TYPE = "entityType";
@@ -40,6 +41,7 @@ public class Parameters {
   private static final String DATATYPE = "datatype";
   private static final String IRI = "iri";
   private static final String DIGEST = "digest";
+  private static final String LANGUAGE = "language";
 
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId) {
@@ -200,5 +202,18 @@ public class Parameters {
         BRANCH_ID, new StringValue(branchId.getId()),
         ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         DIGEST, new StringValue(digest)));
+  }
+
+  public static Value forAnnotationAssertion(@Nonnull IRI entityIri,
+                                             @Nonnull IRI propertyIri,
+                                             @Nonnull String language,
+                                             @Nonnull ProjectId projectId,
+                                             @Nonnull BranchId branchId) {
+    return new MapValue(Map.of(
+        PROJECT_ID, new StringValue(projectId.getId()),
+        BRANCH_ID, new StringValue(branchId.getId()),
+        ENTITY_IRI, new StringValue(entityIri.toString()),
+        PROPERTY_IRI, new StringValue(propertyIri.toString()),
+        LANGUAGE, new StringValue(language)));
   }
 }
