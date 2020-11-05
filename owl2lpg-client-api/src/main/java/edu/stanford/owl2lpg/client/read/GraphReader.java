@@ -28,7 +28,7 @@ public class GraphReader {
 
   public boolean hasResult(String queryString, Value inputParams) {
     try (var session = driver.session()) {
-      return session.readTransaction(tx -> tx.run(queryString, inputParams).list().isEmpty());
+      return session.readTransaction(tx -> tx.run(queryString, inputParams).hasNext());
     }
   }
 

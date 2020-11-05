@@ -35,7 +35,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String CLASS_DESCENDANT_QUERY_FILE = "read/hierarchy/class-descendant.cpy";
   private static final String CLASS_CHILDREN_QUERY_FILE = "read/hierarchy/class-children.cpy";
   private static final String CLASS_PATHS_TO_ANCESTOR_QUERY_FILE = "read/hierarchy/class-paths-to-ancestor.cpy";
-  private static final String CLASS_COUNT_CHILDREN_QUERY_FILE = "read/hierarchy/class-count-children.cpy";
+  private static final String FIND_FIRST_SUBCLASS_QUERY_FILE = "read/hierarchy/find-first-subclass.cpy";
 
   private static final String CLASS_CHILDREN_OF_OWL_THING_QUERY = read(CLASS_CHILDREN_OF_OWL_THING_QUERY_FILE);
   private static final String CLASS_ANCESTOR_QUERY = read(CLASS_ANCESTOR_QUERY_FILE);
@@ -43,7 +43,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
   private static final String CLASS_DESCENDANT_QUERY = read(CLASS_DESCENDANT_QUERY_FILE);
   private static final String CLASS_CHILDREN_QUERY = read(CLASS_CHILDREN_QUERY_FILE);
   private static final String PATHS_TO_ANCESTOR_QUERY = read(CLASS_PATHS_TO_ANCESTOR_QUERY_FILE);
-  private static final String CLASS_COUNT_CHILDREN_QUERY = read(CLASS_COUNT_CHILDREN_QUERY_FILE);
+  private static final String FIND_FIRST_SUBCLASS_QUERY = read(FIND_FIRST_SUBCLASS_QUERY_FILE);
 
   @Nonnull
   private final GraphReader graphReader;
@@ -140,8 +140,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                         @Nonnull BranchId branchId,
                         @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forEntity(owlClass, projectId, branchId, ontoDocId);
-    var childrenCount = graphReader.getInteger(CLASS_COUNT_CHILDREN_QUERY, inputParams, "count");
-    return childrenCount == 0;
+    return graphReader.hasResult(FIND_FIRST_SUBCLASS_QUERY, inputParams);
   }
 
   @Nonnull
