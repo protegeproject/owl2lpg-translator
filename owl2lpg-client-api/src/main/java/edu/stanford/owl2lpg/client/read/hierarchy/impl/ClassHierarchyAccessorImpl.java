@@ -140,7 +140,7 @@ public class ClassHierarchyAccessorImpl implements ClassHierarchyAccessor {
                         @Nonnull BranchId branchId,
                         @Nonnull OntologyDocumentId ontoDocId) {
     var inputParams = Parameters.forEntity(owlClass, projectId, branchId, ontoDocId);
-    return graphReader.hasResult(FIND_FIRST_SUBCLASS_QUERY, inputParams);
+    return graphReader.hasResult(FIND_FIRST_SUBCLASS_QUERY, inputParams) == false;
   }
 
   @Nonnull
