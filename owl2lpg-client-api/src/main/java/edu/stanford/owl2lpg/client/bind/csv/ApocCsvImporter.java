@@ -1,5 +1,6 @@
-package edu.stanford.owl2lpg.client.bind.project.importer;
+package edu.stanford.owl2lpg.client.bind.csv;
 
+import edu.stanford.bmir.protege.web.server.csv.CsvImporter;
 import org.neo4j.driver.Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class ApocCsvImporter implements CsvImporter {
   }
 
   @Override
-  public boolean loadOntologyDocument(@Nonnull String directoryName) {
+  public boolean loadOntologyFromDirectory(@Nonnull String directoryName) {
     var queryString = APOC_IMPORT_CSV_QUERY.replace(DIRECTORY_NAME, directoryName);
     try (var session = driver.session()) {
       return session.writeTransaction(tx -> {

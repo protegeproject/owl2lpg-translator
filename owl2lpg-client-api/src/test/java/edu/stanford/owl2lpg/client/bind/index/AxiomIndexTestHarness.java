@@ -4,7 +4,7 @@ import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.DatabaseModule;
-import edu.stanford.owl2lpg.client.bind.project.index.DefaultIndexLoader;
+import edu.stanford.owl2lpg.client.bind.graph.NodePropertyIndexBuilder;
 import edu.stanford.owl2lpg.client.read.NodeMapperModule;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
  * 2020-10-27
  */
 public class AxiomIndexTestHarness {
-  
+
   private final ProjectId projectId;
 
   private final BranchId branchId;
@@ -148,8 +148,8 @@ public class AxiomIndexTestHarness {
   }
 
   private void ensureIndexes() {
-    var indexLoader = new DefaultIndexLoader(driver);
-    indexLoader.createIndexes();
+    var indexBuilder = new NodePropertyIndexBuilder(driver);
+    indexBuilder.buildIndex();
   }
 
   void addAxiomToOntologyDocument(OWLAxiom axiom, OntologyDocumentId ontDocId) {

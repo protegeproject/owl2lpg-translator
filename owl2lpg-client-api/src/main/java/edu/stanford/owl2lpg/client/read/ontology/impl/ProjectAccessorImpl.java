@@ -35,14 +35,10 @@ public class ProjectAccessorImpl implements ProjectAccessor {
   private static final String BRANCH_IDS_QUERY_FILE = "read/ontology/branch-ids.cpy";
   private static final String ONTOLOGY_DOCUMENT_IDS_QUERY_FILE = "read/ontology/ontology-document-ids.cpy";
   private static final String ONTOLOGY_IDS_QUERY_FILE = "read/ontology/ontology-ids.cpy";
-  private static final String SET_DEFAULT_BRANCH_ID_QUERY_FILE = "read/ontology/set-default-branch-id.cpy";
-  private static final String SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY_FILE = "read/ontology/set-default-ontology-document-id.cpy";
 
   private static final String BRANCH_IDS_QUERY = read(BRANCH_IDS_QUERY_FILE);
   private static final String ONTOLOGY_DOCUMENT_IDS_QUERY = read(ONTOLOGY_DOCUMENT_IDS_QUERY_FILE);
   private static final String ONTOLOGY_IDS_QUERY = read(ONTOLOGY_IDS_QUERY_FILE);
-  private static final String SET_DEFAULT_BRANCH_ID_QUERY = read(SET_DEFAULT_BRANCH_ID_QUERY_FILE);
-  private static final String SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY = read(SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -64,18 +60,6 @@ public class ProjectAccessorImpl implements ProjectAccessor {
         .stream()
         .filter(BranchId::isDefault)
         .findFirst();
-  }
-
-  @Override
-  public boolean setDefaultBranchId(@Nonnull ProjectId projectId, @Nonnull BranchId defaultBranchId) {
-    var inputParams = Parameters.forContext(projectId, defaultBranchId);
-    try (var session = driver.session()) {
-      return session.writeTransaction(tx -> {
-        var result = tx.run(SET_DEFAULT_BRANCH_ID_QUERY, inputParams);
-        var counters = result.consume().counters();
-        return counters.propertiesSet() > 0;
-      });
-    }
   }
 
   @Nonnull
@@ -105,20 +89,6 @@ public class ProjectAccessorImpl implements ProjectAccessor {
         .stream()
         .filter(OntologyDocumentId::isDefault)
         .findFirst();
-  }
-
-  @Override
-  public boolean setDefaultOntologyDocumentId(@Nonnull ProjectId projectId,
-                                              @Nonnull BranchId branchId,
-                                              @Nonnull OntologyDocumentId defaultOntDocId) {
-    var inputParams = Parameters.forContext(projectId, branchId, defaultOntDocId);
-    try (var session = driver.session()) {
-      return session.writeTransaction(tx -> {
-        var result = tx.run(SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY, inputParams);
-        var counters = result.consume().counters();
-        return counters.propertiesSet() > 0;
-      });
-    }
   }
 
   @Nonnull

@@ -1,6 +1,7 @@
-package edu.stanford.owl2lpg.client.bind.project.index;
+package edu.stanford.owl2lpg.client.bind.graph;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.bmir.protege.web.server.graph.IndexBuilder;
 import org.neo4j.driver.Driver;
 
 import javax.annotation.Nonnull;
@@ -13,7 +14,7 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class FullTextIndexLoader implements IndexLoader {
+public class FullTextIndexBuilder implements IndexBuilder {
 
   private static final String FULL_TEXT_INDEX_QUERY_FILE = "index/create-full-text-indexes.cpy";
 
@@ -23,12 +24,12 @@ public class FullTextIndexLoader implements IndexLoader {
   private final Driver driver;
 
   @Inject
-  public FullTextIndexLoader(@Nonnull Driver driver) {
+  public FullTextIndexBuilder(@Nonnull Driver driver) {
     this.driver = checkNotNull(driver);
   }
 
   @Override
-  public boolean createIndexes() {
+  public boolean buildIndex() {
     try (var session = driver.session()) {
       return session.readTransaction(tx -> {
         try {
