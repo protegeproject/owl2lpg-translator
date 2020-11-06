@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -18,6 +19,22 @@ import java.util.stream.Stream;
  * Stanford Center for Biomedical Informatics Research
  */
 public interface ProjectAccessor {
+
+  @Nonnull
+  Optional<BranchId> getDefaultBranchId(@Nonnull ProjectId projectId);
+
+  @Nonnull
+  boolean setDefaultBranchId(@Nonnull ProjectId projectId, @Nonnull BranchId defaultBranchId);
+
+  @Nonnull
+  ImmutableSet<BranchId> getBranchIds(@Nonnull ProjectId projectId);
+
+  @Nonnull
+  Optional<OntologyDocumentId> getDefaultOntologyDocumentId(@Nonnull ProjectId projectId,
+                                                            @Nonnull BranchId branchId);
+
+  @Nonnull
+  boolean setDefaultOntologyDocumentId(@Nonnull ProjectId projectId, @Nonnull BranchId branchId, @Nonnull OntologyDocumentId defaultOntDocId);
 
   @Nonnull
   ImmutableSet<OntologyDocumentId> getOntologyDocumentIds(@Nonnull ProjectId projectId,

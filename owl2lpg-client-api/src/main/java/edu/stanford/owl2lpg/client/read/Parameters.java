@@ -43,6 +43,10 @@ public class Parameters {
   private static final String DIGEST = "digest";
   private static final String LANGUAGE = "language";
 
+  public static Value forContext(@Nonnull ProjectId projectId) {
+    return new MapValue(Map.of(PROJECT_ID, new StringValue(projectId.getId())));
+  }
+
   public static Value forContext(@Nonnull ProjectId projectId,
                                  @Nonnull BranchId branchId) {
     return new MapValue(Map.of(

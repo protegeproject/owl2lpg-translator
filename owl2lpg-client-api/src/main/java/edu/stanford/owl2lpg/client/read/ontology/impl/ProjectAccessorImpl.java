@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.client.read.ontology.impl;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
@@ -18,10 +17,14 @@ import org.semanticweb.owlapi.model.OWLOntologyID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IS_DEFAULT;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -29,8 +32,17 @@ import static edu.stanford.owl2lpg.client.util.Resources.read;
  */
 public class ProjectAccessorImpl implements ProjectAccessor {
 
+  private static final String BRANCH_IDS_QUERY_FILE = "read/ontology/branch-ids.cpy";
+  private static final String ONTOLOGY_DOCUMENT_IDS_QUERY_FILE = "read/ontology/ontology-document-ids.cpy";
   private static final String ONTOLOGY_IDS_QUERY_FILE = "read/ontology/ontology-ids.cpy";
+  private static final String SET_DEFAULT_BRANCH_ID_QUERY_FILE = "read/ontology/set-default-branch-id.cpy";
+  private static final String SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY_FILE = "read/ontology/set-default-ontology-document-id.cpy";
+
+  private static final String BRANCH_IDS_QUERY = read(BRANCH_IDS_QUERY_FILE);
+  private static final String ONTOLOGY_DOCUMENT_IDS_QUERY = read(ONTOLOGY_DOCUMENT_IDS_QUERY_FILE);
   private static final String ONTOLOGY_IDS_QUERY = read(ONTOLOGY_IDS_QUERY_FILE);
+  private static final String SET_DEFAULT_BRANCH_ID_QUERY = read(SET_DEFAULT_BRANCH_ID_QUERY_FILE);
+  private static final String SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY = read(SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY_FILE);
 
   @Nonnull
   private final Driver driver;
@@ -47,8 +59,86 @@ public class ProjectAccessorImpl implements ProjectAccessor {
 
   @Nonnull
   @Override
+  public Optional<BranchId> getDefaultBranchId(@Nonnull ProjectId projectId) {
+    return getBranchIds(projectId)
+        .stream()
+        .filter(BranchId::isDefault)
+        .findFirst();
+  }
+
+  @Override
+  public boolean setDefaultBranchId(@Nonnull ProjectId projectId, @Nonnull BranchId defaultBranchId) {
+    var inputParams = Parameters.forContext(projectId, defaultBranchId);
+    try (var session = driver.session()) {
+      return session.writeTransaction(tx -> {
+        var result = tx.run(SET_DEFAULT_BRANCH_ID_QUERY, inputParams);
+        var counters = result.consume().counters();
+        return counters.propertiesSet() > 0;
+      });
+    }
+  }
+
+  @Nonnull
+  @Override
+  public ImmutableSet<BranchId> getBranchIds(@Nonnull ProjectId projectId) {
+    var inputParams = Parameters.forContext(projectId);
+    try (var session = driver.session()) {
+      return session.readTransaction(tx -> {
+        var branchIds = ImmutableSet.<BranchId>builder();
+        var result = tx.run(BRANCH_IDS_QUERY, inputParams);
+        while (result.hasNext()) {
+          var record = result.next();
+          var node = record.get("n").asNode();
+          var branchId = node.get(BRANCH_ID).asString();
+          var isDefault = node.get(IS_DEFAULT).asBoolean();
+          branchIds.add(BranchId.get(branchId, isDefault));
+        }
+        return branchIds.build();
+      });
+    }
+  }
+
+  @Nonnull
+  @Override
+  public Optional<OntologyDocumentId> getDefaultOntologyDocumentId(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
+    return getOntologyDocumentIds(projectId, branchId)
+        .stream()
+        .filter(OntologyDocumentId::isDefault)
+        .findFirst();
+  }
+
+  @Override
+  public boolean setDefaultOntologyDocumentId(@Nonnull ProjectId projectId,
+                                              @Nonnull BranchId branchId,
+                                              @Nonnull OntologyDocumentId defaultOntDocId) {
+    var inputParams = Parameters.forContext(projectId, branchId, defaultOntDocId);
+    try (var session = driver.session()) {
+      return session.writeTransaction(tx -> {
+        var result = tx.run(SET_DEFAULT_ONTOLOGY_DOCUMENT_ID_QUERY, inputParams);
+        var counters = result.consume().counters();
+        return counters.propertiesSet() > 0;
+      });
+    }
+  }
+
+  @Nonnull
+  @Override
   public ImmutableSet<OntologyDocumentId> getOntologyDocumentIds(@Nonnull ProjectId projectId, @Nonnull BranchId branchId) {
-    return getOntologyDocumentIdMap(projectId, branchId).keySet();
+    var inputParams = Parameters.forContext(projectId, branchId);
+    try (var session = driver.session()) {
+      return session.readTransaction(tx -> {
+        var ontDocIds = ImmutableSet.<OntologyDocumentId>builder();
+        var result = tx.run(ONTOLOGY_DOCUMENT_IDS_QUERY, inputParams);
+        while (result.hasNext()) {
+          var record = result.next();
+          var node = record.get("n").asNode();
+          var ontDocId = node.get(ONTOLOGY_DOCUMENT_ID).asString();
+          var isDefault = node.get(IS_DEFAULT).asBoolean();
+          ontDocIds.add(OntologyDocumentId.get(ontDocId, isDefault));
+        }
+        return ontDocIds.build();
+      });
+    }
   }
 
   @Nonnull
@@ -62,8 +152,12 @@ public class ProjectAccessorImpl implements ProjectAccessor {
         while (result.hasNext()) {
           var row = result.next();
           var ontoDocId = OntologyDocumentId.get(row.get("ontoDocId").asString());
-          var ontologyIri = Optional.fromNullable(row.get("ontologyIri")).transform(Value::asString).transform(IRI::create);
-          var versionIri = Optional.fromNullable(row.get("versionIri")).transform(Value::asString).transform(IRI::create);
+          var ontologyIri = com.google.common.base.Optional.fromNullable(row.get("ontologyIri"))
+              .transform(Value::asString)
+              .transform(IRI::create);
+          var versionIri = com.google.common.base.Optional.fromNullable(row.get("versionIri"))
+              .transform(Value::asString)
+              .transform(IRI::create);
           outputMap.put(ontoDocId, new OWLOntologyID(ontologyIri, versionIri));
         }
         return outputMap.build();
