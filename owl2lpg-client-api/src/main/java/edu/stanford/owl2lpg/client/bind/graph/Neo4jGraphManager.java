@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.client.write.project.ProjectUpdater;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,6 +21,7 @@ public class Neo4jGraphManager implements GraphManager {
   @Nonnull
   private final ProjectUpdater projectUpdater;
 
+  @Inject
   public Neo4jGraphManager(@Nonnull ProjectUpdater projectUpdater) {
     this.projectUpdater = checkNotNull(projectUpdater);
   }

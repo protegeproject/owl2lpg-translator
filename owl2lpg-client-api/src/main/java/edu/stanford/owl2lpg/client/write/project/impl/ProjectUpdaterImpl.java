@@ -8,6 +8,7 @@ import edu.stanford.owl2lpg.client.write.project.ProjectUpdater;
 import org.neo4j.driver.Driver;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.client.util.Resources.read;
@@ -27,6 +28,7 @@ public class ProjectUpdaterImpl implements ProjectUpdater {
   @Nonnull
   private final Driver driver;
 
+  @Inject
   public ProjectUpdaterImpl(@Nonnull Driver driver) {
     this.driver = checkNotNull(driver);
   }
