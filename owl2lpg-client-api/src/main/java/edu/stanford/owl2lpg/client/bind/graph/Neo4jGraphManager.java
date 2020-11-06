@@ -4,7 +4,7 @@ import edu.stanford.bmir.protege.web.server.graph.GraphManager;
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
-import edu.stanford.owl2lpg.client.write.ProjectUpdater;
+import edu.stanford.owl2lpg.client.write.project.ProjectUpdater;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

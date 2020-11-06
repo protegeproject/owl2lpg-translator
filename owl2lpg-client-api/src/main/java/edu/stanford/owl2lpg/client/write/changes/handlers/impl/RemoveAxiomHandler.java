@@ -1,10 +1,10 @@
-package edu.stanford.owl2lpg.client.write.handlers.impl;
+package edu.stanford.owl2lpg.client.write.changes.handlers.impl;
 
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
-import edu.stanford.owl2lpg.client.write.TranslationTranslator;
+import edu.stanford.owl2lpg.client.write.changes.TranslationTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import org.semanticweb.owlapi.model.OWLAxiom;
 

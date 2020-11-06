@@ -7,8 +7,8 @@ import edu.stanford.bmir.protege.web.server.change.OntologyChangeVisitor;
 import edu.stanford.bmir.protege.web.server.change.RemoveAxiomChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveImportChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveOntologyAnnotationChange;
-import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandler;
-import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandler;
+import edu.stanford.owl2lpg.client.write.changes.handlers.AxiomChangeHandler;
+import edu.stanford.owl2lpg.client.write.changes.handlers.OntologyAnnotationChangeHandler;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

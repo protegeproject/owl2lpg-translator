@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write;
+package edu.stanford.owl2lpg.client.write.changes;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;

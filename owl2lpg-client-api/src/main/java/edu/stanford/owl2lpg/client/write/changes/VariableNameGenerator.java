@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write;
+package edu.stanford.owl2lpg.client.write.changes;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

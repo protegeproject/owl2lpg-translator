@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write;
+package edu.stanford.owl2lpg.client.write.changes;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.bmir.protege.web.shared.project.BranchId;

@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write.handlers;
+package edu.stanford.owl2lpg.client.write.changes.handlers;
 
 import edu.stanford.bmir.protege.web.server.change.AddOntologyAnnotationChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveOntologyAnnotationChange;

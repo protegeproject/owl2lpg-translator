@@ -1,12 +1,12 @@
-package edu.stanford.owl2lpg.client.write.handlers.impl;
+package edu.stanford.owl2lpg.client.write.changes.handlers.impl;
 
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.write.GraphWriter;
-import edu.stanford.owl2lpg.client.write.TranslationTranslator;
-import edu.stanford.owl2lpg.translator.AxiomTranslator;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import edu.stanford.owl2lpg.client.write.changes.TranslationTranslator;
+import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -17,31 +17,31 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class AddAxiomHandler {
+public class AddOntologyAnnotationHandler {
 
   @Nonnull
   private final GraphWriter graphWriter;
 
   @Nonnull
-  private final AxiomTranslator axiomTranslator;
+  private final AnnotationObjectTranslator annotationTranslator;
 
   @Nonnull
   private final TranslationTranslator translationTranslator;
 
   @Inject
-  public AddAxiomHandler(@Nonnull GraphWriter graphWriter,
-                         @Nonnull AxiomTranslator axiomTranslator,
-                         @Nonnull TranslationTranslator translationTranslator) {
+  public AddOntologyAnnotationHandler(@Nonnull GraphWriter graphWriter,
+                                      @Nonnull AnnotationObjectTranslator annotationTranslator,
+                                      @Nonnull TranslationTranslator translationTranslator) {
     this.graphWriter = checkNotNull(graphWriter);
-    this.axiomTranslator = checkNotNull(axiomTranslator);
+    this.annotationTranslator = checkNotNull(annotationTranslator);
     this.translationTranslator = checkNotNull(translationTranslator);
   }
 
   public void handle(@Nonnull ProjectId projectId,
                      @Nonnull BranchId branchId,
                      @Nonnull OntologyDocumentId documentId,
-                     @Nonnull OWLAxiom axiom) {
-    var translation = axiomTranslator.translate(axiom);
+                     @Nonnull OWLAnnotation annotation) {
+    var translation = annotationTranslator.translate(annotation);
     var createQuery = translationTranslator.translateToCypherCreateQuery(projectId, branchId, documentId, translation);
     createQuery.forEach(graphWriter::execute);
   }

@@ -1,9 +1,10 @@
-package edu.stanford.owl2lpg.client.write;
+package edu.stanford.owl2lpg.client.write.project.impl;
 
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.Parameters;
+import edu.stanford.owl2lpg.client.write.project.ProjectUpdater;
 import org.neo4j.driver.Driver;
 
 import javax.annotation.Nonnull;

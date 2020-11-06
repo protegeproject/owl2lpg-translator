@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write.handlers;
+package edu.stanford.owl2lpg.client.write.changes.handlers;
 
 import dagger.Binds;
 import dagger.Module;

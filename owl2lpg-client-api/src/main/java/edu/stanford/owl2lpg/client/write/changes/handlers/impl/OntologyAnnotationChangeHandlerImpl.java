@@ -1,11 +1,11 @@
-package edu.stanford.owl2lpg.client.write.handlers.impl;
+package edu.stanford.owl2lpg.client.write.changes.handlers.impl;
 
 import edu.stanford.bmir.protege.web.server.change.AddOntologyAnnotationChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveOntologyAnnotationChange;
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.read.ontology.ProjectAccessor;
-import edu.stanford.owl2lpg.client.write.handlers.OntologyAnnotationChangeHandler;
+import edu.stanford.owl2lpg.client.write.changes.handlers.OntologyAnnotationChangeHandler;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

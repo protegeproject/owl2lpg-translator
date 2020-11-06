@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.client.write;
+package edu.stanford.owl2lpg.client.write.project;
 
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.OntologyDocumentId;

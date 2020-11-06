@@ -1,10 +1,10 @@
-package edu.stanford.owl2lpg.client.write.handlers;
+package edu.stanford.owl2lpg.client.write.changes.handlers;
 
 import dagger.Binds;
 import dagger.Module;
 import edu.stanford.bmir.protege.web.shared.inject.ProjectSingleton;
-import edu.stanford.owl2lpg.client.write.handlers.impl.AxiomChangeHandlerImpl;
-import edu.stanford.owl2lpg.client.write.handlers.impl.OntologyAnnotationChangeHandlerImpl;
+import edu.stanford.owl2lpg.client.write.changes.handlers.impl.AxiomChangeHandlerImpl;
+import edu.stanford.owl2lpg.client.write.changes.handlers.impl.OntologyAnnotationChangeHandlerImpl;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

@@ -2,8 +2,8 @@ package edu.stanford.owl2lpg.client.bind.graph;
 
 import dagger.Binds;
 import dagger.Module;
-import edu.stanford.owl2lpg.client.write.ProjectUpdater;
-import edu.stanford.owl2lpg.client.write.ProjectUpdaterImpl;
+import edu.stanford.owl2lpg.client.write.project.ProjectUpdater;
+import edu.stanford.owl2lpg.client.write.project.impl.ProjectUpdaterImpl;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>

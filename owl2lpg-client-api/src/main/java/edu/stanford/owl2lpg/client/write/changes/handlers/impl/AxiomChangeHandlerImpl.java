@@ -1,10 +1,10 @@
-package edu.stanford.owl2lpg.client.write.handlers.impl;
+package edu.stanford.owl2lpg.client.write.changes.handlers.impl;
 
 import edu.stanford.bmir.protege.web.server.change.AddAxiomChange;
 import edu.stanford.bmir.protege.web.server.change.RemoveAxiomChange;
 import edu.stanford.bmir.protege.web.shared.project.BranchId;
 import edu.stanford.bmir.protege.web.shared.project.ProjectId;
-import edu.stanford.owl2lpg.client.write.handlers.AxiomChangeHandler;
+import edu.stanford.owl2lpg.client.write.changes.handlers.AxiomChangeHandler;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
