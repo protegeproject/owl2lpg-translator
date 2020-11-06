@@ -33,7 +33,7 @@ public class ApocCsvImporter implements CsvImporter {
   }
 
   @Override
-  public boolean loadOntologyProject(@Nonnull String directoryName) {
+  public boolean loadOntologyDocument(@Nonnull String directoryName) {
     var queryString = APOC_IMPORT_CSV_QUERY.replace(DIRECTORY_NAME, directoryName);
     try (var session = driver.session()) {
       return session.writeTransaction(tx -> {

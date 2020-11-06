@@ -8,5 +8,5 @@ import javax.annotation.Nonnull;
  */
 public interface CsvImporter {
 
-  boolean loadOntologyProject(@Nonnull String directoryName);
+  boolean loadOntologyDocument(@Nonnull String directoryName);
 }
