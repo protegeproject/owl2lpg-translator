@@ -2,7 +2,6 @@ package edu.stanford.owl2lpg.translator.visitors;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeFactory;
@@ -49,9 +48,6 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
   private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
-  private final AugmentedEdgeFactory augmentedEdgeFactory;
-
-  @Nonnull
   private final EntityTranslator entityTranslator;
 
   @Nonnull
@@ -66,14 +62,12 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
   @Inject
   public OntologyVisitor(@Nonnull NodeFactory nodeFactory,
                          @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                         @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
                          @Nonnull EntityTranslator entityTranslator,
                          @Nonnull AnnotationValueTranslator annotationValueTranslator,
                          @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
                          @Nonnull AxiomTranslator axiomTranslator) {
     this.nodeFactory = checkNotNull(nodeFactory);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
-    this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
@@ -92,7 +86,7 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
     translateVersionIri(ontology.getOntologyID().getVersionIRI(), documentNode, translations, edges);
     translateOntologyAnnotations(ontology.getAnnotations(), documentNode, translations, edges);
     translateOntologyAxioms(ontology.getAxioms(), documentNode, translations, edges);
-    
+
     return Translation.create(documentId, documentNode, edges.build(), translations.build());
   }
 
