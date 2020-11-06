@@ -7,12 +7,14 @@ import dagger.multibindings.IntoSet;
 import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriter;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -169,6 +171,17 @@ public class ApocCsvWriterModule {
 
   @Nonnull
   private File resolveOutputPath(String fileName) {
+    createDirIfNotExist(importDirectory);
     return importDirectory.resolve(fileName).toFile();
+  }
+
+  private static void createDirIfNotExist(@NotNull Path importDirectory) {
+    if (!Files.exists(importDirectory)) {
+      try {
+        Files.createDirectory(importDirectory);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }
