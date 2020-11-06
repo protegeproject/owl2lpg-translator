@@ -83,8 +83,8 @@ public class OntologyCsvExporter {
                      @Nonnull UUID ontDocUuid) {
     export(ontology,
         ProjectId.get(projectUuid.toString()),
-        BranchId.get(branchUuid.toString()),
-        OntologyDocumentId.get(ontDocUuid.toString()));
+        BranchId.get(branchUuid.toString(), true),
+        OntologyDocumentId.get(ontDocUuid.toString(), true));
   }
 
   public void export(@Nonnull OWLOntology ontology,

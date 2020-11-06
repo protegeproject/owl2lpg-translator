@@ -27,4 +27,5 @@ public class PropertyFields {
   public static final String TYPE = "type";
   public static final String POS = "pos";
   public static final String DIGEST = "digest";
+  public static final String IS_DEFAULT = "isDefault";
 }

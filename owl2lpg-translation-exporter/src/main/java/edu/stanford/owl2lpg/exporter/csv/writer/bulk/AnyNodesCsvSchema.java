@@ -13,6 +13,7 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DATATYPE;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IRI;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IS_DEFAULT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.LANGUAGE;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.LEXICAL_FORM;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.LOCAL_NAME;
@@ -56,6 +57,7 @@ public class AnyNodesCsvSchema implements CsvSchema<Node> {
         .addColumn(PROJECT_ID)
         .addColumn(BRANCH_ID)
         .addColumn(ONTOLOGY_DOCUMENT_ID)
+        .addColumn(IS_DEFAULT + ":boolean")
         .addColumn(IRI)
         .addColumn(LOCAL_NAME)
         .addColumn(PREFIXED_NAME)

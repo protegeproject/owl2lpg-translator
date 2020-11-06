@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_ID;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IS_DEFAULT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 
 /**
@@ -42,6 +43,7 @@ public class OntologyDocumentNodeSchema implements CsvSchema<Node> {
     return com.fasterxml.jackson.dataformat.csv.CsvSchema.builder()
         .addColumn(N4J_JSON_ID)
         .addColumn(N4J_JSON_LABELS)
-        .addColumn(ONTOLOGY_DOCUMENT_ID);
+        .addColumn(ONTOLOGY_DOCUMENT_ID)
+        .addColumn(IS_DEFAULT + ":boolean");
   }
 }

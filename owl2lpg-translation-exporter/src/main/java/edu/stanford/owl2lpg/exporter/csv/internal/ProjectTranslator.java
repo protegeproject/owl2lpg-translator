@@ -23,6 +23,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IS_DEFAULT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.PROJECT_ID;
 
@@ -91,12 +92,14 @@ public class ProjectTranslator {
 
   @Nonnull
   private Node createBranchNode(BranchId branchId) {
-    return nodeFactory.createNode(branchId, BRANCH, Properties.of(BRANCH_ID, branchId.getId()));
+    return nodeFactory.createNode(branchId, BRANCH,
+        Properties.of(BRANCH_ID, branchId.getId(), IS_DEFAULT, branchId.isDefault()));
   }
 
   @Nonnull
-  private Node createDocumentNode(OntologyDocumentId documentId) {
-    return nodeFactory.createNode(documentId, ONTOLOGY_DOCUMENT, Properties.of(ONTOLOGY_DOCUMENT_ID, documentId.getId()));
+  private Node createDocumentNode(OntologyDocumentId ontDocId) {
+    return nodeFactory.createNode(ontDocId, ONTOLOGY_DOCUMENT,
+        Properties.of(ONTOLOGY_DOCUMENT_ID, ontDocId.getId(), IS_DEFAULT, ontDocId.isDefault()));
   }
 
   private void createOntologyIriTranslationAndEdge(IRI ontologyIri, Node documentNode,
