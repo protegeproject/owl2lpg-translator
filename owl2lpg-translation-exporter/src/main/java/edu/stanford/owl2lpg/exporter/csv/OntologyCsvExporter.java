@@ -110,6 +110,9 @@ public class OntologyCsvExporter {
           writeOntologyAnnotations(ontologyAnnotations, documentNode);
           writeOntologyAxioms(axioms, documentNode);
         });
+  }
+
+  public void printReport() {
     csvOutputWriter.printReport();
   }
 

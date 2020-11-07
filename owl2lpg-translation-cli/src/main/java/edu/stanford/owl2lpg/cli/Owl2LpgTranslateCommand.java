@@ -194,5 +194,6 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     var inputStream = Files.newInputStream(ontologyFile);
     var ontology = ontologyManager.loadOntologyFromOntologyDocument(inputStream);
     exporter.export(ontology, fromString(projectId), fromString(branchId), fromString(ontDocId));
+    exporter.printReport();
   }
 }
