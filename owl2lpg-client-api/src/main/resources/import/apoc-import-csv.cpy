@@ -15,5 +15,7 @@ CALL apoc.import.csv(
       {fileName: 'file:/$directoryName/next-edges.csv', type: ''},
       {fileName: 'file:/$directoryName/structural-edges.csv', type: ''},
       {fileName: 'file:/$directoryName/augmenting-edges.csv', type: ''}
-   ], {}
+   ], {
+      ignoreDuplicateNodes: true
+   }
 )
