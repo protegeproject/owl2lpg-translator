@@ -2,3 +2,5 @@ MATCH (:Project {projectId:$projectId})-[:BRANCH]->(:Branch {branchId:$branchId}
 MATCH (o)<-[:IN_ONTOLOGY_SIGNATURE]-(n:Class)
 MATCH (n)-[:SUB_CLASS_OF]->(:Class {iri:"http://www.w3.org/2002/07/owl#Thing"})
 RETURN n
+SKIP 0
+LIMIT 500
