@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList.Builder;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeFactory;
 import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
@@ -19,8 +18,7 @@ import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.shared.BytesDigester;
-import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectDigester;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
@@ -77,9 +75,6 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @Nonnull
-  private final NodeFactory nodeFactory;
-
-  @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
@@ -113,14 +108,10 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   private final AnnotationValueTranslator annotationValueTranslator;
 
   @Nonnull
-  private final OntologyObjectSerializer ontologyObjectSerializer;
-
-  @Nonnull
-  private final BytesDigester bytesDigester;
+  private final OntologyObjectDigester ontologyObjectDigester;
 
   @Inject
-  public AxiomVisitor(@Nonnull NodeFactory nodeFactory,
-                      @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+  public AxiomVisitor(@Nonnull StructuralEdgeFactory structuralEdgeFactory,
                       @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
                       @Nonnull EntityTranslator entityTranslator,
                       @Nonnull ClassExpressionTranslator classExprTranslator,
@@ -131,9 +122,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
                       @Nonnull AnnotationObjectTranslator annotationTranslator,
                       @Nonnull AnnotationSubjectTranslator annotationSubjectTranslator,
                       @Nonnull AnnotationValueTranslator annotationValueTranslator,
-                      @Nonnull OntologyObjectSerializer ontologyObjectSerializer,
-                      @Nonnull BytesDigester bytesDigester) {
-    this.nodeFactory = checkNotNull(nodeFactory);
+                      @Nonnull OntologyObjectDigester ontologyObjectDigester) {
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.augmentedEdgeFactory = checkNotNull(augmentedEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
@@ -145,8 +134,7 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
     this.annotationTranslator = checkNotNull(annotationTranslator);
     this.annotationSubjectTranslator = checkNotNull(annotationSubjectTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
-    this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
-    this.bytesDigester = checkNotNull(bytesDigester);
+    this.ontologyObjectDigester = checkNotNull(ontologyObjectDigester);
   }
 
   @Nonnull
@@ -668,7 +656,9 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
   private Node addPropertyChainTranslationAndEdge(@Nonnull OWLPropertyChain propertyChain,
                                                   @Nonnull Builder<Translation> propertyChainTranslations,
                                                   @Nonnull Builder<Edge> propertyChainEdges) {
-    var propertyChainNode = nodeFactory.createNode(propertyChain, PROPERTY_CHAIN);
+    var digestString = ontologyObjectDigester.getDigest(propertyChain.asList());
+    var nodeId = NodeId.create(digestString);
+    var propertyChainNode = Node.create(nodeId, PROPERTY_CHAIN, Properties.of(DIGEST, digestString));
     var pos = 1;
     for (var propertyExpr : propertyChain) {
       var propertyExprTranslation = addObjectPropertyExpressionTranslation(propertyExpr, propertyChainTranslations);
@@ -810,8 +800,9 @@ public class AxiomVisitor implements OWLAxiomVisitorEx<Translation> {
 
   @Nonnull
   private Node createAxiomNode(OWLAxiom axiom, NodeLabels nodeLabels) {
-    var digestString = bytesDigester.getDigestString(ontologyObjectSerializer.serialize(axiom));
-    return nodeFactory.createNode(axiom, nodeLabels, Properties.of(DIGEST, digestString));
+    var digestString = ontologyObjectDigester.getDigest(axiom);
+    var nodeId = NodeId.create(digestString);
+    return Node.create(nodeId, nodeLabels, Properties.of(DIGEST, digestString));
   }
 
   @Nonnull

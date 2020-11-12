@@ -4,7 +4,6 @@ import dagger.Binds;
 import dagger.Module;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactoryModule;
 import edu.stanford.owl2lpg.model.EdgeFactoryModule;
-import edu.stanford.owl2lpg.model.NodeFactoryModule;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
 import edu.stanford.owl2lpg.translator.visitors.AnnotationObjectVisitor;
@@ -33,7 +32,6 @@ import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module(includes = {
-    NodeFactoryModule.class,
     EdgeFactoryModule.class,
     AugmentedEdgeFactoryModule.class,
     BuiltInPrefixDeclarationsModule.class

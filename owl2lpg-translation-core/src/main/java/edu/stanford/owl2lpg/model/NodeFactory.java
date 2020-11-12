@@ -7,14 +7,15 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Deprecated
 public class NodeFactory {
 
   @Nonnull
-  private final NodeIdMapper nodeIdMapper;
+  private final NodeIdProvider nodeIdProvider;
 
   @Inject
-  public NodeFactory(@Nonnull NodeIdMapper nodeIdMapper) {
-    this.nodeIdMapper = checkNotNull(nodeIdMapper);
+  public NodeFactory(@Nonnull NodeIdProvider nodeIdProvider) {
+    this.nodeIdProvider = checkNotNull(nodeIdProvider);
   }
 
   @Nonnull
@@ -22,7 +23,7 @@ public class NodeFactory {
                          @Nonnull NodeLabels nodeLabels,
                          @Nonnull Properties properties) {
     checkNotNull(anyObject);
-    var nodeId = nodeIdMapper.get(anyObject);
+    var nodeId = nodeIdProvider.getId(anyObject);
     return Node.create(nodeId, nodeLabels, properties);
   }
 

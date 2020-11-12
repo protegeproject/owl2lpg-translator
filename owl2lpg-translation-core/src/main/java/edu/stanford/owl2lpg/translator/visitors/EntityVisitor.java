@@ -5,12 +5,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarations;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectDigester;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.jetbrains.annotations.NotNull;
@@ -46,9 +47,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_PROPERTY;
 public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @Nonnull
-  private final NodeFactory nodeFactory;
-
-  @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
 
   @Nonnull
@@ -57,15 +55,18 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
   @Nonnull
   private final BuiltInPrefixDeclarations builtInPrefixDeclarations;
 
+  @Nonnull
+  private final OntologyObjectDigester ontologyObjectDigester;
+
   @Inject
-  public EntityVisitor(@Nonnull NodeFactory nodeFactory,
-                       @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+  public EntityVisitor(@Nonnull StructuralEdgeFactory structuralEdgeFactory,
                        @Nonnull AnnotationValueTranslator annotationValueTranslator,
-                       @Nonnull BuiltInPrefixDeclarations builtInPrefixDeclarations) {
-    this.nodeFactory = checkNotNull(nodeFactory);
+                       @Nonnull BuiltInPrefixDeclarations builtInPrefixDeclarations,
+                       @Nonnull OntologyObjectDigester ontologyObjectDigester) {
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.builtInPrefixDeclarations = checkNotNull(builtInPrefixDeclarations);
+    this.ontologyObjectDigester = checkNotNull(ontologyObjectDigester);
   }
 
   @Nonnull
@@ -117,13 +118,16 @@ public class EntityVisitor implements OWLEntityVisitorEx<Translation> {
 
   @NotNull
   private Node createEntityNode(OWLEntity entity, NodeLabels nodeLabels) {
-    IRI entityIRI = entity.getIRI();
-    return nodeFactory.createNode(entity, nodeLabels,
+    var digestString = ontologyObjectDigester.getDigest(entity);
+    var nodeId = NodeId.create(digestString);
+    var entityIRI = entity.getIRI();
+    return Node.create(nodeId, nodeLabels,
         Properties.create(ImmutableMap.of(
             PropertyFields.IRI, getIriString(entityIRI),
             PropertyFields.LOCAL_NAME, getLocalName(entityIRI),
             PropertyFields.PREFIXED_NAME, getPrefixedName(entityIRI),
-            PropertyFields.OBO_ID, getOboId(entityIRI))));
+            PropertyFields.OBO_ID, getOboId(entityIRI),
+            PropertyFields.DIGEST, digestString)));
   }
 
   private void translateEntityIri(IRI entityIri, Node entityNode,

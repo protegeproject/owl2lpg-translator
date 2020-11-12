@@ -12,6 +12,7 @@ import javax.inject.Inject;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@Deprecated
 public class IdFormatCheckerImpl implements IdFormatChecker {
 
   @Inject

@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 
 import javax.inject.Inject;
 
+@Deprecated
 public class SingleEncounterNodeCheckerImpl implements SingleEncounterNodeChecker {
 
   @Inject
