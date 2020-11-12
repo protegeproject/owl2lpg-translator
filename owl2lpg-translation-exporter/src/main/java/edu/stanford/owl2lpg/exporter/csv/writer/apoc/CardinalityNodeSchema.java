@@ -15,6 +15,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_EXACT_CARD
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MAX_CARDINALITY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MIN_CARDINALITY;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -52,6 +53,7 @@ public class CardinalityNodeSchema implements CsvSchema<Node> {
     return com.fasterxml.jackson.dataformat.csv.CsvSchema.builder()
         .addColumn(N4J_JSON_ID)
         .addColumn(N4J_JSON_LABELS)
-        .addColumn(CARDINALITY + ":int");
+        .addColumn(CARDINALITY + ":int")
+        .addColumn(DIGEST);
   }
 }

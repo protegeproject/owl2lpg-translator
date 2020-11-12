@@ -17,6 +17,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_ID;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROPERTY_CHAIN;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.SWRL_RULE;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -55,6 +56,7 @@ public class DefaultNodeSchema implements CsvSchema<Node> {
   private static com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder getBuilder() {
     return com.fasterxml.jackson.dataformat.csv.CsvSchema.builder()
         .addColumn(N4J_JSON_ID)
-        .addColumn(N4J_JSON_LABELS);
+        .addColumn(N4J_JSON_LABELS)
+        .addColumn(DIGEST);
   }
 }

@@ -18,7 +18,7 @@ public class NoOpEdgeTracker implements EdgeTracker {
 
   @Override
   public void add(Edge edge, Consumer<Edge> callback) {
-    // NO-OP
+    callback.accept(edge);
   }
 
   @Override

@@ -10,6 +10,7 @@ import static edu.stanford.owl2lpg.model.Node.N4J_JSON_ID;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.BRANCH;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IS_DEFAULT;
 
 /**
@@ -44,6 +45,7 @@ public class BranchNodeSchema implements CsvSchema<Node> {
         .addColumn(N4J_JSON_ID)
         .addColumn(N4J_JSON_LABELS)
         .addColumn(BRANCH_ID)
-        .addColumn(IS_DEFAULT + ":boolean");
+        .addColumn(IS_DEFAULT + ":boolean")
+        .addColumn(DIGEST);
   }
 }
