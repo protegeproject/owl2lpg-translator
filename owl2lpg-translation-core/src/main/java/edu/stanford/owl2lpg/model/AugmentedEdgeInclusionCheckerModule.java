@@ -9,7 +9,7 @@ import edu.stanford.owl2lpg.translator.internal.AugmentedEdgeInclusionCheckerImp
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public abstract class AugmentedEdgeFactoryModule {
+public abstract class AugmentedEdgeInclusionCheckerModule {
 
   @Binds
   public abstract AugmentedEdgeInclusionChecker

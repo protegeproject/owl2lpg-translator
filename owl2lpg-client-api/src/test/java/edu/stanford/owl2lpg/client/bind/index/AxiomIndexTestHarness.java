@@ -19,7 +19,7 @@ import edu.stanford.owl2lpg.client.write.changes.TranslationTranslator;
 import edu.stanford.owl2lpg.client.write.changes.handlers.impl.AddAxiomHandler;
 import edu.stanford.owl2lpg.translator.DaggerTranslatorComponent;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
-import edu.stanford.owl2lpg.translator.shared.DigestFunctionModule;
+import edu.stanford.owl2lpg.translator.shared.HashFunctionModule;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.harness.Neo4jBuilders;
@@ -68,7 +68,7 @@ public class AxiomIndexTestHarness {
 
     var axiomTranslator = DaggerTranslatorComponent.builder()
         .builtInPrefixDeclarationsModule(new BuiltInPrefixDeclarationsModule())
-        .digestFunctionModule(new DigestFunctionModule())
+        .hashFunctionModule(new HashFunctionModule())
         .build()
         .getAxiomTranslator();
 

@@ -11,7 +11,7 @@ import dagger.Provides;
  */
 @SuppressWarnings("UnstableApiUsage")
 @Module
-public class DigestFunctionModule {
+public class HashFunctionModule {
 
   @Provides
   public HashFunction provideHashFunction() {

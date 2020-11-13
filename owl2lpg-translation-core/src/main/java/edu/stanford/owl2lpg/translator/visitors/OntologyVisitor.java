@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.model.NodeIdProvider;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
@@ -12,7 +12,6 @@ import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
-import edu.stanford.owl2lpg.translator.shared.BytesDigester;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -32,7 +31,6 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 
 /**
@@ -59,7 +57,7 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
   private final AxiomTranslator axiomTranslator;
 
   @Nonnull
-  private final BytesDigester bytesDigester;
+  private final NodeIdProvider nodeIdProvider;
 
   @Inject
   public OntologyVisitor(@Nonnull StructuralEdgeFactory structuralEdgeFactory,
@@ -67,13 +65,13 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
                          @Nonnull AnnotationValueTranslator annotationValueTranslator,
                          @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
                          @Nonnull AxiomTranslator axiomTranslator,
-                         @Nonnull BytesDigester bytesDigester) {
+                         @Nonnull NodeIdProvider nodeIdProvider) {
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
     this.axiomTranslator = checkNotNull(axiomTranslator);
-    this.bytesDigester = checkNotNull(bytesDigester);
+    this.nodeIdProvider = checkNotNull(nodeIdProvider);
   }
 
   @Nonnull
@@ -94,13 +92,10 @@ public class OntologyVisitor implements OWLNamedObjectVisitorEx<Translation> {
 
   @Nonnull
   private Node createDocumentNode(UUID documentId) {
-    var digestString = bytesDigester.getDigestString(documentId.toString().getBytes());
-    var nodeId = NodeId.create(digestString);
+    var nodeId = nodeIdProvider.getId(documentId);
     return Node.create(nodeId,
         ONTOLOGY_DOCUMENT,
-        Properties.of(
-            ONTOLOGY_DOCUMENT_ID, String.valueOf(documentId),
-            DIGEST, digestString));
+        Properties.of(ONTOLOGY_DOCUMENT_ID, String.valueOf(documentId)));
   }
 
   private void translateOntologyIri(Optional<IRI> ontologyIri, Node documentNode,

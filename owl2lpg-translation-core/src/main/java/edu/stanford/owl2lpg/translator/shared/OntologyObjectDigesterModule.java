@@ -9,7 +9,7 @@ import dagger.Provides;
  */
 @Module(includes = {
     OntologyObjectSerializerModule.class,
-    DigestFunctionModule.class})
+    HashFunctionModule.class})
 public class OntologyObjectDigesterModule {
 
   @Provides

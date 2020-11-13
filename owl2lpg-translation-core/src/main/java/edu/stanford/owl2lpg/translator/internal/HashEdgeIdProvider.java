@@ -16,13 +16,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class DigestEdgeIdProvider implements EdgeIdProvider {
+public class HashEdgeIdProvider implements EdgeIdProvider {
 
   @Nonnull
   private final HashFunction hashFunction;
 
   @Inject
-  public DigestEdgeIdProvider(@Nonnull HashFunction hashFunction) {
+  public HashEdgeIdProvider(@Nonnull HashFunction hashFunction) {
     this.hashFunction = checkNotNull(hashFunction);
   }
 

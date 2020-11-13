@@ -3,15 +3,13 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.model.Properties;
+import edu.stanford.owl2lpg.model.NodeIdProvider;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.shared.OntologyObjectDigester;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
@@ -28,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 annotations.
@@ -54,7 +51,7 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
   private final AxiomTranslator axiomTranslator;
 
   @Nonnull
-  private final OntologyObjectDigester ontologyObjectDigester;
+  private final NodeIdProvider nodeIdProvider;
 
   @Inject
   public AnnotationObjectVisitor(@Nonnull StructuralEdgeFactory structuralEdgeFactory,
@@ -62,13 +59,13 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
                                  @Nonnull AnnotationValueTranslator annotationValueTranslator,
                                  @Nonnull AnnotationObjectTranslator annotationObjectTranslator,
                                  @Nonnull AxiomTranslator axiomTranslator,
-                                 @Nonnull OntologyObjectDigester ontologyObjectDigester) {
+                                 @Nonnull NodeIdProvider nodeIdProvider) {
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.propertyExprTranslator = checkNotNull(propertyExprTranslator);
     this.annotationValueTranslator = checkNotNull(annotationValueTranslator);
     this.annotationObjectTranslator = checkNotNull(annotationObjectTranslator);
     this.axiomTranslator = checkNotNull(axiomTranslator);
-    this.ontologyObjectDigester = checkNotNull(ontologyObjectDigester);
+    this.nodeIdProvider = checkNotNull(nodeIdProvider);
   }
 
   @Nonnull
@@ -95,9 +92,8 @@ public class AnnotationObjectVisitor implements OWLAnnotationObjectVisitorEx<Tra
 
   @NotNull
   private Node createAnnotationNode(@Nonnull OWLAnnotation annotation) {
-    var digestString = ontologyObjectDigester.getDigest(annotation);
-    var nodeId = NodeId.create(digestString);
-    return Node.create(nodeId, NodeLabels.ANNOTATION, Properties.of(DIGEST, digestString));
+    var nodeId = nodeIdProvider.getId(annotation);
+    return Node.create(nodeId, NodeLabels.ANNOTATION);
   }
 
   @Nonnull

@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeId;
+import edu.stanford.owl2lpg.model.NodeIdProvider;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.DataRangeTranslator;
 import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
-import edu.stanford.owl2lpg.translator.shared.OntologyObjectDigester;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 import org.semanticweb.owlapi.model.OWLDataComplementOf;
@@ -37,7 +36,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_ONE_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.DATA_UNION_OF;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FACET;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.FACET_RESTRICTION;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -60,19 +58,19 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
   private final LiteralTranslator literalTranslator;
 
   @Nonnull
-  private final OntologyObjectDigester ontologyObjectDigester;
+  private final NodeIdProvider nodeIdProvider;
 
   @Inject
   public DataVisitor(@Nonnull StructuralEdgeFactory structuralEdgeFactory,
                      @Nonnull EntityTranslator entityTranslator,
                      @Nonnull DataRangeTranslator dataRangeTranslator,
                      @Nonnull LiteralTranslator literalTranslator,
-                     @Nonnull OntologyObjectDigester ontologyObjectDigester) {
+                     @Nonnull NodeIdProvider nodeIdProvider) {
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.dataRangeTranslator = checkNotNull(dataRangeTranslator);
     this.literalTranslator = checkNotNull(literalTranslator);
-    this.ontologyObjectDigester = checkNotNull(ontologyObjectDigester);
+    this.nodeIdProvider = checkNotNull(nodeIdProvider);
   }
 
   @Nonnull
@@ -200,15 +198,13 @@ public class DataVisitor implements OWLDataVisitorEx<Translation> {
 
   @Nonnull
   private Node createDataRangeNode(OWLObject owlObject, NodeLabels nodeLabels) {
-    var digestString = ontologyObjectDigester.getDigest(owlObject);
-    var nodeId = NodeId.create(digestString);
-    return Node.create(nodeId, nodeLabels, Properties.of(DIGEST, digestString));
+    var nodeId = nodeIdProvider.getId(owlObject);
+    return Node.create(nodeId, nodeLabels);
   }
 
   @Nonnull
   private Node createDataRangeNode(OWLObject owlObject, NodeLabels nodeLabels, Properties properties) {
-    var digestString = ontologyObjectDigester.getDigest(owlObject);
-    var nodeId = NodeId.create(digestString);
-    return Node.create(nodeId, nodeLabels, properties.extend(Properties.of(DIGEST, digestString)));
+    var nodeId = nodeIdProvider.getId(owlObject);
+    return Node.create(nodeId, nodeLabels, properties);
   }
 }

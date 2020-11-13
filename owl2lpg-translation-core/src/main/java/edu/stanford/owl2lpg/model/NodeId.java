@@ -3,7 +3,6 @@ package edu.stanford.owl2lpg.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.auto.value.AutoValue;
-import com.google.common.primitives.Longs;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
@@ -20,10 +19,6 @@ public abstract class NodeId {
   @SuppressWarnings("mutable")
   public static NodeId create(byte[] bytes) {
     return new AutoValue_NodeId(bytes);
-  }
-
-  public static NodeId create(long numberId) {
-    return create(Longs.toByteArray(numberId));
   }
 
   public static NodeId create(String stringId) {

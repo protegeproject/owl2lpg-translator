@@ -2,9 +2,9 @@ package edu.stanford.owl2lpg.translator;
 
 import dagger.Binds;
 import dagger.Module;
-import edu.stanford.owl2lpg.model.AugmentedEdgeFactoryModule;
-import edu.stanford.owl2lpg.model.EdgeFactoryModule;
+import edu.stanford.owl2lpg.model.AugmentedEdgeInclusionCheckerModule;
 import edu.stanford.owl2lpg.model.Translation;
+import edu.stanford.owl2lpg.translator.internal.IdProviderModule;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarationsModule;
 import edu.stanford.owl2lpg.translator.visitors.AnnotationObjectVisitor;
 import edu.stanford.owl2lpg.translator.visitors.AnnotationSubjectVisitor;
@@ -32,8 +32,8 @@ import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module(includes = {
-    EdgeFactoryModule.class,
-    AugmentedEdgeFactoryModule.class,
+    IdProviderModule.class,
+    AugmentedEdgeInclusionCheckerModule.class,
     BuiltInPrefixDeclarationsModule.class
 })
 public abstract class TranslatorModule {

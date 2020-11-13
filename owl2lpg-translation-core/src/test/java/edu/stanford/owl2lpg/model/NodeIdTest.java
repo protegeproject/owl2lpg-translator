@@ -9,8 +9,8 @@ public class NodeIdTest {
 
   @Test
   public void shouldCreateNodeId() {
-    var nodeId = NodeId.create(1);
-    assertThat(nodeId.asString(), equalTo("0000000000000001"));
-    assertThat(nodeId.toString(), equalTo("NodeId_0000000000000001"));
+    var nodeId = NodeId.create("abcde");
+    assertThat(nodeId.asString(), equalTo("abcde"));
+    assertThat(nodeId.toString(), equalTo("NodeId_abcde"));
   }
 }
