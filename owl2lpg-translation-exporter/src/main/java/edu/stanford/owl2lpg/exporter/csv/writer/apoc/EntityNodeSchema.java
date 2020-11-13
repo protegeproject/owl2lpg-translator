@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_ID;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IRI;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.LOCAL_NAME;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.OBO_ID;
@@ -48,6 +49,7 @@ public class EntityNodeSchema implements CsvSchema<Node> {
         .addColumn(IRI)
         .addColumn(LOCAL_NAME)
         .addColumn(PREFIXED_NAME)
-        .addColumn(OBO_ID);
+        .addColumn(OBO_ID)
+        .addColumn(DIGEST);
   }
 }

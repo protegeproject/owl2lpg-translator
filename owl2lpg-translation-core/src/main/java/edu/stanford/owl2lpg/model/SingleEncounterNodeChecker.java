@@ -1,5 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
+@Deprecated
 public interface SingleEncounterNodeChecker {
 
   /**

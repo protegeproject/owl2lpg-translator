@@ -15,6 +15,6 @@ public class DigestFunctionModule {
 
   @Provides
   public HashFunction provideHashFunction() {
-    return Hashing.md5();
+    return Hashing.sha256();
   }
 }

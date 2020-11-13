@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_ID;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.IRI;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -42,6 +43,7 @@ public class IriNodeSchema implements CsvSchema<Node> {
     return com.fasterxml.jackson.dataformat.csv.CsvSchema.builder()
         .addColumn(N4J_JSON_ID)
         .addColumn(N4J_JSON_LABELS)
-        .addColumn(PropertyFields.IRI);
+        .addColumn(PropertyFields.IRI)
+        .addColumn(DIGEST);
   }
 }

@@ -13,6 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@Deprecated
 public class NodeIdMapperImpl implements NodeIdMapper {
 
   @Nonnull

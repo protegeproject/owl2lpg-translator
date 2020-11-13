@@ -1,7 +1,7 @@
 package edu.stanford.owl2lpg.translator;
 
 import dagger.Component;
-import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializerModule;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectDigesterModule;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -9,7 +9,7 @@ import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializerModule;
  */
 @Component(modules = {
     TranslatorModule.class,
-    OntologyObjectSerializerModule.class})
+    OntologyObjectDigesterModule.class})
 @TranslationSessionScope
 public interface TranslatorComponent {
 

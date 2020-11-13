@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_ID;
 import static edu.stanford.owl2lpg.model.Node.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ANONYMOUS_INDIVIDUAL;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.NODE_ID;
 
 /**
@@ -42,6 +43,7 @@ public class AnonymousIndividualNodeSchema implements CsvSchema<Node> {
     return com.fasterxml.jackson.dataformat.csv.CsvSchema.builder()
         .addColumn(N4J_JSON_ID)
         .addColumn(N4J_JSON_LABELS)
-        .addColumn(NODE_ID);
+        .addColumn(NODE_ID)
+        .addColumn(DIGEST);
   }
 }

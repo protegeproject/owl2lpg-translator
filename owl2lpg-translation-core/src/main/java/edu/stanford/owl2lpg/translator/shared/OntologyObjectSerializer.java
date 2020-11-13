@@ -3,6 +3,7 @@ package edu.stanford.owl2lpg.translator.shared;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -12,4 +13,7 @@ public interface OntologyObjectSerializer {
 
   @Nonnull
   byte[] serialize(@Nonnull OWLObject owlObject);
+
+  @Nonnull
+  byte[] serialize(@Nonnull Collection<? extends OWLObject> owlObjects);
 }

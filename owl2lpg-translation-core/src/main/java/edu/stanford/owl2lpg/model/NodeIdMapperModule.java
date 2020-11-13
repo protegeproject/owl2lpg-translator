@@ -15,6 +15,7 @@ import javax.inject.Named;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
+@Deprecated
 @Module(includes = DigestFunctionModule.class)
 public abstract class NodeIdMapperModule {
 

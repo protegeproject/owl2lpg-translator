@@ -1,11 +1,13 @@
 package edu.stanford.owl2lpg.translator.shared;
 
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,6 +32,19 @@ public class BinaryOntologyObjectSerializer implements OntologyObjectSerializer 
       var byteArrayDataOutput = ByteStreams.newDataOutput();
       var outputStream = factory.createOutputStream(byteArrayDataOutput);
       outputStream.writeOWLObject(owlObject);
+      return byteArrayDataOutput.toByteArray();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Nonnull
+  @Override
+  public byte[] serialize(@Nonnull Collection<? extends OWLObject> owlObjects) {
+    try {
+      var byteArrayDataOutput = ByteStreams.newDataOutput();
+      var outputStream = factory.createOutputStream(byteArrayDataOutput);
+      outputStream.writeOWLObjects(Sets.newHashSet(owlObjects));
       return byteArrayDataOutput.toByteArray();
     } catch (IOException e) {
       throw new RuntimeException(e);

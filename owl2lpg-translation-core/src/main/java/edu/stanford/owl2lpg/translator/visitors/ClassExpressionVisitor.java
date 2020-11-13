@@ -3,7 +3,7 @@ package edu.stanford.owl2lpg.translator.visitors;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeFactory;
+import edu.stanford.owl2lpg.model.NodeId;
 import edu.stanford.owl2lpg.model.Properties;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
@@ -13,8 +13,7 @@ import edu.stanford.owl2lpg.translator.EntityTranslator;
 import edu.stanford.owl2lpg.translator.IndividualTranslator;
 import edu.stanford.owl2lpg.translator.LiteralTranslator;
 import edu.stanford.owl2lpg.translator.PropertyExpressionTranslator;
-import edu.stanford.owl2lpg.translator.shared.BytesDigester;
-import edu.stanford.owl2lpg.translator.shared.OntologyObjectSerializer;
+import edu.stanford.owl2lpg.translator.shared.OntologyObjectDigester;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import org.semanticweb.owlapi.model.*;
 
@@ -37,6 +36,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_MIN_CARDIN
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_SOME_VALUES_FROM;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.OBJECT_UNION_OF;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.DIGEST;
 
 /**
  * A visitor that contains the implementation to translate the OWL 2 literals.
@@ -45,9 +45,6 @@ import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.CARDINALITY;
  * Stanford Center for Biomedical Informatics Research
  */
 public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Translation> {
-
-  @Nonnull
-  private final NodeFactory nodeFactory;
 
   @Nonnull
   private final StructuralEdgeFactory structuralEdgeFactory;
@@ -71,23 +68,17 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
   private final IndividualTranslator individualTranslator;
 
   @Nonnull
-  private final OntologyObjectSerializer ontologyObjectSerializer;
-
-  @Nonnull
-  private final BytesDigester bytesDigester;
+  private final OntologyObjectDigester ontologyObjectDigester;
 
   @Inject
-  public ClassExpressionVisitor(@Nonnull NodeFactory nodeFactory,
-                                @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+  public ClassExpressionVisitor(@Nonnull StructuralEdgeFactory structuralEdgeFactory,
                                 @Nonnull EntityTranslator entityTranslator,
                                 @Nonnull ClassExpressionTranslator classExprTranslator,
                                 @Nonnull PropertyExpressionTranslator propertyExprTranslator,
                                 @Nonnull DataRangeTranslator dataRangeTranslator,
                                 @Nonnull LiteralTranslator literalTranslator,
                                 @Nonnull IndividualTranslator individualTranslator,
-                                @Nonnull OntologyObjectSerializer ontologyObjectSerializer,
-                                @Nonnull BytesDigester bytesDigester) {
-    this.nodeFactory = checkNotNull(nodeFactory);
+                                @Nonnull OntologyObjectDigester ontologyObjectDigester) {
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
     this.entityTranslator = checkNotNull(entityTranslator);
     this.classExprTranslator = checkNotNull(classExprTranslator);
@@ -95,8 +86,7 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
     this.dataRangeTranslator = checkNotNull(dataRangeTranslator);
     this.literalTranslator = checkNotNull(literalTranslator);
     this.individualTranslator = checkNotNull(individualTranslator);
-    this.ontologyObjectSerializer = checkNotNull(ontologyObjectSerializer);
-    this.bytesDigester = checkNotNull(bytesDigester);
+    this.ontologyObjectDigester = checkNotNull(ontologyObjectDigester);
   }
 
   @Nonnull
@@ -300,11 +290,15 @@ public class ClassExpressionVisitor implements OWLClassExpressionVisitorEx<Trans
 
   @Nonnull
   private Node createClassExprNode(OWLClassExpression ce, NodeLabels nodeLabels) {
-    return nodeFactory.createNode(ce, nodeLabels);
+    var digestString = ontologyObjectDigester.getDigest(ce);
+    var nodeId = NodeId.create(digestString);
+    return Node.create(nodeId, nodeLabels, Properties.of(DIGEST, digestString));
   }
 
   @Nonnull
   private Node createClassExprNode(OWLClassExpression ce, NodeLabels nodeLabels, Properties properties) {
-    return nodeFactory.createNode(ce, nodeLabels, properties);
+    var digestString = ontologyObjectDigester.getDigest(ce);
+    var nodeId = NodeId.create(digestString);
+    return Node.create(nodeId, nodeLabels, properties.extend(Properties.of(DIGEST, digestString)));
   }
 }

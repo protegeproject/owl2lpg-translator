@@ -18,7 +18,7 @@ public class NoOpNodeTracker implements NodeTracker {
 
   @Override
   public void add(Node node, Consumer<Node> callback) {
-    // NO-OP
+    callback.accept(node);
   }
 
   @Override
