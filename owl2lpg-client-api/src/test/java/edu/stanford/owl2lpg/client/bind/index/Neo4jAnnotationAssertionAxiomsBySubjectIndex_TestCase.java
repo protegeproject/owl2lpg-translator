@@ -53,8 +53,8 @@ class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
 
   @Test
   void shouldNotGetAnyAxioms() {
-    var subClassOfAxioms = getAxioms(iriA, ontDocIdA);
-    assertThat(subClassOfAxioms.isEmpty(), is(true));
+    var assertionAxioms = getAnnotationAssertionAxioms(iriA, ontDocIdA);
+    assertThat(assertionAxioms.isEmpty(), is(true));
   }
 
   @Test
@@ -63,7 +63,7 @@ class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
     testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdA);
     testHarness.addAxiomToOntologyDocument(axiom3, ontDocIdA);
 
-    var assertionAxioms = getAxioms(iriA, ontDocIdA);
+    var assertionAxioms = getAnnotationAssertionAxioms(iriA, ontDocIdA);
 
     assertThat(assertionAxioms, containsInAnyOrder(axiom1, axiom2));
   }
@@ -73,12 +73,12 @@ class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
     testHarness.addAxiomToOntologyDocument(axiom1, ontDocIdA);
     testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdB);
 
-    var assertionAxioms = getAxioms(iriA, ontDocIdA);
+    var assertionAxioms = getAnnotationAssertionAxioms(iriA, ontDocIdA);
 
     assertThat(assertionAxioms, containsInAnyOrder(axiom1));
   }
 
-  private ImmutableList<OWLAnnotationAssertionAxiom> getAxioms(IRI subject, OntologyDocumentId ontDocId) {
+  private ImmutableList<OWLAnnotationAssertionAxiom> getAnnotationAssertionAxioms(IRI subject, OntologyDocumentId ontDocId) {
     return axiomIndex.getAxiomsForSubject(subject, ontDocId).collect(ImmutableList.toImmutableList());
   }
 
