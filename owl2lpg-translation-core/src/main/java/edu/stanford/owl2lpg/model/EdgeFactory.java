@@ -1,7 +1,6 @@
 package edu.stanford.owl2lpg.model;
 
 import edu.stanford.owl2lpg.translator.vocab.EdgeLabel;
-import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -29,12 +28,6 @@ public class EdgeFactory {
   public Edge createEdge(@Nonnull Node startNode,
                          @Nonnull Node endNode,
                          @Nonnull EdgeLabel edgeLabel) {
-    var edgeType = edgeLabel.getEdgeType();
-    if (edgeType == EdgeType.STRUCTURAL) {
-      return createEdge(startNode, endNode, edgeLabel,
-          Properties.of(PropertyFields.STRUCTURAL_SPEC, true));
-    } else {
-      return createEdge(startNode, endNode, edgeLabel, Properties.empty());
-    }
+    return createEdge(startNode, endNode, edgeLabel, Properties.empty());
   }
 }

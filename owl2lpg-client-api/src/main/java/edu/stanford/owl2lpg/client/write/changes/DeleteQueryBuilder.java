@@ -24,7 +24,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.PROJECT_ID;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.STRUCTURAL_SPEC;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -170,7 +169,7 @@ public class DeleteQueryBuilder implements TranslationVisitor {
 
   @Nonnull
   private String cypherQueryMatchAxiomEdge(String axiomVariable) {
-    return "MATCH (" + DOCUMENT_VARIABLE + ")-[" + EdgeLabel.AXIOM.toNeo4jLabel() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")\n";
+    return "MATCH (" + DOCUMENT_VARIABLE + ")-[" + EdgeLabel.AXIOM.toNeo4jLabel() + "]->(" + axiomVariable + ")\n";
   }
 
   @Nonnull

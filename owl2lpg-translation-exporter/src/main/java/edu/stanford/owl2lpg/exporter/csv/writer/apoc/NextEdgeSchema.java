@@ -11,7 +11,6 @@ import static edu.stanford.owl2lpg.model.Edge.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.model.Edge.N4J_JSON_START_ID;
 import static edu.stanford.owl2lpg.translator.vocab.EdgeLabel.NEXT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.POS;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.STRUCTURAL_SPEC;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -45,7 +44,6 @@ public class NextEdgeSchema implements CsvSchema<Edge> {
         .addColumn(N4J_JSON_LABELS)
         .addColumn(N4J_JSON_START_ID)
         .addColumn(N4J_JSON_END_ID)
-        .addColumn(STRUCTURAL_SPEC + ":boolean")
         .addColumn(POS + ":int");
   }
 }

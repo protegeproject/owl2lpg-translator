@@ -12,7 +12,6 @@ import static edu.stanford.owl2lpg.model.Edge.N4J_JSON_LABELS;
 import static edu.stanford.owl2lpg.model.Edge.N4J_JSON_START_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IRI;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.POS;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.STRUCTURAL_SPEC;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.TYPE;
 
 /**
@@ -49,7 +48,6 @@ public class AnyEdgesCsvSchema implements CsvSchema<Edge> {
         .addColumn(N4J_JSON_END_ID)
         .addColumn(TYPE)
         .addColumn(IRI)
-        .addColumn(STRUCTURAL_SPEC + ":boolean")
         .addColumn(POS + ":int");
   }
 }

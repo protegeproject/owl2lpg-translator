@@ -272,8 +272,7 @@ public class StructuralEdgeFactory {
   public Edge getStructuralEdge(@Nonnull Node startNode, @Nonnull Node endNode, @Nonnull EdgeLabel edgeLabel) {
     return edgeFactory.createEdge(startNode,
         endNode,
-        edgeLabel,
-        Properties.of(PropertyFields.STRUCTURAL_SPEC, true));
+        edgeLabel);
   }
 
   @Nonnull
@@ -281,6 +280,6 @@ public class StructuralEdgeFactory {
     return edgeFactory.createEdge(startNode,
         endNode,
         edgeLabel,
-        Properties.of(PropertyFields.STRUCTURAL_SPEC, true, PropertyFields.POS, orderPosition));
+        Properties.of(PropertyFields.POS, orderPosition));
   }
 }

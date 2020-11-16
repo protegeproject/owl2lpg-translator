@@ -24,7 +24,6 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.PROJECT_ID;
-import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.STRUCTURAL_SPEC;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -183,7 +182,7 @@ public class CreateQueryBuilder implements TranslationVisitor {
 
   @Nonnull
   private String cypherQueryMergeAxiomEdge(String axiomVariable) {
-    return "MERGE (" + DOCUMENT_VARIABLE + ")-[" + AXIOM.toNeo4jLabel() + " {" + STRUCTURAL_SPEC + ":true}]->(" + axiomVariable + ")";
+    return "MERGE (" + DOCUMENT_VARIABLE + ")-[" + AXIOM.toNeo4jLabel() + "]->(" + axiomVariable + ")";
   }
 
   public ImmutableList<String> build() {
