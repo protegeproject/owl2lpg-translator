@@ -28,7 +28,7 @@ public interface AxiomAccessorComponent {
 
   ObjectPropertyAssertionAxiomAccessor getObjectPropertyAssertionAxiomAccessor();
 
-  AnnotationAssertionAxiomAccessor getAnnotationPropertyAssertionAxiomAccessor();
+  AnnotationAssertionAxiomAccessor getAnnotationAssertionAxiomAccessor();
 
   CharacteristicsAxiomAccessor getCharacteristicsAxiomAccessor();
 }
