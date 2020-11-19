@@ -22,6 +22,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ENTITY;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT;
 import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.PROJECT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.BRANCH_ID;
+import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.IS_DEFAULT;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.ONTOLOGY_DOCUMENT_ID;
 import static edu.stanford.owl2lpg.translator.vocab.PropertyFields.PROJECT_ID;
 
@@ -139,9 +140,11 @@ public class CreateQueryBuilder implements TranslationVisitor {
         " {" + PROJECT_ID + ":" + projectId.toQuotedString() + "})\n" +
         "MERGE (" + BRANCH_VARIABLE + BRANCH.toNeo4jLabel() +
         " {" + BRANCH_ID + ":" + branchId.toQuotedString() + "})\n" +
+        "ON CREATE SET " + BRANCH_VARIABLE + "." + IS_DEFAULT + "=" + branchId.isDefault() + "\n" +
         "MERGE (" + PROJECT_VARIABLE + ")-[" + EdgeLabel.BRANCH.toNeo4jLabel() + "]->(" + BRANCH_VARIABLE + ")\n" +
         "MERGE (" + DOCUMENT_VARIABLE + ONTOLOGY_DOCUMENT.toNeo4jLabel() +
         " {" + ONTOLOGY_DOCUMENT_ID + ":" + documentId.toQuotedString() + "})\n" +
+        "ON CREATE SET " + DOCUMENT_VARIABLE + "." + IS_DEFAULT + "=" + documentId.isDefault() + "\n" +
         "MERGE (" + BRANCH_VARIABLE + ")-[" + EdgeLabel.ONTOLOGY_DOCUMENT.toNeo4jLabel() + "]->(" + DOCUMENT_VARIABLE + ")\n";
   }
 
