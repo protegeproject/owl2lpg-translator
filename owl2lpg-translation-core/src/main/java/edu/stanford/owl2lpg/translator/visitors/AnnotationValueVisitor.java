@@ -59,9 +59,7 @@ public class AnnotationValueVisitor implements OWLAnnotationValueVisitorEx<Trans
     var digestString = ontologyObjectDigester.getDigest(iri);
     var nodeId = NodeId.create(digestString);
     return Node.create(nodeId, NodeLabels.IRI,
-        Properties.of(
-            PropertyFields.IRI, String.valueOf(iri),
-            PropertyFields.DIGEST, digestString));
+        Properties.of(PropertyFields.IRI, String.valueOf(iri)));
   }
 
   @Nonnull
