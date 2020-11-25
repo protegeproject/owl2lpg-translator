@@ -31,7 +31,7 @@ public class NodePropertyIndexBuilder implements IndexBuilder {
   @Override
   public boolean buildIndex() {
     try (var session = driver.session()) {
-      return session.readTransaction(tx -> {
+      return session.writeTransaction(tx -> {
         try {
           var indexQueries = ImmutableList.copyOf(DEFAULT_INDEX_QUERY.split(";"));
           indexQueries.stream().forEach(tx::run);
