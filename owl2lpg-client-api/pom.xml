@@ -17,7 +17,8 @@
   </description>
 
   <properties>
-    <neo4j-driver.version>4.1.0</neo4j-driver.version>
+    <neo4j-driver.version>4.2.0</neo4j-driver.version>
+    <neo4j-harness.version>4.2.0</neo4j-harness.version>
   </properties>
 
   <dependencies>
@@ -81,7 +82,7 @@
     <dependency>
       <groupId>org.neo4j.test</groupId>
       <artifactId>neo4j-harness</artifactId>
-      <version>4.0.0</version>
+      <version>${neo4j-harness.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
