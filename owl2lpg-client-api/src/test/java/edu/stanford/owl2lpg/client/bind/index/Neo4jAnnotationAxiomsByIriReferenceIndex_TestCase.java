@@ -6,30 +6,31 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 
 import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.apP;
 import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.apQ;
-import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.apR;
 import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.iriA;
 import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.iriB;
-import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.litInt;
+import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.iriP;
+import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.iriQ;
 import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.litStrA;
-import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.litStrB;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.AnnotationAssertion;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.AnnotationPropertyDomain;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.AnnotationPropertyRange;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
+class Neo4jAnnotationAxiomsByIriReferenceIndex_TestCase {
 
-  private Neo4jAnnotationAssertionAxiomsBySubjectIndex axiomIndex;
+  private Neo4jAnnotationAxiomsByIriReferenceIndex axiomIndex;
 
-  private OWLAnnotationAssertionAxiom axiom1, axiom2, axiom3;
+  private OWLAnnotationAxiom axiom1, axiom2, axiom3;
 
   private AxiomIndexTestHarness testHarness;
 
@@ -38,48 +39,48 @@ class Neo4jAnnotationAssertionAxiomsBySubjectIndex_TestCase {
   @BeforeEach
   void setUp() {
     testHarness = AxiomIndexTestHarness.createAndSetUp();
-    axiomIndex = new Neo4jAnnotationAssertionAxiomsBySubjectIndex(
+    axiomIndex = new Neo4jAnnotationAxiomsByIriReferenceIndex(
         testHarness.getProjectId(),
         testHarness.getBranchId(),
-        testHarness.getAssertionAxiomAccessor());
+        testHarness.getAxiomAccessor());
 
     ontDocIdA = testHarness.getOntologyDocumentA();
     ontDocIdB = testHarness.getOntologyDocumentB();
 
     axiom1 = AnnotationAssertion(apP, iriA, litStrA);
-    axiom2 = AnnotationAssertion(apQ, iriA, litInt);
-    axiom3 = AnnotationAssertion(apR, iriB, litStrB);
+    axiom2 = AnnotationPropertyDomain(apQ, iriB);
+    axiom3 = AnnotationPropertyRange(apQ, iriB);
   }
 
   @Test
   void shouldNotGetAnyAxioms() {
-    var assertionAxioms = getAxioms(iriA, ontDocIdA);
-    assertThat(assertionAxioms.isEmpty(), is(true));
+    var result = getAxioms(iriA, ontDocIdA);
+    assertThat(result.isEmpty(), is(true));
   }
 
   @Test
-  void shouldGetAllSubClassOfAxiomsFromSpecificSubject() {
+  void shouldGetAllAnnotationAxiomsFromSpecificIri() {
     testHarness.addAxiomToOntologyDocument(axiom1, ontDocIdA);
     testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdA);
     testHarness.addAxiomToOntologyDocument(axiom3, ontDocIdA);
 
-    var assertionAxioms = getAxioms(iriA, ontDocIdA);
+    var result = getAxioms(iriP, ontDocIdA);
 
-    assertThat(assertionAxioms, containsInAnyOrder(axiom1, axiom2));
+    assertThat(result, containsInAnyOrder(axiom1));
   }
 
   @Test
-  void shouldOnlyGetSubClassOfAxiomsFromSpecificOntDoc() {
-    testHarness.addAxiomToOntologyDocument(axiom1, ontDocIdA);
-    testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdB);
+  void shouldOnlyGetAnnotationAxiomsFromSpecificOntDoc() {
+    testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdA);
+    testHarness.addAxiomToOntologyDocument(axiom3, ontDocIdB);
 
-    var assertionAxioms = getAxioms(iriA, ontDocIdA);
+    var result = getAxioms(iriQ, ontDocIdB);
 
-    assertThat(assertionAxioms, containsInAnyOrder(axiom1));
+    assertThat(result, containsInAnyOrder(axiom3));
   }
 
-  private ImmutableList<OWLAnnotationAssertionAxiom> getAxioms(IRI subject, OntologyDocumentId ontDocId) {
-    return axiomIndex.getAxiomsForSubject(subject, ontDocId).collect(ImmutableList.toImmutableList());
+  private ImmutableList<OWLAnnotationAxiom> getAxioms(IRI iri, OntologyDocumentId ontDocId) {
+    return axiomIndex.getReferencingAxioms(iri, ontDocId).collect(ImmutableList.toImmutableList());
   }
 
   @AfterEach

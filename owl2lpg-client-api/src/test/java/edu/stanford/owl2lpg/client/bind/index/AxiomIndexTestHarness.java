@@ -6,6 +6,7 @@ import edu.stanford.bmir.protege.web.shared.project.ProjectId;
 import edu.stanford.owl2lpg.client.DatabaseModule;
 import edu.stanford.owl2lpg.client.bind.graph.NodePropertyIndexBuilder;
 import edu.stanford.owl2lpg.client.read.NodeMapperModule;
+import edu.stanford.owl2lpg.client.read.axiom.AnnotationAssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AssertionAxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.AxiomAccessor;
 import edu.stanford.owl2lpg.client.read.axiom.CharacteristicsAxiomAccessor;
@@ -45,6 +46,8 @@ public class AxiomIndexTestHarness {
   private ProjectAccessor projectAccessor;
 
   private AxiomAccessor axiomAccessor;
+
+  private AnnotationAssertionAxiomAccessor annotationAssertionAxiomAccessor;
 
   private AssertionAxiomAccessor assertionAxiomAccessor;
 
@@ -87,6 +90,7 @@ public class AxiomIndexTestHarness {
         .owlDataFactoryModule(owlDataFactoryModule)
         .build();
     axiomAccessor = axiomAccessorComponent.getAxiomAccessor();
+    annotationAssertionAxiomAccessor = axiomAccessorComponent.getAnnotationAssertionAxiomAccessor();
     assertionAxiomAccessor = axiomAccessorComponent.getAssertionAxiomAccessor();
     characteristicsAxiomAccessor = axiomAccessorComponent.getCharacteristicsAxiomAccessor();
 
@@ -130,6 +134,11 @@ public class AxiomIndexTestHarness {
   @Nonnull
   AxiomAccessor getAxiomAccessor() {
     return axiomAccessor;
+  }
+
+  @Nonnull
+  AnnotationAssertionAxiomAccessor getAnnotationAssertionAxiomAccessor() {
+    return annotationAssertionAxiomAccessor;
   }
 
   @Nonnull

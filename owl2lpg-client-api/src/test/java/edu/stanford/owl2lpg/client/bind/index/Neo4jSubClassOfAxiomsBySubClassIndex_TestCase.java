@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
-import static edu.stanford.owl2lpg.client.bind.index.OwlObjects.clsA;
-import static edu.stanford.owl2lpg.client.bind.index.OwlObjects.clsB;
-import static edu.stanford.owl2lpg.client.bind.index.OwlObjects.clsC;
+import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.clsA;
+import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.clsB;
+import static edu.stanford.owl2lpg.client.bind.index.TestOwlObjects.clsC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -52,7 +52,7 @@ class Neo4jSubClassOfAxiomsBySubClassIndex_TestCase {
   }
 
   @Test
-  void shouldGetAllSubClassOfAxiomsFromOntDoc() {
+  void shouldGetAllSubClassOfAxiomsFromSpecificSubClass() {
     testHarness.addAxiomToOntologyDocument(axiom1, ontDocIdA);
     testHarness.addAxiomToOntologyDocument(axiom2, ontDocIdA);
 

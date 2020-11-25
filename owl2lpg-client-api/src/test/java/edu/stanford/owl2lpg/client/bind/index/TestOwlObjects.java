@@ -19,7 +19,7 @@ import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Objec
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OwlObjects {
+public class TestOwlObjects {
 
   static final IRI iriA = IRI("http://example.org/A");
   static final IRI iriB = IRI("http://example.org/B");
