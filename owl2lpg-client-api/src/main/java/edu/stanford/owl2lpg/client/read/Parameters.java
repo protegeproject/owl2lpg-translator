@@ -63,6 +63,10 @@ public class Parameters {
         ONTO_DOC_ID, new StringValue(ontoDocId.getId())));
   }
 
+  public static Value forContext(@Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(ONTO_DOC_ID, new StringValue(ontoDocId.getId())));
+  }
+
   public static Value forEntity(@Nonnull OWLEntity entity,
                                 @Nonnull ProjectId projectId,
                                 @Nonnull BranchId branchId) {
@@ -93,6 +97,13 @@ public class Parameters {
     return new MapValue(Map.of(
         PROJECT_ID, new StringValue(projectId.getId()),
         BRANCH_ID, new StringValue(branchId.getId()),
+        ENTITY_IRI, new StringValue(entityIri.toString())));
+  }
+
+  public static Value forEntityIri(@Nonnull IRI entityIri,
+                                   @Nonnull OntologyDocumentId ontDocId) {
+    return new MapValue(Map.of(
+        ONTO_DOC_ID, new StringValue(ontDocId.getId()),
         ENTITY_IRI, new StringValue(entityIri.toString())));
   }
 
@@ -145,6 +156,13 @@ public class Parameters {
     return new MapValue(Map.of(
         PROJECT_ID, new StringValue(projectId.getId()),
         BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
+        AXIOM_TYPE, new StringValue(axiomType.getName())));
+  }
+
+  public static Value forAxiomType(@Nonnull AxiomType axiomType,
+                                   @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
         ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         AXIOM_TYPE, new StringValue(axiomType.getName())));
   }
@@ -204,6 +222,13 @@ public class Parameters {
     return new MapValue(Map.of(
         PROJECT_ID, new StringValue(projectId.getId()),
         BRANCH_ID, new StringValue(branchId.getId()),
+        ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
+        DIGEST, new StringValue(digest)));
+  }
+
+  public static Value forNodeDigest(@Nonnull String digest,
+                                    @Nonnull OntologyDocumentId ontoDocId) {
+    return new MapValue(Map.of(
         ONTO_DOC_ID, new StringValue(ontoDocId.getId()),
         DIGEST, new StringValue(digest)));
   }
