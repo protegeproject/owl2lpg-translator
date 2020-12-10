@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.writer.noop;
+package edu.stanford.owl2lpg.exporter.common.writer.noop;
 
 import org.jetbrains.annotations.NotNull;
 

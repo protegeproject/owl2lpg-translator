@@ -1,6 +1,6 @@
-package edu.stanford.owl2lpg.exporter.csv.writer.noop;
+package edu.stanford.owl2lpg.exporter.common.writer.noop;
 
-import edu.stanford.owl2lpg.exporter.csv.writer.NodeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
 import edu.stanford.owl2lpg.model.Node;
 
 import java.util.function.Consumer;

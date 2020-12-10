@@ -1,12 +1,8 @@
-package edu.stanford.owl2lpg.exporter.csv;
+package edu.stanford.owl2lpg.exporter.graphml;
 
 import edu.stanford.owl2lpg.exporter.common.internal.ProjectTranslator;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
-import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
-import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.model.NodeId;
-import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
-import edu.stanford.owl2lpg.model.Translation;
+import edu.stanford.owl2lpg.exporter.graphml.writer.Neo4jGraphmlWriter;
+import edu.stanford.owl2lpg.model.*;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
 import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
@@ -26,7 +22,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class PerAxiomCsvExporter {
+public class PerAxiomGraphmlExporter {
 
   @Nonnull
   private final ProjectTranslator projectTranslator;
@@ -41,16 +37,16 @@ public class PerAxiomCsvExporter {
   private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
-  private final Neo4jCsvWriter csvWriter;
+  private final Neo4jGraphmlWriter csvWriter;
 
   private Node documentNode = Node.create(NodeId.create(UUID.randomUUID().toString()), ONTOLOGY_DOCUMENT);
 
   @Inject
-  public PerAxiomCsvExporter(@Nonnull ProjectTranslator projectTranslator,
-                             @Nonnull AxiomTranslator axiomTranslator,
-                             @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                             @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
-                             @Nonnull Neo4jCsvWriter csvWriter) {
+  public PerAxiomGraphmlExporter(@Nonnull ProjectTranslator projectTranslator,
+                                 @Nonnull AxiomTranslator axiomTranslator,
+                                 @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                                 @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
+                                 @Nonnull Neo4jGraphmlWriter csvWriter) {
     this.projectTranslator = checkNotNull(projectTranslator);
     this.axiomTranslator = checkNotNull(axiomTranslator);
     this.structuralEdgeFactory = checkNotNull(structuralEdgeFactory);
@@ -90,7 +86,7 @@ public class PerAxiomCsvExporter {
             .ifPresent(csvWriter::writeEdge));
   }
 
-  public Neo4jCsvWriter getCsvWriter() {
+  public Neo4jGraphmlWriter getCsvWriter() {
     return csvWriter;
   }
 

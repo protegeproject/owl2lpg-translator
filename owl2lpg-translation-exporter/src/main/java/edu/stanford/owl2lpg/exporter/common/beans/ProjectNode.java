@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,28 +16,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class LanguageTagNode {
+public abstract class ProjectNode {
 
   public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_LANG = "lang:string";
+  public static final String PROPERTY_PROJECT_ID = "projectId:string";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
-  public static LanguageTagNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                       @JsonProperty(PROPERTY_LANG) @Nonnull String propertyLang,
-                                       @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
-    return new AutoValue_LanguageTagNode(nodeId, propertyLang, nodeLabels);
+  public static ProjectNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                                   @JsonProperty(PROPERTY_PROJECT_ID) @Nonnull String projectId,
+                                   @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
+    return new AutoValue_ProjectNode(nodeId, projectId, nodeLabels);
   }
 
   @Nonnull
-  public static LanguageTagNode of(@Nonnull Node node) {
+  public static ProjectNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperty(PropertyFields.LANGUAGE),
+        node.getProperty(PropertyFields.PROJECT_ID),
         node.getLabels().asList());
   }
 
@@ -45,9 +45,9 @@ public abstract class LanguageTagNode {
   @Nonnull
   public abstract String getNodeId();
 
-  @JsonProperty(PROPERTY_LANG)
+  @JsonProperty(PROPERTY_PROJECT_ID)
   @Nonnull
-  public abstract String getPropertyLang();
+  public abstract String getProjectId();
 
   @JsonProperty(NODE_LABELS)
   @Nonnull

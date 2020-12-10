@@ -1,8 +1,8 @@
-package edu.stanford.owl2lpg.exporter.csv.writer;
+package edu.stanford.owl2lpg.exporter.graphml.writer;
 
 import com.google.common.collect.ImmutableMultiset;
-import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Translation;
@@ -20,13 +20,13 @@ import java.util.stream.Stream;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class Neo4jCsvWriter {
+public class Neo4jGraphmlWriter {
 
   @Nonnull
-  private final CsvWriter<Node> nodesCsvWriter;
+  private final GraphmlWriter<Node> nodesCsvWriter;
 
   @Nonnull
-  private final CsvWriter<Edge> relationshipsCsvWriter;
+  private final GraphmlWriter<Edge> relationshipsCsvWriter;
 
   @Nonnull
   private final NodeTracker nodeTracker;
@@ -43,10 +43,10 @@ public class Neo4jCsvWriter {
   private final EnumMap<NodeLabels, Counter> nodeLabelsMultiset = new EnumMap<>(NodeLabels.class);
 
   @Inject
-  public Neo4jCsvWriter(@Nonnull CsvWriter<Node> nodesCsvWriter,
-                        @Nonnull CsvWriter<Edge> edgeCsvWriter,
-                        @Nonnull NodeTracker nodeTracker,
-                        @Nonnull EdgeTracker edgeTracker) {
+  public Neo4jGraphmlWriter(@Nonnull GraphmlWriter<Node> nodesCsvWriter,
+                            @Nonnull GraphmlWriter<Edge> edgeCsvWriter,
+                            @Nonnull NodeTracker nodeTracker,
+                            @Nonnull EdgeTracker edgeTracker) {
     this.nodesCsvWriter = nodesCsvWriter;
     this.relationshipsCsvWriter = edgeCsvWriter;
     this.nodeTracker = nodeTracker;

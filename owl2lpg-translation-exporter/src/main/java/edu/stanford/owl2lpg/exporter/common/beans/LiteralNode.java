@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

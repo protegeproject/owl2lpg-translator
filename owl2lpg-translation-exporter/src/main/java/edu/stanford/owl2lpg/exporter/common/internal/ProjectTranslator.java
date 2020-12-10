@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.internal;
+package edu.stanford.owl2lpg.exporter.common.internal;
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.translator.shared.BranchId;

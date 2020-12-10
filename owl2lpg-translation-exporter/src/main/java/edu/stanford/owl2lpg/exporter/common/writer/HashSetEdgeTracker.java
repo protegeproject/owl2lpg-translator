@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.writer;
+package edu.stanford.owl2lpg.exporter.common.writer;
 
 import com.google.common.collect.Sets;
 import edu.stanford.owl2lpg.model.Edge;

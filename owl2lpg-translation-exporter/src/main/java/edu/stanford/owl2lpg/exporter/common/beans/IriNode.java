@@ -1,44 +1,50 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
 
 import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class PropertylessNode {
+public abstract class IriNode {
 
   public static final String NODE_ID = ":ID";
+
+  public static final String PROPERTY_IRI = "iri:string";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
-  public static PropertylessNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                        @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
-    return new AutoValue_PropertylessNode(nodeId, nodeLabels);
+  public static IriNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                               @JsonProperty(PROPERTY_IRI) @Nonnull String propertyIri,
+                               @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
+    return new AutoValue_IriNode(nodeId, propertyIri, nodeLabels);
   }
 
   @Nonnull
-  public static PropertylessNode of(@Nonnull Node node) {
-    checkNotNull(node);
+  public static IriNode of(@Nonnull Node node) {
     return create(
         node.printNodeId(),
+        node.getProperty(PropertyFields.IRI),
         node.getLabels().asList());
   }
 
   @JsonProperty(NODE_ID)
   @Nonnull
   public abstract String getNodeId();
+
+  @JsonProperty(PROPERTY_IRI)
+  @Nonnull
+  public abstract String getPropertyIri();
 
   @JsonProperty(NODE_LABELS)
   @Nonnull

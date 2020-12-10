@@ -1,16 +1,16 @@
-package edu.stanford.owl2lpg.exporter.csv;
+package edu.stanford.owl2lpg.exporter.graphml;
 
 import edu.stanford.owl2lpg.exporter.common.internal.ProjectTranslator;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jCsvWriter;
+import edu.stanford.owl2lpg.exporter.graphml.writer.Neo4jGraphmlWriter;
 import edu.stanford.owl2lpg.model.AugmentedEdgeFactory;
-import edu.stanford.owl2lpg.translator.shared.BranchId;
 import edu.stanford.owl2lpg.model.Node;
-import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
-import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import edu.stanford.owl2lpg.model.StructuralEdgeFactory;
 import edu.stanford.owl2lpg.model.Translation;
 import edu.stanford.owl2lpg.translator.AnnotationObjectTranslator;
 import edu.stanford.owl2lpg.translator.AxiomTranslator;
+import edu.stanford.owl2lpg.translator.shared.BranchId;
+import edu.stanford.owl2lpg.translator.shared.OntologyDocumentId;
+import edu.stanford.owl2lpg.translator.shared.ProjectId;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -28,7 +28,7 @@ import static edu.stanford.owl2lpg.translator.vocab.NodeLabels.ONTOLOGY_DOCUMENT
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class OntologyCsvExporter {
+public class OntologyGraphmlExporter {
 
   @Nonnull
   private final ProjectTranslator projectTranslator;
@@ -46,15 +46,15 @@ public class OntologyCsvExporter {
   private final AugmentedEdgeFactory augmentedEdgeFactory;
 
   @Nonnull
-  private final Neo4jCsvWriter csvWriter;
+  private final Neo4jGraphmlWriter csvWriter;
 
   @Inject
-  public OntologyCsvExporter(@Nonnull ProjectTranslator projectTranslator,
-                             @Nonnull AnnotationObjectTranslator annotationTranslator,
-                             @Nonnull AxiomTranslator axiomTranslator,
-                             @Nonnull StructuralEdgeFactory structuralEdgeFactory,
-                             @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
-                             @Nonnull Neo4jCsvWriter csvWriter) {
+  public OntologyGraphmlExporter(@Nonnull ProjectTranslator projectTranslator,
+                                 @Nonnull AnnotationObjectTranslator annotationTranslator,
+                                 @Nonnull AxiomTranslator axiomTranslator,
+                                 @Nonnull StructuralEdgeFactory structuralEdgeFactory,
+                                 @Nonnull AugmentedEdgeFactory augmentedEdgeFactory,
+                                 @Nonnull Neo4jGraphmlWriter csvWriter) {
     this.projectTranslator = checkNotNull(projectTranslator);
     this.annotationTranslator = checkNotNull(annotationTranslator);
     this.axiomTranslator = checkNotNull(axiomTranslator);

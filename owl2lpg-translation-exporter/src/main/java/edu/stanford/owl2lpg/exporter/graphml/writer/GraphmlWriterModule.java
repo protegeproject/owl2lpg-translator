@@ -1,12 +1,12 @@
-package edu.stanford.owl2lpg.exporter.csv.writer;
+package edu.stanford.owl2lpg.exporter.graphml.writer;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import dagger.Module;
 import dagger.Provides;
-import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.HashSetEdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.HashSetNodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,23 +25,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public class CsvWriterModule {
+public class GraphmlWriterModule {
 
   @Nonnull
   private final Path outputPath;
 
-  public CsvWriterModule(@Nonnull Path outputPath) {
-    this.outputPath = (outputPath == null) ? Paths.get(".").toAbsolutePath().normalize() : outputPath;
+  public GraphmlWriterModule(@Nonnull Path outputPath) {
+    this.outputPath = checkNotNull(outputPath);
   }
 
   @Provides
   @TranslationSessionScope
-  public CsvWriter<Node> provideNodeCsvWriter() {
+  public GraphmlWriter<Node> provideNodeGraphmlWriter() {
     try {
       var outputFile = new File(outputPath + File.separator + "nodes.csv");
-      return new CsvWriter<Node>(
+      return new GraphmlWriter<Node>(
           new CsvMapper(),
-          new Neo4jNodeCsvSchema(),
+          new Neo4jNodeGraphmlSchema(),
           new BufferedWriter(new FileWriter(outputFile)));
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -51,12 +50,12 @@ public class CsvWriterModule {
 
   @Provides
   @TranslationSessionScope
-  public CsvWriter<Edge> provideEdgeCsvWriter() {
+  public GraphmlWriter<Edge> provideEdgeGraphmlWriter() {
     try {
       var outputFile = new File(outputPath + File.separator + "edges.csv");
-      return new CsvWriter<Edge>(
+      return new GraphmlWriter<Edge>(
           new CsvMapper(),
-          new Neo4jRelationshipsCsvSchema(),
+          new Neo4jRelationshipsGraphmlSchema(),
           new BufferedWriter(new FileWriter(outputFile)));
     } catch (IOException e) {
       throw new RuntimeException(e);

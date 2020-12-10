@@ -1,16 +1,14 @@
-package edu.stanford.owl2lpg.exporter.csv.writer.noop;
+package edu.stanford.owl2lpg.exporter.graphml.writer.noop;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import dagger.Module;
 import dagger.Provides;
+import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpEdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpNodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpWriter;
-import edu.stanford.owl2lpg.exporter.csv.writer.CsvWriter;
 import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jNodeCsvSchema;
-import edu.stanford.owl2lpg.exporter.csv.writer.Neo4jRelationshipsCsvSchema;
-import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
+import edu.stanford.owl2lpg.exporter.graphml.writer.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
@@ -20,23 +18,23 @@ import edu.stanford.owl2lpg.translator.TranslationSessionScope;
  * Stanford Center for Biomedical Informatics Research
  */
 @Module
-public class NoOpCsvWriterModule {
+public class NoOpGraphmlWriterModule {
 
   @Provides
   @TranslationSessionScope
-  public CsvWriter<Node> provideNodeCsvWriter() {
-    return new NoOpCsvWriter<Node>(
+  public GraphmlWriter<Node> provideNodeGraphmlWriter() {
+    return new NoOpGraphmlWriter<Node>(
         new CsvMapper(),
-        new Neo4jNodeCsvSchema(),
+        new Neo4jNodeGraphmlSchema(),
         new NoOpWriter());
   }
 
   @Provides
   @TranslationSessionScope
-  public CsvWriter<Edge> provideEdgeCsvWriter() {
-    return new NoOpCsvWriter<Edge>(
+  public GraphmlWriter<Edge> provideEdgeGraphmlWriter() {
+    return new NoOpGraphmlWriter<Edge>(
         new CsvMapper(),
-        new Neo4jRelationshipsCsvSchema(),
+        new Neo4jRelationshipsGraphmlSchema(),
         new NoOpWriter());
   }
 

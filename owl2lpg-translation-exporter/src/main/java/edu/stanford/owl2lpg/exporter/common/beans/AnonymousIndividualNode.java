@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,28 +16,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class ProjectNode {
+public abstract class AnonymousIndividualNode {
 
   public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_PROJECT_ID = "projectId:string";
+  public static final String PROPERTY_NODE_ID = "nodeID:string";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
-  public static ProjectNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                   @JsonProperty(PROPERTY_PROJECT_ID) @Nonnull String projectId,
-                                   @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
-    return new AutoValue_ProjectNode(nodeId, projectId, nodeLabels);
+  public static AnonymousIndividualNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                                               @JsonProperty(PROPERTY_NODE_ID) @Nonnull String propertyNodeId,
+                                               @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
+    return new AutoValue_AnonymousIndividualNode(nodeId, propertyNodeId, nodeLabels);
   }
 
   @Nonnull
-  public static ProjectNode of(@Nonnull Node node) {
+  public static AnonymousIndividualNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperty(PropertyFields.PROJECT_ID),
+        node.getProperty(PropertyFields.NODE_ID),
         node.getLabels().asList());
   }
 
@@ -45,9 +45,9 @@ public abstract class ProjectNode {
   @Nonnull
   public abstract String getNodeId();
 
-  @JsonProperty(PROPERTY_PROJECT_ID)
+  @JsonProperty(PROPERTY_NODE_ID)
   @Nonnull
-  public abstract String getProjectId();
+  public abstract String getPropertyNodeId();
 
   @JsonProperty(NODE_LABELS)
   @Nonnull
