@@ -13,7 +13,7 @@ import edu.stanford.owl2lpg.translator.AnnotationValueTranslator;
 import edu.stanford.owl2lpg.translator.shared.BuiltInPrefixDeclarations;
 import edu.stanford.owl2lpg.translator.vocab.NodeLabels;
 import edu.stanford.owl2lpg.translator.vocab.PropertyFields;
-import org.jetbrains.annotations.NotNull;
+import edu.stanford.owl2lpg.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;

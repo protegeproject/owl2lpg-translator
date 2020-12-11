@@ -76,6 +76,11 @@
               <artifactId>picocli-codegen</artifactId>
               <version>4.2.0</version>
             </path>
+<!--            <path>-->
+<!--              <groupId>com.google.dagger</groupId>-->
+<!--              <artifactId>dagger-compiler</artifactId>-->
+<!--              <version>${dagger.version}</version>-->
+<!--            </path>-->
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
