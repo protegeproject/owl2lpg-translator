@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.exporter.graphml.writer.noop;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlMapper;
 import edu.stanford.owl2lpg.exporter.graphml.writer.GraphmlWriter;
 import edu.stanford.owl2lpg.exporter.graphml.writer.Neo4jGraphmlSchema;
 
@@ -14,10 +14,10 @@ import java.io.Writer;
  */
 public class NoOpGraphmlWriter<T> extends GraphmlWriter<T> {
 
-  public NoOpGraphmlWriter(@Nonnull CsvMapper csvMapper,
+  public NoOpGraphmlWriter(@Nonnull GraphmlMapper graphmlMapper,
                            @Nonnull Neo4jGraphmlSchema schema,
                            @Nonnull Writer output) {
-    super(csvMapper, schema, output);
+    super(graphmlMapper, schema, output);
   }
 
   @Override

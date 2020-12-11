@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.exporter.graphml.writer;
 
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlSchema;
 
 import javax.annotation.Nonnull;

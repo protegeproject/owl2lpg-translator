@@ -23,10 +23,10 @@ import java.util.stream.Stream;
 public class Neo4jGraphmlWriter {
 
   @Nonnull
-  private final GraphmlWriter<Node> nodesCsvWriter;
+  private final GraphmlWriter<Node> nodesGraphmlWriter;
 
   @Nonnull
-  private final GraphmlWriter<Edge> relationshipsCsvWriter;
+  private final GraphmlWriter<Edge> relationshipsGraphmlWriter;
 
   @Nonnull
   private final NodeTracker nodeTracker;
@@ -43,12 +43,12 @@ public class Neo4jGraphmlWriter {
   private final EnumMap<NodeLabels, Counter> nodeLabelsMultiset = new EnumMap<>(NodeLabels.class);
 
   @Inject
-  public Neo4jGraphmlWriter(@Nonnull GraphmlWriter<Node> nodesCsvWriter,
-                            @Nonnull GraphmlWriter<Edge> edgeCsvWriter,
+  public Neo4jGraphmlWriter(@Nonnull GraphmlWriter<Node> nodesGraphmlWriter,
+                            @Nonnull GraphmlWriter<Edge> edgeGraphmlWriter,
                             @Nonnull NodeTracker nodeTracker,
                             @Nonnull EdgeTracker edgeTracker) {
-    this.nodesCsvWriter = nodesCsvWriter;
-    this.relationshipsCsvWriter = edgeCsvWriter;
+    this.nodesGraphmlWriter = nodesGraphmlWriter;
+    this.relationshipsGraphmlWriter = edgeGraphmlWriter;
     this.nodeTracker = nodeTracker;
     this.edgeTracker = edgeTracker;
     Stream.of(EdgeLabel.values())
@@ -101,9 +101,9 @@ public class Neo4jGraphmlWriter {
   private void write(Node node) {
     try {
       nodeCount++;
-      nodesCsvWriter.write(node);
+      nodesGraphmlWriter.write(node);
       nodeLabelsMultiset.get(node.getLabels()).increment();
-      nodesCsvWriter.flush();
+      nodesGraphmlWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -129,9 +129,9 @@ public class Neo4jGraphmlWriter {
   private void write(Edge edge) {
     try {
       edgeCount++;
-      relationshipsCsvWriter.write(edge);
+      relationshipsGraphmlWriter.write(edge);
       edgeLabelMultiset.get(edge.getLabel()).increment();
-      relationshipsCsvWriter.flush();
+      relationshipsGraphmlWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -166,8 +166,8 @@ public class Neo4jGraphmlWriter {
   }
 
   public void flush() throws IOException {
-    nodesCsvWriter.flush();
-    relationshipsCsvWriter.flush();
+    nodesGraphmlWriter.flush();
+    relationshipsGraphmlWriter.flush();
   }
 
   public void printReport() {

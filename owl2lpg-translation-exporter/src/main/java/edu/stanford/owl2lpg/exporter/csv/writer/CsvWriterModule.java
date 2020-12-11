@@ -32,7 +32,7 @@ public class CsvWriterModule {
   private final Path outputPath;
 
   public CsvWriterModule(@Nonnull Path outputPath) {
-    this.outputPath = (outputPath == null) ? Paths.get(".").toAbsolutePath().normalize() : outputPath;
+    this.outputPath = (outputPath == null) ? Paths.get("").toAbsolutePath().normalize() : outputPath;
   }
 
   @Provides

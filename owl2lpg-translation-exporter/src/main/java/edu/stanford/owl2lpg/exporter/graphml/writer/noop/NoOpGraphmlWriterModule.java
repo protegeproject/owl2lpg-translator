@@ -1,6 +1,5 @@
 package edu.stanford.owl2lpg.exporter.graphml.writer.noop;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import dagger.Module;
 import dagger.Provides;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
@@ -8,6 +7,7 @@ import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpEdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpNodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpWriter;
 import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
+import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlMapper;
 import edu.stanford.owl2lpg.exporter.graphml.writer.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
@@ -24,7 +24,7 @@ public class NoOpGraphmlWriterModule {
   @TranslationSessionScope
   public GraphmlWriter<Node> provideNodeGraphmlWriter() {
     return new NoOpGraphmlWriter<Node>(
-        new CsvMapper(),
+        new GraphmlMapper(),
         new Neo4jNodeGraphmlSchema(),
         new NoOpWriter());
   }
@@ -33,7 +33,7 @@ public class NoOpGraphmlWriterModule {
   @TranslationSessionScope
   public GraphmlWriter<Edge> provideEdgeGraphmlWriter() {
     return new NoOpGraphmlWriter<Edge>(
-        new CsvMapper(),
+        new GraphmlMapper(),
         new Neo4jRelationshipsGraphmlSchema(),
         new NoOpWriter());
   }

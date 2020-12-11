@@ -75,5 +75,12 @@
       <version>1.3</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.tinkerpop/tinkergraph-gremlin -->
+    <dependency>
+      <groupId>org.apache.tinkerpop</groupId>
+      <artifactId>tinkergraph-gremlin</artifactId>
+      <version>3.4.8</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

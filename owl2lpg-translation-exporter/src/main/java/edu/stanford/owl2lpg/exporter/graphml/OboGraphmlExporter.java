@@ -43,11 +43,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class OboGraphmlExporter {
 
   @Nonnull
-  private final PerAxiomGraphmlExporter csvExporter;
+  private final PerAxiomGraphmlExporter graphmlExporter;
 
   @Inject
-  public OboGraphmlExporter(@Nonnull PerAxiomGraphmlExporter csvExporter) {
-    this.csvExporter = checkNotNull(csvExporter);
+  public OboGraphmlExporter(@Nonnull PerAxiomGraphmlExporter graphmlExporter) {
+    this.graphmlExporter = checkNotNull(graphmlExporter);
   }
 
   public void export(@Nonnull File inputFile,
@@ -57,8 +57,8 @@ public class OboGraphmlExporter {
                      boolean isTrackingDeclaration) throws IOException {
     var in = new CountingInputStream(new FileInputStream(inputFile));
 
-    var csvTranslator = new MinimalObo2Owl(in, csvExporter, inputFile.length(), isTrackingDeclaration);
-    csvTranslator.translateProject(projectId, branchId, ontDocId);
+    var graphmlTranslator = new MinimalObo2Owl(in, graphmlExporter, inputFile.length(), isTrackingDeclaration);
+    graphmlTranslator.translateProject(projectId, branchId, ontDocId);
 
     var sw = Stopwatch.createStarted();
 
@@ -68,14 +68,14 @@ public class OboGraphmlExporter {
     oboParser.setReader(bufferedReader);
 
     var obodoc = new MinimalOboDoc();
-    obodoc.setTranslator(csvTranslator);
-    csvTranslator.setObodoc(obodoc);
+    obodoc.setTranslator(graphmlTranslator);
+    graphmlTranslator.setObodoc(obodoc);
     oboParser.parseOBODoc(obodoc);
 
     System.out.printf("Time: %,dms\n", sw.elapsed().toMillis());
-    System.out.printf("Axioms: %,d\n", +csvTranslator.getAxiomsCount());
+    System.out.printf("Axioms: %,d\n", +graphmlTranslator.getAxiomsCount());
 
-    csvExporter.printReport();
+    graphmlExporter.printReport();
 
     bufferedReader.close();
   }
@@ -100,19 +100,19 @@ public class OboGraphmlExporter {
 
     private final CountingInputStream countingInputStream;
     private final long fileSize;
-    private final PerAxiomGraphmlExporter csvExporter;
+    private final PerAxiomGraphmlExporter graphmlExporter;
     private final boolean isTrackingDeclaration;
 
     private final Set<OWLDeclarationAxiom> declarationCache = Sets.newHashSet();
     private long ts = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
 
     public MinimalObo2Owl(@Nonnull CountingInputStream countingInputStream,
-                          @Nonnull PerAxiomGraphmlExporter csvExporter,
+                          @Nonnull PerAxiomGraphmlExporter graphmlExporter,
                           long fileSize,
                           boolean isTrackingDeclaration) {
       super(OWLManager.createOWLOntologyManager());
       this.countingInputStream = countingInputStream;
-      this.csvExporter = csvExporter;
+      this.graphmlExporter = graphmlExporter;
       this.fileSize = fileSize;
       this.isTrackingDeclaration = isTrackingDeclaration;
     }
@@ -121,7 +121,7 @@ public class OboGraphmlExporter {
                                  BranchId branchId,
                                  OntologyDocumentId ontDocId) {
       try {
-        csvExporter.export(projectId, branchId, ontDocId);
+        graphmlExporter.export(projectId, branchId, ontDocId);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -153,7 +153,7 @@ public class OboGraphmlExporter {
       try {
         counter.incrementAndGet();
         printLog();
-        csvExporter.export(axiom);
+        graphmlExporter.export(axiom);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -162,7 +162,7 @@ public class OboGraphmlExporter {
     private void printLog() {
       var c = counter.get();
       if (c % 1_000_000 == 0) {
-        var csvWriter = csvExporter.getCsvWriter();
+        var graphmlWriter = graphmlExporter.getGraphmlWriter();
         long read = countingInputStream.getCount() / (1024 * 1024);
         long ts1 = ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
         long delta = (ts1 - ts) / 1000_000;
@@ -173,10 +173,10 @@ public class OboGraphmlExporter {
         var totalMemory = runtime.totalMemory();
         var freeMemory = runtime.freeMemory();
         var consumedMemory = (totalMemory - freeMemory) / (1024 * 1024);
-        var trackedNodesPercent = (100.0 * csvWriter.getTrackedNodeCount()) / csvWriter.getNodeCount();
-        var trackedEdgesPercent = (100.0 * csvWriter.getTrackedEdgeCount()) / csvWriter.getEdgeCount();
+        var trackedNodesPercent = (100.0 * graphmlWriter.getTrackedNodeCount()) / graphmlWriter.getNodeCount();
+        var trackedEdgesPercent = (100.0 * graphmlWriter.getTrackedEdgeCount()) / graphmlWriter.getEdgeCount();
         System.out.printf("%,9d axioms (Read %,4d Mb [%3d%%]  Delta: %,5d ms) (Used memory: %,8d MB)  Nodes: %,8d  Edges: %,8d  Tracked nodes: %,8d (%,.2f%%)  Tracked edges: %,8d (%,.2f%%)\n",
-            c, read, percent, delta, consumedMemory, csvWriter.getNodeCount(), csvWriter.getEdgeCount(), csvWriter.getTrackedNodeCount(), trackedNodesPercent, csvWriter.getTrackedEdgeCount(), trackedEdgesPercent);
+            c, read, percent, delta, consumedMemory, graphmlWriter.getNodeCount(), graphmlWriter.getEdgeCount(), graphmlWriter.getTrackedNodeCount(), trackedNodesPercent, graphmlWriter.getTrackedEdgeCount(), trackedEdgesPercent);
       }
     }
 

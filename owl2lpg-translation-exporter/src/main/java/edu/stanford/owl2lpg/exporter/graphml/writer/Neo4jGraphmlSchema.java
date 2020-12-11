@@ -1,6 +1,6 @@
 package edu.stanford.owl2lpg.exporter.graphml.writer;
 
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlSchema;
 
 import javax.annotation.Nonnull;
 
@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
 public interface Neo4jGraphmlSchema {
 
   @Nonnull
-  CsvSchema getGraphmlSchema();
+  GraphmlSchema getGraphmlSchema();
 
   @Nonnull
-  CsvSchema getGraphmlSchemaWithHeader();
+  GraphmlSchema getGraphmlSchemaWithHeader();
 }

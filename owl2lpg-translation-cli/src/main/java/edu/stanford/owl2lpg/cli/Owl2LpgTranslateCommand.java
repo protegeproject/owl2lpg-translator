@@ -105,12 +105,13 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     try {
       var csvWriterModule = new CsvWriterModule(outputDirectoryLocation);
-      var exporter = DaggerCsvExporterComponent.builder()
+      var exporterComponent = DaggerCsvExporterComponent.builder()
               .csvWriterModule(csvWriterModule)
-              .build()
-              .getOboCsvExporter();
+              .build();
+      var exporter = exporterComponent.getOboCsvExporter();
       var ontologyFile = ontologyFileLocation.toFile();
-      exporter.export(ontologyFile, ProjectId.create(projectId),
+      exporter.export(ontologyFile, 
+              ProjectId.create(projectId),
               BranchId.create(branchId),
               OntologyDocumentId.create(ontDocId), true);
     } catch (Exception e) {
@@ -124,14 +125,15 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     try {
       var csvWriterModule = new CsvWriterModule(outputDirectoryLocation);
-      var exporter = DaggerCsvExporterComponent.builder()
+      var exporterComponent = DaggerCsvExporterComponent.builder()
               .csvWriterModule(csvWriterModule)
-              .build()
-              .getOntologyCsvExporter();
+              .build();
+      var exporter = exporterComponent.getOntologyCsvExporter();
       var ontologyFile = ontologyFileLocation.toFile();
       var ontologyManager = OWLManager.createOWLOntologyManager();
       var ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
-      exporter.export(ontology, ProjectId.create(projectId),
+      exporter.export(ontology, 
+              ProjectId.create(projectId),
               BranchId.create(branchId),
               OntologyDocumentId.create(ontDocId));
     } catch (Exception e) {
@@ -145,12 +147,13 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     try {
       var graphmlWriterModule = new GraphmlWriterModule(outputDirectoryLocation);
-      var exporter = DaggerGraphmlExporterComponent.builder()
+      var exporterComponent = DaggerGraphmlExporterComponent.builder()
               .graphmlWriterModule(graphmlWriterModule)
-              .build()
-              .getOboGraphmlExporter();
+              .build();
+      var exporter = exporterComponent.getOboGraphmlExporter();
       var ontologyFile = ontologyFileLocation.toFile();
-      exporter.export(ontologyFile, ProjectId.create(projectId),
+      exporter.export(ontologyFile, 
+              ProjectId.create(projectId),
               BranchId.create(branchId),
               OntologyDocumentId.create(ontDocId), true);
     } catch (Exception e) {
@@ -164,14 +167,15 @@ public class Owl2LpgTranslateCommand implements Callable<Integer> {
     int exitCode = 0;
     try {
       var graphmlWriterModule = new GraphmlWriterModule(outputDirectoryLocation);
-      var exporter = DaggerGraphmlExporterComponent.builder()
+      var exporterComponent = DaggerGraphmlExporterComponent.builder()
               .graphmlWriterModule(graphmlWriterModule)
-              .build()
-              .getOntologyGraphmlExporter();
+              .build();
+      var exporter = exporterComponent.getOntologyGraphmlExporter();
       var ontologyFile = ontologyFileLocation.toFile();
       var ontologyManager = OWLManager.createOWLOntologyManager();
       var ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
-      exporter.export(ontology, ProjectId.create(projectId),
+      exporter.export(ontology, 
+              ProjectId.create(projectId),
               BranchId.create(branchId),
               OntologyDocumentId.create(ontDocId));
     } catch (Exception e) {
