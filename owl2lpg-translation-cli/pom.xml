@@ -30,6 +30,13 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <id>jcenter</id>
+      <url>https://jcenter.bintray.com</url>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
       <plugin>
@@ -82,13 +89,16 @@
               <version>${dagger.version}</version>
             </path>
             <path>
-              <groupId>com.google.auto.value</groupId>
-              <artifactId>auto-service</artifactId>
-              <version>${auto-value.version}</version>
+              <groupId>dev.arunkumar</groupId>
+              <artifactId>scabbard-processor</artifactId>
+              <version>0.4.0</version>
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
+            <arg>-Ascabbard.outputFormat=png</arg>
+            <arg>-Ascabbard.failOnError=false</arg>
+            <arg>-Ascabbard.qualifiedNames=true</arg>
           </compilerArgs>
         </configuration>
       </plugin>
