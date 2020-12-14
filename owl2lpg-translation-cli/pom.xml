@@ -76,11 +76,16 @@
               <artifactId>picocli-codegen</artifactId>
               <version>4.2.0</version>
             </path>
-<!--            <path>-->
-<!--              <groupId>com.google.dagger</groupId>-->
-<!--              <artifactId>dagger-compiler</artifactId>-->
-<!--              <version>${dagger.version}</version>-->
-<!--            </path>-->
+            <path>
+              <groupId>com.google.dagger</groupId>
+              <artifactId>dagger-compiler</artifactId>
+              <version>${dagger.version}</version>
+            </path>
+            <path>
+              <groupId>com.google.auto.value</groupId>
+              <artifactId>auto-service</artifactId>
+              <version>${auto-value.version}</version>
+            </path>
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>

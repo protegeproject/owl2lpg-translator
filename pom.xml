@@ -131,13 +131,6 @@
           <version>3.8.0</version>
           <configuration>
             <release>11</release>
-<!--            <annotationProcessorPaths>-->
-<!--              <path>-->
-<!--                <groupId>com.google.dagger</groupId>-->
-<!--                <artifactId>dagger-compiler</artifactId>-->
-<!--                <version>${dagger.version}</version>-->
-<!--              </path>-->
-<!--            </annotationProcessorPaths>-->
           </configuration>
         </plugin>
         <plugin>
