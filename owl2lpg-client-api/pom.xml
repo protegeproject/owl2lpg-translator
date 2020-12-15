@@ -60,10 +60,6 @@
       <artifactId>auto-value-annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.auto.value</groupId>
-      <artifactId>auto-value</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.google.dagger</groupId>
       <artifactId>dagger</artifactId>
     </dependency>
@@ -99,5 +95,52 @@
       <version>1.3</version>
     </dependency>
   </dependencies>
+
+<!--  <repositories>-->
+<!--    <repository>-->
+<!--      <id>jcenter</id>-->
+<!--      <url>https://jcenter.bintray.com</url>-->
+<!--    </repository>-->
+<!--  </repositories>-->
+
+  <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>com.google.dagger</groupId>
+                <artifactId>dagger-compiler</artifactId>
+                <version>${dagger.version}</version>
+              </path>
+              <path>
+                <groupId>com.google.auto.value</groupId>
+                <artifactId>auto-value</artifactId>
+                <version>${auto-value.version}</version>
+              </path>
+              <path>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${auto-service.version}</version>
+              </path>
+<!--              <path>-->
+<!--                <groupId>dev.arunkumar</groupId>-->
+<!--                <artifactId>scabbard-processor</artifactId>-->
+<!--                <version>0.4.0</version>-->
+<!--              </path>-->
+            </annotationProcessorPaths>
+<!--            <compilerArgs>-->
+<!--              <arg>-Ascabbard.outputFormat=svg</arg>-->
+<!--              <arg>-Ascabbard.failOnError=false</arg>-->
+<!--              <arg>-Ascabbard.qualifiedNames=true</arg>-->
+<!--            </compilerArgs>-->
+          </configuration>
+        </plugin>
+      </plugins>
+  </build>
+
 
 </project>

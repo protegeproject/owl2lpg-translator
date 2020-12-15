@@ -27,6 +27,7 @@ public abstract class EdgeId {
         .array());
   }
 
+  @SuppressWarnings("mutable")
   public abstract byte[] getBytes();
 
   public String asString() {
