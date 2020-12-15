@@ -80,14 +80,6 @@
     </dependency>
   </dependencies>
 
-
-<!--  <repositories>-->
-<!--    <repository>-->
-<!--      <id>jcenter</id>-->
-<!--      <url>https://jcenter.bintray.com</url>-->
-<!--    </repository>-->
-<!--  </repositories>-->
-
   <build>
       <plugins>
         <plugin>
@@ -111,17 +103,17 @@
                 <artifactId>auto-service</artifactId>
                 <version>${auto-service.version}</version>
               </path>
-<!--              <path>-->
-<!--                <groupId>dev.arunkumar</groupId>-->
-<!--                <artifactId>scabbard-processor</artifactId>-->
-<!--                <version>0.4.0</version>-->
-<!--              </path>-->
+              <path>
+                <groupId>dev.arunkumar</groupId>
+                <artifactId>scabbard-processor</artifactId>
+                <version>${scabbard.version}</version>
+              </path>
             </annotationProcessorPaths>
-<!--            <compilerArgs>-->
-<!--              <arg>-Ascabbard.outputFormat=svg</arg>-->
-<!--              <arg>-Ascabbard.failOnError=false</arg>-->
-<!--              <arg>-Ascabbard.qualifiedNames=true</arg>-->
-<!--            </compilerArgs>-->
+            <compilerArgs>
+              <arg>-Ascabbard.outputFormat=svg</arg>
+              <arg>-Ascabbard.failOnError=false</arg>
+              <arg>-Ascabbard.qualifiedNames=true</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
       </plugins>
