@@ -72,18 +72,15 @@ public class GraphmlWriter extends ObjectWriter implements AutoCloseable {
    */
   private Vertex replaceVertex(Vertex oldV, Vertex newV) {
     this.g  .V(newV).as("new")
-            .V(oldV).as("old")
-            .inE().as("oldIn")
+            .V(oldV).as("old").sideEffect(__.drop())
+            .inE().as("oldIn").sideEffect(__.drop())
             .outV().as("oldFrom")
             .addE(__.select("oldIn").label()).from("oldFrom").to("new")
-            .select("oldIn").drop()
             .select("old")
-            .outE().as("oldOut")
+            .outE().as("oldOut").sideEffect(__.drop())
             .inV().as("oldTo")
             .addE(__.select("oldOut").label()).from("new").to("oldTo")
-            .select("oldOut").drop()
             .iterate();
-    this.g.V(oldV).drop().iterate();
     return newV;
   }
   /**
