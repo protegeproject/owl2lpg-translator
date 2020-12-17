@@ -66,25 +66,25 @@ public class GraphmlWriter extends ObjectWriter implements AutoCloseable {
   /**
    * If you want to swap one vertex for another preserving all of its
    * edges and properties.
-   * @param old
-   * @param newt
+   * @param oldV
+   * @param newV
    * @return
    */
-  private Vertex replaceVertex(Vertex old, Vertex newt) {
-    this.g  .V(newt).as("new")
-            .V(old).as("old")
-            .inE().as("oIn")
-            .inV().as("oeFrom")
-            .addE(__.select("oIn").label()).from("oeFrom").to("new")
-            .select("oIn").drop()
+  private Vertex replaceVertex(Vertex oldV, Vertex newV) {
+    this.g  .V(newV).as("new")
+            .V(oldV).as("old")
+            .inE().as("oldIn")
+            .outV().as("oldFrom")
+            .addE(__.select("oldIn").label()).from("oldFrom").to("new")
+            .select("oldIn").drop()
             .select("old")
-            .outE().as("oOut")
-            .inV().as("oeTo")
-            .addE(__.select("oOut").label()).from("new").to("oeTo")
-            .select("oOut").drop()
-            .select("old").drop()
+            .outE().as("oldOut")
+            .inV().as("oldTo")
+            .addE(__.select("oldOut").label()).from("new").to("oldTo")
+            .select("oldOut").drop()
             .iterate();
-    return newt;
+    this.g.V(oldV).drop().iterate();
+    return newV;
   }
   /**
    * If a node has already been added the get that.
