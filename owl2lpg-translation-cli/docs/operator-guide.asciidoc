@@ -1,0 +1,77 @@
+= OWL to LGP Operator Guide : Transformation
+:doctype: article
+:revnumber: 1.0
+:revdate: 2020-09-01
+:revremark: The first incarnation of {doctitle}
+:version-label!:
+:description: Notes for operators, decisions made and instructions.
+:keywords: graph tinkerpop gremlin metalab mesomodel
+:imagesdir: image
+:runconfig: ../../.run
+:sectnums:
+:toc:
+
+== Reference
+
+* link:https://tinkerpop.apache.org/docs/3.4.9/reference[TinkerPop Reference]
+* link:https://github.com/protegeproject[Stanford Protege GitHub]
+
+== Build
+
+[source,powershell]
+----
+mvm install
+----
+
+== Run
+
+You will need to set the environment variables in to suitable values.
+
+[source,powershell]
+----
+$projectDir = .../owl2lpg-translator/
+$dataDir = ...
+----
+
+[source,powershell]
+----
+"C:\Program Files\OpenJDK\jdk-14.0.1\bin\java.exe" `
+  -classpath "${projectDir}/owl2lpg-translation-cli/target/owl2lpg-translation-cli.jar" `
+  edu.stanford.owl2lpg.cli.Owl2LpgCommand translate -f graphml `
+  "${dataDir}/ontology.owl" `
+  "-o ."
+----
+
+There are also some scripts that wrap this command.
+
+[source,powershell]
+----
+../src/main/scripts/run.ps1
+----
+[source,powershell]
+----
+run.ps1 translate -f graphml "${dataDir}/ontology.owl" -o .
+----
+...and...
+[source,bash]
+----
+../src/main/scripts/run.sh
+----
+[source,bash]
+----
+run.sh translate -f graphml "${dataDir}/ontology.owl" -o .
+----
+
+== Debugging
+
+The default output format is csv.
+[source,intellij]
+----
+include::{runconfig}/Owl2LpgCommand_csv.run.xml[]
+----
+
+The alternate output format is graphml.
+[source,intellij]
+----
+include::{runconfig}/Owl2LpgCommand_graphml.run.xml[]
+----

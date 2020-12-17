@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Owl2LpgCommand graphml" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="14" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="edu.stanford.owl2lpg.cli.Owl2LpgCommand" />
+    <module name="owl2lpg-translation-cli" />
+    <option name="PROGRAM_PARAMETERS" value="translate -f graphml ontology.owl" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
