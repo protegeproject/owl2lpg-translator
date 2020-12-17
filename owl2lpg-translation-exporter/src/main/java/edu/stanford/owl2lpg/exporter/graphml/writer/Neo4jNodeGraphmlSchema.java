@@ -25,28 +25,23 @@ public class Neo4jNodeGraphmlSchema implements Neo4jGraphmlSchema {
     return getBuilder().build();
   }
 
-  @Override
-  @Nonnull
-  public GraphmlSchema getGraphmlSchemaWithHeader() {
-    return getBuilder().setUseHeader(true).build();
-  }
 
   private static GraphmlSchema.Builder getBuilder() {
     return GraphmlSchema.builder()
-        .addColumn(N4J_JSON_ID)
-        .addColumn(N4J_JSON_LABELS)
-        .addColumn(PROJECT_ID)
-        .addColumn(BRANCH_ID)
-        .addColumn(ONTOLOGY_DOCUMENT_ID)
-        .addColumn(IRI)
-        .addColumn(LOCAL_NAME)
-        .addColumn(PREFIXED_NAME)
-        .addColumn(OBO_ID)
-        .addColumn(LEXICAL_FORM)
-        .addColumn(DATATYPE)
-        .addColumn(LANGUAGE)
-        .addColumn(NODE_ID)
-        .addColumn(CARDINALITY + ":int")
-        .addColumn(DIGEST);
+        .addProperty(N4J_JSON_ID)
+        .addProperty(N4J_JSON_LABELS)
+        .addProperty(PROJECT_ID)
+        .addProperty(BRANCH_ID)
+        .addProperty(ONTOLOGY_DOCUMENT_ID)
+        .addProperty(IRI)
+        .addProperty(LOCAL_NAME)
+        .addProperty(PREFIXED_NAME)
+        .addProperty(OBO_ID)
+        .addProperty(LEXICAL_FORM)
+        .addProperty(DATATYPE)
+        .addProperty(LANGUAGE)
+        .addProperty(NODE_ID)
+        .addProperty(CARDINALITY + ":int")
+        .addProperty(DIGEST);
   }
 }

@@ -23,10 +23,7 @@ import java.util.stream.Stream;
 public class Neo4jGraphmlWriter {
 
   @Nonnull
-  private final GraphmlWriter<Node> nodesGraphmlWriter;
-
-  @Nonnull
-  private final GraphmlWriter<Edge> relationshipsGraphmlWriter;
+  private final GraphmlWriter graphmlWriter;
 
   @Nonnull
   private final NodeTracker nodeTracker;
@@ -43,12 +40,10 @@ public class Neo4jGraphmlWriter {
   private final EnumMap<NodeLabels, Counter> nodeLabelsMultiset = new EnumMap<>(NodeLabels.class);
 
   @Inject
-  public Neo4jGraphmlWriter(@Nonnull GraphmlWriter<Node> nodesGraphmlWriter,
-                            @Nonnull GraphmlWriter<Edge> edgeGraphmlWriter,
+  public Neo4jGraphmlWriter(@Nonnull GraphmlWriter graphmlWriter,
                             @Nonnull NodeTracker nodeTracker,
                             @Nonnull EdgeTracker edgeTracker) {
-    this.nodesGraphmlWriter = nodesGraphmlWriter;
-    this.relationshipsGraphmlWriter = edgeGraphmlWriter;
+    this.graphmlWriter = graphmlWriter;
     this.nodeTracker = nodeTracker;
     this.edgeTracker = edgeTracker;
     Stream.of(EdgeLabel.values())
@@ -101,9 +96,9 @@ public class Neo4jGraphmlWriter {
   private void write(Node node) {
     try {
       nodeCount++;
-      nodesGraphmlWriter.write(node);
+      graphmlWriter.writeNode(node);
       nodeLabelsMultiset.get(node.getLabels()).increment();
-      nodesGraphmlWriter.flush();
+      graphmlWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -129,9 +124,9 @@ public class Neo4jGraphmlWriter {
   private void write(Edge edge) {
     try {
       edgeCount++;
-      relationshipsGraphmlWriter.write(edge);
+      graphmlWriter.writeEdge(edge);
       edgeLabelMultiset.get(edge.getLabel()).increment();
-      relationshipsGraphmlWriter.flush();
+      graphmlWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -166,8 +161,7 @@ public class Neo4jGraphmlWriter {
   }
 
   public void flush() throws IOException {
-    nodesGraphmlWriter.flush();
-    relationshipsGraphmlWriter.flush();
+    graphmlWriter.flush();
   }
 
   public void printReport() {
@@ -179,6 +173,15 @@ public class Neo4jGraphmlWriter {
     getEdgeLabelMultiset().forEachEntry((edgeLabel, count) ->
         console.printf("    Rel    %-36s %,10d\n", edgeLabel.toNeo4jLabel(), count));
     console.flush();
+  }
+
+  public void close() {
+    try {
+      graphmlWriter.close();
+    } catch(IOException ex) {
+      var console = new PrintWriter(System.out);
+      console.printf("\nCould not write output\n\n");
+    }
   }
 
   /* A static utility class to do the counting for each translation per node and edge labels */

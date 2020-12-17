@@ -13,6 +13,4 @@ public interface Neo4jGraphmlSchema {
   @Nonnull
   GraphmlSchema getGraphmlSchema();
 
-  @Nonnull
-  GraphmlSchema getGraphmlSchemaWithHeader();
 }

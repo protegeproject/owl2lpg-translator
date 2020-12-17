@@ -10,6 +10,7 @@ import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlMapper;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
@@ -39,30 +40,13 @@ public class GraphmlWriterModule {
 
   @Provides
   @TranslationSessionScope
-  public GraphmlWriter<Node> provideNodeGraphmlWriter() {
-    try {
-      var outputFile = new File(outputPath + File.separator + "graph.graphml");
-      return new GraphmlWriter<Node>(
-          new GraphmlMapper(),
-          new Neo4jNodeGraphmlSchema(),
-          new BufferedWriter(new FileWriter(outputFile)));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Provides
-  @TranslationSessionScope
-  public GraphmlWriter<Edge> provideEdgeGraphmlWriter() {
-    try {
-      var outputFile = new File(outputPath + File.separator + "edges.csv");
-      return new GraphmlWriter<Edge>(
-          new GraphmlMapper(),
-          new Neo4jRelationshipsGraphmlSchema(),
-          new BufferedWriter(new FileWriter(outputFile)));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  public GraphmlWriter provideGraphmlWriter() {
+    var outputFilePath = outputPath.resolve("graph.graphml");
+    var graph = TinkerGraph.open();
+    return new GraphmlWriter(
+        new GraphmlMapper(),
+        new Neo4jNodeGraphmlSchema(),
+        graph, outputFilePath);
   }
 
   @Provides

@@ -80,6 +80,8 @@ public class OntologyGraphmlExporter {
     writeOntologyAxioms(ontology.getAxioms(), documentNode);
 
     graphmlWriter.printReport();
+
+    graphmlWriter.close();
   }
 
   private void writeTranslation(Translation translation) {

@@ -20,13 +20,13 @@ public class Neo4jRelationshipsGraphmlSchema implements Neo4jGraphmlSchema {
 
   private static GraphmlSchema.Builder getBuilder() {
     return GraphmlSchema.builder()
-        .addColumn(N4J_JSON_LABELS)
-        .addColumn(N4J_JSON_START_ID)
-        .addColumn(N4J_JSON_END_ID)
-        .addColumn(TYPE)
-        .addColumn(IRI)
-        .addColumn(STRUCTURAL_SPEC + ":boolean")
-        .addColumn(POS + ":int");
+        .addProperty(N4J_JSON_LABELS)
+        .addProperty(N4J_JSON_START_ID)
+        .addProperty(N4J_JSON_END_ID)
+        .addProperty(TYPE)
+        .addProperty(IRI)
+        .addProperty(STRUCTURAL_SPEC + ":boolean")
+        .addProperty(POS + ":int");
   }
 
   @Override
@@ -35,9 +35,4 @@ public class Neo4jRelationshipsGraphmlSchema implements Neo4jGraphmlSchema {
     return getBuilder().build();
   }
 
-  @Override
-  @Nonnull
-  public GraphmlSchema getGraphmlSchemaWithHeader() {
-    return getBuilder().setUseHeader(true).build();
-  }
 }

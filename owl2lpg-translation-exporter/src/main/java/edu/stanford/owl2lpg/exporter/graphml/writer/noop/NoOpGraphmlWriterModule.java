@@ -12,6 +12,9 @@ import edu.stanford.owl2lpg.exporter.graphml.writer.*;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
+
+import java.nio.file.Paths;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -22,20 +25,12 @@ public class NoOpGraphmlWriterModule {
 
   @Provides
   @TranslationSessionScope
-  public GraphmlWriter<Node> provideNodeGraphmlWriter() {
-    return new NoOpGraphmlWriter<Node>(
-        new GraphmlMapper(),
-        new Neo4jNodeGraphmlSchema(),
-        new NoOpWriter());
-  }
-
-  @Provides
-  @TranslationSessionScope
-  public GraphmlWriter<Edge> provideEdgeGraphmlWriter() {
-    return new NoOpGraphmlWriter<Edge>(
-        new GraphmlMapper(),
-        new Neo4jRelationshipsGraphmlSchema(),
-        new NoOpWriter());
+  public GraphmlWriter provideGraphmlWriter() {
+    return new NoOpGraphmlWriter(
+            new GraphmlMapper(),
+            new Neo4jNodeGraphmlSchema(),
+            TinkerGraph.open(),
+            Paths.get("").toAbsolutePath().normalize().resolve("output.graphml") );
   }
 
   @Provides
