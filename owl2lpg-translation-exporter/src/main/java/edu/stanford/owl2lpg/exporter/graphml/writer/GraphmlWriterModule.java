@@ -25,16 +25,15 @@ public class GraphmlWriterModule {
 
   public GraphmlWriterModule(@Nonnull Path outputPath) {
       this.outputPath = (outputPath == null)
-              ? Paths.get("").toAbsolutePath().normalize()
+              ? Paths.get("").toAbsolutePath().resolve("graph.graphml").normalize()
               : outputPath;
   }
 
   @Provides
   @TranslationSessionScope
   public GraphmlWriter provideGraphmlWriter() {
-    var outputFilePath = outputPath.resolve("graph.graphml");
     var graph = TinkerGraph.open();
-    return new GraphmlWriter(graph, outputFilePath);
+    return new GraphmlWriter(graph, outputPath);
   }
 
   @Provides
