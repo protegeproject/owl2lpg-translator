@@ -1,8 +1,5 @@
 package edu.stanford.owl2lpg.exporter.graphml.writer;
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlMapper;
-import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlSchema;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.NodeId;
@@ -25,40 +22,27 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource.traversal;
 
-public class GraphmlWriter extends ObjectWriter implements AutoCloseable {
+public class GraphmlWriter implements AutoCloseable {
   static Logger log = LoggerFactory.getLogger(GraphmlWriter.class);
 
   @Nonnull
   private final Path output;
 
   @Nonnull
-  private Neo4jGraphmlSchema schema;
-
-  @Nonnull
-  private final GraphmlMapper graphmlMapper;
-
-  @Nonnull
-  private TinkerGraph objectWriter;
+  private TinkerGraph graphWriter;
 
   private final GraphTraversalSource g;
-  private final GraphmlSchema gs;
   private final Map<NodeId, Vertex> nodeCache;
   private final Map<NodeId, Edge> edgePending;
 
   private final static String UNLABELLED = "UNLABELLED";
 
   @Inject
-  public GraphmlWriter(@Nonnull GraphmlMapper graphmlMapper,
-                       @Nonnull Neo4jGraphmlSchema schema,
-                       @Nonnull Graph graph,
+  public GraphmlWriter(@Nonnull TinkerGraph graph,
                        @Nonnull Path output) {
-    super(graphmlMapper, null, null);
-    this.graphmlMapper = checkNotNull(graphmlMapper);
     this.output = checkNotNull(output);
-    this.schema = checkNotNull(schema);
-    this.objectWriter = TinkerGraph.open();
-    this.g = traversal().withGraph(this.objectWriter);
-    this.gs = schema.getGraphmlSchema();
+    this.graphWriter = graph;
+    this.g = traversal().withEmbedded(this.graphWriter);
     this.nodeCache = new HashMap<>();
     this.edgePending = new HashMap<>();
   }

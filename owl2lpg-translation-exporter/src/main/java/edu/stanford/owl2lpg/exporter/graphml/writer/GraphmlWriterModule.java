@@ -2,25 +2,16 @@ package edu.stanford.owl2lpg.exporter.graphml.writer;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.HashSetEdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.HashSetNodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
-import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
-import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlMapper;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
@@ -43,10 +34,7 @@ public class GraphmlWriterModule {
   public GraphmlWriter provideGraphmlWriter() {
     var outputFilePath = outputPath.resolve("graph.graphml");
     var graph = TinkerGraph.open();
-    return new GraphmlWriter(
-        new GraphmlMapper(),
-        new Neo4jNodeGraphmlSchema(),
-        graph, outputFilePath);
+    return new GraphmlWriter(graph, outputFilePath);
   }
 
   @Provides

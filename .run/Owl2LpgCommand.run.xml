@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Owl2LpgCommand" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="dataDir" value="C:\Users\fred\IdeaProjects\symcps-scripts\graph\src\main\data" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="edu.stanford.owl2lpg.cli.Owl2LpgCommand" />
+    <module name="owl2lpg-translation-cli" />
+    <option name="PROGRAM_PARAMETERS" value="translate -f graphml -o . &quot;C:\Users\fred\IdeaProjects\symcps-scripts\graph\src\main\data\uuv_functional_ontology.owl&quot;" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

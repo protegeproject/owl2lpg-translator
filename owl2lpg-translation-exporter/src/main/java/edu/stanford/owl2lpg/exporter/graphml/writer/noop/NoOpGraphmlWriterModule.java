@@ -2,15 +2,11 @@ package edu.stanford.owl2lpg.exporter.graphml.writer.noop;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpEdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpNodeTracker;
-import edu.stanford.owl2lpg.exporter.common.writer.noop.NoOpWriter;
-import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
-import edu.stanford.owl2lpg.exporter.graphml.wip.GraphmlMapper;
-import edu.stanford.owl2lpg.exporter.graphml.writer.*;
-import edu.stanford.owl2lpg.model.Edge;
-import edu.stanford.owl2lpg.model.Node;
+import edu.stanford.owl2lpg.exporter.graphml.writer.GraphmlWriter;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
@@ -27,8 +23,6 @@ public class NoOpGraphmlWriterModule {
   @TranslationSessionScope
   public GraphmlWriter provideGraphmlWriter() {
     return new NoOpGraphmlWriter(
-            new GraphmlMapper(),
-            new Neo4jNodeGraphmlSchema(),
             TinkerGraph.open(),
             Paths.get("").toAbsolutePath().normalize().resolve("output.graphml") );
   }

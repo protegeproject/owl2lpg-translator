@@ -73,5 +73,5 @@ include::{runconfig}/Owl2LpgCommand_csv.run.xml[]
 The alternate output format is graphml.
 [source,intellij]
 ----
-include::{runconfig}/Owl2LpgCommand_graphml.run.xml[]
+include::{runconfig}/Owl2LpgCommand.run.xml[]
 ----
