@@ -35,11 +35,11 @@ $dataDir = ...
 
 [source,powershell]
 ----
-"C:\Program Files\OpenJDK\jdk-14.0.1\bin\java.exe" `
+java.exe `
   -classpath "${projectDir}/owl2lpg-translation-cli/target/owl2lpg-translation-cli.jar" `
   edu.stanford.owl2lpg.cli.Owl2LpgCommand translate -f graphml `
   "${dataDir}/ontology.owl" `
-  "-o ."
+  -o "."
 ----
 
 There are also some scripts that wrap this command.
