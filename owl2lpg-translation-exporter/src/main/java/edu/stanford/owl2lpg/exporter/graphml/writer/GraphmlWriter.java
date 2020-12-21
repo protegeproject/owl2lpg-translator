@@ -32,9 +32,6 @@ public class GraphmlWriter implements AutoCloseable {
 
   private final GraphTraversalSource g;
   private final Map<NodeId, Vertex> nodeCache;
-  private final Map<NodeId, Edge> edgePending;
-
-  private final static String UNLABELLED = "UNLABELLED";
 
   @Inject
   public GraphmlWriter(@Nonnull TinkerGraph graph,
@@ -43,49 +40,28 @@ public class GraphmlWriter implements AutoCloseable {
     this.graphWriter = graph;
     this.g = traversal().withEmbedded(this.graphWriter);
     this.nodeCache = new HashMap<>();
-    this.edgePending = new HashMap<>();
   }
 
   /**
-   * If you want to swap one vertex for another preserving all of its
-   * edges and properties.
-   * @param oldV
-   * @param newV
-   * @return
-   */
-  private Vertex replaceVertex(Vertex oldV, Vertex newV) {
-    this.g  .V(newV).as("new")
-            .V(oldV).as("old").sideEffect(__.drop())
-            .inE().as("oldIn").sideEffect(__.drop())
-            .outV().as("oldFrom")
-            .addE(__.select("oldIn").label()).from("oldFrom").to("new")
-            .select("old")
-            .outE().as("oldOut").sideEffect(__.drop())
-            .inV().as("oldTo")
-            .addE(__.select("oldOut").label()).from("new").to("oldTo")
-            .iterate();
-    return newV;
-  }
-  /**
    * If a node has already been added the get that.
-   * If a label is provided then set that.
+   * Set the label and properties.
    *
-   * @param nodeId
-   * @param label
+   * @param node
    * @return
    */
-  private Vertex acquireNode(NodeId nodeId, String label) {
+  private Vertex acquireNode(Node node) {
+    var nodeId = node.getNodeId();
     if (this.nodeCache.containsKey(nodeId)) {
-      var vertex1 = this.nodeCache.get(nodeId);
-      if (vertex1.label() != UNLABELLED) {
-        return vertex1;
-      }
-      log.info("node not yet registered {}", label);
-      final Vertex vertex2 = replaceVertex(vertex1, this.g.addV(label).next());
-      this.nodeCache.put(nodeId, vertex2);
-      return vertex2;
+      return this.nodeCache.get(nodeId);
     }
-    final Vertex vertex = this.g.addV(label).next();
+    var nodeLabels = node.getLabels();
+    var nodeMainLabel = nodeLabels.getMainLabel();
+
+    var tr = this.g.addV(nodeMainLabel);
+    for (var entry : node.getProperties().getMap().entrySet()) {
+      tr = tr.property(entry.getKey(), entry.getValue());
+    }
+    final Vertex vertex = tr.next();
     this.nodeCache.put(nodeId, vertex);
     return vertex;
   }
@@ -98,19 +74,18 @@ public class GraphmlWriter implements AutoCloseable {
    * @throws IOException
    */
   public void writeNode(@Nonnull Node node) throws IOException {
-    var labels = node.getLabels();
-    var tr = g.V(acquireNode(node.getNodeId(), labels.getMainLabel()));
-    for (var entry : node.getProperties().getMap().entrySet()) {
-      tr = tr.property(entry.getKey(), entry.getValue());
-    }
-    tr.iterate();
+    acquireNode(node);
   }
 
+  /**
+   * @param edge
+   * @throws IOException
+   */
   public void writeEdge(@Nonnull Edge edge) throws IOException {
     var label = edge.getLabel();
     var tr = g.addE(label.getName())
-            .to(acquireNode(edge.getToNode().getNodeId(), UNLABELLED))
-            .from(acquireNode(edge.getFromNode().getNodeId(), UNLABELLED));
+            .to(acquireNode(edge.getToNode()))
+            .from(acquireNode(edge.getFromNode()));
     for (var entry : edge.getProperties().getMap().entrySet()) {
       tr = tr.property(entry.getKey(), entry.getValue());
     }
