@@ -25,7 +25,7 @@ public class GraphmlWriterModule {
 
   public GraphmlWriterModule(@Nonnull Path outputPath) {
       this.outputPath = (outputPath == null)
-              ? Paths.get("").toAbsolutePath().resolve("graph.graphml").normalize()
+              ? Paths.get("").toAbsolutePath().resolve("ontology.graphml").normalize()
               : outputPath;
   }
 
