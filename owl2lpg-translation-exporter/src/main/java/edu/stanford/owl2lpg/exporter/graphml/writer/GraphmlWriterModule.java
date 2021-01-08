@@ -7,6 +7,7 @@ import edu.stanford.owl2lpg.exporter.common.writer.HashSetEdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.HashSetNodeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
+import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,11 @@ public class GraphmlWriterModule {
   @Provides
   @TranslationSessionScope
   public GraphmlWriter provideGraphmlWriter() {
-    var graph = TinkerGraph.open();
+    var conf = new BaseConfiguration();
+//    conf.setProperty("gremlin.tinkergraph.defaultVertexPropertyCardinality","list");
+    conf.setProperty("gremlin.tinkergraph.vertexIdManager","UUID");
+    conf.setProperty("gremlin.tinkergraph.edgeIdManager","UUID");
+    var graph = TinkerGraph.open(conf);
     return new GraphmlWriter(graph, outputPath);
   }
 
