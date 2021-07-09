@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,28 +16,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class BranchNode {
+public abstract class EntityNode {
 
   public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_BRANCH_ID = "branchId:string";
+  public static final String PROPERTY_IRI = "iri:string";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
-  public static BranchNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                  @JsonProperty(PROPERTY_BRANCH_ID) @Nonnull String branchId,
+  public static EntityNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                                  @JsonProperty(PROPERTY_IRI) @Nonnull String propertyIri,
                                   @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
-    return new AutoValue_BranchNode(nodeId, branchId, nodeLabels);
+    return new AutoValue_EntityNode(nodeId, propertyIri, nodeLabels);
   }
 
   @Nonnull
-  public static BranchNode of(@Nonnull Node node) {
+  public static EntityNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperty(PropertyFields.BRANCH_ID),
+        node.getProperty(PropertyFields.IRI),
         node.getLabels().asList());
   }
 
@@ -45,9 +45,9 @@ public abstract class BranchNode {
   @Nonnull
   public abstract String getNodeId();
 
-  @JsonProperty(PROPERTY_BRANCH_ID)
+  @JsonProperty(PROPERTY_IRI)
   @Nonnull
-  public abstract String getBranchId();
+  public abstract String getPropertyIri();
 
   @JsonProperty(NODE_LABELS)
   @Nonnull

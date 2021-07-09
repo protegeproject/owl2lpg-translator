@@ -3,6 +3,10 @@ package edu.stanford.owl2lpg.exporter.csv.writer;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import dagger.Module;
 import dagger.Provides;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.HashSetEdgeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.HashSetNodeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.translator.TranslationSessionScope;
@@ -13,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,7 +32,7 @@ public class CsvWriterModule {
   private final Path outputPath;
 
   public CsvWriterModule(@Nonnull Path outputPath) {
-    this.outputPath = checkNotNull(outputPath);
+    this.outputPath = (outputPath == null) ? Paths.get("").toAbsolutePath().normalize() : outputPath;
   }
 
   @Provides

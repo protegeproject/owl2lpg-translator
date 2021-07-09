@@ -1,6 +1,6 @@
-package edu.stanford.owl2lpg.exporter.csv.writer.noop;
+package edu.stanford.owl2lpg.exporter.common.writer.noop;
 
-import edu.stanford.owl2lpg.exporter.csv.writer.EdgeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.model.Edge;
 
 import java.util.function.Consumer;

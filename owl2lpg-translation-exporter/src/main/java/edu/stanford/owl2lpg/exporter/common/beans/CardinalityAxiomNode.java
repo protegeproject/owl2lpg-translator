@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,28 +16,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class EntityNode {
+public abstract class CardinalityAxiomNode {
 
   public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_IRI = "iri:string";
+  public static final String PROPERTY_CARDINALITY = "cardinality:int";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
-  public static EntityNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                  @JsonProperty(PROPERTY_IRI) @Nonnull String propertyIri,
-                                  @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
-    return new AutoValue_EntityNode(nodeId, propertyIri, nodeLabels);
+  public static CardinalityAxiomNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                                            @JsonProperty(PROPERTY_CARDINALITY) @Nonnull Integer propertyCardinality,
+                                            @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
+    return new AutoValue_CardinalityAxiomNode(nodeId, propertyCardinality, nodeLabels);
   }
 
   @Nonnull
-  public static EntityNode of(@Nonnull Node node) {
+  public static CardinalityAxiomNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperty(PropertyFields.IRI),
+        node.getProperty(PropertyFields.CARDINALITY),
         node.getLabels().asList());
   }
 
@@ -45,9 +45,9 @@ public abstract class EntityNode {
   @Nonnull
   public abstract String getNodeId();
 
-  @JsonProperty(PROPERTY_IRI)
+  @JsonProperty(PROPERTY_CARDINALITY)
   @Nonnull
-  public abstract String getPropertyIri();
+  public abstract Integer getPropertyCardinality();
 
   @JsonProperty(NODE_LABELS)
   @Nonnull

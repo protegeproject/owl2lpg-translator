@@ -35,6 +35,7 @@ public abstract class NodeId {
 
   @JsonIgnore
   @Nonnull
+  @SuppressWarnings("mutable")
   public abstract byte[] getBytes();
 
   @JsonValue

@@ -1,4 +1,4 @@
-package edu.stanford.owl2lpg.exporter.csv.beans;
+package edu.stanford.owl2lpg.exporter.common.beans;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,28 +16,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  */
 @AutoValue
-public abstract class AnonymousIndividualNode {
+public abstract class BranchNode {
 
   public static final String NODE_ID = ":ID";
 
-  public static final String PROPERTY_NODE_ID = "nodeID:string";
+  public static final String PROPERTY_BRANCH_ID = "branchId:string";
 
   public static final String NODE_LABELS = ":LABEL";
 
   @JsonCreator
   @Nonnull
-  public static AnonymousIndividualNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
-                                               @JsonProperty(PROPERTY_NODE_ID) @Nonnull String propertyNodeId,
-                                               @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
-    return new AutoValue_AnonymousIndividualNode(nodeId, propertyNodeId, nodeLabels);
+  public static BranchNode create(@JsonProperty(NODE_ID) @Nonnull String nodeId,
+                                  @JsonProperty(PROPERTY_BRANCH_ID) @Nonnull String branchId,
+                                  @JsonProperty(NODE_LABELS) @Nonnull ImmutableList<String> nodeLabels) {
+    return new AutoValue_BranchNode(nodeId, branchId, nodeLabels);
   }
 
   @Nonnull
-  public static AnonymousIndividualNode of(@Nonnull Node node) {
+  public static BranchNode of(@Nonnull Node node) {
     checkNotNull(node);
     return create(
         node.printNodeId(),
-        node.getProperty(PropertyFields.NODE_ID),
+        node.getProperty(PropertyFields.BRANCH_ID),
         node.getLabels().asList());
   }
 
@@ -45,9 +45,9 @@ public abstract class AnonymousIndividualNode {
   @Nonnull
   public abstract String getNodeId();
 
-  @JsonProperty(PROPERTY_NODE_ID)
+  @JsonProperty(PROPERTY_BRANCH_ID)
   @Nonnull
-  public abstract String getPropertyNodeId();
+  public abstract String getBranchId();
 
   @JsonProperty(NODE_LABELS)
   @Nonnull

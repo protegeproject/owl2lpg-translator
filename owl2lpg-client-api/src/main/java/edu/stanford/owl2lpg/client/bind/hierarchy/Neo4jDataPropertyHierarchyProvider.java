@@ -142,9 +142,9 @@ public class Neo4jDataPropertyHierarchyProvider implements DataPropertyHierarchy
         .stream()
         .anyMatch(documentId -> hierarchyAccessor.isAncestor(parent, child, projectId, branchId, documentId));
   }
-
-  @Override
-  public void handleChanges(List<OntologyChange> list) {
-    // Do nothing
-  }
+//
+//  @Override
+//  public void handleChanges(List<OntologyChange> list) {
+//    // Do nothing
+//  }
 }

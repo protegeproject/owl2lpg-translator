@@ -1,8 +1,8 @@
-package edu.stanford.owl2lpg.exporter.csv.writer;
+package edu.stanford.owl2lpg.exporter.graphml.writer;
 
 import com.google.common.collect.ImmutableMultiset;
-import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.exporter.common.writer.NodeTracker;
+import edu.stanford.owl2lpg.exporter.common.writer.EdgeTracker;
 import edu.stanford.owl2lpg.model.Edge;
 import edu.stanford.owl2lpg.model.Node;
 import edu.stanford.owl2lpg.model.Translation;
@@ -20,13 +20,10 @@ import java.util.stream.Stream;
  * @author Josef Hardi <josef.hardi@stanford.edu> <br>
  * Stanford Center for Biomedical Informatics Research
  */
-public class Neo4jCsvWriter {
+public class Neo4jGraphmlWriter {
 
   @Nonnull
-  private final CsvWriter<Node> nodesCsvWriter;
-
-  @Nonnull
-  private final CsvWriter<Edge> relationshipsCsvWriter;
+  private final GraphmlWriter graphmlWriter;
 
   @Nonnull
   private final NodeTracker nodeTracker;
@@ -43,12 +40,10 @@ public class Neo4jCsvWriter {
   private final EnumMap<NodeLabels, Counter> nodeLabelsMultiset = new EnumMap<>(NodeLabels.class);
 
   @Inject
-  public Neo4jCsvWriter(@Nonnull CsvWriter<Node> nodesCsvWriter,
-                        @Nonnull CsvWriter<Edge> edgeCsvWriter,
-                        @Nonnull NodeTracker nodeTracker,
-                        @Nonnull EdgeTracker edgeTracker) {
-    this.nodesCsvWriter = nodesCsvWriter;
-    this.relationshipsCsvWriter = edgeCsvWriter;
+  public Neo4jGraphmlWriter(@Nonnull GraphmlWriter graphmlWriter,
+                            @Nonnull NodeTracker nodeTracker,
+                            @Nonnull EdgeTracker edgeTracker) {
+    this.graphmlWriter = graphmlWriter;
     this.nodeTracker = nodeTracker;
     this.edgeTracker = edgeTracker;
     Stream.of(EdgeLabel.values())
@@ -101,9 +96,9 @@ public class Neo4jCsvWriter {
   private void write(Node node) {
     try {
       nodeCount++;
-      nodesCsvWriter.write(node);
+      graphmlWriter.writeNode(node);
       nodeLabelsMultiset.get(node.getLabels()).increment();
-      nodesCsvWriter.flush();
+      graphmlWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -129,9 +124,9 @@ public class Neo4jCsvWriter {
   private void write(Edge edge) {
     try {
       edgeCount++;
-      relationshipsCsvWriter.write(edge);
+      graphmlWriter.writeEdge(edge);
       edgeLabelMultiset.get(edge.getLabel()).increment();
-      relationshipsCsvWriter.flush();
+      graphmlWriter.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -166,8 +161,7 @@ public class Neo4jCsvWriter {
   }
 
   public void flush() throws IOException {
-    nodesCsvWriter.flush();
-    relationshipsCsvWriter.flush();
+    graphmlWriter.flush();
   }
 
   public void printReport() {
@@ -179,6 +173,15 @@ public class Neo4jCsvWriter {
     getEdgeLabelMultiset().forEachEntry((edgeLabel, count) ->
         console.printf("    Rel    %-36s %,10d\n", edgeLabel.toNeo4jLabel(), count));
     console.flush();
+  }
+
+  public void close() {
+    try {
+      graphmlWriter.close();
+    } catch(IOException ex) {
+      var console = new PrintWriter(System.out);
+      console.printf("\nCould not write output\n\n");
+    }
   }
 
   /* A static utility class to do the counting for each translation per node and edge labels */
